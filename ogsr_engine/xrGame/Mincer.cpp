@@ -34,7 +34,7 @@ void CMincer::OnStateSwitch(EZoneState new_state)
 
 	if(m_eZoneState==eZoneStateBlowout && new_state!=eZoneStateBlowout)
 	{
-		Telekinesis().clear_deactivate();
+		Telekinesis().deactivate(); //Telekinesis().clear_deactivate();
 	}
 	inherited::OnStateSwitch(new_state);
 }
