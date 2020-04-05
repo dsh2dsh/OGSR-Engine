@@ -20,7 +20,7 @@ float	psSoundVEffects = 1.0f;
 float	psSoundVFactor = 1.0f;
 
 float	psSoundVMusic = 1.f;
-int		psSoundCacheSizeMB = 32;
+int		psSoundCacheSizeMB = 64; //32;
 
 CSoundRender_Core*				SoundRender = 0;
 CSound_manager_interface*		Sound = 0;
