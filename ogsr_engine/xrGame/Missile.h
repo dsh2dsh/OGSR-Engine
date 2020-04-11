@@ -77,6 +77,7 @@ protected:
 protected:
 
 	bool					m_throw;
+	bool m_contacted;
 	
 	//время уничтожения
 	u32						m_dwDestroyTime;
@@ -119,6 +120,7 @@ protected:
 	u8   m_idle_state;
 	u8   idle_state();
 	void PlayAnimIdle( u8 );
+	void Contact() { m_contacted = true; };
 
 protected:
 			void			setup_throw_params		();
@@ -137,4 +139,5 @@ public:
 	IC		u32				destroy_time			() const {return m_dwDestroyTime;};
 	static	void			ExitContactCallback		(bool& do_colide,bool bo1,dContact& c,SGameMtl * /*material_1*/,SGameMtl * /*material_2*/);
 	virtual u16				bone_count_to_synchronize	() const;
+	bool Contacted() const { return m_contacted; };
 };
