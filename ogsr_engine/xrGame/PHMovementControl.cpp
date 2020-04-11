@@ -1153,6 +1153,8 @@ void CPHMovementControl::CreateCharacter()
 	trying_poses[2].set(vPosition);
 	trying_poses[3].set(vPosition);
 	trying_poses[4].set(vPosition);
+
+	m_character->SetMas( GetMass() );
 }
 CPHSynchronize*	CPHMovementControl::GetSyncItem()
 {
