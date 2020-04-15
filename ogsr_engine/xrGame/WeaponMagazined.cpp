@@ -789,7 +789,7 @@ void CWeaponMagazined::switch2_Hiding()
 {
 	CWeapon::FireEnd();
 
-	HUD_SOUND::StopSound( sndReload );
+	StopHUDSounds();
 	PlaySound	(sndHide,get_LastFP());
 
 	PlayAnimHide();
