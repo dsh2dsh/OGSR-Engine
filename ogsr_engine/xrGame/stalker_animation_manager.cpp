@@ -60,7 +60,7 @@ void CStalkerAnimationManager::reload				(CAI_Stalker *_object)
 	m_object					= _object;
 	m_visual					= object().Visual();
 
-	m_crouch_state_config		= object().SpecificCharacter().crouch_type();
+	m_crouch_state_config = int( READ_IF_EXISTS( pSettings, r_u32, object().cNameSect(), "crouch_type", object().SpecificCharacter().crouch_type() ) );
 	VERIFY						((m_crouch_state_config == 0) || (m_crouch_state_config == 1) || (m_crouch_state_config == -1));
 	m_crouch_state				= m_crouch_state_config;
 
