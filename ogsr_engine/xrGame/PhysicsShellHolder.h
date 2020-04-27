@@ -124,7 +124,7 @@ public://IPhysicsShellHolder
 	virtual	bool					IsActor								()						;
 	virtual bool					IsStalker							()						;
 	virtual	void					MovementCollisionEnable				( bool enable )			;
-	virtual CPHSoundPlayer*				ObjectPhSoundPlayer() { if (m_pPhysicsShell) return ph_sound_player(); else return nullptr; }
+	virtual CPHSoundPlayer*				ObjectPhSoundPlayer() { return ph_sound_player(); }
 
 private:
 	Fvector					m_overriden_activation_speed;
