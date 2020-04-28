@@ -16,6 +16,8 @@ class CPhysicItem :
 			public CPHShellSimpleCreator
 {
 	typedef CPhysicsShellHolder inherited;
+	u16 m_my_material_idx;
+
 public:
 	bool			m_ready_to_destroy;
 
@@ -36,4 +38,5 @@ public:
 	virtual void	create_box_physic_shell			();
 	virtual void	create_box2sphere_physic_shell	();
 	virtual void	create_physic_shell				();
+	virtual void CreatePhysicsShell();
 };

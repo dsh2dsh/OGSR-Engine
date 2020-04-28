@@ -11,6 +11,7 @@
 #include "physicsshell.h"
 #include "xrserver_objects.h"
 #include "../Include/xrRender/Kinematics.h"
+#include "../xr_3da/gamemtllib.h"
 
 #define CHOOSE_MAX(x,inst_x,y,inst_y,z,inst_z)\
 	if(x>y)\
@@ -33,6 +34,7 @@ CPhysicItem::~CPhysicItem	()
 void CPhysicItem::init		()
 {
 	m_pPhysicsShell			= 0;
+	m_my_material_idx = GAMEMTL_NONE_IDX;
 }
 
 void CPhysicItem::reinit	()
@@ -44,6 +46,8 @@ void CPhysicItem::reinit	()
 void CPhysicItem::Load		(LPCSTR section)
 {
 	inherited::Load			(section);
+	if ( pSettings->line_exist( section, "material" ) )
+	  m_my_material_idx = GMLib.GetMaterialIdx( pSettings->r_string( section, "material" ) );
 }
 
 void CPhysicItem::reload	(LPCSTR section)
@@ -202,4 +206,11 @@ void CPhysicItem::create_physic_shell()
 {
 	///create_box_physic_shell();
 	inherited::create_physic_shell();
+}
+
+
+void CPhysicItem::CreatePhysicsShell() {
+  CPHShellSimpleCreator::CreatePhysicsShell();
+  if ( m_my_material_idx != GAMEMTL_NONE_IDX )
+    PHSetMaterial( m_my_material_idx );
 }
