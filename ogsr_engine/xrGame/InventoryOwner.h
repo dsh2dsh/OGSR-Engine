@@ -178,6 +178,7 @@ public:
 	virtual	void			spawn_supplies			();
 
 	CInventoryItem* CInventoryOwner::GetCurrentOutfit() const;
+	CInventoryItem* CInventoryOwner::GetCurrentTorch() const;
 
 	//////////////////////////////////////////////////////////////////////////
 	// связь со скриптами
