@@ -343,7 +343,8 @@ void	CRenderTarget::phase_combine	()
 	if (ps_r2_ls_flags.test(R2FLAG_FXAA))
 	{
 		PIX_EVENT(FXAA);
-		phase_fxaa();
+		phase_fxaa( 0 );
+		phase_fxaa( 1 );
 		RCache.set_Stencil(FALSE);
 	}
 
