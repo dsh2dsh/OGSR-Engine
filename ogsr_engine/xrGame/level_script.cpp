@@ -964,6 +964,10 @@ int get_character_community_team( LPCSTR comm ) {
   return community.team();
 }
 
+bool is_actor_indoor() {
+  return Level().IsActorIndoor();
+}
+
 
 #pragma optimize("s",on)
 void CLevel::script_register(lua_State *L)
@@ -1121,6 +1125,7 @@ void CLevel::script_register(lua_State *L)
 		def( "iterate_vertices_inside", &iterate_vertices_inside ),
 		def( "iterate_vertices_border", &iterate_vertices_border ),
 		def( "get_character_community_team", &get_character_community_team ),
+		def( "is_actor_indoor", &is_actor_indoor ),
 		//--#SM+# Begin --
 		def("set_blender_mode_main", &set_blender_mode_main),
 		def("get_blender_mode_main", &get_blender_mode_main),

@@ -146,6 +146,17 @@ void	IGame_Level::OnFrame		( )
 	}
 }
 
+bool IGame_Level::IsActorIndoor() {
+  static bool bIndoor     = true;
+  static u32  last_frame  = 0;
+  if ( last_frame != Device.dwFrame ) {
+    collide::rq_result RQ;
+    bIndoor    = ObjectSpace.RayPick( Device.vCameraPosition, Fvector().set( 0.f, 1.f, 0.f ), 50.f, collide::rqtBoth, RQ, CurrentViewEntity() );
+    last_frame = Device.dwFrame;
+  }
+  return bIndoor;
+}
+
 // ==================================================================================================
 
 void CServerInfo::AddItem( LPCSTR name_, LPCSTR value_, u32 color_ )
