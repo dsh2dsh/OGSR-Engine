@@ -482,7 +482,7 @@ void CHW::updateWindowProps(HWND m_hWnd)
 					m_ChainDesc.BufferDesc.Height);
 			};
 
-			AdjustWindowRect		(	&m_rcWindowBounds, dwWindowStyle, FALSE );
+			AdjustWindowRect		(	&m_rcWindowBounds, DWORD(dwWindowStyle), FALSE );
 
 			SetWindowPos			(	m_hWnd, 
 				HWND_NOTOPMOST,	
