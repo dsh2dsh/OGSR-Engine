@@ -93,6 +93,7 @@ public:
 		flActorObstacle	= (1ul<<12ul),
 		flNoRicoshet	= (1ul<<13ul),
 	flPickable		= (1ul<<14ul),
+	flOutdoor		= (1ul<<15ul),
 
 
 		

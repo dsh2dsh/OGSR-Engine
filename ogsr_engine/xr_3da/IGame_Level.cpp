@@ -9,6 +9,7 @@
 #include "gamefont.h"
 #include "xrLevel.h"
 #include "CameraManager.h"
+#include "gamemtllib.h"
 
 ENGINE_API	IGame_Level*	g_pGameLevel	= NULL;
 
@@ -146,12 +147,31 @@ void	IGame_Level::OnFrame		( )
 	}
 }
 
+
+ICF static BOOL info_trace_callback( collide::rq_result& result, LPVOID params ) {
+  bool& bIndoor	= *(bool*)params;
+  if ( result.O ) {
+    if ( g_pGameLevel->CurrentViewEntity() == result.O )
+      return TRUE;
+  }
+  else {
+    CDB::TRI* T = g_pGameLevel->ObjectSpace.GetStaticTris() + result.element;
+    const auto* mtl = GMLib.GetMaterialByIdx( T->material );
+    if ( mtl->Flags.test( SGameMtl::flPassable | SGameMtl::flOutdoor ) )
+      return TRUE;
+  }	
+  bIndoor = true;
+  return FALSE;
+}
+
 bool IGame_Level::IsActorIndoor() {
   static bool bIndoor     = true;
   static u32  last_frame  = 0;
+  static collide::rq_results RQR;
   if ( last_frame != Device.dwFrame ) {
-    collide::rq_result RQ;
-    bIndoor    = ObjectSpace.RayPick( Device.vCameraPosition, Fvector().set( 0.f, 1.f, 0.f ), 50.f, collide::rqtBoth, RQ, CurrentViewEntity() );
+    collide::ray_defs RD( Device.vCameraPosition, Fvector().set( 0.f, 1.f, 0.f ), 50.f, CDB::OPT_CULL, collide::rqtBoth );
+    RQR.r_clear();
+    ObjectSpace.RayQuery( RQR, RD, info_trace_callback, &bIndoor, NULL, CurrentViewEntity() );
     last_frame = Device.dwFrame;
   }
   return bIndoor;
