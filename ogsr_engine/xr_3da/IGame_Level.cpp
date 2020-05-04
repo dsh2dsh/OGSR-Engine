@@ -159,7 +159,7 @@ ICF static BOOL info_trace_callback( collide::rq_result& result, LPVOID params )
     const auto* mtl = GMLib.GetMaterialByIdx( T->material );
     if ( mtl->Flags.test( SGameMtl::flPassable | SGameMtl::flOutdoor ) )
       return TRUE;
-  }	
+  }
   bIndoor = true;
   return FALSE;
 }
@@ -168,11 +168,12 @@ bool IGame_Level::IsActorIndoor() {
   static bool bIndoor     = true;
   static u32  last_frame  = 0;
   static collide::rq_results RQR;
-  if ( last_frame != Device.dwFrame ) {
+  if ( last_frame < Device.dwTimeGlobal ) {
     collide::ray_defs RD( Device.vCameraPosition, Fvector().set( 0.f, 1.f, 0.f ), 50.f, CDB::OPT_CULL, collide::rqtBoth );
     RQR.r_clear();
+    bIndoor = false;
     ObjectSpace.RayQuery( RQR, RD, info_trace_callback, &bIndoor, NULL, CurrentViewEntity() );
-    last_frame = Device.dwFrame;
+    last_frame = Device.dwTimeGlobal + 1000;
   }
   return bIndoor;
 }
