@@ -95,6 +95,15 @@ xr_token							qminmax_sm_token					[ ]={
 	{ 0,							0												}
 };
 
+u32 ps_r_pp_aa_mode = 0;
+xr_token pp_aa_mode_token[] =
+{
+	{ "st_opt_off",		0	},
+	{ "st_opt_fxaa",	FXAA	},
+	{ "st_opt_dlaa",	DLAA	},
+	{ 0,			0	},
+};
+
 //	“Off”
 //	“DX10.0 style [Standard]”
 //	“DX10.1 style [Higher quality]”
@@ -946,7 +955,8 @@ void		xrRender_initconsole	()
 	CMD3(CCC_Token,		"r3_msaa_alphatest",			&ps_r3_msaa_atest,			qmsaa__atest_token);
 	CMD3(CCC_Token,		"r3_minmax_sm",					&ps_r3_minmax_sm,			qminmax_sm_token);
 
-	CMD3(CCC_Mask, "r2_fxaa", &ps_r2_ls_flags, R2FLAG_FXAA);
+	//CMD3(CCC_Mask, "r2_fxaa", &ps_r2_ls_flags, R2FLAG_FXAA);
+	CMD3( CCC_Token, "r_aa_mode", &ps_r_pp_aa_mode,	pp_aa_mode_token);
 
 	CMD4(CCC_detail_radius, "r__detail_radius", &ps_r__detail_radius, 49, 300);
 	CMD4(CCC_Integer, "r__no_scale_on_fade", &ps_no_scale_on_fade, 0, 1); //Alundaio

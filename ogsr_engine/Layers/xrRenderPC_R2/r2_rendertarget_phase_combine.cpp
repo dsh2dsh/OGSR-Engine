@@ -235,10 +235,9 @@ void	CRenderTarget::phase_combine	()
 	}
 
 	//FXAA
-	if (ps_r2_ls_flags.test(R2FLAG_FXAA))
-	{
+	if ( ps_r_pp_aa_mode > 0 ) {
 		PIX_EVENT(FXAA);
-		phase_fxaa();
+		phase_fxaa( s_fxaa );
 		RCache.set_Stencil(FALSE);
 	}
 

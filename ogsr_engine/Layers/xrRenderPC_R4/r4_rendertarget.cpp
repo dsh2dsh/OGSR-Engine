@@ -730,6 +730,7 @@ CRenderTarget::CRenderTarget		()
 
 		//FXAA
 		s_fxaa.create("fxaa");
+		s_dlaa.create("dlaa");
 		g_fxaa.create(FVF::F_V, RCache.Vertex.Buffer(), RCache.QuadIB);
 	}
 
