@@ -55,6 +55,7 @@ protected:
 	u32							Sounds_Random_dwNextTime;
 	BOOL						Sounds_Random_Enabled;
 	CCameraManager*				m_pCameras;
+	std::string on_change_weather_callback;
 
 	// temporary
 	xr_vector<ISpatial*>		snd_ER;
@@ -110,6 +111,7 @@ public:
 	void						LL_CheckTextures		();
 	virtual void				SetEnvironmentGameTimeFactor(u64 const& GameTime, float const& fTimeFactor) = 0;
 	bool IsActorIndoor();
+	virtual void OnChangeCurrentWeather() = 0;
 
 };
 
