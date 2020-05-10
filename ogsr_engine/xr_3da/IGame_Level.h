@@ -111,7 +111,7 @@ public:
 	void						LL_CheckTextures		();
 	virtual void				SetEnvironmentGameTimeFactor(u64 const& GameTime, float const& fTimeFactor) = 0;
 	bool IsActorIndoor();
-	virtual void OnChangeCurrentWeather() = 0;
+	virtual void OnChangeCurrentWeather( LPCSTR sect ) = 0;
 
 };
 
