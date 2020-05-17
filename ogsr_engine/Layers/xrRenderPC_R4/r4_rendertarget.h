@@ -203,7 +203,6 @@ private:
 
 	//FXAA
 	ref_shader s_fxaa;
-	ref_shader s_dlaa;
 	ref_geom g_fxaa;
 
 public:
@@ -312,7 +311,7 @@ public:
 	void						phase_combine_volumetric();
 	void						phase_pp				();
 	void PhaseRainDrops();
-	void phase_fxaa( ref_shader&, u32 id = 0 );
+	void phase_fxaa( u32 id = 0 );
 
 	virtual void				set_blur				(float	f)		{ param_blur=f;						}
 	virtual void				set_gray				(float	f)		{ param_gray=f;						}

@@ -351,16 +351,11 @@ void	CRenderTarget::phase_combine	()
 	RCache.set_Stencil(FALSE);
 
 	//FXAA
-	if ( ps_r_pp_aa_mode > 0 ) {
+	if (ps_r2_ls_flags.test(R2FLAG_FXAA))
+	{
 		PIX_EVENT(FXAA);
-		if ( ps_r_pp_aa_mode == FXAA ) {
-		  for ( u32 id = 0; id < 3; id++ )
-		    phase_fxaa( s_fxaa, id );
-		}
-		else if ( ps_r_pp_aa_mode == DLAA ) {
-		  for ( u32 id = 0; id < 2; id++ )
-		    phase_fxaa( s_dlaa, id );
-		}
+		phase_fxaa( 0 );
+		phase_fxaa( 1 );
 		RCache.set_Stencil(FALSE);
 	}
 

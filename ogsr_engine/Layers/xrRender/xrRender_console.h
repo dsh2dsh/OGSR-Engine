@@ -151,7 +151,7 @@ enum
 	R2FLAG_SUN_TSM				= (1<<2),
 	R2FLAG_SUN_DETAILS			= (1<<3),
 	R2FLAG_TONEMAP				= (1<<4),
-//	R2FLAG_FXAA					= (1<<5),
+	R2FLAG_FXAA					= (1<<5),
 	R2FLAG_GI					= (1<<6),
 	R2FLAG_FASTBLOOM			= (1<<7),
 	R2FLAG_GLOBALMATERIAL		= (1<<8),
@@ -208,14 +208,6 @@ enum
 	R2FLAGEXT_RAIN_DROPS = 1 << 12,
 	R2FLAGEXT_RAIN_DROPS_CONTROL = 1 << 13,
 	R2FLAGEXT_ACTOR_SHADOW = 1 << 14,
-};
-
-extern ECORE_API u32			ps_r_pp_aa_mode;
-extern ECORE_API xr_token		pp_aa_mode_token[];
-enum
-{
-	FXAA = 1,
-	DLAA
 };
 
 extern void						xrRender_initconsole	();

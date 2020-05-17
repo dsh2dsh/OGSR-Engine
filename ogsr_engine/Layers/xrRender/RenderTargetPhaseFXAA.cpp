@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-void CRenderTarget::phase_fxaa( ref_shader& S, u32 id )
+void CRenderTarget::phase_fxaa( u32 id )
 {
 	u32 Offset = 0;
 	const float _w = float(Device.dwWidth);
@@ -8,8 +8,15 @@ void CRenderTarget::phase_fxaa( ref_shader& S, u32 id )
 	const float du = ps_r1_pps_u, dv = ps_r1_pps_v;
 
 #if defined(USE_DX10) || defined(USE_DX11)
-	ref_rt dest_rt = RImplementation.o.dx10_msaa ? rt_Generic : rt_Color;
+	ref_rt dest_rt;
+	if ( id == 0 )
+	  dest_rt = rt_Generic_1;
+	else
+	  dest_rt = RImplementation.o.dx10_msaa ? rt_Generic : rt_Color;
 	u_setrt(dest_rt, nullptr, nullptr, HW.pBaseZB);
+
+	RCache.set_CullMode(CULL_NONE);
+	RCache.set_Stencil(FALSE);
 
 	FVF::V* pv = (FVF::V*)RCache.Vertex.Lock(4, g_fxaa->vb_stride, Offset);
 	pv->set(du + 0, dv + float(_h), 0, 0, 1);
@@ -37,11 +44,12 @@ void CRenderTarget::phase_fxaa( ref_shader& S, u32 id )
 #endif
 	RCache.Vertex.Unlock(4, g_fxaa->vb_stride);
 
-	RCache.set_Element( S->E[ id ] );
+	RCache.set_Element( s_fxaa->E[ id ] );
 	RCache.set_Geometry(g_fxaa);
 	RCache.Render(D3DPT_TRIANGLELIST, Offset, 0, 4, 0, 2);
 
 #if defined(USE_DX10) || defined(USE_DX11)
-	HW.pContext->CopyResource( rt_Generic_0->pTexture->surface_get(), dest_rt->pTexture->surface_get() );
+	if ( id == 1 )
+	  HW.pContext->CopyResource( rt_Generic_0->pTexture->surface_get(), dest_rt->pTexture->surface_get() );
 #endif
 }
