@@ -504,6 +504,10 @@ public:
 			const CCoverPoint	*ambush_cover( const Fvector &position, const Fvector &enemy_position, float radius, float min_distance, const luabind::functor<bool>& );
 			const CCoverPoint	*angle_cover( const Fvector&, float, const Fvector&, float, float, u32 );
 			const CCoverPoint	*angle_cover( const Fvector&, float, const Fvector&, float, float, u32, const luabind::functor<bool>& );
+			const CCoverPoint	*far_cover( const Fvector&, float, float, float, float );
+			const CCoverPoint	*far_cover( const Fvector&, float, float, float, float, const luabind::functor<bool>& );
+			const CCoverPoint	*close_cover( const Fvector&, float, float, float, float );
+			const CCoverPoint	*close_cover( const Fvector&, float, float, float, float, const luabind::functor<bool>& );
 			CScriptIniFile		*spawn_ini				() const;
 			bool				active_zone_contact		(u16 id);
 
