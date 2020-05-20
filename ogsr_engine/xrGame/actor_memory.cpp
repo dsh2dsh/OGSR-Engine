@@ -11,6 +11,7 @@
 #include "actor.h"
 #include "../xr_3da/camerabase.h"
 #include "gamepersistent.h"
+#include "ai/monsters/basemonster/base_monster.h"
 
 CActorMemory::CActorMemory					(CActor *actor) :
 	inherited		(
@@ -27,6 +28,10 @@ BOOL CActorMemory::feel_vision_isRelevant	(CObject* O)
 	CEntityAlive	*entity_alive = smart_cast<CEntityAlive*>(O);
 	if (!entity_alive)
 		return		(FALSE);
+
+	auto monster = smart_cast<CBaseMonster*>( entity_alive );
+	if ( monster && monster->state_invisible )
+	  return FALSE;
 
 	return			(TRUE);
 }
