@@ -127,20 +127,20 @@ const CCoverPoint *CScriptGameObject::ambush_cover( const Fvector &position, con
   return nullptr;
 }
 
-const CCoverPoint *CScriptGameObject::far_cover( const Fvector &position, float radius, float min_distance, float max_distance, float deviation ) {
+const CCoverPoint *CScriptGameObject::far_cover( const Fvector &position, const Fvector &enemy_position, float radius, float min_distance, float max_distance, float deviation ) {
   CAI_Stalker *stalker = smart_cast<CAI_Stalker*>(&object());
   ASSERT_FMT( stalker, "[%s]: %s not a CAI_Stalker", __FUNCTION__, object().cName().c_str() );
-  stalker->m_ce_far->setup( position, min_distance, max_distance, deviation );
+  stalker->m_ce_far->setup( enemy_position, min_distance, max_distance, deviation );
   const CCoverPoint *point = ai().cover_manager().best_cover( position, radius, *stalker->m_ce_far );
   return point;
 }
 
-const CCoverPoint *CScriptGameObject::far_cover( const Fvector &position, float radius, float min_distance, float max_distance, float deviation, const luabind::functor<bool>& callback ) {
+const CCoverPoint *CScriptGameObject::far_cover( const Fvector &position, const Fvector &enemy_position, float radius, float min_distance, float max_distance, float deviation, const luabind::functor<bool>& callback ) {
   CAI_Stalker *stalker = smart_cast<CAI_Stalker*>(&object());
   ASSERT_FMT( stalker, "[%s]: %s not a CAI_Stalker", __FUNCTION__, object().cName().c_str() );
   std::vector<const CCoverPoint*> covers;
   stalker->m_ce_far->setup(
-    position, min_distance, max_distance, deviation,
+    enemy_position, min_distance, max_distance, deviation,
     [&]( auto point ) -> bool {
       covers.push_back( point );
       return true;
@@ -154,20 +154,20 @@ const CCoverPoint *CScriptGameObject::far_cover( const Fvector &position, float 
   return nullptr;
 }
 
-const CCoverPoint *CScriptGameObject::close_cover( const Fvector &position, float radius, float min_distance, float max_distance, float deviation ) {
+const CCoverPoint *CScriptGameObject::close_cover( const Fvector &position, const Fvector &enemy_position, float radius, float min_distance, float max_distance, float deviation ) {
   CAI_Stalker *stalker = smart_cast<CAI_Stalker*>(&object());
   ASSERT_FMT( stalker, "[%s]: %s not a CAI_Stalker", __FUNCTION__, object().cName().c_str() );
-  stalker->m_ce_close->setup( position, min_distance, max_distance, deviation );
+  stalker->m_ce_close->setup( enemy_position, min_distance, max_distance, deviation );
   const CCoverPoint *point = ai().cover_manager().best_cover( position, radius, *stalker->m_ce_close );
   return point;
 }
 
-const CCoverPoint *CScriptGameObject::close_cover( const Fvector &position, float radius, float min_distance, float max_distance, float deviation, const luabind::functor<bool>& callback ) {
+const CCoverPoint *CScriptGameObject::close_cover( const Fvector &position, const Fvector &enemy_position, float radius, float min_distance, float max_distance, float deviation, const luabind::functor<bool>& callback ) {
   CAI_Stalker *stalker = smart_cast<CAI_Stalker*>(&object());
   ASSERT_FMT( stalker, "[%s]: %s not a CAI_Stalker", __FUNCTION__, object().cName().c_str() );
   std::vector<const CCoverPoint*> covers;
   stalker->m_ce_close->setup(
-    position, min_distance, max_distance, deviation,
+    enemy_position, min_distance, max_distance, deviation,
     [&]( auto point ) -> bool {
       covers.push_back( point );
       return true;
