@@ -96,7 +96,8 @@ void CGraviArtefact::PhDataUpdate( dReal step ) {
 
 void CGraviArtefact::OnH_B_Independent( bool just_before_destroy ) {
   inherited::OnH_B_Independent( just_before_destroy );
-  m_jump_jump = m_keep = m_raise = false;
+  m_jump_jump = m_keep = false;
+  m_raise = true;
   if ( m_jump_time )
     m_jump_time_end = Device.dwTimeGlobal + m_jump_time;
 }
@@ -120,27 +121,38 @@ void CGraviArtefact::process_gravity() {
     dir.y = -1.f;
     // проверить высоту артефакта
     float range = RQ.range - Radius();
-    if ( m_jump_min_height && res && range < m_jump_min_height ) {
+    if ( m_jump_min_height && range < m_jump_min_height ) {
       m_jump_jump = false;
       m_keep  = false;
       m_raise = true;
+      if ( m_jump_debug )
+        Msg( "[%s]: raising %s range[%f]", __FUNCTION__, cName().c_str(), range );
     }
     else {
       if ( m_jump_min_height && fsimilar( m_fJumpHeight, m_jump_min_height ) ) {
         m_jump_jump = false;
         if ( m_keep ) {
-          if ( res && fsimilar( range, m_keep_height, 0.01f ) )
+          if ( fsimilar( range, m_keep_height, 0.01f ) )
             dir.y = 0;
           else {
+            m_keep  = false;
+            m_raise = true;
             if ( m_jump_debug )
               Msg( "[%s]: lowering %s range[%f]", __FUNCTION__, cName().c_str(), range );
-            dir.y = -m_jump_keep_speed;
+            raise_speed = -m_jump_keep_speed;
           }
         }
         else if ( m_raise ) {
-          m_keep = true;
-          m_keep_height = range;
-          dir.y = 0;
+          if ( fsimilar( range, m_jump_min_height, 0.01f ) ) {
+            m_keep = true;
+            m_keep_height = range;
+            dir.y = 0;
+          }
+          else {
+            if ( m_jump_debug )
+              Msg( "[%s]: lowering %s range[%f]", __FUNCTION__, cName().c_str(), range );
+            raise_speed = -m_jump_keep_speed;
+          }
         }
       }
       else {
@@ -173,8 +185,6 @@ void CGraviArtefact::process_gravity() {
     Fvector vel;
     m_pPhysicsShell->get_LinearVel( vel );
     vel.y = 0.f;
-    if ( !fsimilar( m_fJumpHeight, m_jump_min_height ) )
-      vel.x = vel.z = 0.f;
     m_pPhysicsShell->set_LinearVel( vel );
     if ( m_raise ) dir.y = raise_speed;
     m_pPhysicsShell->applyGravityAccel( dir );
