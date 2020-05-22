@@ -30,7 +30,7 @@ BOOL CActorMemory::feel_vision_isRelevant	(CObject* O)
 		return		(FALSE);
 
 	auto monster = smart_cast<CBaseMonster*>( entity_alive );
-	if ( monster && monster->state_invisible )
+	if ( monster && monster->ability_invisibility() && monster->state_invisible )
 	  return FALSE;
 
 	return			(TRUE);
