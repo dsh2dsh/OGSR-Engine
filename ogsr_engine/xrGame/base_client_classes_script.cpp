@@ -197,6 +197,7 @@ void CCameraScript::script_register(lua_State *L)
 	module(L)
 		[
 			class_<CCameraBase>("CCameraBase")
+			.def_readwrite( "m_Flags", &CCameraBase::m_Flags )
 			.def_readwrite("aspect",		&CCameraBase::f_aspect)
 			.def_readonly ("direction",		&CCameraBase::vDirection)
 			.def_readwrite("fov",			&CCameraBase::f_fov)
@@ -211,7 +212,15 @@ void CCameraScript::script_register(lua_State *L)
 			.def_readwrite("roll",			&CCameraBase::roll),
 
 
-			def("actor_camera",				&actor_camera)
+			def("actor_camera",				&actor_camera),
+
+			class_<enum_exporter<CCameraBase>>( "CCameraBaseFlags" )
+			.enum_( "CCameraBaseFlags" )
+			[
+			  value( "flRelativeLink",   int( CCameraBase::flRelativeLink   ) ),
+			  value( "flPositionRigid",  int( CCameraBase::flPositionRigid  ) ),
+			  value( "flDirectionRigid", int( CCameraBase::flDirectionRigid ) )
+			]
 		];
 }
 
