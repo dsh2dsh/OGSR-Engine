@@ -123,10 +123,13 @@ void CPHMovementControl::in_shedule_Update(u32 DT)
 				xr_delete(m_capture);
 }
 
-void CPHMovementControl::Calculate(Fvector& vAccel,const Fvector& camDir,float /**ang_speed/**/,float jump,float /**dt/**/,bool /**bLight/**/)
+void CPHMovementControl::Calculate( Fvector& vAccel, const Fvector& camDir, float /**ang_speed/**/, float jump, float /**dt/**/, bool /**bLight/**/, bool zoom_mode )
 {
 	Fvector previous_position{ vPosition };
-	m_character->GetPosition(vPosition);
+	if ( zoom_mode )
+	  m_character->GetPosition( vPosition );
+	else
+	  m_character->IPosition( vPosition );
 	if(bExernalImpulse)
 	{
 		
