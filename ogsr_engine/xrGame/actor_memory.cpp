@@ -11,7 +11,7 @@
 #include "actor.h"
 #include "../xr_3da/camerabase.h"
 #include "gamepersistent.h"
-#include "ai/monsters/basemonster/base_monster.h"
+#include "ai/monsters/bloodsucker/bloodsucker.h"
 
 CActorMemory::CActorMemory					(CActor *actor) :
 	inherited		(
@@ -29,8 +29,8 @@ BOOL CActorMemory::feel_vision_isRelevant	(CObject* O)
 	if (!entity_alive)
 		return		(FALSE);
 
-	auto monster = smart_cast<CBaseMonster*>( entity_alive );
-	if ( monster && monster->ability_invisibility() && monster->state_invisible )
+	auto bloodsucker = smart_cast<CAI_Bloodsucker*>( entity_alive );
+	if ( bloodsucker && bloodsucker->no_visibility_state() )
 	  return FALSE;
 
 	return			(TRUE);

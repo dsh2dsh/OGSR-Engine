@@ -201,6 +201,7 @@ public:
 	void			set_visibility_state	(visibility_t new_state);
 	void			force_visibility_state	(int state);
 	void			update_invisibility		();
+	bool no_visibility_state();
 
 public:
 	u32				m_hits_before_vampire;

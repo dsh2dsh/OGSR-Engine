@@ -684,9 +684,13 @@ void CAI_Bloodsucker::manual_deactivate()
 	setVisible		(TRUE);
 }
 
+bool CAI_Bloodsucker::no_visibility_state() {
+  return m_visibility_state == no_visibility;
+}
+
 void   CAI_Bloodsucker::renderable_Render ()
 {
-	if ( m_visibility_state != no_visibility )
+	if ( !no_visibility_state() )
 	{
 		inherited::renderable_Render();
 	}
