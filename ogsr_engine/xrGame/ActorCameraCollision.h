@@ -11,4 +11,4 @@ extern float	camera_collision_character_shift_z ;
 #endif
 */
 bool test_camera_box( const Fvector &box_size, const Fmatrix &xform, CPhysicsShellHolder* l_actor );
-void	collide_camera( CCameraBase & camera, float _viewport_near , CPhysicsShellHolder *l_actor  );
+void	collide_camera( CCameraBase & camera, float _viewport_near , CPhysicsShellHolder *l_actor, bool on_ladder  );

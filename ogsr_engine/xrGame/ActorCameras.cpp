@@ -268,8 +268,11 @@ void CActor::cam_Update(float dt, float fFOV)
 	}
 	//--#SM+#--
 
-	if(mstate_real & mcClimb&&cam_active!=eacFreeLook)
-		camUpdateLadder(dt);
+	bool on_ladder = false;
+	if ( mstate_real & mcClimb && cam_active != eacFreeLook ) {
+	  on_ladder = true;
+	  camUpdateLadder( dt );
+	}
 	current_ik_cam_shift = 0;
 
 	// Alex ADD: smooth crouch fix
@@ -331,10 +334,8 @@ void CActor::cam_Update(float dt, float fFOV)
 		cameras[eacFirstEye]->Update	(point,dangle);
 		cameras[eacFirstEye]->f_fov		= fFOV;
 	}
-	if (Level().CurrentEntity() == this)
-	{
-		collide_camera( *cameras[eacFirstEye], _viewport_near, this );
-	}
+	if ( Level().CurrentEntity() == this && cam_active == eacFirstEye )
+		collide_camera( *cameras[eacFirstEye], _viewport_near, this, on_ladder );
 	if( psActorFlags.test(AF_PSP) )
 	{
 		Cameras().UpdateFromCamera(C);

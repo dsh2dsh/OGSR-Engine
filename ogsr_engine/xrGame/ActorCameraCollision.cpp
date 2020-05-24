@@ -334,7 +334,7 @@ bool test_camera_box( const Fvector &box_size, const Fmatrix &xform, CPhysicsShe
 	return ret;
 }
 
-void	collide_camera( CCameraBase & camera, float _viewport_near, CPhysicsShellHolder *l_actor )
+void	collide_camera( CCameraBase & camera, float _viewport_near, CPhysicsShellHolder *l_actor, bool on_ladder )
 {
 	//CPhysicsShellHolder* l_actor = smart_cast<CPhysicsShellHolder*>( Level().CurrentEntity() );
 	VERIFY( l_actor );
@@ -368,6 +368,9 @@ void	collide_camera( CCameraBase & camera, float _viewport_near, CPhysicsShellHo
 	}
 	cam_vPosition = camera.vPosition;
 	collided = false;
+
+	if ( on_ladder )
+	  return;
 
 	set_camera_collision( box_size, xform, roote, box );
 /*
