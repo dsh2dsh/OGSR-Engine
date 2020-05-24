@@ -14,7 +14,6 @@
 
 #include "StateManager\dx10SamplerStateCache.h"
 #include "StateManager\dx10StateCache.h"
-#include <VersionHelpers.h>
 
 #ifndef _EDITOR
 void	fill_vid_mode_list			(CHW* _hw);
@@ -105,8 +104,6 @@ void CHW::CreateDevice( HWND m_hWnd, bool move_window )
 	ZeroMemory				( &sd, sizeof(sd) );
 
 	selectResolution	(sd.BufferDesc.Width, sd.BufferDesc.Height, bWindowed);
-        bool win10 = IsWindows10OrGreater();
-	Msg( "* Win10 or greater detected: %s", win10 ? "true" : "false" );
 
 	// Back buffer
 	//.	P.BackBufferWidth		= dwWidth;
@@ -114,7 +111,7 @@ void CHW::CreateDevice( HWND m_hWnd, bool move_window )
 	//	TODO: DX10: implement dynamic format selection
 	//sd.BufferDesc.Format		= fTarget;
 	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	sd.BufferCount = win10 ? 2 : 1;
+	sd.BufferCount = 1;
 
 	// Multisample
 	sd.SampleDesc.Count = 1;
@@ -124,7 +121,7 @@ void CHW::CreateDevice( HWND m_hWnd, bool move_window )
 	//P.SwapEffect			= bWindowed?D3DSWAPEFFECT_COPY:D3DSWAPEFFECT_DISCARD;
 	//P.hDeviceWindow			= m_hWnd;
 	//P.Windowed				= bWindowed;
-	sd.SwapEffect = win10 ? DXGI_SWAP_EFFECT_FLIP_DISCARD : DXGI_SWAP_EFFECT_DISCARD;
+	sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 	sd.OutputWindow = m_hWnd;
 	sd.Windowed = bWindowed;
 
