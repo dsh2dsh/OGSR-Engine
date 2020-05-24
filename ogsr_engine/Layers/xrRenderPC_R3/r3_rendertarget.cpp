@@ -1138,9 +1138,6 @@ void CRenderTarget::increment_light_marker()
 
 bool CRenderTarget::need_to_render_sunshafts()
 {
-	if ( ! (RImplementation.o.advancedpp && ps_r_sun_shafts) )
-		return false;
-
 	{
 		CEnvDescriptor&	E = *g_pGamePersistent->Environment().CurrentEnv;
 		Fcolor sun_color= ((light*)RImplementation.Lights.sun_adapted._get())->color;
