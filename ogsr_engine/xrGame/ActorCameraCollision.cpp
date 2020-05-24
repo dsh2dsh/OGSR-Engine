@@ -77,7 +77,9 @@ static const float soft_cfm_for_controllers = 0.05f;
 
 static void	cammera_shell_collide_callback( bool& do_collide, bool bo1, dContact& c, SGameMtl* material_1, SGameMtl* material_2 )
 {
-	c.surface.soft_cfm =soft_cfm_for_geometry;
+	//c.surface.soft_cfm =soft_cfm_for_geometry;
+	c.surface.soft_cfm = 1.e-10f;
+	c.surface.soft_erp = 1.f;
 
 	dxGeomUserData	*oposite_data		=	retrieveGeomUserData( bo1 ? c.geom.g2 : c.geom.g1 ) ;
 	
@@ -240,8 +242,7 @@ void set_camera_collision( const Fvector &box_size, const Fmatrix &xform, CPhysi
 	roote->SetTransform( xform, mh_clear );
 }
 
-void	do_collide_and_move(const Fmatrix &xform, CPhysicsShellHolder* l_actor, CPhysicsShell	*shell, CPhysicsElement *roote )
-{
+bool do_collide_and_move( const Fmatrix &xform, CPhysicsShellHolder* l_actor, CPhysicsShell *shell, CPhysicsElement *roote ) {
 	///////////////////////////////////////////////////////////////////
 	VERIFY( ph_world );
 	VERIFY( !ph_world->Processing() );
@@ -255,8 +256,10 @@ void	do_collide_and_move(const Fmatrix &xform, CPhysicsShellHolder* l_actor, CPh
 	shell->EnableCollision();
 	shell->CollideAll();
 
+	bool collided = false;
 	if(cam_collided)
 	{
+		collided = true;
 //#ifdef	DEBUG
 	//debug_output().PH_DBG_Clear();
 	//debug_output().DBG_OpenCashedDraw();
@@ -282,6 +285,8 @@ void	do_collide_and_move(const Fmatrix &xform, CPhysicsShellHolder* l_actor, CPh
 	//l_actor->character_physics_support()->movement()->CollisionEnable( TRUE );
 	l_actor->MovementCollisionEnable( true );
 	shell->Disable();
+
+	return collided;
 }
 
 bool do_collide_not_move(const Fmatrix &xform, CPhysicsShellHolder* l_actor, CPhysicsShell	*shell, CPhysicsElement *roote)
@@ -348,6 +353,22 @@ void	collide_camera( CCameraBase & camera, float _viewport_near, CPhysicsShellHo
 	get_old_camera_box( old_box_size, old_form, roote, box );
 	if( clamp_change( old_form, xform, EPS,EPS,EPS,EPS) &&  Fvector().sub( old_box_size, box_size ).magnitude() < EPS )
 		return;
+
+	static Fvector cam_vPosition      = { 0.f, 0.f, 0.f };
+	static Fvector collided_vPosition = camera.vPosition;
+	static bool    collided = false;
+	float cam_diff  = Fvector().sub( cam_vPosition, camera.vPosition ).magnitude();
+	bool  cam_moved = !fis_zero( cam_diff, 0.01f );
+	if ( collided && !cam_moved ) {
+	  camera.vPosition = collided_vPosition;
+	  return;
+	}
+	else if ( !cam_moved ) {
+	  return;
+	}
+	cam_vPosition = camera.vPosition;
+	collided = false;
+
 	set_camera_collision( box_size, xform, roote, box );
 /*
 #ifdef	DEBUG
@@ -358,7 +379,8 @@ void	collide_camera( CCameraBase & camera, float _viewport_near, CPhysicsShellHo
 	}
 #endif
 */
-	do_collide_and_move( xform, l_actor, shell, roote );
+	if ( !do_collide_and_move( xform, l_actor, shell, roote ) )
+	  return;
 /*
 #ifdef	DEBUG
 	if( dbg_draw_camera_collision )
@@ -367,4 +389,7 @@ void	collide_camera( CCameraBase & camera, float _viewport_near, CPhysicsShellHo
 */
 	roote->GetGlobalPositionDynamic( &camera.vPosition );
 	camera.vPosition.mad( camera.Direction(), -_viewport_near/2.f );
+
+	collided_vPosition = camera.vPosition;
+	collided = true;
 }
