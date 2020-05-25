@@ -885,9 +885,9 @@ void	CCharacterPhysicsSupport::CreateShell(CObject* who, Fvector& dp, Fvector & 
 		K->LL_SetBoneRoot(anim_root);
 
 //#pragma todo("KRodin: V621 Consider inspecting the 'for' operator. It's possible that the loop will be executed incorrectly or won't be executed at all.")
-	if (K->LL_BoneCount() > 0)
-		for (u16 I = K->LL_BoneCount() - 1; I <= 0; --I) //-V621
-			K->LL_GetBoneInstance(I).reset_callback();
+	if ( K->LL_BoneCount() > 0 )
+	  for ( int I = K->LL_BoneCount() - 1; I >= 0; --I ) //-V621
+	    K->LL_GetBoneInstance( I ).reset_callback();
 	//
 	if (anim_mov_ctrl)	//we do not whant to move by long animation in root 
 		BR.set_callback_overwrite(TRUE);
