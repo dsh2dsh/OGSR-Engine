@@ -4,6 +4,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
+#include "actor.h"
 #include "hudtarget.h"
 #include "hudmanager.h"
 #include "../xr_3da/GameMtlLib.h"
@@ -155,7 +156,7 @@ void CHUDTarget::Render()
 	Device.mFullTransform.transform(pt, p2);
 	pt.y = -pt.y;
 	float di_size;
-	if ( psHUD_Flags.test( HUD_CROSSHAIR_ZOOM ) )
+	if ( psHUD_Flags.test( HUD_CROSSHAIR_ZOOM ) && !psActorFlags.test( AF_CROSSHAIR_DBG ) )
 	  di_size = psHUD_Flags.test( HUD_CROSSHAIR_ZOOM_RT ) ? C_SIZE : C_SIZE / _max( powf( pt.w, .9f ), 1.f );
 	else
 	  di_size = C_SIZE / powf( pt.w, .2f );

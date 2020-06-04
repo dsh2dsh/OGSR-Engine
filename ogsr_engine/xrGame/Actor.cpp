@@ -876,7 +876,7 @@ void CActor::UpdateCL	()
 			HUD().SetCrosshairDisp(0.f);
 			HUD().ShowCrosshair(false);
 
-			if ( psHUD_Flags.test( HUD_CROSSHAIR_ZOOM ) )
+			if ( psHUD_Flags.test( HUD_CROSSHAIR_ZOOM ) && !psActorFlags.test( AF_CROSSHAIR_DBG ) )
 			  if ( mstate_real & mcClimb || inventory().IsSlotsBlocked() || Holder() || character_physics_support()->movement()->PHCapture() )
 			      psHUD_Flags.set( HUD_CROSSHAIR_RT2, false );
 			  else if ( smart_cast<CGrenade*>( inventory().ActiveItem() ) )

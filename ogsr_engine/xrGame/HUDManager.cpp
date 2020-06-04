@@ -232,7 +232,7 @@ void  CHUDManager::RenderUI()
 		Font().Render();
 	}
 
-	if (psHUD_Flags.is(HUD_CROSSHAIR|HUD_CROSSHAIR_RT|HUD_CROSSHAIR_RT2) && !bAlready)	
+	if ( ( psActorFlags.test( AF_CROSSHAIR_DBG ) || psHUD_Flags.is( HUD_CROSSHAIR|HUD_CROSSHAIR_RT|HUD_CROSSHAIR_RT2 ) ) && !bAlready)	
 		m_pHUDTarget->Render();
 
 	// draw_wnds_rects		(); -- вызываеться так же после RenderUI

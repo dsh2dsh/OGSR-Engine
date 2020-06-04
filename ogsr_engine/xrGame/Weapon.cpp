@@ -2084,7 +2084,7 @@ void CWeapon::Show( bool now ) {
 }
 
 bool CWeapon::show_crosshair() {
-  if ( psHUD_Flags.test( HUD_CROSSHAIR_ZOOM ) )
+  if ( psHUD_Flags.test( HUD_CROSSHAIR_ZOOM ) && !psActorFlags.test( AF_CROSSHAIR_DBG ) )
     return !IsZoomEnabled();
   return !( IsZoomed() && ZoomHideCrosshair() );
 }
@@ -2269,5 +2269,5 @@ bool CWeapon::IsPartlyReloading() {
 
 
 bool CWeapon::use_crosshair() const {
-  return !psHUD_Flags.test( HUD_CROSSHAIR_ZOOM );
+  return psActorFlags.test( AF_CROSSHAIR_DBG ) || !psHUD_Flags.test( HUD_CROSSHAIR_ZOOM );
 }
