@@ -275,6 +275,7 @@ protected:
 
 	bool m_bUseScopeZoom			= false;
 	bool m_bUseScopeGrenadeZoom		= false;
+	bool m_bUseSilencerGrenadeZoom		= false;
 	bool m_bUseScopeDOF = true;
 	bool m_bForceScopeDOF = false;
 	bool m_bScopeShowIndicators = true;

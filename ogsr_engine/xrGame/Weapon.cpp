@@ -378,6 +378,7 @@ void CWeapon::Load		(LPCSTR section)
 	m_bZoomEnabled = !!pSettings->r_bool(section,"zoom_enabled");
 	m_bUseScopeZoom = !!READ_IF_EXISTS(pSettings, r_bool, section, "use_scope_zoom", false);
 	m_bUseScopeGrenadeZoom = !!READ_IF_EXISTS(pSettings, r_bool, section, "use_scope_grenade_zoom", false);
+	m_bUseSilencerGrenadeZoom = !!READ_IF_EXISTS(pSettings, r_bool, section, "use_silencer_grenade_zoom", false);
 	m_bUseScopeDOF = !!READ_IF_EXISTS(pSettings, r_bool, section, "use_scope_dof", true);
 	m_bForceScopeDOF = !!READ_IF_EXISTS(pSettings, r_bool, section, "force_scope_dof", false);
 	m_bScopeShowIndicators = !!READ_IF_EXISTS(pSettings, r_bool, section, "scope_show_indicators", true);
@@ -598,7 +599,10 @@ void CWeapon::UpdateZoomOffset() //Собрал все манипуляции с
 
 		if (IsGrenadeMode())
 		{
-			if (m_bUseScopeGrenadeZoom && has_scope)
+			const bool has_silencer = SilencerAttachable() && IsSilencerAttached();
+			if ( m_bUseSilencerGrenadeZoom && has_silencer )
+				LoadZoomOffset( hud_sect.c_str(), "silencer_grenade_" );
+			else if ( m_bUseScopeGrenadeZoom && has_scope )
 				LoadZoomOffset(*hud_sect, "scope_grenade_");
 			else
 				LoadZoomOffset(*hud_sect, "grenade_");
