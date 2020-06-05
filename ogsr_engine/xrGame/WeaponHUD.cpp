@@ -18,13 +18,18 @@ weapon_hud_container* g_pWeaponHUDContainer=0;
 BOOL weapon_hud_value::load(const shared_str& section, CHudItem* owner)
 {	
 	// Geometry and transform
-	Fvector						pos,ypr;
-	pos							= pSettings->r_fvector3(section,"position");
+	Fvector	ypr;
 	ypr							= pSettings->r_fvector3(section,"orientation");
 	ypr.mul						(PI/180.f);
 
 	m_offset.setHPB				(ypr.x,ypr.y,ypr.z);
-	m_offset.translate_over		(pos);
+	m_position = pSettings->r_fvector3( section, "position" );
+	if ( pSettings->line_exist( section, "position_add" ) )
+	  m_position_add = pSettings->r_fvector3( section, "position_add" );
+	else
+	  m_position_add.set( 0.f, 0.f, 0.f );
+	m_position_add_scope = READ_IF_EXISTS( pSettings, r_fvector3, section, "position_add_scope", m_position_add );
+	SetScope( false );
 
 	// Visual
 	LPCSTR visual_name			= pSettings->r_string(section, "visual");
@@ -62,6 +67,11 @@ BOOL weapon_hud_value::load(const shared_str& section, CHudItem* owner)
 	return TRUE;
 }
 
+void weapon_hud_value::SetScope( bool has_scope ) {
+  m_cur_position_add = has_scope ? m_position_add_scope : m_position_add;
+  m_offset.translate_over( Fvector().add( m_position, m_cur_position_add ) );
+}
+
 weapon_hud_value::~weapon_hud_value()
 {
 	IRenderVisual* v = m_animations->dcast_RenderVisual();
@@ -86,6 +96,10 @@ u32 shared_weapon_hud::motion_length( MotionIDEx& M )
 MotionID shared_weapon_hud::motion_id(LPCSTR name)
 {
 	return p_->m_animations->ID_Cycle_Safe(name);
+}
+
+void shared_weapon_hud::SetScope( bool has_scope ) {
+  p_->SetScope( has_scope );
 }
 
 CWeaponHUD::CWeaponHUD			(CHudItem* pHudItem)
@@ -115,6 +129,10 @@ void  CWeaponHUD::Init()
 {
 	m_bStopAtEndAnimIsRunning	= false;
 	m_pCallbackItem				= NULL;
+
+	auto wpn = smart_cast<CWeapon*>( m_pParentWeapon );
+	if ( wpn )
+	  m_shared_data.SetScope( wpn->ScopeAttachable() && wpn->IsScopeAttached() );
 }
 
 
@@ -207,6 +225,10 @@ void CWeaponHUD::CleanSharedContainer	()
 {
 	VERIFY(g_pWeaponHUDContainer);
 	g_pWeaponHUDContainer->clean(false);
+}
+
+Fvector CWeaponHUD::ZoomOffset() {
+  return Fvector().sub( m_fZoomOffset, m_shared_data.get_value()->m_cur_position_add );
 }
 
 MotionIDEx& random_anim( MotionSVec& v ) {

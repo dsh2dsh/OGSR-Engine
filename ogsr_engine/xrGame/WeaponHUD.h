@@ -53,11 +53,16 @@ public:
 	Fvector				m_fp2_offset;
 	Fvector				m_sp_offset;
 
+	Fvector				m_position;
+	Fvector				m_cur_position_add;
+	Fvector				m_position_add;
+	Fvector				m_position_add_scope;
 	Fmatrix				m_offset;
 	bool				m_bAllowBobbing;
 public:
 	virtual				~weapon_hud_value		();
 	BOOL				load					(const shared_str& section, CHudItem* owner);
+	void SetScope( bool has_scope );
 };
 
 typedef shared_container<weapon_hud_value>		weapon_hud_container;
@@ -90,6 +95,7 @@ public:
 	IKinematicsAnimated*	animations				(){return p_->m_animations;}
 	u32 motion_length ( MotionIDEx& M );
 	MotionID			motion_id				(LPCSTR name);
+	void SetScope( bool has_scope );
 };
 //---------------------------------------------------------------------------
 
@@ -139,7 +145,7 @@ public:
 	const Fvector&		FirePoint2		()	{return m_shared_data.get_value()->m_fp2_offset;}
 	const Fvector&		ShellPoint		()	{return m_shared_data.get_value()->m_sp_offset;	}
 
-	const Fvector&		ZoomOffset		()	const {return m_fZoomOffset;}
+	Fvector ZoomOffset();
 	float				ZoomRotateX		()	const {return m_fZoomRotateX;}
 	float				ZoomRotateY		()	const {return m_fZoomRotateY;}
 	void				SetZoomOffset	(const Fvector& zoom_offset)  { m_fZoomOffset = zoom_offset;}
