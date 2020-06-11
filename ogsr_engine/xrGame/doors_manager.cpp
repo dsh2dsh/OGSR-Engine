@@ -81,7 +81,7 @@ bool manager::actualize_doors_state(actor& actor, float const average_speed)
     m_doors.nearest( position, radius, nearest_doors );
     m_nearest_doors.clear();
     for ( const auto it : nearest_doors ) {
-      if ( _abs( it->position().y - position.y ) < 2 )
+      if ( _abs( it->position().y - position.y ) < 1.2 )
         m_nearest_doors.push_back( it );
     }
     // check_bug_door			( );
