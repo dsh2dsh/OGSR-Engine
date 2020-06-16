@@ -33,4 +33,8 @@ protected:
 
 	void process_gravity();
 	void process_jump();
+
+public:
+	bool m_jump_ignore_passable;
+	std::vector<std::string> m_jump_ignore_materials;
 };

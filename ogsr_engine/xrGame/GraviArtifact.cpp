@@ -12,6 +12,7 @@
 #include "game_cl_base.h"
 #include "../Include/xrRender/Kinematics.h"
 #include "phworld.h"
+#include "../xr_3da/gamemtllib.h"
 
 extern CPHWorld*	ph_world;
 #define CHOOSE_MAX(x,inst_x,y,inst_y,z,inst_z)\
@@ -49,6 +50,19 @@ void CGraviArtefact::Load(LPCSTR section)
 	m_jump_keep_speed = READ_IF_EXISTS( pSettings, r_float, section, "jump_keep_speed", 25.f );
 	m_jump_time = READ_IF_EXISTS( pSettings, r_u32, section, "jump_time", 0 ) * 1000;
 	m_jump_debug = READ_IF_EXISTS( pSettings, r_bool, section, "jump_debug", false );
+
+	m_jump_ignore_passable = READ_IF_EXISTS( pSettings, r_bool, section, "jump_ignore_passable", true );
+	if ( pSettings->line_exist( section, "jump_ignore_materials" ) ) {
+	  LPCSTR item_section = pSettings->r_string( section ,"jump_ignore_materials" );
+	  if ( item_section && item_section[ 0 ] ) {
+	    int count = _GetItemCount( item_section );
+	    for ( int i = 0; i < count; i++ ) {
+	      string128 item;
+	      _GetItem( item_section, i, item );
+	      m_jump_ignore_materials.emplace_back( item );
+	    }
+	  }
+	}
 }
 
 
@@ -103,13 +117,50 @@ void CGraviArtefact::OnH_B_Independent( bool just_before_destroy ) {
 }
 
 
+struct ray_query_param {
+  CGraviArtefact* m_holder;
+  float           m_range;
+  ray_query_param( CGraviArtefact* holder ) {
+    m_holder = holder;
+  }
+};
+
+static BOOL trace_callback( collide::rq_result& result, LPVOID params ) {
+  ray_query_param* param = (ray_query_param*)params;
+  if ( !result.O ) {
+    // получить треугольник и узнать его материал
+    CDB::TRI* T	= Level().ObjectSpace.GetStaticTris() + result.element;
+    if ( T->material < GMLib.CountMaterial() ) {
+      CGraviArtefact* holder = param->m_holder;
+      auto mtl = GMLib.GetMaterialByIdx( T->material );
+      if ( mtl->Flags.is( SGameMtl::flPassable ) && !holder->m_jump_ignore_passable )
+        return TRUE;
+      if ( !holder->m_jump_ignore_materials.empty() ) {
+        std::string mtl_name( mtl->m_Name.c_str() );
+        const auto it = std::find(
+          holder->m_jump_ignore_materials.begin(),
+          holder->m_jump_ignore_materials.end(),
+          mtl_name
+        );
+        if ( it != holder->m_jump_ignore_materials.end() )
+          return TRUE;
+      }
+    }
+  }
+  param->m_range = result.range;
+  return FALSE;
+}
+
+
 void CGraviArtefact::process_gravity() {
   Fvector dir = { 0, -1, 0 };
   Fvector P = Position();
   P.y += Radius();
-  collide::rq_result RQ;
   Fbox level_box = Level().ObjectSpace.GetBoundingVolume();
-  bool res = Level().ObjectSpace.RayPick( P, dir, _abs( P.y - level_box.y1 ) + 1.f, collide::rqtBoth, RQ, this );
+  collide::ray_defs RD( P, dir, _abs( P.y - level_box.y1 ) + 1.f, CDB::OPT_CULL, collide::rqtBoth );
+  collide::rq_results RQR;
+  ray_query_param params( this );
+  bool res = Level().ObjectSpace.RayQuery( RQR, RD, trace_callback, &params, NULL, this );
   float raise_speed = m_jump_raise_speed;
   if ( !res ) {
     m_jump_jump = false;
@@ -120,7 +171,7 @@ void CGraviArtefact::process_gravity() {
   else {
     dir.y = -1.f;
     // проверить высоту артефакта
-    float range = RQ.range - Radius();
+    float range = params.m_range - Radius();
     if ( m_jump_min_height && range < m_jump_min_height ) {
       m_jump_jump = false;
       m_keep  = false;
