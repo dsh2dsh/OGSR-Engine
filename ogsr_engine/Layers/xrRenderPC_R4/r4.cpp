@@ -299,7 +299,7 @@ void					CRender::create					()
 
 	//	MSAA option dependencies
 
-	o.dx10_msaa			= !!ps_r3_msaa;
+	o.dx10_msaa = !!ps_r3_msaa;
 	o.dx10_msaa_samples = (1 << ps_r3_msaa);
 
 	o.dx10_msaa_opt		= ps_r2_ls_flags.test(R3FLAG_MSAA_OPT);
@@ -332,9 +332,14 @@ void					CRender::create					()
 			if (ps_r3_msaa_atest)
 				o.dx10_msaa_alphatest = MSAA_ATEST_DX10_0_ATOC;
 		}
+		if ( ps_r2_ls_flags_ext.test( R2FLAGEXT_SSLR ) ) {
+		  Msg( "* SSLR disabled because MSAA" );
+		  ps_r2_ls_flags_ext.set( R2FLAGEXT_SSLR, FALSE );
+		}
 	}
 
-	o.dx10_gbuffer_opt	= ps_r2_ls_flags.test(R3FLAG_GBUFFER_OPT);
+#pragma todo("Сделать чтобы SSLR работал и с вкл отпимизацией G-буффера. Нужно много правок, поэтому пока отключено.")
+	o.dx10_gbuffer_opt = ps_r2_ls_flags.test(R3FLAG_GBUFFER_OPT) && !ps_r2_ls_flags_ext.test(R2FLAGEXT_SSLR);
 
 	o.dx10_minmax_sm = ps_r3_minmax_sm;
 	o.dx10_minmax_sm_screenarea_threshold = 1600*1200;
@@ -1376,6 +1381,15 @@ HRESULT	CRender::shader_compile			(
 #else
 	sh_name[len] = '0'; ++len;
 #endif
+
+	if (ps_r2_ls_flags_ext.test(R2FLAGEXT_SSLR))
+	{
+		defines[def_it].Name = "SSLR_ENABLED";
+		defines[def_it].Definition = "1";
+		def_it++;
+	}
+	sh_name[len] = '0' + char(ps_r2_ls_flags_ext.test(R2FLAGEXT_SSLR)); ++len;
+
 
 	//Be carefull!!!!! this should be at the end to correctly generate
 	//compiled shader name;
