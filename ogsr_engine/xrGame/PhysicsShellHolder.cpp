@@ -115,6 +115,8 @@ void CPhysicsShellHolder::init			()
 	m_pPhysicsShell				=	NULL		;
 	b_sheduled					=	false		;
 	m_activation_speed_is_overriden = false;
+	m_ph_heavy = false;
+	m_ph_heavy_override = false;
 }
 bool	 CPhysicsShellHolder::has_shell_collision_place( const CPhysicsShellHolder* obj ) const
 {
@@ -599,4 +601,22 @@ void CPhysicsShellHolder::SetActivationSpeedOverride(Fvector const& speed)
 {
 	m_overriden_activation_speed = speed;
 	m_activation_speed_is_overriden = true;
+}
+
+
+void CPhysicsShellHolder::Load( LPCSTR section ) {
+  inherited::Load( section );
+  m_ph_heavy = READ_IF_EXISTS( pSettings, r_bool, section, "ph_heavy", false );
+}
+
+
+bool CPhysicsShellHolder::IsPhHeavy() {
+  if ( spawn_ini() && spawn_ini()->section_exist( "ph_heavy" ) )
+    return true;
+  return ( m_ph_heavy || m_ph_heavy_override );
+}
+
+
+void CPhysicsShellHolder::SetPhHeavy( bool val ) {
+  m_ph_heavy_override = val;
 }

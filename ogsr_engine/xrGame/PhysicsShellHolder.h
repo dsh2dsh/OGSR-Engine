@@ -87,6 +87,7 @@ public:
 	virtual void			setup_physic_shell		();
 	virtual void			deactivate_physics_shell ();
 
+	virtual void Load( LPCSTR section );
 	virtual void			net_Destroy			();
 	virtual BOOL			net_Spawn			(CSE_Abstract*	DC);
 	virtual void			save				(NET_Packet &output_packet);
@@ -104,6 +105,8 @@ public:
 	virtual bool			register_schedule	() const;
 	bool ActorCanCapture() const;
 	bool hasFixedBones() const;
+	bool IsPhHeavy();
+	void SetPhHeavy( bool val );
 
 public://IPhysicsShellHolder
 	virtual	Fmatrix&				ObjectXFORM							()						;
@@ -129,6 +132,7 @@ public://IPhysicsShellHolder
 private:
 	Fvector					m_overriden_activation_speed;
 	bool					m_activation_speed_is_overriden;
+	bool m_ph_heavy, m_ph_heavy_override;
 
 public:
 	virtual bool			ActivationSpeedOverriden	(Fvector& dest, bool clear_override);

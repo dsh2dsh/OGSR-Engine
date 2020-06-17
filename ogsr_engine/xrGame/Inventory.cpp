@@ -251,8 +251,14 @@ bool CInventory::DropItem(CGameObject *pObj)
 		}break;
 	case eItemPlaceSlot:{
 			ASSERT_FMT(InSlot(pIItem), "CInventory::DropItem: InSlot(pIItem): [%s], id: [%u]", pObj->cName().c_str(), pObj->ID());
-			if(m_iActiveSlot == pIItem->GetSlot()) 
-				Activate	(NO_ACTIVE_SLOT);
+			if ( m_iActiveSlot == pIItem->GetSlot() ) {
+			  Activate( NO_ACTIVE_SLOT );
+			  if ( smart_cast<CActor*>( m_pOwner ) ) {
+			    CWeapon* pWeapon = smart_cast<CWeapon*>( pIItem );
+			    if ( pWeapon && !pIItem->object().getDestroy() )
+			      pWeapon->SetPhHeavy( true );
+			  }
+			}
 
 			m_slots[pIItem->GetSlot()].m_pIItem = NULL;	
 

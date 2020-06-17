@@ -910,6 +910,7 @@ void CWeapon::OnH_B_Chield		()
 	m_set_next_ammoType_on_reload	= u32(-1);
 
 	m_nearwall_last_hud_fov = psHUD_FOV_def;
+	CPhysicsShellHolder::SetPhHeavy( false );
 }
 
 static float state_time = 0;				// таймер нахождения оружия в текущем состоянии
