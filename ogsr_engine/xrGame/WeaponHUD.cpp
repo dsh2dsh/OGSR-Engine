@@ -131,7 +131,7 @@ void  CWeaponHUD::Init()
 	m_pCallbackItem				= NULL;
 
 	auto wpn = smart_cast<CWeapon*>( m_pParentWeapon );
-	if ( wpn )
+	if ( wpn && wpn->ParentIsActor() )
 	  m_shared_data.SetScope( wpn->ScopeAttachable() && wpn->IsScopeAttached() );
 }
 
