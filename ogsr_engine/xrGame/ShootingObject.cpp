@@ -318,12 +318,18 @@ void CShootingObject::StartFlameParticles	()
 {
 	if(0==m_sFlameParticlesCurrent.size()) return;
 
-	//если партиклы циклические
-	if(m_pFlameParticles && m_pFlameParticles->IsLooped() && 
-		m_pFlameParticles->IsPlaying()) 
-	{
-		UpdateFlameParticles();
-		return;
+	if ( m_pFlameParticles ) {
+	  if ( m_pFlameParticles->IsLooped() ) {
+	    //если партиклы циклические
+	    if ( m_pFlameParticles->IsPlaying() ) {
+	      UpdateFlameParticles();
+	      return;
+	    }
+	  }
+	  else if ( m_pFlameParticles->IsPlaying() && !ParentIsActor() && Core.Features.test( xrCore::Feature::npc_simplified_shooting ) ) {
+	    UpdateFlameParticles();
+	    return;
+	  }
 	}
 
 	StopFlameParticles();
