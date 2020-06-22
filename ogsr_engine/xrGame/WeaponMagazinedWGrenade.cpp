@@ -226,7 +226,7 @@ void CWeaponMagazinedWGrenade::OnShot		()
 {
 	if(m_bGrenadeMode)
 	{
-		PlaySound( sndShotG, get_LastFP2(), true );
+		PlaySound( sndShotG, get_LastFP2(), ParentIsActor() );
 		
 		AddShotEffector		();
 		
