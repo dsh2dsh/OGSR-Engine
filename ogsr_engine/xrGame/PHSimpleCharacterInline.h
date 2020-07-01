@@ -96,14 +96,3 @@ void CPHSimpleCharacter::UpdateDynamicDamage(dContact* c, u16 obj_material_idx, 
 		}
 	}
 }
-
-IC		void	CPHSimpleCharacter::foot_material_update(u16	contact_material_idx,u16	foot_material_idx)
-{
-	if(*p_lastMaterialIDX!=u16(-1)&&GMLib.GetMaterialByIdx( *p_lastMaterialIDX)->Flags.test(SGameMtl:: flPassable)&&!b_foot_mtl_check)	return			;
-	b_foot_mtl_check					=false											;
-	if(GMLib.GetMaterialByIdx(contact_material_idx)->Flags.test(SGameMtl:: flPassable))
-								*p_lastMaterialIDX=contact_material_idx					;
-	else	
-								*p_lastMaterialIDX=foot_material_idx					;
-
-}
