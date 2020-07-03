@@ -224,7 +224,7 @@ void CBurer::PostLoad (LPCSTR section)
 	inherited::PostLoad						(section);
 	if (m_anti_aim)
 	{
-		m_anti_aim->set_callback(anti_aim_ability::hit_callback(this, &CBurer::StaminaHit));
+		m_anti_aim->set_callback(fastdelegate::MakeDelegate(this, &CBurer::StaminaHit));
 	}
 }
 
@@ -239,7 +239,7 @@ void CBurer::CheckSpecParams(u32 spec_params)
 {
 }
 
-void xr_stdcall CBurer::StaminaHit ()
+void  CBurer::StaminaHit ()
 {
 	if ( GodMode() )
 	{

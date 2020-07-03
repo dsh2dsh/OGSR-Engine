@@ -409,7 +409,7 @@ void CLevel::OnFrame	()
 	if (m_bNeed_CrPr)					make_NetCorrectionPrediction();
 
 	if (g_mt_config.test(mtMap))
-		Device.add_to_seq_parallel(fastdelegate::FastDelegate0<>(m_map_manager,&CMapManager::Update));
+		Device.add_to_seq_parallel(fastdelegate::MakeDelegate(m_map_manager,&CMapManager::Update));
 	else								
 		MapManager().Update();
 	// Inherited update
@@ -426,8 +426,8 @@ void CLevel::OnFrame	()
 	Device.Statistic->TEST0.End			();
 
 	// update static sounds
-		if (g_mt_config.test(mtLevelSounds)) 
-			Device.add_to_seq_parallel	(fastdelegate::FastDelegate0<>(m_level_sound_manager,&CLevelSoundManager::Update));
+	if (g_mt_config.test(mtLevelSounds))
+		Device.add_to_seq_parallel(fastdelegate::MakeDelegate(m_level_sound_manager, &CLevelSoundManager::Update));
 		else								
 			m_level_sound_manager->Update	();
 	//-----------------------------------------------------

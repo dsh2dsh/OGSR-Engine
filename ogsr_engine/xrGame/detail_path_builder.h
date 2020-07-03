@@ -38,7 +38,7 @@ public:
 			void			register_to_process	()
 	{
 		m_object->m_wait_for_distributed_computation	= true;
-		Device.add_to_seq_parallel	(fastdelegate::FastDelegate0<>(this,&CDetailPathBuilder::process));
+		Device.add_to_seq_parallel(fastdelegate::MakeDelegate(this,&CDetailPathBuilder::process));
 	}
 
 			void			process_impl	(bool separate_computing = true)
@@ -67,7 +67,7 @@ public:
 			m_object->m_wait_for_distributed_computation	= false;
 
 		Device.remove_from_seq_parallel	(
-			fastdelegate::FastDelegate0<>(
+			fastdelegate::MakeDelegate(
 				this,
 				&CDetailPathBuilder::process
 			)
