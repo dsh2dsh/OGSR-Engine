@@ -113,6 +113,7 @@ public:
 	bool IsActorIndoor();
 	virtual void OnChangeCurrentWeather( LPCSTR sect ) = 0;
 
+	virtual void GetGameTimeForShaders(u32& hours, u32& minutes, u32& seconds, u32& milliseconds) = 0;
 };
 
 //-----------------------------------------------------------------------------------------------------------
