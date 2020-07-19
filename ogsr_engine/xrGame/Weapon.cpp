@@ -33,6 +33,7 @@
 
 #include "WeaponMagazinedWGrenade.h"
 #include "GamePersistent.h"
+#include "ui/UIMainIngameWnd.h"
 
 #define WEAPON_REMOVE_TIME		60000
 #define ROTATION_TIME			0.25f
@@ -599,6 +600,9 @@ void CWeapon::UpdateZoomOffset() //Собрал все манипуляции с
 	{
 		const bool has_gl = GrenadeLauncherAttachable() && IsGrenadeLauncherAttached();
 		const bool has_scope = ScopeAttachable() && IsScopeAttached();
+
+		if ( ParentIsActor() )
+		  m_pHUD->SetScope( has_scope );
 
 		if (IsGrenadeMode())
 		{
@@ -1827,6 +1831,15 @@ void CWeapon::UpdateHudAdditonal		(Fmatrix& trans)
 {
 	auto pActor = smart_cast<const CActor*>(H_Parent());
 	if(!pActor) return;
+
+	if ( g_bHudAdjustMode ) {
+	  if ( !m_pHUD->HUDAdjustMode() )
+	    m_pHUD->EnableHUDAdjustMode( true );
+	}
+	else if ( m_pHUD->HUDAdjustMode() ) {
+	  m_pHUD->EnableHUDAdjustMode( false );
+	  m_pHUD->SetScope( ScopeAttachable() && IsScopeAttached() );
+	}
 
 	u8 idx = GetCurrentHudOffsetIdx();
 

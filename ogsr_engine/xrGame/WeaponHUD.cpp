@@ -17,6 +17,8 @@ weapon_hud_container* g_pWeaponHUDContainer=0;
 
 BOOL weapon_hud_value::load(const shared_str& section, CHudItem* owner)
 {	
+	m_adjust_mode = false;
+
 	// Geometry and transform
 	Fvector	ypr;
 	ypr							= pSettings->r_fvector3(section,"orientation");
@@ -68,8 +70,18 @@ BOOL weapon_hud_value::load(const shared_str& section, CHudItem* owner)
 }
 
 void weapon_hud_value::SetScope( bool has_scope ) {
+  if ( m_adjust_mode )
+    return;
   m_cur_position_add = has_scope ? m_position_add_scope : m_position_add;
   m_offset.translate_over( Fvector().add( m_position, m_cur_position_add ) );
+}
+
+void weapon_hud_value::EnableAdjustMode( bool mode ) {
+  if ( mode ) {
+    m_cur_position_add = Fvector().set( 0.f, 0.f, 0.f );
+    m_offset.translate_over( m_position );
+  }
+  m_adjust_mode = mode;
 }
 
 weapon_hud_value::~weapon_hud_value()
@@ -102,6 +114,10 @@ void shared_weapon_hud::SetScope( bool has_scope ) {
   p_->SetScope( has_scope );
 }
 
+void shared_weapon_hud::EnableAdjustMode( bool mode ) {
+  p_->EnableAdjustMode( mode );
+}
+
 CWeaponHUD::CWeaponHUD			(CHudItem* pHudItem)
 {
 	m_bVisible					= false;
@@ -129,10 +145,6 @@ void  CWeaponHUD::Init()
 {
 	m_bStopAtEndAnimIsRunning	= false;
 	m_pCallbackItem				= NULL;
-
-	auto wpn = smart_cast<CWeapon*>( m_pParentWeapon );
-	if ( wpn && wpn->ParentIsActor() )
-	  m_shared_data.SetScope( wpn->ScopeAttachable() && wpn->IsScopeAttached() );
 }
 
 
@@ -228,7 +240,21 @@ void CWeaponHUD::CleanSharedContainer	()
 }
 
 Fvector CWeaponHUD::ZoomOffset() {
-  return Fvector().sub( m_fZoomOffset, m_shared_data.get_value()->m_cur_position_add );
+  Fvector cur_add = m_shared_data.get_value()->m_cur_position_add;
+  cur_add.y = cur_add.y * _cos( _abs( m_fZoomRotateX ) );
+  return Fvector().sub( m_fZoomOffset, cur_add );
+}
+
+void CWeaponHUD::SetZoomOffset( const Fvector& zoom_offset ) {
+  m_fZoomOffset = zoom_offset;
+}
+
+void CWeaponHUD::SetScope( bool has_scope ) {
+  m_shared_data.SetScope( has_scope );
+}
+
+void CWeaponHUD::EnableHUDAdjustMode( bool mode ) {
+  m_shared_data.EnableAdjustMode( mode );
 }
 
 MotionIDEx& random_anim( MotionSVec& v ) {

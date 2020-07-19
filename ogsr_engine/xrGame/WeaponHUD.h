@@ -59,10 +59,12 @@ public:
 	Fvector				m_position_add_scope;
 	Fmatrix				m_offset;
 	bool				m_bAllowBobbing;
+	bool				m_adjust_mode;
 public:
 	virtual				~weapon_hud_value		();
 	BOOL				load					(const shared_str& section, CHudItem* owner);
 	void SetScope( bool has_scope );
+	void EnableAdjustMode( bool mode );
 };
 
 typedef shared_container<weapon_hud_value>		weapon_hud_container;
@@ -96,6 +98,7 @@ public:
 	u32 motion_length ( MotionIDEx& M );
 	MotionID			motion_id				(LPCSTR name);
 	void SetScope( bool has_scope );
+	void EnableAdjustMode( bool mode );
 };
 //---------------------------------------------------------------------------
 
@@ -145,10 +148,13 @@ public:
 	const Fvector&		FirePoint2		()	{return m_shared_data.get_value()->m_fp2_offset;}
 	const Fvector&		ShellPoint		()	{return m_shared_data.get_value()->m_sp_offset;	}
 
+	void    SetScope( bool has_scope );
+	void    EnableHUDAdjustMode( bool mode );
+	bool    HUDAdjustMode() { return m_shared_data.get_value()->m_adjust_mode; }
 	Fvector ZoomOffset();
 	float				ZoomRotateX		()	const {return m_fZoomRotateX;}
 	float				ZoomRotateY		()	const {return m_fZoomRotateY;}
-	void				SetZoomOffset	(const Fvector& zoom_offset)  { m_fZoomOffset = zoom_offset;}
+	void    SetZoomOffset( const Fvector& zoom_offset );
 	void				SetZoomRotateX	(float zoom_rotate_x)		  { m_fZoomRotateX = zoom_rotate_x;}
 	void				SetZoomRotateY	(float zoom_rotate_y)		  { m_fZoomRotateY = zoom_rotate_y;}
 	
