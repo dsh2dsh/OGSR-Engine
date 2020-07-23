@@ -40,8 +40,8 @@ public:
 public:
 	virtual void		OnCalculateBones() = 0;
 
-#ifdef DEBUG
 	virtual std::pair<LPCSTR,LPCSTR>	LL_MotionDefName_dbg	(MotionID	ID) = 0;
+#ifdef DEBUG
 	virtual	void						LL_DumpBlends_dbg		( )=0;
 #endif
 

@@ -104,8 +104,8 @@ private:
 	void						IFXBlendSetup			(CBlend &B, MotionID motion_ID, float blendAccrue, float blendFalloff,float Power ,float Speed,u16 bone);
 //.	bool						LoadMotions				(LPCSTR N, IReader *data);
 public:
-#if (defined DEBUG || defined _EDITOR)
 	std::pair<LPCSTR,LPCSTR>	LL_MotionDefName_dbg	(MotionID	ID);
+#if (defined DEBUG || defined _EDITOR)
 	void						LL_DumpBlends_dbg		( );
 #endif
 	u32							LL_PartBlendsCount			( u32 bone_part_id );
