@@ -362,8 +362,10 @@ class_<CScriptGameObject> script_register_game_object3(class_<CScriptGameObject>
 		.def( "throw_target", ( bool ( CScriptGameObject::* )( const Fvector&, u32 const, CScriptGameObject* ) )( &CScriptGameObject::throw_target ) )
 
 		.def( "g_fireParams", &CScriptGameObject::g_fireParams )
-		.def( "can_kill_enemy", &CScriptGameObject::can_kill_enemy )
-		.def( "can_fire_to_enemy", &CScriptGameObject::can_fire_to_enemy )
+		.def( "can_kill_enemy",    ( bool ( CScriptGameObject::* )() )( &CScriptGameObject::can_kill_enemy ) )
+		.def( "can_kill_enemy",    ( bool ( CScriptGameObject::* )( CScriptGameObject* ) )( &CScriptGameObject::can_kill_enemy ) )
+		.def( "can_fire_to_enemy", ( bool ( CScriptGameObject::* )( CScriptGameObject* ) )( &CScriptGameObject::can_fire_to_enemy ) )
+		.def( "can_fire_to_enemy", ( bool ( CScriptGameObject::* )( CScriptGameObject*, u32 ) )( &CScriptGameObject::can_fire_to_enemy ) )
 
 		.def( "register_in_combat",   &CScriptGameObject::register_in_combat   )
 		.def( "unregister_in_combat", &CScriptGameObject::unregister_in_combat )

@@ -282,21 +282,22 @@ private:
 	bool				m_can_kill_enemy;
 	float				m_pick_distance;
 	u32					m_pick_frame_id;
+	const CEntityAlive* m_pick_last_enemy;
 	collide::rq_results	rq_storage;
 
 private:
 			void						can_kill_entity			(const Fvector &position, const Fvector &direction, float distance, collide::rq_results& rq_storage);
 			void						can_kill_entity_from	(const Fvector &position, Fvector direction, float distance);
-			void						update_can_kill_info	();
+	void  update_can_kill_info( const CEntityAlive *enemy = nullptr );
 
 public:
-			bool						can_kill_member			();
-			bool						can_kill_enemy			();
-			float						pick_distance			();
-	IC		float						start_pick_distance		() const;
-			bool						fire_make_sense			();
-			bool can_fire_to_enemy( const CEntityAlive *enemy );
-			
+	bool  can_kill_member( const CEntityAlive *enemy = nullptr );
+	bool  can_kill_enemy( const CEntityAlive *enemy = nullptr );
+	float pick_distance( const CEntityAlive *enemy = nullptr );
+	float start_pick_distance( const CEntityAlive *enemy = nullptr ) const;
+	bool  fire_make_sense();
+	bool can_fire_to_enemy( const CEntityAlive *enemy );
+
 	virtual LPCSTR						Name					() const;
 	virtual BOOL						feel_touch_contact		(CObject* O);
 	virtual BOOL						feel_touch_on_contact	(CObject* O);

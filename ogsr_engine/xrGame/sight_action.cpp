@@ -249,9 +249,10 @@ void CSightAction::execute_fire_object			()
 		case 0 : {
 			execute_object	();
 
-			if (target_reached() && object().inventory().ActiveItem()) {
-				if (!m_object->can_kill_enemy() || m_object->can_kill_member())
-					m_state_fire_object	= 1;
+			if ( target_reached() && object().inventory().ActiveItem() ) {
+			  auto enemy = smart_cast<const CEntityAlive*>( m_object_to_look );
+			  if ( !m_object->can_kill_enemy( enemy ) || m_object->can_kill_member( enemy ) )
+			    m_state_fire_object = 1;
 			}
 			break;
 		}

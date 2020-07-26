@@ -618,42 +618,41 @@ void CAI_Stalker::can_kill_entity_from	(const Fvector &position, Fvector directi
 	can_kill_entity			(position,direction,distance,rq_storage);
 }
 
-IC	float CAI_Stalker::start_pick_distance	() const
-{
-	float					result = 50.f;
-	if (!memory().enemy().selected())
-		return				(result);
 
-	return					(
-		_max(
-			result,
-			memory().enemy().selected()->Position().distance_to(Position()) + 1.f
-		)
-	);
+IC float CAI_Stalker::start_pick_distance( const CEntityAlive *enemy ) const {
+  float result = 50.f;
+  if ( !enemy )
+    enemy = memory().enemy().selected();
+  if ( !enemy )
+    return result;
+
+  return _max( result, enemy->Position().distance_to( Position() ) + 1.f );
 }
 
-float CAI_Stalker::pick_distance		()
-{
-	if (!inventory().ActiveItem())
-		return				(start_pick_distance());
-		
-	update_can_kill_info	();
-	return					(m_pick_distance);
+
+float CAI_Stalker::pick_distance( const CEntityAlive *enemy ) {
+  if ( !enemy )
+    enemy = memory().enemy().selected();
+  if ( !inventory().ActiveItem() )
+    return start_pick_distance( enemy );
+  update_can_kill_info( enemy );
+  return m_pick_distance ;
 }
 
-void CAI_Stalker::update_can_kill_info	()
-{
-	if (m_pick_frame_id == Device.dwFrame)
-		return;
 
-	m_pick_frame_id			= Device.dwFrame;
-	m_can_kill_member		= false;
-	m_can_kill_enemy		= false;
+void CAI_Stalker::update_can_kill_info( const CEntityAlive *enemy ) {
+  if ( m_pick_frame_id == Device.dwFrame && m_pick_last_enemy == enemy )
+    return;
 
-	Fvector					position, direction;
-	VERIFY					(inventory().ActiveItem());
-	g_fireParams			(0,position,direction);
-	can_kill_entity_from	(position,direction,start_pick_distance());
+  m_pick_frame_id   = Device.dwFrame;
+  m_can_kill_member = false;
+  m_can_kill_enemy  = false;
+  m_pick_last_enemy = enemy ? enemy : memory().enemy().selected();
+
+  Fvector position, direction;
+  VERIFY( inventory().ActiveItem() );
+  g_fireParams( 0, position, direction );
+  can_kill_entity_from( position, direction, start_pick_distance( m_pick_last_enemy ) );
 }
 
 bool CAI_Stalker::undetected_anomaly	()
@@ -1252,19 +1251,19 @@ void CAI_Stalker::on_enemy_wounded_or_killed	(const CAI_Stalker *wounded_or_kill
 	sound().play					(eStalkerSoundEnemyKilledOrWounded);
 }
 
-bool CAI_Stalker::can_kill_member							()
+bool CAI_Stalker::can_kill_member( const CEntityAlive *enemy )
 {
 	if (!animation().script_animations().empty())
 		return				(false);
 
-	update_can_kill_info	();
+	update_can_kill_info( enemy );
 	return					(m_can_kill_member);
 }
 
-bool CAI_Stalker::can_kill_enemy							()
+bool CAI_Stalker::can_kill_enemy( const CEntityAlive *enemy )
 {
 	VERIFY					(inventory().ActiveItem());
-	update_can_kill_info	();
+	update_can_kill_info( enemy );
 	return					(m_can_kill_enemy);
 }
 

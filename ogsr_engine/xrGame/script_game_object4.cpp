@@ -877,21 +877,33 @@ bool CScriptGameObject::controller_psy_hit_active() {
 }
 
 
-bool CScriptGameObject::can_kill_enemy() {
+bool CScriptGameObject::can_kill_enemy( const CScriptGameObject* obj ) {
   CAI_Stalker *stalker = smart_cast<CAI_Stalker*>( &object() );
   ASSERT_FMT( stalker, "[%s]: %s not a CAI_Stalker", __FUNCTION__, object().cName().c_str() );
-  return stalker->can_kill_enemy();
+  CEntityAlive* enemy;
+  if ( obj ) {
+    enemy = smart_cast<CEntityAlive*>( &(obj->object()) );
+    ASSERT_FMT( enemy, "[%s]: %s not a CEntityAlive", __FUNCTION__, obj->cName().c_str() );
+  }
+  else
+    enemy = nullptr;
+  return stalker->can_kill_enemy( enemy );
 }
 
 
-bool CScriptGameObject::can_fire_to_enemy( const CScriptGameObject* obj ) {
+bool CScriptGameObject::can_fire_to_enemy( const CScriptGameObject* obj, u32 fire_make_sense_interval ) {
   CAI_Stalker *stalker = smart_cast<CAI_Stalker*>( &object() );
   ASSERT_FMT( stalker, "[%s]: %s not a CAI_Stalker", __FUNCTION__, object().cName().c_str() );
   auto enemy = smart_cast<CEntityAlive*>( &(obj->object()) );
   ASSERT_FMT( enemy, "[%s]: %s not a CEntityAlive", __FUNCTION__, obj->cName().c_str() );
 
-  bool can_kill = stalker->can_kill_enemy();
+  bool can_kill = stalker->can_kill_enemy( enemy );
   bool vis = stalker->memory().visual().visible_right_now( enemy );
+  if ( !vis && fire_make_sense_interval ) {
+    u32 last_time_seen = stalker->memory().visual().visible_object_time_last_seen( enemy );
+    if ( last_time_seen != u32(-1) && Device.dwTimeGlobal <= last_time_seen + fire_make_sense_interval )
+      vis = true;
+  }
   if ( ( vis || can_kill ) && stalker->can_fire_to_enemy( enemy ) ) {
     if ( can_kill ) return true; // на линии огня
     float pick_dist = stalker->pick_distance();

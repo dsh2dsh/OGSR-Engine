@@ -803,7 +803,8 @@ public:
 	bool throw_target( const Fvector&, u32 const, CScriptGameObject* = nullptr );
 
 	void g_fireParams( const CScriptGameObject*, Fvector&, Fvector& );
-	bool can_fire_to_enemy( const CScriptGameObject* );
+	bool can_kill_enemy( const CScriptGameObject* = nullptr );
+	bool can_fire_to_enemy( const CScriptGameObject*, u32 fire_make_sense_interval = 0 );
 
 	void register_in_combat();
 	void unregister_in_combat();
@@ -827,7 +828,6 @@ public:
 
 	doors::door*				m_door;
 
-	bool can_kill_enemy();
 	void set_fastest_scheduler( bool );
 	void set_slowest_scheduler( bool );
 	void configure_scheduler( u32, u32 );
