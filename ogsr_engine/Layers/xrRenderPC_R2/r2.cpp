@@ -217,6 +217,10 @@ void					CRender::create					()
 	o.nvdbt				= HW.support	((D3DFORMAT)MAKEFOURCC('N','V','D','B'), D3DRTYPE_SURFACE, 0);
 	if (o.nvdbt)		Msg	("* NV-DBT supported and used");
 
+	o.no_ram_textures = strstr( Core.Params, "-noramtex" ) ? TRUE : FALSE; //ps_r__common_flags.test( RFLAG_NO_RAM_TEXTURES );
+	if ( o.no_ram_textures )
+	  Msg( "* Managed textures disabled" );
+
 	// options (smap-pool-size)
 	o.smapsize = r2_SmapSize;
 

@@ -151,7 +151,7 @@ ID3DTexture2D*	TW_LoadTextureFromTexture
 		HW.pDevice,
 		top_width,top_height,
 		levels_exist,0,t_dest_fmt,
-		D3DPOOL_MANAGED,&t_dest
+		RImplementation.o.no_ram_textures ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED,&t_dest
 		));
 
 	// Copy surfaces & destroy temporary
@@ -359,7 +359,7 @@ _DDS_CUBE:
 					D3DX_DEFAULT,
 					IMG.MipLevels,0,
 					IMG.Format,
-					D3DPOOL_MANAGED,
+					RImplementation.o.no_ram_textures ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED,
 					D3DX_DEFAULT,
 					D3DX_DEFAULT,
 					0,&IMG,0,
