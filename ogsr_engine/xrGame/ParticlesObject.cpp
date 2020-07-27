@@ -54,7 +54,7 @@ void CParticlesObject::Init	(LPCSTR p_name, IRender_Sector* S, BOOL bAutoRemove)
 	
 	// sheduled
 	shedule.t_min			= 20;
-	shedule.t_max			= 100; //50;
+	shedule.t_max			= 200; //50;
 	shedule_register		();
 
 	dwLastTime				= Device.dwTimeGlobal;
