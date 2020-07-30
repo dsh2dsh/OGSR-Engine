@@ -27,6 +27,9 @@ protected:
 	ref_glow		glow_render;
 	Fvector			m_focus;
 	Fcolor			m_color;
+	bool m_bind_to_camera;
+	Fvector m_torch_offset;
+	Fvector m_omni_offset;
 private:
 	inline	bool	can_use_dynamic_lights	();
 
