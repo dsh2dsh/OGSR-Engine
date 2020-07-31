@@ -62,8 +62,8 @@ CTorch::CTorch(void)
 	}
 
 	m_bind_to_camera = false;
-	m_torch_offset   = TORCH_OFFSET;
-	m_omni_offset    = OMNI_OFFSET;
+	m_camera_torch_offset = TORCH_OFFSET;
+	m_camera_omni_offset  = OMNI_OFFSET;
 }
 
 CTorch::~CTorch(void) 
@@ -105,8 +105,8 @@ void CTorch::Load(LPCSTR section)
 	}
 
 	m_bind_to_camera = READ_IF_EXISTS( pSettings, r_bool, section, "bind_to_camera", false );
-	m_torch_offset   = READ_IF_EXISTS( pSettings, r_fvector3, section, "torch_offset", TORCH_OFFSET );
-	m_omni_offset    = READ_IF_EXISTS( pSettings, r_fvector3, section, "omni_offset", OMNI_OFFSET );
+	m_camera_torch_offset = READ_IF_EXISTS( pSettings, r_fvector3, section, "camera_torch_offset", TORCH_OFFSET );
+	m_camera_omni_offset  = READ_IF_EXISTS( pSettings, r_fvector3, section, "camera_omni_offset", OMNI_OFFSET );
 }
 
 void CTorch::SwitchNightVision()
@@ -355,32 +355,40 @@ void CTorch::UpdateCL()
 				m_prev_hp.y = angle_inertion_var(m_prev_hp.y, -actor->cam_FirstEye()->pitch, TORCH_INERTION_SPEED_MIN, TORCH_INERTION_SPEED_MAX, TORCH_INERTION_CLAMP, Device.fTimeDelta);
 			}
 
-			Fvector dir, pos;
+			Fvector dir, pos, right, up;
 			if ( m_bind_to_camera && actor->active_cam() == eacFirstEye ) {
 			  dir = actor->Cameras().Direction();
+			  Fvector::generate_orthonormal_basis_normalized( dir, up, right );
 			  pos = actor->Cameras().Position();
+			  Fvector offset = pos;
+			  offset.mad( right, m_camera_torch_offset.x );
+			  offset.mad( up,    m_camera_torch_offset.y );
+			  offset.mad( dir,   m_camera_torch_offset.z );
+		  	  light_render->set_position( offset );
+			  offset = pos;
+			  offset.mad( right, m_camera_omni_offset.x );
+			  offset.mad( up,    m_camera_omni_offset.y );
+			  offset.mad( dir,   m_camera_omni_offset.z );
+			  light_omni->set_position( offset );
 			}
 			else {
 			  dir.setHP( m_prev_hp.x + m_delta_h, m_prev_hp.y );
+			  Fvector::generate_orthonormal_basis_normalized( dir, up, right );
 			  pos = M.c;
+			  Fvector offset = pos;
+			  offset.mad( M.i, TORCH_OFFSET.x );
+			  offset.mad( M.j, TORCH_OFFSET.y );
+			  offset.mad( M.k, TORCH_OFFSET.z );
+		  	  light_render->set_position( offset );
+			  offset = pos;
+			  offset.mad( M.i, OMNI_OFFSET.x );
+			  offset.mad( M.j, OMNI_OFFSET.y );
+			  offset.mad( M.k, OMNI_OFFSET.z );
+			  light_omni->set_position( offset );
 			}
-
-			Fvector offset = pos;
-			offset.mad( M.i, m_torch_offset.x );
-			offset.mad( M.j, m_torch_offset.y );
-			offset.mad( M.k, m_torch_offset.z );
-		  	light_render->set_position( offset );
-
-			offset = pos;
-			offset.mad( M.i, m_omni_offset.x );
-			offset.mad( M.j, m_omni_offset.y );
-			offset.mad( M.k, m_omni_offset.z );
-			light_omni->set_position( offset );
 
 			glow_render->set_position( pos );
 
-			Fvector right, up;
-			Fvector::generate_orthonormal_basis_normalized( dir, up, right );
 			light_render->set_rotation( dir, right );
 			light_omni->set_rotation( dir, right );
 			glow_render->set_direction( dir );
@@ -529,5 +537,5 @@ void CTorch::renderable_Render()
 }
 
 void CTorch::calc_m_delta_h( float range ) {
-  m_delta_h = PI_DIV_2 - atan( ( range * 0.5f ) / _abs( m_torch_offset.x ) );
+  m_delta_h = PI_DIV_2 - atan( ( range * 0.5f ) / _abs( TORCH_OFFSET.x ) );
 }
