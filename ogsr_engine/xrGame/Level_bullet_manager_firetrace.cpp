@@ -172,81 +172,75 @@ BOOL  CBulletManager::firetrace_callback(collide::rq_result& result, LPVOID para
 		return TRUE;
 }
 
-void CBulletManager::FireShotmark (SBullet* bullet, const Fvector& vDir, const Fvector &vEnd, collide::rq_result& R, u16 target_material, const Fvector& vNormal, bool ShowMark)
-{
-	if ( bullet->parent_id != Actor()->ID() && Core.Features.test( xrCore::Feature::npc_simplified_shooting ) && Device.vCameraPosition.distance_to( vEnd ) > g_shotmarks_dist )
-	  return;
 
-	SGameMtlPair* mtl_pair	= GMLib.GetMaterialPair(bullet->bullet_material_idx, target_material);
-	Fvector particle_dir	= vNormal;
+void CBulletManager::FireShotmark( SBullet* bullet, const Fvector& vDir, const Fvector &vEnd, collide::rq_result& R, u16 target_material, const Fvector& vNormal, bool ShowMark ) {
+  if ( bullet->parent_id != Actor()->ID() && Core.Features.test( xrCore::Feature::npc_simplified_shooting ) && Device.vCameraPosition.distance_to( vEnd ) > g_shotmarks_dist )
+    return;
 
-	if (R.O)
-	{
-		particle_dir		 = vDir;
-		particle_dir.invert	();
+  SGameMtlPair* mtl_pair = GMLib.GetMaterialPair( bullet->bullet_material_idx, target_material );
+  Fvector particle_dir   = vNormal;
 
-		//на текущем актере отметок не ставим
-		if ( !smart_cast<CActor*>( R.O ) && mtl_pair && !mtl_pair->m_pCollideMarks->empty() && ShowMark )
-		{
-			//добавить отметку на материале
-			Fvector p;
-			p.mad(bullet->pos, bullet->dir, R.range - 0.01f);
-			::Render->add_SkeletonWallmark(&R.O->renderable.xform,
-				PKinematics(R.O->Visual()),
-				&*mtl_pair->m_pCollideMarks,
-				p,
-				bullet->dir,
-				bullet->wallmark_size);
-		}
-	}
-	else 
-	{
-		//вычислить нормаль к пораженной поверхности
-		Fvector*	pVerts = Level().ObjectSpace.GetStaticVerts();
-		CDB::TRI*	pTri = Level().ObjectSpace.GetStaticTris() + R.element;
+  if ( R.O ) {
+    particle_dir = vDir;
+    particle_dir.invert();
 
-		if (mtl_pair && !mtl_pair->m_pCollideMarks->empty() && ShowMark)
-		{
-			//добавить отметку на материале
-			::Render->add_StaticWallmark(&*mtl_pair->m_pCollideMarks, vEnd, bullet->wallmark_size, pTri, pVerts);
-		}
-	}
+    // на текущем актере отметок не ставим
+    if ( !smart_cast<CActor*>( R.O ) && mtl_pair && !mtl_pair->m_pCollideMarks->empty() && ShowMark ) {
+      // добавить отметку на материале
+      Fvector p;
+      p.mad( bullet->pos, bullet->dir, R.range - 0.01f );
+      ::Render->add_SkeletonWallmark(
+        &R.O->renderable.xform,
+        PKinematics( R.O->Visual() ),
+        &*mtl_pair->m_pCollideMarks,
+        p, bullet->dir, bullet->wallmark_size
+      );
+    }
+  }
+  else  {
+    // вычислить нормаль к пораженной поверхности
+    Fvector* pVerts = Level().ObjectSpace.GetStaticVerts();
+    CDB::TRI* pTri  = Level().ObjectSpace.GetStaticTris() + R.element;
 
-	ref_sound* pSound = (!mtl_pair || mtl_pair->CollideSounds.empty())?
-						NULL:&mtl_pair->CollideSounds[::Random.randI(0,mtl_pair->CollideSounds.size())];
+    if ( mtl_pair && !mtl_pair->m_pCollideMarks->empty() && ShowMark )
+      // добавить отметку на материале
+      ::Render->add_StaticWallmark( &*mtl_pair->m_pCollideMarks, vEnd, bullet->wallmark_size, pTri, pVerts );
+  }
 
-	//проиграть звук
-	if(pSound && ShowMark)
-	{
-		CObject* O			= Level().Objects.net_Find(bullet->parent_id );
-		bullet->m_mtl_snd	= *pSound;
-		bullet->m_mtl_snd.play_at_pos(O, vEnd, 0);
-	}
+  ref_sound* pSound = ( !mtl_pair || mtl_pair->CollideSounds.empty() ) ?
+    nullptr : &mtl_pair->CollideSounds[ ::Random.randI( 0, mtl_pair->CollideSounds.size() ) ];
 
-	LPCSTR ps_name = (!mtl_pair || mtl_pair->CollideParticles.empty())?
-NULL:*mtl_pair->CollideParticles[::Random.randI(0,mtl_pair->CollideParticles.size())];
+  // проиграть звук
+  if ( pSound && ShowMark ) {
+    CObject* O = Level().Objects.net_Find( bullet->parent_id  );
+    bullet->m_mtl_snd = *pSound;
+    bullet->m_mtl_snd.play_at_pos( O, vEnd, 0 );
+  }
 
-	SGameMtl*	tgt_mtl = GMLib.GetMaterialByIdx(target_material);
-	BOOL bStatic = !tgt_mtl->Flags.test(SGameMtl::flDynamic);
+  LPCSTR ps_name = ( !mtl_pair || mtl_pair->CollideParticles.empty() ) ?
+    nullptr : *mtl_pair->CollideParticles[ ::Random.randI( 0, mtl_pair->CollideParticles.size() ) ];
 
-	if( (ps_name && ShowMark) || (bullet->flags.explosive && bStatic) )
-	{
-		Fmatrix pos;
-		pos.k.normalize(particle_dir);
-		Fvector::generate_orthonormal_basis(pos.k, pos.j, pos.i);
-		pos.c.set(vEnd);
-		if(ps_name && ShowMark){
-			//отыграть партиклы попадания в материал
-			CParticlesObject* ps = CParticlesObject::Create(ps_name,TRUE);
+  SGameMtl* tgt_mtl = GMLib.GetMaterialByIdx( target_material );
+  BOOL bStatic = !tgt_mtl->Flags.test( SGameMtl::flDynamic );
 
-			ps->UpdateParent(pos,zero_vel);
-			GamePersistent().ps_needtoplay.push_back(ps);
-		}
+  if ( ( ps_name && ShowMark ) || ( bullet->flags.explosive && bStatic ) ) {
+    Fmatrix pos;
+    pos.k.normalize( particle_dir );
+    Fvector::generate_orthonormal_basis( pos.k, pos.j, pos.i );
+    pos.c.set( vEnd );
 
-		if(bullet->flags.explosive&&bStatic)
-			PlayExplodePS(pos, bullet->m_ExplodeParticles.empty() ? m_ExplodeParticles : bullet->m_ExplodeParticles);
-	}
+    if ( ps_name && ShowMark ) {
+      // отыграть партиклы попадания в материал
+      CParticlesObject* ps = CParticlesObject::Create( ps_name, TRUE );
+      ps->UpdateParent( pos, zero_vel );
+      GamePersistent().ps_needtoplay.push_back( ps );
+    }
+
+    if ( bullet->flags.explosive && bStatic )
+      PlayExplodePS( pos, bullet->m_ExplodeParticles.empty() ? m_ExplodeParticles : bullet->m_ExplodeParticles );
+  }
 }
+
 
 void CBulletManager::StaticObjectHit	(CBulletManager::_event& E)
 {
