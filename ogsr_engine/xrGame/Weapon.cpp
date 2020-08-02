@@ -2273,7 +2273,7 @@ float CWeapon::GetHudFov()
 }
 
 
-void CWeapon::OnBulletHit() {
+void CWeapon::OnBulletHit( CBulletManager::_event& E ) {
   if ( !fis_zero( conditionDecreasePerShotOnHit ) )
     ChangeCondition( -conditionDecreasePerShotOnHit );
 }

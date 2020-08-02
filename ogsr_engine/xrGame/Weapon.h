@@ -12,6 +12,7 @@
 #include "xrServer_Objects_ALife.h"
 #include "xrServer_Objects_ALife_Items.h"
 #include "actor.h"
+#include "Level_Bullet_Manager.h"
 
 // refs
 class CEntity;
@@ -585,6 +586,6 @@ public:
 
 	void SwitchScope();
 
-	virtual void OnBulletHit();
+	virtual void OnBulletHit( CBulletManager::_event& E );
 	bool IsPartlyReloading();
 };

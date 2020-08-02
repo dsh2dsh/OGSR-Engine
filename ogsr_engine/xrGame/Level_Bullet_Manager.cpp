@@ -432,7 +432,7 @@ void CBulletManager::CommitEvents			()	// @ the start of frame
                                   CObject* O = Level().Objects.net_Find( E.bullet.weapon_id );
                                   if ( O ) {
                                     CWeapon* W = smart_cast<CWeapon*>( O );
-                                    if ( W ) W->OnBulletHit();
+                                    if ( W ) W->OnBulletHit( E );
                                   }
                                 }
 			}break;

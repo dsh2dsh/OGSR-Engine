@@ -95,6 +95,7 @@ private:
 
 	friend	CLevel;
 
+public:
 	enum EventType {
 		EVENT_HIT	= u8(0),
 		EVENT_REMOVE,
@@ -112,6 +113,7 @@ private:
 		collide::rq_result	R			;
 		u16					tgt_material;
 	};
+
 protected:
 	std::vector<ref_sound>	m_WhineSounds;
 	RStringVec				m_ExplodeParticles	;
