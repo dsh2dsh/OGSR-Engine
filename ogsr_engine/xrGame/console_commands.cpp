@@ -1398,5 +1398,5 @@ void CCC_RegisterCommands()
 	CMD4( CCC_Float, "g_cam_height_speed",  &cam_HeightInterpolationSpeed, 4.0f, 16.0f );
 	CMD4( CCC_Float, "g_cam_lookout_speed", &cam_LookoutSpeed,             1.0f,  4.0f );
 
-	CMD4( CCC_Float, "g_shotmarks_dist", &g_shotmarks_dist, 25.f, 100.f );
+	CMD4( CCC_Float, "g_shotmarks_dist", &g_shotmarks_dist, 5.f, 100.f );
 }
