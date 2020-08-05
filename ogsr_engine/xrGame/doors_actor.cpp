@@ -130,19 +130,15 @@ void actor::process_doors(float const average_speed, doors_type& processed_doors
     std::inplace_merge(processed_doors.begin(), processed_doors.begin() + processed_count, processed_doors.end());
 }
 
-#ifdef DEBUG
-BOOL g_debug_doors = 1;
-#endif // #ifdef DEBUG
+bool g_debug_doors = false;
 
 bool actor::add_new_door(float const average_speed, door* const door, doors_type const& processed_doors,
     doors_type& locked_doors, temp_doors_type& new_doors, door_state const state)
 {
     if (door->is_locked(state))
     {
-#ifdef DEBUG
         if (g_debug_doors)
             Msg("actor[%s] is waiting for the locked door[%s]", get_name(), door->get_name());
-#endif // #ifdef DEBUG
         return false;
     }
 
@@ -151,11 +147,9 @@ bool actor::add_new_door(float const average_speed, door* const door, doors_type
         doors_type::iterator const i = std::find(locked_doors.begin(), locked_doors.end(), door);
         if (i == locked_doors.end())
         {
-#ifdef DEBUG
             if (g_debug_doors)
                 Msg("actor[%s] is waiting for the door[%s] blocked by %s", get_name(), door->get_name(),
                     door->get_initiators_ids().c_str());
-#endif // #ifdef DEBUG
             return false;
         }
 
@@ -164,11 +158,9 @@ bool actor::add_new_door(float const average_speed, door* const door, doors_type
         door->change_state(this, state);
         if (door->is_blocked(state))
         {
-#ifdef DEBUG
             if (g_debug_doors)
                 Msg("actor[%s] is waiting for the door[%s] blocked by %s", get_name(), door->get_name(),
                     door->get_initiators_ids().c_str());
-#endif // #ifdef DEBUG
             return false;
         }
     }

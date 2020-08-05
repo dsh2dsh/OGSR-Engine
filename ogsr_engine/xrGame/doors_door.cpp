@@ -116,9 +116,7 @@ bool door::is_blocked(door_state const state) const
     return (m_target_state != state);
 }
 
-#ifdef DEBUG
-extern BOOL g_debug_doors;
-#endif // #ifdef DEBUG
+extern bool g_debug_doors;
 
 void door::lock()
 {
@@ -129,10 +127,8 @@ void door::lock()
     VERIFY(!m_locked);
     m_locked = true;
     m_object.set_ai_obstacle( true );
-#ifdef DEBUG
     if (g_debug_doors)
         Msg("door[%s] is locked", m_object.cName().c_str());
-#endif // #ifdef DEBUG
 }
 
 void door::unlock()
@@ -144,10 +140,8 @@ void door::unlock()
     VERIFY(m_locked);
     m_locked = false;
     m_object.set_ai_obstacle( false );
-#ifdef DEBUG
     if (g_debug_doors)
         Msg("door[%s] is unlocked", m_object.cName().c_str());
-#endif // #ifdef DEBUG
 }
 
 //Alundaio: Modified to pass the initiator to ph_door:use_callback
@@ -161,11 +155,9 @@ void door::change_state(actor* initiator)
         return;
 
     m_object.callback(GameObject::eUseObject)(m_object.lua_game_object(), initiator ? static_cast<CScriptGameObject*>(initiator->lua_game_object()) : nullptr);
-#ifdef DEBUG
     if (g_debug_doors)
         Msg("door[%s] started to change its state to [%s]", m_object.cName().c_str(),
             m_target_state == door_state_open ? "open" : "closed");
-#endif // #ifdef DEBUG
 }
 //Alundaio: END
 
@@ -182,11 +174,9 @@ void door::change_state(actor* const initiator, door_state const start_state, do
     {
         m_initiators.push_back(initiator);
         m_target_state = start_state;
-#ifdef DEBUG
         if (g_debug_doors)
             Msg("door[%s] added initiator[%s] to keep door %s", m_object.cName().c_str(), initiator->get_name(),
                 m_target_state == door_state_open ? "open" : "closed");
-#endif // #ifdef DEBUG
         //		if ( !xr_strcmp( "sim_default_duty_28212", initiator->get_name()) ) {
         //			int i=0; (void)i;
         //		}
@@ -196,11 +186,9 @@ void door::change_state(actor* const initiator, door_state const start_state, do
 
     if (m_target_state == start_state)
     {
-#ifdef DEBUG
         if (g_debug_doors)
             Msg("door[%s] added initiator[%s] to keep door %s", m_object.cName().c_str(), initiator->get_name(),
                 m_target_state == door_state_open ? "open" : "closed");
-#endif // #ifdef DEBUG
         //		if ( !xr_strcmp( "sim_default_duty_28212", initiator->get_name()) ) {
         //			int i=0; (void)i;
         //		}
@@ -214,11 +202,9 @@ void door::change_state(actor* const initiator, door_state const start_state, do
     VERIFY2(found != m_initiators.end(), make_string("cannot find initiator %s", initiator->get_name()));
     if (found != m_initiators.end())
     {
-#ifdef DEBUG
         if (g_debug_doors)
             Msg("door[%s] removed initiator[%s] to keep door %s", m_object.cName().c_str(), initiator->get_name(),
                 m_target_state == door_state_open ? "open" : "closed");
-#endif // #ifdef DEBUG
         //		if ( !xr_strcmp( "sim_default_duty_28212", initiator->get_name()) ) {
         //			int i=0; (void)i;
         //		}
@@ -231,11 +217,9 @@ void door::change_state(actor* const initiator, door_state const start_state, do
     if (m_previous_state != stop_state)
     {
         m_target_state = m_previous_state;
-#ifdef DEBUG
         if (g_debug_doors)
             Msg("door[%s] restores its state to %s", m_object.cName().c_str(),
                 m_target_state == door_state_open ? "open" : "closed");
-#endif // #ifdef DEBUG
         //		if ( !xr_strcmp( "sim_default_duty_28212", initiator->get_name()) ) {
         //			int i=0; (void)i;
         //		}
@@ -275,7 +259,6 @@ void door::on_change_state(door_state const state)
     change_state(nullptr); //Alundaio: NULL - no need to know who
 }
 
-#ifdef DEBUG
 LPCSTR door::get_name() const { return m_object.cName().c_str(); }
 shared_str door::get_initiators_ids() const
 {
@@ -309,4 +292,3 @@ bool door::check_initiator(actor const* const initiator) const
 {
     return std::find(m_initiators.begin(), m_initiators.end(), initiator) != m_initiators.end();
 }
-#endif // #ifdef DEBUG
