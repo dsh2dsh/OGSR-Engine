@@ -1214,11 +1214,10 @@ void CScriptGameObject::IterateRuck( const luabind::functor<void>& functor, cons
 }
 
 
-void CScriptGameObject::register_door							()
-{
-	VERIFY2								( !m_door, make_string("object %s has been registered as a door already", m_game_object->cName().c_str()) );
-	m_door								= ai().doors().register_door( *smart_cast<CPhysicObject*>(m_game_object) );
-//	Msg									( "registering door 0x%-08x", m_door );
+void CScriptGameObject::register_door() {
+  ASSERT_FMT( !m_door, "object %s has been registered as a door already", m_game_object->cName().c_str() );
+  ASSERT_FMT( smart_cast<CPhysicObject*>( m_game_object ), "%s isn't CPhysicObject", m_game_object->cName().c_str() );
+  m_door = ai().doors().register_door( *smart_cast<CPhysicObject*>( m_game_object ) );
 }
 
 void CScriptGameObject::unregister_door							()
