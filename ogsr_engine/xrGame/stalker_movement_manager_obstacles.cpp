@@ -264,37 +264,38 @@ static float get_distance											(
 #endif // #ifdef DEBUG
 }
 
-float stalker_movement_manager_obstacles::is_going_through			( Fmatrix const& matrix, Fvector const& vector, float const max_distance ) const
-{
-	if (!actual())
-		return							-1.f;
 
-	if (path().empty())
-		return							-1.f;
+float stalker_movement_manager_obstacles::is_going_through( Fmatrix const& matrix, Fvector const& vector, float const max_distance ) const {
+  if ( !actual() )
+    return -1.f;
 
-	if (detail().curr_travel_point_index() >= detail().path().size() - 1)
-		return							-1.f;
+  if ( path().empty() )
+    return -1.f;
 
-	Fvector start_position				= matrix.c;
-	Fvector stop_position;
-	matrix.transform_tiny				( stop_position, vector );
+  if ( detail().curr_travel_point_index() >= detail().path().size() - 1 )
+    return -1.f;
 
-	float current_distance				= 0.f;
-	float min_distance					= flt_max;
-	typedef xr_vector<STravelPathPoint>	detail_path_type;
-	detail_path_type::const_iterator	i = detail().path().begin() + detail().curr_travel_point_index() + 1;
-	detail_path_type::const_iterator	e = detail().path().end();
-	for ( ; i != e; ++i) {
-		float const distance			= get_distance((*(i - 1)).position,(*i).position,start_position,stop_position, .35f);
-		min_distance					= distance > -1.f ? std::min( min_distance, distance ) : min_distance;
+  Fvector start_position = matrix.c;
+  Fvector stop_position;
+  matrix.transform_tiny( stop_position, vector );
 
-		current_distance				+= (*(i - 1)).position.distance_to((*i).position);
-		if ( current_distance > max_distance )
-			return						min_distance == flt_max ? -1.f : min_distance;
-	}
+  float current_distance = 0.f;
+  float min_distance     = flt_max;
+  typedef xr_vector<STravelPathPoint> detail_path_type;
+  detail_path_type::const_iterator i = detail().path().begin() + detail().curr_travel_point_index() + 1;
+  detail_path_type::const_iterator e = detail().path().end();
 
-	return								min_distance == flt_max ? -1.f : min_distance;
+  for ( ; i != e; ++i ) {
+    float const distance = get_distance( (*(i - 1)).position, (*i).position, start_position, stop_position, .35f );
+    min_distance = distance > -1.f ? std::min( min_distance, distance ) : min_distance;
+    current_distance += (*(i - 1)).position.distance_to( (*i).position );
+    if ( current_distance > max_distance )
+      return min_distance == flt_max ? -1.f : min_distance;
+  }
+
+  return min_distance == flt_max ? -1.f : min_distance;
 }
+
 
 void stalker_movement_manager_obstacles::on_death	( )
 {
