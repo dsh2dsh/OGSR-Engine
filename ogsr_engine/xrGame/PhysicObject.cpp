@@ -749,6 +749,11 @@ bool CPhysicObject::get_door_vectors( Fvector& closed, Fvector& open ) const {
     return false;
   Fvector2 limits = joint.limits[ 1 ].limit;
 
+  if ( fsimilar( limits.x, limits.y ) ) {
+    auto j = m_pPhysicsShell->get_Joint( door_bone );
+    j->GetLimits( limits.y, limits.x, 0 );
+  }
+
   //if( limits.y < EPS ) //limits.y - limits.x < EPS
   //      return false;
 
