@@ -284,7 +284,7 @@ bool CControlPathBuilder::can_use_distributed_computations (u32 option) const
 
 	VERIFY(Actor());
 	VERIFY(inherited_com::m_object);
-	if (Actor()->memory().visual().visible_right_now(inherited_com::m_object)) return false;
+	//if (Actor()->memory().visual().visible_right_now(inherited_com::m_object)) return false;
 	return inherited::can_use_distributed_computations(option);
 }
 
