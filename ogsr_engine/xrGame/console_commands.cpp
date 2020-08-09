@@ -50,6 +50,7 @@ extern	u64		g_qwEStartGameTime;
 ENGINE_API
 extern	float	psHUD_FOV_def;
 extern	float	psSqueezeVelocity;
+extern	int		psLUA_GCSTEP;
 
 extern	int		x_m_x;
 extern	int		x_m_z;
@@ -1202,12 +1203,14 @@ void CCC_RegisterCommands()
 	CMD3(CCC_Mask,				"mt_object_handler",	&g_mt_config,	mtObjectHandler);
 	CMD3(CCC_Mask,				"mt_sound_player",		&g_mt_config,	mtSoundPlayer);
 	CMD3(CCC_Mask,				"mt_bullets",			&g_mt_config,	mtBullets);
+	CMD3(CCC_Mask,				"mt_script_gc",			&g_mt_config,	mtLUA_GC);
 	CMD3(CCC_Mask,				"mt_level_sounds",		&g_mt_config,	mtLevelSounds);
 	CMD3(CCC_Mask,				"mt_alife",				&g_mt_config,	mtALife);
 	CMD3(CCC_Mask,				"mt_map",				&g_mt_config,	mtMap);
 #endif // MASTER_GOLD
 
 #ifdef DEBUG
+	CMD4(CCC_Integer,			"lua_gcstep",			&psLUA_GCSTEP,	1, 1000);
 	CMD3(CCC_Mask,				"ai_debug",				&psAI_Flags,	aiDebug);
 	CMD3(CCC_Mask,				"ai_dbg_brain",			&psAI_Flags,	aiBrain);
 	CMD3(CCC_Mask,				"ai_dbg_motion",		&psAI_Flags,	aiMotion);

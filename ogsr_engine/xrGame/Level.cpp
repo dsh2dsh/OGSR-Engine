@@ -430,6 +430,10 @@ void CLevel::OnFrame	()
 		Device.add_to_seq_parallel(fastdelegate::MakeDelegate(m_level_sound_manager, &CLevelSoundManager::Update));
 		else								
 			m_level_sound_manager->Update	();
+	if ( g_mt_config.test( mtLUA_GC ) )
+	  Device.add_to_seq_parallel( fastdelegate::MakeDelegate( this, &CLevel::script_gc ) );
+	else
+	  script_gc();
 	//-----------------------------------------------------
 	if (pStatGraphR)
 	{	
@@ -439,6 +443,11 @@ void CLevel::OnFrame	()
 		pStatGraphR->AppendItem(float(m_dwRPC)*fRPC_Mult, 0xffff0000, 1);
 		pStatGraphR->AppendItem(float(m_dwRPS)*fRPS_Mult, 0xff00ff00, 0);
 	};
+}
+
+int psLUA_GCSTEP = 100; //10;
+void CLevel::script_gc() {
+  lua_gc( ai().script_engine().lua(), LUA_GCSTEP, psLUA_GCSTEP );
 }
 
 #ifdef DEBUG_PRECISE_PATH
