@@ -24,7 +24,7 @@
 #	include "ai_debug.h"
 #endif // MASTER_GOLD
 
-static const u32 fail_check_time	= 1000;
+static const u32 fail_check_time	= 2000; //1000;
 
 stalker_movement_manager_obstacles::stalker_movement_manager_obstacles	(CAI_Stalker *object) :
 	inherited						(object),
@@ -46,7 +46,7 @@ void stalker_movement_manager_obstacles::Load	( LPCSTR section )
 {
 	inherited::Load					( section );
 
-	level_path_builder().use_delay_after_fail	( false );
+	//level_path_builder().use_delay_after_fail	( false );
 }
 
 CRestrictedObject *stalker_movement_manager_obstacles::create_restricted_object	()
