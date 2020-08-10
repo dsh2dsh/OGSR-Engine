@@ -1547,6 +1547,7 @@ void CWeapon::UpdateAddonsVisibility( bool is_activating )
 bool CWeapon::Activate( bool now ) 
 {
 	UpdateAddonsVisibility( true );
+	if ( ParentIsActor() ) UpdateZoomOffset();
 	return inherited::Activate( now );
 }
 
