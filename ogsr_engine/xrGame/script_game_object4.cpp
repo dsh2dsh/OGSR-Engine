@@ -901,8 +901,12 @@ bool CScriptGameObject::can_fire_to_enemy( const CScriptGameObject* obj, u32 fir
   bool vis = stalker->memory().visual().visible_right_now( enemy );
   if ( !vis && fire_make_sense_interval ) {
     u32 last_time_seen = stalker->memory().visual().visible_object_time_last_seen( enemy );
-    if ( last_time_seen != u32(-1) && Device.dwTimeGlobal <= last_time_seen + fire_make_sense_interval )
-      vis = true;
+    if ( last_time_seen != u32(-1) && last_time_seen <= Device.dwTimeGlobal && Device.dwTimeGlobal <= last_time_seen + fire_make_sense_interval ) {
+      MemorySpace::CVisibleObject* obj = stalker->memory().visual().visible_object( enemy );
+      if ( obj && obj->m_object_params.m_position.distance_to( enemy->Position() ) < 5 ) {
+        vis = true;
+      }
+    }
   }
   if ( ( vis || can_kill ) && stalker->can_fire_to_enemy( enemy ) ) {
     if ( can_kill ) return true; // на линии огня
