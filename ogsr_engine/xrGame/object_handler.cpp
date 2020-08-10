@@ -159,7 +159,7 @@ bool CObjectHandler::goal_reached	()
 void CObjectHandler::weapon_bones	(int &b0, int &b1, int &b2) const
 {
 	CWeapon						*weapon = smart_cast<CWeapon*>(inventory().ActiveItem());
-	if (!weapon || !planner().m_storage.property(ObjectHandlerSpace::eWorldPropertyStrapped)) {
+	if ( !weapon || !weapon->can_be_strapped() || !planner().m_storage.property( ObjectHandlerSpace::eWorldPropertyStrapped ) ) {
 		if (weapon)
 			weapon->strapped_mode	(false);
 		b0						= m_r_hand;
@@ -168,7 +168,7 @@ void CObjectHandler::weapon_bones	(int &b0, int &b1, int &b2) const
 		return;
 	}
 
-	THROW3						(weapon->can_be_strapped(),"Cannot strap weapon",*weapon->cName());
+	ASSERT_FMT( weapon->can_be_strapped(), "[%s]: Cannot strap weapon %s", __FUNCTION__, weapon->cNameSect().c_str() );
 
 	if (weapon->ID() != m_strap_object_id) {
 		IKinematics				*kinematics = smart_cast<IKinematics*>(planner().m_object->Visual());
