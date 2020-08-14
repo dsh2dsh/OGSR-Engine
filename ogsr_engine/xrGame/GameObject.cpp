@@ -30,6 +30,8 @@
 #include "alife_object_registry.h"
 #include "Car.h"
 #include "ai_obstacle.h"
+#include "ai/stalker/ai_stalker.h"
+#include "Inventory.h"
 
 #include "ai_object_location.h"
 
@@ -1205,4 +1207,15 @@ void CGameObject::FeelTouchAddonsRelcase( CObject* O ) {
       }
     );
   }
+}
+
+
+float CGameObject::shedule_Scale() {
+  if ( smart_cast<CAI_Stalker*>( H_Parent() ) ) {
+    auto* obj   = smart_cast<CGameObject*>( H_Parent() );
+    auto* owner = smart_cast<CInventoryOwner*>( H_Parent() );
+    if ( owner && smart_cast<CGameObject*>( owner->inventory().ActiveItem() ) == this )
+      return obj->shedule_Scale();
+  }
+  return inherited::shedule_Scale();
 }

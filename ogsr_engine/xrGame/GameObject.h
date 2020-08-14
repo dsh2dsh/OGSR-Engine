@@ -135,6 +135,7 @@ public:
 
 	virtual void			shedule_Update		(u32 dt);	
 	virtual bool			shedule_Needed		();
+	virtual float			shedule_Scale		();
 
 	virtual void			renderable_Render	();
 	virtual void			OnEvent				(NET_Packet& P, u16 type);
