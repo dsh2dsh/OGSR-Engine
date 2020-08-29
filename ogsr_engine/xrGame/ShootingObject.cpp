@@ -432,6 +432,9 @@ void CShootingObject::FireBullet(const Fvector& pos,
 								 u16 weapon_id,
 								 bool send_hit)
 {
+	if ( fis_zero( m_fStartBulletSpeed ) || fis_zero( fireDistance ) )
+	  return;
+
 	Fvector dir;
 	random_dir(dir,shot_dir,fire_disp);
 
