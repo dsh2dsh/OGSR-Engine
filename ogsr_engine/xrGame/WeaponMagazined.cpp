@@ -359,6 +359,7 @@ void CWeaponMagazined::ReloadMagazine()
 		bool forActor = ParentIsActor();
 
 		//попытаться найти в инвентаре патроны текущего типа 
+		ASSERT_FMT( m_ammoType < m_ammoTypes.size(), "[%s]: wrong m_ammoType[%u]: m_ammoTypes[%u]", __FUNCTION__, m_ammoType, m_ammoTypes.size() );
 		if ( Core.Features.test(xrCore::Feature::hard_ammo_reload) && forActor )
 		  m_pAmmo = smart_cast<CWeaponAmmo*>( m_pCurrentInventory->GetAmmoMaxCurr( *m_ammoTypes[ m_ammoType ], forActor ) );
 		else

@@ -1087,30 +1087,23 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 				if ( Core.Features.test(xrCore::Feature::lock_reload_in_sprint) && ParentIsActor() && g_actor->get_state() & mcSprint )
 				  return true;
 
-				if(flags&CMD_START) 
-				{
-					u32 l_newType = m_ammoType;
-
-					for (;;)
-					{
-						if (++l_newType >= m_ammoTypes.size())
-						{
-							for (l_newType = 0; l_newType < m_ammoTypes.size(); ++l_newType)
-								if (unlimited_ammo() || m_pCurrentInventory->GetAmmo(m_ammoTypes[l_newType].c_str(), ParentIsActor()))
-									break;
-							break;
-						}
-
-						if (unlimited_ammo() || m_pCurrentInventory->GetAmmo(m_ammoTypes[l_newType].c_str(), ParentIsActor()))
-							break;
-					}
-
-					if(l_newType != m_ammoType) 
-					{
-						m_set_next_ammoType_on_reload = l_newType;						
-
-						if(OnServer()) Reload();
-					}
+				if ( flags & CMD_START ) {
+				  u32 l_newType = m_ammoType;
+				  for ( ;; ) {
+				    l_newType++;
+				    if ( l_newType >= m_ammoTypes.size() ) {
+				      for ( l_newType = 0; l_newType < m_ammoType; l_newType++ )
+				        if ( unlimited_ammo() || m_pCurrentInventory->GetAmmo( m_ammoTypes[ l_newType ].c_str(), ParentIsActor() ) )
+				          break;
+				      break;
+				    }
+				    if ( unlimited_ammo() || m_pCurrentInventory->GetAmmo( m_ammoTypes[ l_newType ].c_str(), ParentIsActor() ) )
+				      break;
+				  }
+				  if ( l_newType != m_ammoType ) {
+				    m_set_next_ammoType_on_reload = l_newType;						
+				    if ( OnServer() ) Reload();
+				  }
 				}
 			} 
             return true;
