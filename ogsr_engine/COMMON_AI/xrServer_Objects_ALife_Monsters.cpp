@@ -113,8 +113,16 @@ CSE_ALifeTraderAbstract::CSE_ALifeTraderAbstract(LPCSTR caSection)
 //	m_fCumulativeItemMass		= 0.f;
 //	m_iCumulativeItemVolume		= 0;
 	m_dwMoney					= 0;
-	if (pSettings->line_exist(caSection, "money"))
-		m_dwMoney 				= pSettings->r_u32(caSection, "money");
+	if ( pSettings->line_exist( caSection, "money" ) ) {
+	  LPCSTR str = pSettings->r_string( caSection, "money" );
+	  int cnt    = _GetItemCount( str );
+	  if ( cnt > 1 ) {
+	    Ivector2 m = pSettings->r_ivector2( caSection, "money" );
+	    m_dwMoney = ::Random.randI( m.x, m.y );
+	  }
+	  else
+	    m_dwMoney = pSettings->r_u32( caSection, "money" );
+	}
 	m_fMaxItemMass				= pSettings->r_float(caSection, "max_item_mass");
 
 	m_sCharacterProfile			= READ_IF_EXISTS(pSettings,r_string,caSection,"character_profile","default");
