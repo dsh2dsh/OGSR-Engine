@@ -36,6 +36,7 @@ public:
 			bool					flag				(u32 index, u8 flag_index) const;
 			Flags32					flags				(u32 index) const;
 			bool					terminal			(u32 index) const;
+  void safe_path( LPCSTR caPatrolPathToGo, bool on_level, bool strict_pos_inside );
 
 	DECLARE_SCRIPT_REGISTER_FUNCTION
 };

@@ -53,5 +53,6 @@ void CPatrolPathParams::script_register(lua_State *L)
 			.def("flag",						&CPatrolPathParams::flag)
 			.def("flags",						&CPatrolPathParams::flags)
 			.def("terminal",					&CPatrolPathParams::terminal)
+			.def( "safe_path", &CPatrolPathParams::safe_path )
 	];
 }

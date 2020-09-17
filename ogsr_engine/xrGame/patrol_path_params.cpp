@@ -98,3 +98,14 @@ bool CPatrolPathParams::terminal (u32 index) const
 	return				(m_path->vertex(index)->edges().size() == 0);
 }
 
+
+void CPatrolPathParams::safe_path( LPCSTR caPatrolPathToGo, bool on_level, bool strict_pos_inside ) {
+  m_path_name = caPatrolPathToGo;
+  m_path = ai().patrol_paths().safe_path( m_path_name, true, on_level, strict_pos_inside );
+
+#ifdef CRASH_ON_INVALID_VERTEX_ID
+  ASSERT_FMT( m_path, "[%s]: there is no patrol path %s", __FUNCTION__, caPatrolPathToGo );
+#else
+  THROW3( m_path, "There is no patrol path", caPatrolPathToGo );
+#endif
+}
