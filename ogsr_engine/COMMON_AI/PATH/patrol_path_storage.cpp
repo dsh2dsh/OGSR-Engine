@@ -166,7 +166,7 @@ void CPatrolPathStorage::add_path( shared_str patrol_name, CPatrolPath *path ) {
 }
 
 
-const CPatrolPath* CPatrolPathStorage::safe_path( shared_str patrol_name, bool no_assert, bool on_level ) const {
+const CPatrolPath* CPatrolPathStorage::safe_path( shared_str patrol_name, bool no_assert, bool on_level, bool strict_pos_inside ) const {
   auto it = m_registry.find( patrol_name );
   if ( it == m_registry.end() )
     return path( patrol_name, no_assert );
@@ -178,6 +178,11 @@ const CPatrolPath* CPatrolPathStorage::safe_path( shared_str patrol_name, bool n
         u32 prev_vertex_id = pp.m_level_vertex_id;
         pp.m_level_vertex_id = ai().level_graph().vertex( pp.m_position );
         Msg( "* [%s]: path[%s] pp[%s] level_vertex_id[%u] -> %u", __FUNCTION__, patrol_name.c_str(), pp.m_name.c_str(), prev_vertex_id, pp.m_level_vertex_id );
+      }
+      if ( strict_pos_inside && !ai().level_graph().inside( pp.m_level_vertex_id, pp.m_position ) ) {
+        Fvector pos = ai().level_graph().vertex_position( pp.m_level_vertex_id );
+        Msg( "* [%s]: path[%s] pp[%s] correct position to be inside level_vertex_id[%u]", __FUNCTION__, patrol_name.c_str(), pp.m_name.c_str(), pp.m_level_vertex_id );
+        pp.m_position = ai().level_graph().vertex_position( pp.m_level_vertex_id );
       }
     }
     else
