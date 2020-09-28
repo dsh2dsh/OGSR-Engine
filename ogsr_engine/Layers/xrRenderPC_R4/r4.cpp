@@ -307,8 +307,8 @@ void					CRender::create					()
 	o.dx10_msaa_samples = (1 << ps_r3_msaa);
 
 	o.dx10_msaa_opt		= ps_r2_ls_flags.test(R3FLAG_MSAA_OPT);
-	o.dx10_msaa_opt		= o.dx10_msaa_opt && o.dx10_msaa && ( HW.FeatureLevel >= D3D_FEATURE_LEVEL_10_1 )
-			|| o.dx10_msaa && (HW.FeatureLevel >= D3D_FEATURE_LEVEL_11_0);
+	o.dx10_msaa_opt		= o.dx10_msaa_opt && o.dx10_msaa && ( HW.FeatureLevel >= D3D_FEATURE_LEVEL_10_1 );
+			//o.dx10_msaa && (HW.FeatureLevel >= D3D_FEATURE_LEVEL_11_0);
 
 	//o.dx10_msaa_hybrid	= ps_r2_ls_flags.test(R3FLAG_MSAA_HYBRID);
 	o.dx10_msaa_hybrid	= ps_r2_ls_flags.test((u32)R3FLAG_USE_DX10_1);
@@ -1174,21 +1174,20 @@ HRESULT	CRender::shader_compile			(
     if( o.dx10_msaa )
 	{
 		static char def[ 256 ];
-		//if( m_MSAASample < 0 )
-		//{
+		if( m_MSAASample < 0 || o.dx10_msaa_opt )
+		{
 			def[0]= '0';
-		//	sh_name[len]='0'; ++len;
-		//}
-		//else
-		//{
-		//	def[0]= '0' + char(m_MSAASample);
-		//	sh_name[len]='0' + char(m_MSAASample); ++len;
-		//}
+			sh_name[len]='0'; ++len;
+		}
+		else
+		{
+			def[0]= '0' + char(m_MSAASample);
+			sh_name[len]='0' + char(m_MSAASample); ++len;
+		}
 		def[1] = 0;
 		defines[def_it].Name		=	"ISAMPLE";
 		defines[def_it].Definition	=	def;
 		def_it						++	;
-		sh_name[len]='0'; ++len;
 	}
 	else
 	{
