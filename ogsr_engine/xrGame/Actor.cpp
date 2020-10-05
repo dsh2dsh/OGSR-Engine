@@ -369,8 +369,7 @@ void CActor::Load	(LPCSTR section )
 		VERIFY			(cnt!=0);
 		for(int i=0; i<cnt;++i)
 		{
-			sndHit[hit_type].push_back		(ref_sound());
-			sndHit[hit_type].back().create	(_GetItem(hit_snds,i,tmp),st_Effect,sg_SourceType);
+			sndHit[hit_type].emplace_back().create(_GetItem(hit_snds, i, tmp), st_Effect, sg_SourceType);
 		}
 		strconcat( sizeof( tmp ), tmp, hit_name, "_min" );
 		sndHitMin[ hit_type ] = READ_IF_EXISTS( pSettings, r_float, hit_snd_sect, tmp, 0.f );
