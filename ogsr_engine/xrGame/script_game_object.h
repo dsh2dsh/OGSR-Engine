@@ -135,7 +135,7 @@ struct CSightParams {
 
 class CScriptGameObject {
 	mutable CGameObject		*m_game_object;
-	mutable lua_State		*m_lua_state;
+	mutable lua_State* m_lua_state{};
 public:
 
 							CScriptGameObject		(CGameObject *tpGameObject);

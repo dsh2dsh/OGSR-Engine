@@ -34,7 +34,7 @@ protected:
 
 	float			GetArtefactParam		(ActorRestoreParams params, u32 i);
 
-	CUIStatic*	m_listWnd;
+	CUIStatic* m_listWnd{};
 
 	enum{
 		_item_start = 0,
@@ -60,5 +60,5 @@ protected:
 
 		_max_item_index,
 	};
-	CUIOutfitImmunity*		m_items[_max_item_index];
+	CUIOutfitImmunity* m_items[_max_item_index]{};
 };

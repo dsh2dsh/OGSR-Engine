@@ -30,18 +30,18 @@ class CPHCharacter :
 public:
 
 u64						m_creation_step				;
-bool					b_exist						;
+bool					b_exist{};
 protected:
 
 ////////////////////////// dynamic
 
 CPHInterpolation m_body_interpolation;
 dBodyID				m_body;
-CPhysicsShellHolder* m_phys_ref_object;
+CPhysicsShellHolder* m_phys_ref_object{};
 
 
-dReal					m_mass;
-bool					was_enabled_before_freeze;
+dReal					m_mass{};
+bool					was_enabled_before_freeze{};
 
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ u16* p_lastMaterialIDX;
 u16 lastMaterialIDX;
 ///////////////////////////////////////////////////////////////////////////
 dVector3 m_safe_velocity;
-dVector3 m_safe_position;
+dVector3 m_safe_position{};
 dReal	 m_mean_y;
 public:
 enum ERestrictionType

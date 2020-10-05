@@ -19,7 +19,7 @@ private:
 protected:
 		Fvector					m_mass_center;				//e ??				//bl
 		CPhysicsShellHolder*	m_phys_ref_object;			//->to shell ??		//bl
-		float					m_volume;					//e ??				//bl
+		float					m_volume{};					//e ??				//bl
 		u16						ul_material;				//e ??				//bl
 		ContactCallbackFun*			contact_callback;		//->to shell ??		//bt
 		ObjectContactCallbackFun*	object_contact_callback;//->to shell ??		//st
