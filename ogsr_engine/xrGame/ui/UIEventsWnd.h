@@ -59,4 +59,5 @@ public:
 
 	CUIXml						m_ui_task_item_xml;
 
+	u32 get_visible_objectives( CGameTask* task );
 };
