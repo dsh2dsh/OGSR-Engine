@@ -296,7 +296,6 @@ u32 CUIEventsWnd::get_visible_objectives( CGameTask* task ) {
     auto& it = task->m_Objectives.at( i );
     if ( it.TaskState() != eTaskStateInProgress ) {
       visible_objectives = i + 1;
-      break;
     }
   }
   if ( visible_objectives < 2 )
