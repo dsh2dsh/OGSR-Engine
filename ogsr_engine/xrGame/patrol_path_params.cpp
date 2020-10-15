@@ -109,3 +109,7 @@ void CPatrolPathParams::safe_path( LPCSTR caPatrolPathToGo, bool on_level, bool 
   THROW3( m_path, "There is no patrol path", caPatrolPathToGo );
 #endif
 }
+
+LPCSTR CPatrolPathParams::patrol_name() const {
+  return m_path_name.c_str();
+}
