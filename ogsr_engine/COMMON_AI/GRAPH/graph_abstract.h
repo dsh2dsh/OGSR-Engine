@@ -54,6 +54,7 @@ public:
 	IC		void						add_edge		(const _vertex_id_type &vertex_id0, const _vertex_id_type &vertex_id1, const _edge_weight_type &edge_weight);
 	IC		void						add_edge		(const _vertex_id_type &vertex_id0, const _vertex_id_type &vertex_id1, const _edge_weight_type &edge_weight0, const _edge_weight_type &edge_weight1);
 	IC		void						remove_edge		(const _vertex_id_type &vertex_id0, const _vertex_id_type &vertex_id1);
+	IC void	clear_edges( const _vertex_id_type &vertex_id0 );
 	IC		u32							vertex_count	() const;
 	IC		u32							edge_count		() const;
 	IC		bool						empty			() const;

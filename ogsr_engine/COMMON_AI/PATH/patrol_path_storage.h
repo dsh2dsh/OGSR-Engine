@@ -43,6 +43,7 @@ public:
 	void remove_path( shared_str );
 
   const CPatrolPath* safe_path( shared_str, bool = false, bool = false, bool = false ) const;
+  CPatrolPath* get_path( shared_str );
 };
 
 #include "patrol_path_storage_inline.h"

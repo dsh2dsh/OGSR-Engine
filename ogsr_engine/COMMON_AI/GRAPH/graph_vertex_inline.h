@@ -32,8 +32,7 @@ IC	CSGraphVertex::CVertex					(const _data_type &data, const _vertex_id_type &ve
 TEMPLATE_SPECIALIZATION
 IC	CSGraphVertex::~CVertex				()
 {
-	while (!edges().empty())
-		remove_edge			(edges().back().vertex_id());
+	clear_edges();
 
 	while (!m_vertices.empty())
 		m_vertices.back()->remove_edge(vertex_id());
@@ -43,6 +42,12 @@ IC	CSGraphVertex::~CVertex				()
 	}
 	catch(...) {
 	}
+}
+
+TEMPLATE_SPECIALIZATION
+IC void CSGraphVertex::clear_edges() {
+  while ( !edges().empty() )
+    remove_edge( edges().back().vertex_id() );
 }
 
 TEMPLATE_SPECIALIZATION

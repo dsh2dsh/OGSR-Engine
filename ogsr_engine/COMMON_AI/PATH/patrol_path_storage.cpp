@@ -166,6 +166,12 @@ void CPatrolPathStorage::add_path( shared_str patrol_name, CPatrolPath *path ) {
 }
 
 
+CPatrolPath* CPatrolPathStorage::get_path( shared_str patrol_name ) {
+  auto it = m_registry.find( patrol_name );
+  return ( it == m_registry.end() ? nullptr : (*it).second );
+}
+
+
 const CPatrolPath* CPatrolPathStorage::safe_path( shared_str patrol_name, bool no_assert, bool on_level, bool strict_pos_inside ) const {
   auto it = m_registry.find( patrol_name );
   if ( it == m_registry.end() )

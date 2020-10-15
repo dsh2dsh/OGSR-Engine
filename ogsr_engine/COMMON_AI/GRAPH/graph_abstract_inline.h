@@ -76,6 +76,13 @@ IC	void CAbstractGraph::remove_edge		(const _vertex_id_type &vertex_id0, const _
 }
 
 TEMPLATE_SPECIALIZATION
+IC void CAbstractGraph::clear_edges( const _vertex_id_type &vertex_id0 ) {
+  CVertex* _vertex = vertex( vertex_id0 );
+  VERIFY( _vertex );
+  _vertex->clear_edges();
+}
+
+TEMPLATE_SPECIALIZATION
 IC	u32 CAbstractGraph::vertex_count		() const
 {
 	return						(m_vertices.size());

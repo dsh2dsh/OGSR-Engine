@@ -39,6 +39,7 @@ public:
 	IC		bool						operator==			(const CVertex &obj) const;
 	IC		void						add_edge			(CVertex *vertex, const _edge_weight_type &edge_weight);
 	IC		void						remove_edge			(const _vertex_id_type &vertex_id);
+	IC void clear_edges();
 	IC		void						on_edge_addition	(CVertex *vertex);
 	IC		void						on_edge_removal		(const CVertex *vertex);
 	IC		const _vertex_id_type		&vertex_id			() const;

@@ -847,6 +847,11 @@ void patrol_path_remove( LPCSTR patrol_path ) {
 }
 
 
+CPatrolPath* get_patrol_path( LPCSTR patrol_path ) {
+  return ai().patrol_paths_raw().get_path( shared_str( patrol_path ) );
+}
+
+
 //
 float set_blender_mode_main(float blender_num = 0.f) //--#SM+#--
 {
@@ -1145,6 +1150,7 @@ void CLevel::script_register(lua_State *L)
 		def( "get_character_community_team", &get_character_community_team ),
 		def( "is_actor_indoor", &is_actor_indoor ),
 		def( "get_effector_bobbing", &get_effector_bobbing ),
+		def( "get_patrol_path", &get_patrol_path ),
 		//--#SM+# Begin --
 		def("set_blender_mode_main", &set_blender_mode_main),
 		def("get_blender_mode_main", &get_blender_mode_main),
