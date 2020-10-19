@@ -36,26 +36,39 @@ namespace Feel {
 		}
 		return (fp->vis>fp->vis_threshold); 
 	}
-	void	Vision::o_new		(CObject* O)
-	{
-		auto& I = feel_visible.emplace_back();
-		I.O						= O;
-		I.Cache_vis				= 1.f;
-		I.Cache.verts[0].set	(0,0,0);
-		I.Cache.verts[1].set	(0,0,0);
-		I.Cache.verts[2].set	(0,0,0);
-		I.fuzzy					= -EPS_S;
-		I.cp_LP.set				(0,0,0);
-		I.trans = 1.f;
+
+	void Vision::o_new( CObject* O ) {
+	  for ( const auto& it : feel_visible )
+	    if ( it.O == O ) return;
+	  auto& I = feel_visible.emplace_back();
+	  I.O         = O;
+	  I.Cache_vis = 1.f;
+	  I.Cache.verts[ 0 ].set( 0, 0, 0 );
+	  I.Cache.verts[ 1 ].set( 0, 0, 0 );
+	  I.Cache.verts[ 2 ].set( 0, 0, 0 );
+	  I.fuzzy     = -EPS_S;
+	  I.cp_LP.set( 0, 0, 0 );
+	  I.trans     = 1.f;
 	}
-	void	Vision::o_delete	(CObject* O)
-	{
+
+	void Vision::o_delete( CObject* O ) {
+	  feel_visible.erase(
+	    std::remove_if(
+	      feel_visible.begin(), feel_visible.end(),
+	      [&]( const auto& it ) {
+	        return it.O == O;
+	      }
+	    ),
+	    feel_visible.end()
+	  );
+/* dsh:
 		xr_vector<feel_visible_Item>::iterator I=feel_visible.begin(),TE=feel_visible.end();
 		for (; I!=TE; I++)
 			if (I->O==O) {
 				feel_visible.erase(I);
 				return;
 			}
+*/
 	}
 
 	void	Vision::feel_vision_clear	()
@@ -75,8 +88,11 @@ namespace Feel {
 		if (Io!=query.end())query.erase	(Io);
 		Io = std::find		(diff.begin(),diff.end(),object);
 		if (Io!=diff.end())	diff.erase	(Io);
+/* dsh:
 		xr_vector<feel_visible_Item>::iterator Ii=feel_visible.begin(),IiE=feel_visible.end();
 		for (; Ii!=IiE; ++Ii)if (Ii->O==object){ feel_visible.erase(Ii); break; }
+*/
+		o_delete( object );
 	}
 
 	void	Vision::feel_vision_query	(Fmatrix& mFull, Fvector& P)
