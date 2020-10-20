@@ -18,6 +18,7 @@
 #include "visual_memory_manager.h"
 #include "sound_memory_manager.h"
 #include "hit_memory_manager.h"
+#include "agent_enemy_manager.h"
 
 CGroupHierarchyHolder::~CGroupHierarchyHolder			()
 {
@@ -124,6 +125,8 @@ void CGroupHierarchyHolder::unregister_in_agent_manager	(CEntity *member)
 		agent_manager().member().remove	(member);
 		if (agent_manager().member().members().empty())
 			xr_delete					(m_agent_manager);
+		else
+		  agent_manager().enemy().remove_wounded_processor( member->ID() );
 	}
 
 	if (m_members.empty()) {

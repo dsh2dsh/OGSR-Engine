@@ -47,6 +47,7 @@ protected:
 
 public:
 	IC						CAgentEnemyManager	(CAgentManager *object);
+	~CAgentEnemyManager();
 			void			update				();
 			void			distribute_enemies	();
 	IC		ENEMIES			&enemies			();
@@ -54,6 +55,7 @@ public:
 
 private:
 			void			wounded_processor	(const CEntityAlive *object, const ALife::_OBJECT_ID &wounded_processor_id);
+			void cleanup_wounded_processors();
 
 public:
 		ALife::_OBJECT_ID	wounded_processor	(const CEntityAlive *object);
@@ -62,6 +64,7 @@ public:
 			bool			assigned_wounded	(const CEntityAlive *wounded, const CAI_Stalker *member);
 			bool			useful_enemy		(const CEntityAlive *enemy, const CAI_Stalker *member) const;
 			void remove_wounded_processor( const CEntityAlive* object );
+			void remove_wounded_processor( ALife::_OBJECT_ID wounded_processor_id );
 };
 
 #include "agent_enemy_manager_inline.h"

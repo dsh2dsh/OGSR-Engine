@@ -88,6 +88,10 @@ public:
 
 CAgentEnemyManager::WOUNDED_ENEMIES CAgentEnemyManager::m_wounded_processors;
 
+CAgentEnemyManager::~CAgentEnemyManager() {
+  cleanup_wounded_processors();
+}
+
 void CAgentEnemyManager::fill_enemies			()
 {
 	m_enemies.clear					();
@@ -122,7 +126,8 @@ void CAgentEnemyManager::fill_enemies			()
 			    m_wounded_processors.begin(),
 			    m_wounded_processors.end(),
 			    find_wounded_predicate( enemy )
-			  )
+                          ),
+			  m_wounded_processors.end()
 			);
 		}
 	}
@@ -423,14 +428,7 @@ void CAgentEnemyManager::assign_wounded			()
 	u32						previous_wounded_count = m_wounded.size();
 	WOUNDED_ENEMY			*previous_wounded = (WOUNDED_ENEMY*)_alloca(previous_wounded_count*sizeof(WOUNDED_ENEMY)); //-V630
 	std::copy				(m_wounded.begin(),m_wounded.end(),previous_wounded);
-	for ( const auto& it : m_wounded )
-	  m_wounded_processors.erase(
-	    std::remove_if(
-	      m_wounded_processors.begin(),
-	      m_wounded_processors.end(),
-	      find_wounded_predicate( it.first )
-	    )
-	  );
+	cleanup_wounded_processors();
 	m_wounded.clear			();
 
 #ifdef DEBUG
@@ -578,7 +576,8 @@ void CAgentEnemyManager::assign_wounded			()
 		  CAI_Stalker* stalker = smart_cast<CAI_Stalker*>( O );
 		  if ( stalker ) {
 		    float dist = stalker->Position().distance_to_sqr( enemy->m_object->Position() );
-		    if ( best_distance_sqr < dist ) {
+		    if ( best_distance_sqr < dist || !stalker->g_Alive() || stalker->wounded() ) {
+		      ASSERT_FMT( stalker->get_agent_manager(), "[%s]: %s has no agent_manager()", __FUNCTION__, stalker->cName().c_str() );
 		      stalker->agent_manager().enemy().remove_wounded_processor( enemy->m_object );
 		      wounded_processor( enemy->m_object, processor->ID() );
 		    }
@@ -746,13 +745,52 @@ void CAgentEnemyManager::remove_wounded_processor( const CEntityAlive *object ) 
       m_wounded.begin(),
       m_wounded.end(),
       find_wounded_predicate( object )
-    )
+    ),
+    m_wounded.end()
   );
   m_wounded_processors.erase(
     std::remove_if(
       m_wounded_processors.begin(),
       m_wounded_processors.end(),
       find_wounded_predicate( object )
-    )
+    ),
+    m_wounded_processors.end()
   );
+}
+
+
+void CAgentEnemyManager::remove_wounded_processor( ALife::_OBJECT_ID wounded_processor_id ) {
+  m_wounded.erase(
+    std::remove_if(
+      m_wounded.begin(),
+      m_wounded.end(),
+      [&]( const auto& it ) -> bool {
+        return it.second.first == wounded_processor_id;
+      }
+    ),
+    m_wounded.end()
+  );
+  m_wounded_processors.erase(
+    std::remove_if(
+      m_wounded_processors.begin(),
+      m_wounded_processors.end(),
+      [&]( const auto& it ) -> bool {
+        return it.second.first == wounded_processor_id;
+      }
+    ),
+    m_wounded_processors.end()
+  );
+}
+
+
+void CAgentEnemyManager::cleanup_wounded_processors() {
+  for ( const auto& it : m_wounded )
+    m_wounded_processors.erase(
+      std::remove_if(
+        m_wounded_processors.begin(),
+        m_wounded_processors.end(),
+        find_wounded_predicate( it.first )
+      ),
+      m_wounded_processors.end()
+    );
 }

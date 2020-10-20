@@ -52,6 +52,7 @@
 #include "../../inventory.h"
 #include "../../game_object_space.h"
 #include "../../holder_custom.h"
+#include "../../agent_enemy_manager.h"
 
 using namespace StalkerSpace;
 
@@ -819,6 +820,7 @@ void CAI_Stalker::wounded					(bool value)
 		return;
 
 	agent_manager().member().unregister_in_combat	(this);
+	agent_manager().enemy().remove_wounded_processor( ID() );
 }
 
 bool CAI_Stalker::wounded					(const CRestrictedObject *object) const
