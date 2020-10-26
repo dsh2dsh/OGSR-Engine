@@ -936,6 +936,13 @@ void CScriptGameObject::unregister_in_combat() {
 }
 
 
+bool CScriptGameObject::registered_in_combat() {
+  CAI_Stalker *stalker = smart_cast<CAI_Stalker*>( &object() );
+  ASSERT_FMT( stalker, "[%s]: %s not a CAI_Stalker", __FUNCTION__, object().cName().c_str() );
+  return stalker->agent_manager().member().registered_in_combat( stalker );
+}
+
+
 void CScriptGameObject::enable_clutched_hammer( bool val ) {
   CAI_Stalker *stalker = smart_cast<CAI_Stalker*>( &object() );
   ASSERT_FMT( stalker, "[%s]: %s not a CAI_Stalker", __FUNCTION__, object().cName().c_str() );

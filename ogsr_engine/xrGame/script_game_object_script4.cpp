@@ -369,6 +369,7 @@ class_<CScriptGameObject> script_register_game_object3(class_<CScriptGameObject>
 
 		.def( "register_in_combat",   &CScriptGameObject::register_in_combat   )
 		.def( "unregister_in_combat", &CScriptGameObject::unregister_in_combat )
+		.def( "registered_in_combat", &CScriptGameObject::registered_in_combat )
 		.def( "enable_clutched_hammer", &CScriptGameObject::enable_clutched_hammer )
 
 		.def( "stalker_disp_base", ( float ( CScriptGameObject::* )() )( &CScriptGameObject::stalker_disp_base ) )

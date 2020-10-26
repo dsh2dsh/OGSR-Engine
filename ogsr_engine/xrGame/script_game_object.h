@@ -808,6 +808,7 @@ public:
 
 	void register_in_combat();
 	void unregister_in_combat();
+	bool registered_in_combat();
 	void enable_clutched_hammer( bool );
 
 	float stalker_disp_base();
