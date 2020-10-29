@@ -220,25 +220,24 @@ void CLocatorAPI::Register		(LPCSTR name, u32 vfs, u32 crc, u32 ptr, u32 size_re
 	strcpy_s			(temp, desc.name);
 	string_path			path;
 	string_path			folder;
-	while (temp[0]) 
-	{
-		_splitpath		(temp, path, folder, 0, 0 );
-		if ( !folder[0] ) break;
-        strcat			(path,folder);
-		if (!exist(path))	
-		{
-			desc.name			= xr_strdup(path);
-			desc.vfs			= 0xffffffff;
-			desc.ptr			= 0;
-			desc.size_real		= 0;
-			desc.size_compressed= 0;
-            desc.modif			= u32(-1);
-            std::pair<files_it,bool> I = files.insert(desc); 
-
-            R_ASSERT(I.second);
-		}
-		strcpy_s( temp, path ); //strcpy_s					(temp, folder);
-		if (xr_strlen(temp))		temp[xr_strlen(temp)-1]=0;
+	while ( temp[ 0] ) {
+	  _splitpath( temp, path, folder, 0, 0 );
+	  if ( !folder[0] )
+	    break;
+	  strcat( path, folder );
+	  if ( !exist( path ) ) {
+	    desc.name  = xr_strdup( path );
+	    desc.vfs   = 0xffffffff;
+	    desc.ptr   = 0;
+	    desc.size_real = 0;
+	    desc.size_compressed = 0;
+	    desc.modif = u32(-1);
+	    std::pair<files_it,bool> I = files.insert( desc );
+	    R_ASSERT( I.second );
+	  }
+	  strcpy_s( temp, path );
+	  if ( xr_strlen( temp ) )
+	    temp[ xr_strlen( temp ) - 1 ] = 0;
 	}
 }
 
