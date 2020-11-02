@@ -660,16 +660,16 @@ void SGameTaskKey::destroy()
 }
 
 void SGameTaskKey::sync_task_version() {
-	CGameTask* new_game_task = xr_new<CGameTask>(game_task->m_ID);
-	new_game_task->m_ReceiveTime = game_task->m_ReceiveTime;
-	new_game_task->m_FinishTime = game_task->m_FinishTime;
-	new_game_task->m_TimeToComplete = game_task->m_TimeToComplete;
-	if (new_game_task->m_objectives_version == game_task->m_objectives_version) {
-		for (auto& it : game_task->m_Objectives) {
-			if (u32(it.idx) == new_game_task->m_Objectives.size()) break;
-			new_game_task->m_Objectives[it.idx].task_state = it.TaskState();
-		}
-	}
-	delete_data(game_task);
-	game_task = new_game_task;
+  CGameTask* new_game_task = xr_new<CGameTask>( game_task->m_ID );
+  new_game_task->m_ReceiveTime    = game_task->m_ReceiveTime;
+  new_game_task->m_FinishTime     = game_task->m_FinishTime;
+  new_game_task->m_TimeToComplete = game_task->m_TimeToComplete;
+  if ( new_game_task->m_objectives_version == game_task->m_objectives_version ) {
+    for ( auto& it : game_task->m_Objectives ) {
+      if ( u32(it.idx) == new_game_task->m_Objectives.size() ) break;
+      new_game_task->m_Objectives[ it.idx ].task_state = it.TaskState();
+    }
+  }
+  delete_data( game_task );
+  game_task = new_game_task;
 }
