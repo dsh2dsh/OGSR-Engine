@@ -68,3 +68,8 @@ void CUITaskDescrWnd::AddArticle					(CEncyclopediaArticle* article)
 	article_info->SetArticle	(article);
 	m_UITaskInfoWnd->AddWindow	(article_info, true);
 }
+
+
+u32 CUITaskDescrWnd::GetSize() {
+  return m_UITaskInfoWnd->GetSize();
+}

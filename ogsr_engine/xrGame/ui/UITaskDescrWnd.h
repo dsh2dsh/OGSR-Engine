@@ -23,4 +23,5 @@ public:
 	void		ClearAll					();
 	void		AddArticle					(LPCSTR article);
 	void		AddArticle					(CEncyclopediaArticle* article);
+	u32 GetSize();
 };

@@ -239,8 +239,7 @@ void CUIEventsWnd::ShowDescription			(CGameTask* t, int idx)
 
 		m_UITaskInfoWnd->ClearAll	();
 
-		if(Actor()->encyclopedia_registry->registry().objects_ptr())
-		{
+		if ( Actor()->encyclopedia_registry->registry().objects_ptr() ) {
 			ARTICLE_VECTOR::const_iterator it		= Actor()->encyclopedia_registry->registry().objects_ptr()->begin();
 
 			for(; it != Actor()->encyclopedia_registry->registry().objects_ptr()->end(); ++it)
@@ -259,6 +258,17 @@ void CUIEventsWnd::ShowDescription			(CGameTask* t, int idx)
 						m_UITaskInfoWnd->AddArticle(&A);
 					}
 				}
+			}
+
+			if ( o.article_id.size() && !m_UITaskInfoWnd->GetSize() ) {
+			  ARTICLE_VECTOR& article_vector = Actor()->encyclopedia_registry->registry().objects();
+			  FindArticleByIDPred pred( o.article_id );
+			  if ( std::find_if( article_vector.begin(), article_vector.end(), pred ) == article_vector.end() ) {
+			    CEncyclopediaArticle article;
+			    article.Load( o.article_id );
+			    article_vector.emplace_back( o.article_id, Level().GetGameTime(), article.data()->articleType );
+			    m_UITaskInfoWnd->AddArticle( &article );
+			  }
 			}
 		}
 	}
