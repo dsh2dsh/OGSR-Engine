@@ -444,6 +444,7 @@ protected:
 	//увеличение изношености при выстреле
 	float					conditionDecreasePerShot;
 	float					conditionDecreasePerShotOnHit;
+	float					conditionDecreasePerShotSilencer;
 
 	//  [8/2/2005]
 	float					m_fPDM_disp_base			;
