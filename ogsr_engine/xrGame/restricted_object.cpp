@@ -80,8 +80,7 @@ BOOL CRestrictedObject::net_Spawn			(CSE_Abstract* data)
 	m_applied					= false;
 	m_removed					= true;
 	
-	string8192					temp0;
-	string8192					temp1;
+	string8192 temp0{}, temp1{};
 	
 	xr_strcpy						(temp0,*monster->m_out_space_restrictors);
 	xr_strcpy						(temp1,*monster->m_in_space_restrictors);
@@ -340,8 +339,7 @@ void CRestrictedObject::add_restrictions	(const xr_vector<ALife::_OBJECT_ID> &ou
 
 	START_PROFILE("Restricted Object/Add Restrictions");
 
-	string8192					temp_out_restrictions;
-	string8192					temp_in_restrictions;
+	string8192 temp_out_restrictions{}, temp_in_restrictions{};
 	
 	construct_restriction_string<CRestrictionPredicate<true>,true>(temp_out_restrictions,sizeof(temp_out_restrictions),out_restrictions,this->out_restrictions(),CRestrictionPredicate<true>(RestrictionSpace::eRestrictorTypeOut));
 	construct_restriction_string<CRestrictionPredicate<true>,true>(temp_in_restrictions,sizeof(temp_in_restrictions),in_restrictions,this->in_restrictions(),CRestrictionPredicate<true>(RestrictionSpace::eRestrictorTypeIn));
@@ -360,8 +358,7 @@ void CRestrictedObject::remove_restrictions	(const xr_vector<ALife::_OBJECT_ID> 
 
 	START_PROFILE("Restricted Object/Remove Restrictions");
 	
-	string8192					temp_out_restrictions;
-	string8192					temp_in_restrictions;
+	string8192 temp_out_restrictions{}, temp_in_restrictions{};
 
 	construct_restriction_string<CRestrictionPredicate<false>,false>(temp_out_restrictions,sizeof(temp_out_restrictions),out_restrictions,this->out_restrictions(),CRestrictionPredicate<false>(RestrictionSpace::eRestrictorTypeOut));
 	construct_restriction_string<CRestrictionPredicate<false>,false>(temp_in_restrictions,sizeof(temp_in_restrictions),in_restrictions,this->in_restrictions(),CRestrictionPredicate<false>(RestrictionSpace::eRestrictorTypeIn));
