@@ -16,6 +16,7 @@
 #include "../alife_registry_wrappers.h"
 #include "../encyclopedia_article.h"
 #include "UIPdaAux.h"
+#include "UIEditBox.h"
 
 extern u32			g_pda_info_state;
 
@@ -23,6 +24,8 @@ CUIDiaryWnd::CUIDiaryWnd()
 {
 	m_currFilter	= eNone;
 	prevArticlesCount = 0;
+	m_UISearchNews     = nullptr;
+	m_UIEditSearchNews = nullptr;
 }
 
 CUIDiaryWnd::~CUIDiaryWnd()
@@ -33,6 +36,8 @@ CUIDiaryWnd::~CUIDiaryWnd()
 	m_ArticlesDB.clear();
 	delete_data(m_updatedSectionImage);
 	delete_data(m_oldSectionImage);
+	if ( m_UISearchNews )
+	  delete_data( m_UISearchNews );
 }
 
 void CUIDiaryWnd::Show(bool status)
@@ -77,6 +82,19 @@ void CUIDiaryWnd::Init()
 	xml_init.InitWindow				(uiXml, "main_wnd:left_frame:work_area", 0, m_UILeftWnd);
 	m_UILeftFrame->AttachChild		(m_UILeftWnd);
 
+//dsh:
+	if ( uiXml.NavigateToNode( "main_wnd:left_frame:work_area:search_news", 0 ) ) {
+	  m_UISearchNews = xr_new<CUIWindow>();
+          m_UISearchNews->SetAutoDelete( false );
+	  xml_init.InitWindow( uiXml, "main_wnd:left_frame:work_area:search_news", 0, m_UISearchNews );
+	  m_UIEditSearchNews = xr_new<CUIEditBox>();
+	  m_UIEditSearchNews->SetAutoDelete( true );
+          m_UISearchNews->AttachChild( m_UIEditSearchNews );
+	  xml_init.InitEditBox( uiXml, "main_wnd:left_frame:work_area:search_news:edit", 0, m_UIEditSearchNews );
+	  Register( m_UIEditSearchNews );
+	  AddCallback( m_UIEditSearchNews->WindowName(), EDIT_TEXT_COMMIT, fastdelegate::MakeDelegate(this, &CUIDiaryWnd::OnSearchNews ) );
+	}
+
 	m_SrcListWnd					= xr_new<CUIListWnd>(); m_SrcListWnd->SetAutoDelete(false);
 	xml_init.InitListWnd			(uiXml, "main_wnd:left_frame:work_area:src_list", 0, m_SrcListWnd);
 	m_SrcListWnd->SetWindowName		("src_list");
@@ -115,9 +133,8 @@ void CUIDiaryWnd::Init()
 	RearrangeTabButtons				(m_FilterTab, m_sign_places);
 }
 
-void	CUIDiaryWnd::SendMessage			(CUIWindow* pWnd, s16 msg, void* pData)
-{
-	CUIWndCallback::OnEvent(pWnd, msg, pData);
+void CUIDiaryWnd::SendMessage( CUIWindow* pWnd, s16 msg, void* pData ) {
+  CUIWndCallback::OnEvent( pWnd, msg, pData );
 }
 
 void CUIDiaryWnd::OnFilterChanged			(CUIWindow* w, void*)
@@ -183,17 +200,25 @@ void CUIDiaryWnd::LoadJournalTab()
 }
 
 
-void CUIDiaryWnd::UnloadNewsTab	()
-{
-	m_UIRightWnd->DetachChild	(m_UINewsWnd);
-	m_UINewsWnd->Show			(false);
+void CUIDiaryWnd::UnloadNewsTab() {
+  m_UIRightWnd->DetachChild( m_UINewsWnd );
+  m_UINewsWnd->Show( false );
+  if ( m_UISearchNews ) {
+    m_UILeftWnd->DetachChild( m_UISearchNews );
+    m_UISearchNews->Show( false );
+    m_UIEditSearchNews->SetText( "" );
+    m_UINewsWnd->SetSearchStr( "" );
+  }
 }
 
-void CUIDiaryWnd::LoadNewsTab	()
-{
-	m_UIRightWnd->AttachChild	(m_UINewsWnd);
-	m_UINewsWnd->Show			(true);
-	g_pda_info_state			&= ~pda_section::news;
+void CUIDiaryWnd::LoadNewsTab() {
+  m_UIRightWnd->AttachChild( m_UINewsWnd );
+  m_UINewsWnd->Show( true );
+  g_pda_info_state &= ~pda_section::news;
+  if ( m_UISearchNews ) {
+    m_UILeftWnd->AttachChild( m_UISearchNews );
+    m_UISearchNews->Show( true );
+  }
 }
 
 void CUIDiaryWnd::OnSrcListItemClicked	(CUIWindow* w,void* p)
@@ -301,4 +326,9 @@ void CUIDiaryWnd::UpdateJournal() {
     }
     prevArticlesCount = Actor()->encyclopedia_registry->registry().objects_ptr()->size();
   }
+}
+
+
+void CUIDiaryWnd::OnSearchNews( CUIWindow* w, void* pData ) {
+  m_UINewsWnd->SetSearchStr( m_UIEditSearchNews->GetText() );
 }

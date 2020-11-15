@@ -8,11 +8,11 @@ struct GAME_NEWS_DATA;
 class CUINewsItemWnd :public CUIWindow
 {
 typedef	CUIWindow		inherited;
-CUIStatic*				m_UIText;
-CUIStatic*				m_UITextDate;
-CUIStatic*				m_UIImage;
-
 public:
+	CUIStatic* m_UIText;
+	CUIStatic* m_UITextDate;
+	CUIStatic* m_UIImage;
+
 					CUINewsItemWnd					();
 	virtual			~CUINewsItemWnd					();
 			void	Init( CUIXml& uiXml, LPCSTR start_from );

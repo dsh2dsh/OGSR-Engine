@@ -4,6 +4,7 @@
 #include "UIWindow.h"
 #include "UIWndCallback.h"
 #include "../encyclopedia_article_defs.h"
+class CUIEditBox;
 class CUINewsWnd;
 class CUIFrameLineWnd;
 class CUIFrameWindow;
@@ -39,6 +40,8 @@ protected:
 	CUITabControl*		m_FilterTab;
 	CUIListWnd*			m_SrcListWnd;
 	CUIScrollView*		m_DescrView;
+	CUIWindow*  m_UISearchNews;
+	CUIEditBox* m_UIEditSearchNews;
 	CGameFont*			m_pTreeRootFont;
 	u32					m_uTreeRootColor;
 	CGameFont*			m_pTreeItemFont;
@@ -57,6 +60,8 @@ protected:
 			void		UnloadNewsTab			();
 			void		LoadNewsTab				();
 			void		Reload					(EDiaryFilter new_filter);
+	void OnSearchNews( CUIWindow* w, void* pData );
+
 public:
 						CUIDiaryWnd				();
 	virtual				~CUIDiaryWnd			();
