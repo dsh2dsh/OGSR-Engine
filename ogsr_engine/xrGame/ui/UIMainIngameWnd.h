@@ -53,6 +53,7 @@ protected:
 	CUICarPanel			UICarPanel;
 	CUIMotionIcon		UIMotionIcon;	
 	CUIZoneMap*			UIZoneMap;
+	CUIWindow* m_UIPause;
 
 	//иконка, показывающая количество активных PDA
 	CUIStatic			UIPdaOnline;
@@ -167,6 +168,9 @@ protected:
 	void				UpdatePickUpItem();
 public:
 	void				SetPickUpItem	(CInventoryItem* PickUpItem);
+	bool has_pause_screen();
+	bool visible_pause_screen();
+	void show_pause_screen( bool onoff );
 
 	DECLARE_SCRIPT_REGISTER_FUNCTION
 #ifdef DEBUG

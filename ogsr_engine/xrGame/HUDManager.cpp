@@ -6,6 +6,7 @@
 #include "..\xr_3da\igame_level.h"
 #include "clsid_game.h"
 #include "GamePersistent.h"
+#include "ui\UIMainInGameWnd.h"
 
 
 CFontManager::CFontManager()
@@ -237,7 +238,12 @@ void  CHUDManager::RenderUI()
 
 	// draw_wnds_rects		(); -- вызываеться так же после RenderUI
 
-	if( Device.Paused() && bShowPauseString){
+	if ( Device.Paused() && bShowPauseString ) {
+	  if ( pUI->UIMainIngameWnd->has_pause_screen() ) {
+	    if ( !pUI->UIMainIngameWnd->visible_pause_screen() )
+	      pUI->UIMainIngameWnd->show_pause_screen( true );
+	  }
+	  else {
 		CGameFont* pFont	= Font().pFontGraffiti50Russian;
 		pFont->SetColor		(0x80FF0000	);
 		LPCSTR _str			= CStringTable().translate("st_game_paused").c_str();
@@ -248,7 +254,10 @@ void  CHUDManager::RenderUI()
 		pFont->SetAligment	(CGameFont::alCenter);
 		pFont->Out			(_pos.x, _pos.y, _str);
 		pFont->OnRender		();
+	  }
 	}
+	else if ( !Device.Paused() && pUI->UIMainIngameWnd->visible_pause_screen() )
+	  pUI->UIMainIngameWnd->show_pause_screen( false );
 
 }
 
@@ -281,7 +290,7 @@ void CHUDManager::SetHitmarkType		(LPCSTR tex_name)
 {
 	HitMarker.InitShader				(tex_name);
 }
-#include "ui\UIMainInGameWnd.h"
+
 void CHUDManager::OnScreenRatioChanged()
 {
 	xr_delete							(pUI->UIMainIngameWnd);

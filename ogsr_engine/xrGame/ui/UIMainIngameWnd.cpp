@@ -129,6 +129,8 @@ CUIMainIngameWnd::CUIMainIngameWnd()
 	warn_icon_list[ewiPsyHealth]	= &UIPsyHealthIcon;
 	warn_icon_list[ewiInvincible]	= &UIInvincibleIcon;
 	warn_icon_list[ewiThirst]		= &UIThirstIcon;
+
+	m_UIPause = nullptr;
 }
 
 #include "UIProgressShape.h"
@@ -141,6 +143,8 @@ CUIMainIngameWnd::~CUIMainIngameWnd()
 	xr_delete					(m_artefactPanel);
 	HUD_SOUND::DestroySound		(m_contactSnd);
 	xr_delete					(g_MissileForceShape);
+	if ( m_UIPause )
+	  delete_data( m_UIPause );
 }
 
 void CUIMainIngameWnd::Init()
@@ -300,6 +304,12 @@ void CUIMainIngameWnd::Init()
 	UIStaticDiskIO.SetOriginalRect			(0,0,32,32);
 	UIStaticDiskIO.SetStretchTexture		(TRUE);
 
+	if ( uiXml.NavigateToNode( "pause_screen", 0 ) ) {
+	  m_UIPause = xr_new<CUIWindow>();
+          m_UIPause->SetAutoDelete( false );
+	  xml_init.InitWindow( uiXml, "pause_screen", 0, m_UIPause );
+          m_UIPause->Show( false );
+	}
 
 	HUD_SOUND::LoadSound					("maingame_ui", "snd_new_contact"		, m_contactSnd		, SOUND_TYPE_IDLE);
 }
@@ -1219,6 +1229,27 @@ void CUIMainIngameWnd::reset_ui()
 	m_pPickUpItem					= NULL;
 	UIMotionIcon.ResetVisibility	();
 }
+
+
+bool CUIMainIngameWnd::has_pause_screen() {
+  return m_UIPause ? true : false;
+}
+
+bool CUIMainIngameWnd::visible_pause_screen() {
+  return m_UIPause ? m_UIPause->GetVisible() : false;
+}
+
+void CUIMainIngameWnd::show_pause_screen( bool onoff ) {
+  if ( onoff && !IsChild( m_UIPause ) ) {
+    AttachChild( m_UIPause );
+    m_UIPause->Show( true );
+  }
+  else if ( !onoff && IsChild( m_UIPause ) ) {
+    DetachChild( m_UIPause );
+    m_UIPause->Show( false );
+  }
+}
+
 
 #ifdef DEBUG
 
