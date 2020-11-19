@@ -238,10 +238,13 @@ void  CHUDManager::RenderUI()
 
 	// draw_wnds_rects		(); -- вызываеться так же после RenderUI
 
+	CUIWindow* pause_screen = pUI->UIMainIngameWnd->get_pause_screen();
 	if ( Device.Paused() && bShowPauseString ) {
-	  if ( pUI->UIMainIngameWnd->has_pause_screen() ) {
-	    if ( !pUI->UIMainIngameWnd->visible_pause_screen() )
-	      pUI->UIMainIngameWnd->show_pause_screen( true );
+	  if ( pause_screen ) {
+	    if ( !pause_screen->GetVisible() ) {
+	      GetUI()->AddDialogToRender( pause_screen );
+	      pause_screen->Show( true );
+	    }
 	  }
 	  else {
 		CGameFont* pFont	= Font().pFontGraffiti50Russian;
@@ -256,8 +259,10 @@ void  CHUDManager::RenderUI()
 		pFont->OnRender		();
 	  }
 	}
-	else if ( !Device.Paused() && pUI->UIMainIngameWnd->visible_pause_screen() )
-	  pUI->UIMainIngameWnd->show_pause_screen( false );
+	else if ( pause_screen && pause_screen->GetVisible() && !Device.Paused() ) {
+	  GetUI()->RemoveDialogToRender( pause_screen );
+	  pause_screen->Show( false );
+	}
 
 }
 

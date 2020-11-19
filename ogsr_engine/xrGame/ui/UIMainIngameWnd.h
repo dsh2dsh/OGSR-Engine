@@ -168,9 +168,7 @@ protected:
 	void				UpdatePickUpItem();
 public:
 	void				SetPickUpItem	(CInventoryItem* PickUpItem);
-	bool has_pause_screen();
-	bool visible_pause_screen();
-	void show_pause_screen( bool onoff );
+	CUIWindow* get_pause_screen();
 
 	DECLARE_SCRIPT_REGISTER_FUNCTION
 #ifdef DEBUG

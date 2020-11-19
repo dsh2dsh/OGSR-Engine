@@ -1231,23 +1231,8 @@ void CUIMainIngameWnd::reset_ui()
 }
 
 
-bool CUIMainIngameWnd::has_pause_screen() {
-  return m_UIPause ? true : false;
-}
-
-bool CUIMainIngameWnd::visible_pause_screen() {
-  return m_UIPause ? m_UIPause->GetVisible() : false;
-}
-
-void CUIMainIngameWnd::show_pause_screen( bool onoff ) {
-  if ( onoff && !IsChild( m_UIPause ) ) {
-    AttachChild( m_UIPause );
-    m_UIPause->Show( true );
-  }
-  else if ( !onoff && IsChild( m_UIPause ) ) {
-    DetachChild( m_UIPause );
-    m_UIPause->Show( false );
-  }
+CUIWindow* CUIMainIngameWnd::get_pause_screen() {
+  return m_UIPause;
 }
 
 
