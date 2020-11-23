@@ -34,6 +34,7 @@
 #include "WeaponMagazinedWGrenade.h"
 #include "GamePersistent.h"
 #include "ui/UIMainIngameWnd.h"
+#include "ai/phantom/phantom.h"
 
 #define WEAPON_REMOVE_TIME		60000
 #define ROTATION_TIME			0.25f
@@ -2230,6 +2231,9 @@ float CWeapon::GetHudFov()
 		// Получаем расстояние от камеры до точки в прицеле
 		collide::rq_result& RQ = HUD().GetCurrentRayQuery();
 		float dist = RQ.range;
+
+		if ( RQ.O && smart_cast<CPhantom*>( RQ.O ) )
+		  dist = m_nearwall_dist_max;
 
 		// Интерполируем расстояние в диапазон от 0 (min) до 1 (max)
 		clamp(dist, m_nearwall_dist_min, m_nearwall_dist_max);
