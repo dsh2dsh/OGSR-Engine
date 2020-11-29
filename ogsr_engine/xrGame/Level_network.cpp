@@ -179,7 +179,7 @@ void CLevel::ClientSend()
 u32 CLevel::Objects_net_Save( NET_Packet* _Packet, u32 start, u32 max_object_size ) {
   NET_Packet& Packet = *_Packet;
   u32 position;
-  for ( ; start < Objects.o_count(); start++ ) {
+  while ( start < Objects.o_count() ) {
     CObject*     _P = Objects.o_get_by_iterator( start );
     CGameObject* P  = smart_cast<CGameObject*>( _P );
     // Msg( "save:iterating:%d:%s", P->ID(), *P->cName() );
@@ -192,11 +192,14 @@ u32 CLevel::Objects_net_Save( NET_Packet* _Packet, u32 start, u32 max_object_siz
       ASSERT_FMT( size < 65536, "Object [%s][%u] exceed network-data limit: size = [%u], Pend = [%u], Pstart = [%u]", P->cName().c_str(), P->ID(), size, Packet.w_tell(), position );
       // Msg( "save:saved:%d bytes:%d:%s", size, P->ID(), *P->cName() );
       Packet.w_chunk_close16( position );
-      if ( max_object_size > ( NET_PacketSizeLimit - Packet.w_tell() ) )
+      if ( max_object_size > ( NET_PacketSizeLimit - Packet.w_tell() ) ) {
+        start++;
         break;
+      }
     }
+    start++;
   }
-  return ++start;
+  return start;
 }
 
 

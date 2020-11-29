@@ -239,12 +239,12 @@ u32	CObjectList::net_Export			(NET_Packet* _Packet,	u32 start, u32 max_object_si
 
 	NET_Packet& Packet	= *_Packet;
 	u32			position;
-	for (; start<objects_active.size() + objects_sleeping.size(); start++)			{
+	while ( start < objects_active.size() + objects_sleeping.size() ) {
 		CObject* P = (start<objects_active.size()) ? objects_active[start] : objects_sleeping[start-objects_active.size()];
 		if (P->net_Relevant() && !P->getDestroy())	{			
 			Packet.w_u16			(u16(P->ID())	);
 			Packet.w_chunk_open8	(position);
-			//Msg						("cl_export: %d '%s'",P->ID(),*P->cName());
+			//Msg( "[%s]: cl_export: %d '%s'", __FUNCTION__, P->ID(), P->cName().c_str() );
 			P->net_Export			(Packet);
 
 #ifdef DEBUG
@@ -262,12 +262,15 @@ u32	CObjectList::net_Export			(NET_Packet* _Packet,	u32 start, u32 max_object_si
 			Packet.w_chunk_close8	(position);
 //			if (0==(--count))		
 //				break;
-			if (max_object_size > (NET_PacketSizeLimit - Packet.w_tell()))
+			if ( max_object_size > ( NET_PacketSizeLimit - Packet.w_tell() ) ) {
+				start++;
 				break;
+			}
 		}
+		start++;
 	}
 	if (g_Dump_Export_Obj) Msg("------------------- ");
-	return	start+1;
+	return start;
 }
 
 int	g_Dump_Import_Obj = 0;
