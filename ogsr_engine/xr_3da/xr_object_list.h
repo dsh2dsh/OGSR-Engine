@@ -43,6 +43,7 @@ public:
 	CObject*					FindObjectByName	( shared_str	name	);
 	CObject*					FindObjectByName	( LPCSTR		name	);
 	CObject*					FindObjectByCLS_ID	( CLASS_ID		cls		);
+	CObject* FindObjectByID( u16 id );
 
 	void						Load				( );
 	void						Unload				( );
@@ -77,9 +78,7 @@ public:
 
 public:
 			void				register_object_to_destroy	(CObject *object_to_destroy);
-#ifdef DEBUG
 			bool				registered_object_to_destroy(const CObject *object_to_destroy) const;
-#endif // DEBUG
 };
 
 #endif //__XR_OBJECT_LIST_H__

@@ -446,7 +446,6 @@ void CObjectList::register_object_to_destroy(CObject *object_to_destroy)
 	}
 }
 
-#ifdef DEBUG
 bool CObjectList::registered_object_to_destroy	(const CObject *object_to_destroy) const
 {
 	return					(
@@ -458,4 +457,12 @@ bool CObjectList::registered_object_to_destroy	(const CObject *object_to_destroy
 		destroy_queue.end()
 	);
 }
-#endif // DEBUG
+
+
+CObject* CObjectList::FindObjectByID( u16 id ) {
+  for ( xr_vector<CObject*>::iterator I = objects_active.begin(); I != objects_active.end(); I++ )
+    if ( (*I)->ID() == id ) return (*I);
+  for ( xr_vector<CObject*>::iterator I = objects_sleeping.begin(); I != objects_sleeping.end(); I++ )
+    if ( (*I)->ID() == id ) return (*I);
+  return nullptr;
+}
