@@ -190,6 +190,13 @@ u32 get_time_minutes()
 	return			mins;
 }
 
+u32 get_time_seconds()
+{
+	u32 year = 0, month = 0, day = 0, hours = 0, mins = 0, secs = 0, milisecs = 0;
+	split_time((g_pGameLevel && Level().game) ? Level().GetGameTime() : ai().alife().time_manager().game_time(), year, month, day, hours, mins, secs, milisecs);
+	return			secs;
+}
+
 float cover_in_direction(u32 level_vertex_id, const Fvector &direction)
 {
 	float			y,p;
@@ -1050,6 +1057,7 @@ void CLevel::script_register(lua_State *L)
 		def("get_time_days",					get_time_days),
 		def("get_time_hours",					get_time_hours),
 		def("get_time_minutes",					get_time_minutes),
+		def("get_time_seconds",					get_time_seconds),
 
 		def("cover_in_direction",				cover_in_direction),
 		def("vertex_in_direction",				vertex_in_direction),
