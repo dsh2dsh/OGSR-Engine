@@ -303,12 +303,14 @@ void CLevel::cl_Process_Event				(u16 dest, u16 type, NET_Packet& P)
 {
 	//			Msg				("--- event[%d] for [%d]",type,dest);
 	CObject*	 O	= Objects.net_Find	(dest);
-	if (0==O)		{
+	if ( !O ) {
 #ifdef DEBUG
-		Msg("* WARNING: c_EVENT[%d] to [%d]: unknown dest",type,dest);
+	  Msg( "* WARNING: c_EVENT[%d] to [%d]: unknown dest", type, dest );
 #endif // DEBUG
-		return;
+	  ProcessGameSpawnsDestroy( dest, type, P );
+	  return;
 	}
+
 	CGameObject* GO = smart_cast<CGameObject*>(O);
 	if (!GO)		{
 		Msg("! ERROR: c_EVENT[%d] : non-game-object",dest);
@@ -360,6 +362,7 @@ void CLevel::ProcessGameEvents		()
 			Msg("- d[%d],ts[%d] -- E[svT=%d],[evT=%d]",Device.dwTimeGlobal,timeServer(),svT,game_events->queue.begin()->timestamp);
 		*/
 
+		m_just_destroyed.clear();
 		while	(game_events->available(svT))
 		{
 			u16 ID,dest,type;
@@ -384,6 +387,8 @@ void CLevel::ProcessGameEvents		()
 			}			
 		}
 	}
+
+	Device.add_to_seq_parallel( fastdelegate::MakeDelegate( this, &CLevel::ProcessGameSpawns ) );
 }
 
 void CLevel::OnFrame	()
@@ -447,6 +452,11 @@ void CLevel::OnFrame	()
 
 int psLUA_GCSTEP = 100; //10;
 void CLevel::script_gc() {
+  if ( !on_before_script_gc_callback.empty() && Device.dwPrecacheFrame == 0 && !Device.Paused() ) {
+    luabind::functor<void> funct;
+    if ( ai().script_engine().functor( on_before_script_gc_callback.c_str(), funct ) )
+      funct();
+  }
   lua_gc( ai().script_engine().lua(), LUA_GCSTEP, psLUA_GCSTEP );
 }
 
@@ -900,10 +910,17 @@ void CLevel::OnChangeCurrentWeather( LPCSTR sect ) {
     funct( sect );
 }
 
+
+void CLevel::OnDestroyObject( u16 id ) {
+  m_just_destroyed.push_back( id );
+}
+
+
 u32	GameID()
 {
 	return Game().Type();
 }
+
 
 #include "..\xr_3da\IGame_Persistent.h"
 

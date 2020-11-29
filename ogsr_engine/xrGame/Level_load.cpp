@@ -107,8 +107,12 @@ BOOL CLevel::Load_GameSpecific_After()
 		Sounds_Random_Enabled	= FALSE;
 	}
 
-	if ( pSettings->section_exist( "engine_callbacks" ) && pSettings->line_exist( "engine_callbacks", "on_change_weather" ) )
-	  on_change_weather_callback = pSettings->r_string( "engine_callbacks", "on_change_weather" );
+	if ( pSettings->section_exist( "engine_callbacks" ) ) {
+	  if ( pSettings->line_exist( "engine_callbacks", "on_before_script_gc" ) )
+	    on_before_script_gc_callback = pSettings->r_string( "engine_callbacks", "on_before_script_gc" );
+	  if ( pSettings->line_exist( "engine_callbacks", "on_change_weather" ) )
+	    on_change_weather_callback = pSettings->r_string( "engine_callbacks", "on_change_weather" );
+	}
 
 	g_pGamePersistent->Environment().SetGameTime(GetEnvironmentGameDayTimeSec(), game->GetEnvironmentGameTimeFactor());
 

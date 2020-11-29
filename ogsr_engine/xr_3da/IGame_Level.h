@@ -56,6 +56,7 @@ protected:
 	BOOL						Sounds_Random_Enabled{};
 	CCameraManager*				m_pCameras;
 	std::string on_change_weather_callback;
+	std::string on_before_script_gc_callback;
 
 	// temporary
 	xr_vector<ISpatial*>		snd_ER;
@@ -113,6 +114,7 @@ public:
 	virtual void				SetEnvironmentGameTimeFactor(u64 const& GameTime, float const& fTimeFactor) = 0;
 	bool IsActorIndoor();
 	virtual void OnChangeCurrentWeather( LPCSTR sect ) = 0;
+	virtual void OnDestroyObject( u16 id ) = 0;
 
 	virtual void GetGameTimeForShaders(u32& hours, u32& minutes, u32& seconds, u32& milliseconds) = 0;
 };

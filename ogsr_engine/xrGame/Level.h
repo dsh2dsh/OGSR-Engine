@@ -169,6 +169,7 @@ public:
 	xr_deque<CSE_Abstract*>		game_spawn_queue;
 	xrServer*					Server;
 	GlobalFeelTouch				m_feel_deny;
+	std::vector<u16> m_just_destroyed;
 
 private:
 	// preload sounds registry
@@ -229,6 +230,7 @@ public:
 	void						cl_Process_Spawn		(NET_Packet& P);
 	void						ProcessGameEvents		( );
 	void						ProcessGameSpawns		( );
+	void ProcessGameSpawnsDestroy( u16 dest, u16 type, NET_Packet& P );
 
 	// Input
 	virtual	void				IR_OnKeyboardPress		( int btn );
@@ -332,6 +334,7 @@ public:
 			void			remove_objects				();
 	virtual void			OnSessionTerminate			(LPCSTR reason);
 	virtual void OnChangeCurrentWeather( LPCSTR sect );
+	virtual void OnDestroyObject( u16 id );
 
 	DECLARE_SCRIPT_REGISTER_FUNCTION
 };
