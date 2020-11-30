@@ -43,7 +43,7 @@ void CLevel::cl_Process_Spawn(NET_Packet& P)
 
 	if ( Device.dwPrecacheFrame == 0 ) {
 	  CSE_ALifeTraderAbstract* trader = smart_cast<CSE_ALifeTraderAbstract*>( E );
-	  bool postpone = trader ? true : false;
+	  bool postpone = ( trader && !is_removing_objects() ) ? true : false;
 	  if ( !trader ) {
 	    for ( const auto& it : game_spawn_queue ) {
 	      if ( E->ID_Parent == it->ID ) {
