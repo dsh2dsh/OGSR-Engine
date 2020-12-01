@@ -138,6 +138,7 @@ DEFINE_VECTOR	(xr_rtoken,RTokenVec,RTokenVecIt);
 #	define FuncDbg __noop
 #	define ASSERT_FMT_DBG(cond, ...) do { if (!(cond)) Msg(__VA_ARGS__); } while(0) //Вылета не будет, просто в лог напишем
 #endif
+#define MsgIfDbg( ... ) if ( Core.ParamFlags.test( xrCore::ParamFlag::dbg ) ) Msg( __VA_ARGS__ );
 
 
 #include "LocatorAPI.h"

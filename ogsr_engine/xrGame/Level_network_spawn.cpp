@@ -32,7 +32,7 @@ void CLevel::cl_Process_Spawn(NET_Packet& P)
 	};
 
 	if ( std::find( m_just_destroyed.begin(), m_just_destroyed.end(), E->ID ) != m_just_destroyed.end() ) {
-	  Msg( "* [%s]: skip just destroyed %s ID[%d] ID_Parent[%d]", __FUNCTION__, E->name_replace(), E->ID, E->ID_Parent );
+	  MsgIfDbg( "* [%s]: skip just destroyed %s ID[%d] ID_Parent[%d]", __FUNCTION__, E->name_replace(), E->ID, E->ID_Parent );
 	  m_just_destroyed.erase(
 	    std::remove( m_just_destroyed.begin(), m_just_destroyed.end(), E->ID ),
 	    m_just_destroyed.end()
@@ -53,7 +53,7 @@ void CLevel::cl_Process_Spawn(NET_Packet& P)
 	    }
 	  }
 	  if ( postpone ) {
-	    //Msg( "* [%s]: delay spawn ID[%d] ID_Parent[%d] name_replace[%s]", __FUNCTION__, E->ID, E->ID_Parent, E->name_replace() );
+	    //MsgIfDbg( "* [%s]: delay spawn ID[%d] ID_Parent[%d] name_replace[%s]", __FUNCTION__, E->ID, E->ID_Parent, E->name_replace() );
 	    game_spawn_queue.push_back( E );
 	    return;
 	  }
@@ -200,7 +200,7 @@ void CLevel::ProcessGameSpawns() {
   while ( !game_spawn_queue.empty() ) {
     CSE_Abstract* E = game_spawn_queue.front();
     game_spawn_queue.pop_front();
-    //Msg( "* [%s]: delayed spawn dwFrame[%u] ID[%d] ID_Parent[%d] name_replace[%s]", __FUNCTION__, Device.dwFrame, E->ID, E->ID_Parent, E->name_replace() );
+    MsgIfDbg( "* [%s]: delayed spawn dwFrame[%u] ID[%d] ID_Parent[%d] name_replace[%s]", __FUNCTION__, Device.dwFrame, E->ID, E->ID_Parent, E->name_replace() );
     g_sv_Spawn( E );
     if ( smart_cast<CSE_ALifeTraderAbstract*>( E ) ) {
       trader = E;
@@ -212,7 +212,7 @@ void CLevel::ProcessGameSpawns() {
   if ( trader ) {
     for ( auto& E : game_spawn_queue ) {
       if ( E->ID_Parent == trader->ID ) {
-        //Msg( "* [%s]: delayed spawn dwFrame[%u] trader[%d] ID[%d] ID_Parent[%d] name_replace[%s]", __FUNCTION__, Device.dwFrame, trader->ID, E->ID, E->ID_Parent, E->name_replace() );
+        //MsgIfDbg( "* [%s]: delayed spawn dwFrame[%u] trader[%d] ID[%d] ID_Parent[%d] name_replace[%s]", __FUNCTION__, Device.dwFrame, trader->ID, E->ID, E->ID_Parent, E->name_replace() );
         g_sv_Spawn( E );
       }
     }
@@ -246,13 +246,13 @@ void CLevel::ProcessGameSpawnsDestroy( u16 dest, u16 type, NET_Packet& P ) {
       [&]( auto& E ) {
         if ( type == GE_DESTROY ) {
           if ( E->ID == dest || E->ID_Parent == dest ) {
-            //Msg( "* [CLevel::ProcessGameSpawnsDestroy]: delayed spawn GE_DESTROY dest[%d] ID[%d] ID_Parent[%d] name_replace[%s]", dest, E->ID, E->ID_Parent, E->name_replace() );
+            //MsgIfDbg( "* [CLevel::ProcessGameSpawnsDestroy]: delayed spawn GE_DESTROY dest[%d] ID[%d] ID_Parent[%d] name_replace[%s]", dest, E->ID, E->ID_Parent, E->name_replace() );
             F_entity_Destroy( E );
             return true;
           }
         }
         else if ( E->ID == dest ) { // type == GE_DESTROY_REJECT
-          //Msg( "* [CLevel::ProcessGameSpawnsDestroy]: delayed spawn GE_DESTROY_REJECT dest[%d] ID[%d] ID_Parent[%d] name_replace[%s]", dest, E->ID, E->ID_Parent, E->name_replace() );
+          //MsgIfDbg( "* [CLevel::ProcessGameSpawnsDestroy]: delayed spawn GE_DESTROY_REJECT dest[%d] ID[%d] ID_Parent[%d] name_replace[%s]", dest, E->ID, E->ID_Parent, E->name_replace() );
           F_entity_Destroy( E );
           return true;
         }
