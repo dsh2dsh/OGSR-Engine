@@ -14,12 +14,12 @@ bool xrServer::Process_event_reject	(NET_Packet& P, const ClientID sender, const
 //	R_ASSERT			(e_parent && e_entity);
 	if (!e_parent)
 	{
-		Msg("xrServer::Process_event_reject: no parent object! ID %d", id_parent);
+		MsgIfDbg( "* [%s]: no parent object! ID[%d]", __FUNCTION__, id_parent );
 		return false;
 	}
 	if (!e_entity)
 	{
-		Msg("xrServer::Process_event_reject: no entity object! ID %d", id_entity);
+		MsgIfDbg("* [%s]: no entity object! ID[%d] parent[%s]", __FUNCTION__, id_entity, e_parent->name_replace() );
 		return false;
 	}
 	game->OnDetach		(id_parent,id_entity);
