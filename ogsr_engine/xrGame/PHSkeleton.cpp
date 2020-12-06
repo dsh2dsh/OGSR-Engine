@@ -282,7 +282,7 @@ void CPHSkeleton::RestoreNetState( CSE_PHSkeleton* /*po*/ ) {
 		};
 	}
         else
-          Msg( "~ [%s]: [%s] has different state in saved_bones[%u] PHGetSyncItemsNumber[%u] Visual[%s] alive[%s]", __FUNCTION__, obj->Name_script(), saved_bones.size(), obj->PHGetSyncItemsNumber(), obj->cNameVisual().c_str(), obj->GetHealth()>0 ? "yes" : "no" );
+          MsgIfDbg( "* [%s]: [%s] has different state in saved_bones[%u] PHGetSyncItemsNumber[%u] Visual[%s] alive[%s]", __FUNCTION__, obj->Name_script(), saved_bones.size(), obj->PHGetSyncItemsNumber(), obj->cNameVisual().c_str(), obj->GetHealth()>0 ? "yes" : "no" );
 	saved_bones.clear();
 	po->_flags.set(CSE_PHSkeleton::flSavedData,FALSE);
 	m_flags.set(CSE_PHSkeleton::flSavedData,FALSE);
