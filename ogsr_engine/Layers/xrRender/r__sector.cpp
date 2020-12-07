@@ -102,6 +102,11 @@ void	CPortal::Setup	(Fvector* V, int vcnt, CSector* face, CSector* back)
 	*/
 }
 
+CSector::CSector() {
+  m_root   = NULL;
+  r_marker = 0xffffffff;
+}
+
 //
 CSector::~CSector()
 {
