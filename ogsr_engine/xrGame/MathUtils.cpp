@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "Extendedgeom.h"
-const float phInfinity = std::numeric_limits<float>::max();
 
 bool ContactShotMarkGetEffectPars(dContactGeom* c, dxGeomUserData* &data, float &vel_cret, bool &b_invert_normal)
 {

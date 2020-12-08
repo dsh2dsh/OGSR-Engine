@@ -34,7 +34,7 @@
 #include "../xr_3da/device.h"
 
 //#define USE_SMART_HITS
-//#define USE_IK
+#define USE_IK
 
 IC bool is_imotion(interactive_motion *im)
 {
@@ -253,8 +253,8 @@ void CCharacterPhysicsSupport::SpawnInitPhysics( CSE_Abstract* e )
 		}
 #endif
 #ifdef	USE_IK
-		if( etStalker == m_eType || etActor == m_eType || (m_EntityAlife.Visual()->dcast_PKinematics()->LL_UserData() && m_EntityAlife.Visual()->dcast_PKinematics()->LL_UserData()->section_exist("ik")) )
-				CreateIKController( );
+		if (etStalker == m_eType || etActor == m_eType || (m_EntityAlife.Visual()->dcast_PKinematics()->LL_UserData() && m_EntityAlife.Visual()->dcast_PKinematics()->LL_UserData()->section_exist("ik")))
+			CreateIKController();
 #endif
 
 		SpawnCharacterCreate( );
@@ -975,7 +975,6 @@ void	CCharacterPhysicsSupport::EndActivateFreeShell(CObject* who, const Fvector&
 
 void CCharacterPhysicsSupport::in_ChangeVisual()
 {
-
 	IKinematicsAnimated* KA = smart_cast<IKinematicsAnimated*>(m_EntityAlife.Visual());
 	if (m_ik_controller)
 	{

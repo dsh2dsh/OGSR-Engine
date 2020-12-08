@@ -6155,6 +6155,42 @@
       <Filter>AI\AScript\ScriptClasses\UI\LoadScreen</Filter>
     </ClInclude>
     <ClInclude Include="ui\UIHelper.h" />
+    <ClInclude Include="ik_object_shift.h">
+      <Filter>Core\Client\Objects\physics\IK</Filter>
+    </ClInclude>
+    <ClInclude Include="ik_limb_state_predict.h">
+      <Filter>Core\Client\Objects\physics\IK</Filter>
+    </ClInclude>
+    <ClInclude Include="ik_limb_state.h">
+      <Filter>Core\Client\Objects\physics\IK</Filter>
+    </ClInclude>
+    <ClInclude Include="ik_foot_collider.h">
+      <Filter>Core\Client\Objects\physics\IK</Filter>
+    </ClInclude>
+    <ClInclude Include="ik_dbg_matrix.h">
+      <Filter>Core\Client\Objects\physics\IK</Filter>
+    </ClInclude>
+    <ClInclude Include="ik_calculate_state.h">
+      <Filter>Core\Client\Objects\physics\IK</Filter>
+    </ClInclude>
+    <ClInclude Include="ik_collide_data.h">
+      <Filter>Core\Client\Objects\physics\IK</Filter>
+    </ClInclude>
+    <ClInclude Include="ik_calculate_data.h">
+      <Filter>Core\Client\Objects\physics\IK</Filter>
+    </ClInclude>
+    <ClInclude Include="IKFoot_inl.h">
+      <Filter>Core\Client\Objects\physics\IK</Filter>
+    </ClInclude>
+    <ClInclude Include="IKFoot.h">
+      <Filter>Core\Client\Objects\physics\IK</Filter>
+    </ClInclude>
+    <ClInclude Include="pose_extrapolation.h">
+      <Filter>Core\Client\Objects\physics\IK</Filter>
+    </ClInclude>
+    <ClInclude Include="matrix_utils.h">
+      <Filter>Core\Client\Objects\physics\IK</Filter>
+    </ClInclude>
     <ClInclude Include="magic_box3.h">
       <Filter>Core\Client\Objects\base\GameObject\ai_obstacle\min_obb\magic_box</Filter>
     </ClInclude>
@@ -6256,9 +6292,6 @@
     </ClInclude>
     <ClInclude Include="ActorCameraCollision.h">
       <Filter>Core\Client\Cameras</Filter>
-    </ClInclude>
-    <ClInclude Include="matrix_utils.h">
-      <Filter>Core\Client\Objects\physics\Base\Objects\Utils</Filter>
     </ClInclude>
     <ClInclude Include="GeometryBits.h">
       <Filter>Core\Client\Objects\physics\Base</Filter>
@@ -9068,6 +9101,27 @@
       <Filter>AI\AScript\ScriptClasses\UI\LoadScreen</Filter>
     </ClCompile>
     <ClCompile Include="ui\UIHelper.cpp" />
+    <ClCompile Include="ik_object_shift.cpp">
+      <Filter>Core\Client\Objects\physics\IK</Filter>
+    </ClCompile>
+    <ClCompile Include="ik_limb_state.cpp">
+      <Filter>Core\Client\Objects\physics\IK</Filter>
+    </ClCompile>
+    <ClCompile Include="ik_foot_collider.cpp">
+      <Filter>Core\Client\Objects\physics\IK</Filter>
+    </ClCompile>
+    <ClCompile Include="ik_dbg_matrix.cpp">
+      <Filter>Core\Client\Objects\physics\IK</Filter>
+    </ClCompile>
+    <ClCompile Include="ik_calculate_data.cpp">
+      <Filter>Core\Client\Objects\physics\IK</Filter>
+    </ClCompile>
+    <ClCompile Include="IKFoot.cpp">
+      <Filter>Core\Client\Objects\physics\IK</Filter>
+    </ClCompile>
+    <ClCompile Include="pose_extrapolation.cpp">
+      <Filter>Core\Client\Objects\physics\IK</Filter>
+    </ClCompile>
     <ClCompile Include="magic_box3.cpp">
       <Filter>Core\Client\Objects\base\GameObject\ai_obstacle\min_obb\magic_box</Filter>
     </ClCompile>

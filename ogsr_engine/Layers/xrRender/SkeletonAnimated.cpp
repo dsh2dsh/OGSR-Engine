@@ -68,18 +68,15 @@ std::pair<LPCSTR,LPCSTR> CKinematicsAnimated::LL_MotionDefName_dbg	(MotionID ID)
 }
 
 
-
-#if (defined DEBUG || defined _EDITOR)
-
 static LPCSTR name_bool( BOOL v )
 {
-	static  xr_token token_bool[] = { { "false", 0 }, { "true", 1 } };
+	constexpr xr_token token_bool[] = { { "false", 0 }, { "true", 1 } };
 	return get_token_name( token_bool, v );
 }
 
 static LPCSTR name_blend_type( CBlend::ECurvature blend )
 {
-	static xr_token token_blend[] = 
+	constexpr xr_token token_blend[] = 
 	{
 		{"eFREE_SLOT"		, CBlend::eFREE_SLOT	},
 		{"eAccrue"			, CBlend::eAccrue		},
@@ -118,7 +115,6 @@ void	CKinematicsAnimated::LL_DumpBlends_dbg	( )
 		dump_blend( this, *I, u32(I - blend_pool.begin()) );
 }
 
-#endif
 
 u32	CKinematicsAnimated::LL_PartBlendsCount	( u32 bone_part_id )
 {
@@ -137,22 +133,6 @@ void	CKinematicsAnimated::LL_IterateBlends( IterateBlendsCallback &callback )
 	for (; I!=E; I++)
 		if (I->blend_state() != CBlend::eFREE_SLOT) callback(*I);
 }
-/*
-LPCSTR CKinematicsAnimated::LL_MotionDefName_dbg	(LPVOID ptr)
-{
-//.
-	// cycles
-	mdef::const_iterator I,E;
-	I = motions.cycle()->begin(); 
-	E = motions.cycle()->end(); 
-	for ( ; I != E; ++I) if (&(*I).second == ptr) return *(*I).first;
-	// fxs
-	I = motions.fx()->begin(); 
-	E = motions.fx()->end(); 
-	for ( ; I != E; ++I) if (&(*I).second == ptr) return *(*I).first;
-	return 0;
-}
-*/
 
 
 //////////////////////////////////////////////////////////////////////
