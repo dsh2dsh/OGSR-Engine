@@ -171,11 +171,13 @@ void CRenderDevice::SecondaryThreadProc(void* context)
 			device.syncThreadExit.Set();
 			return;
 		}
- 
+
+		device.m_IsSecondThreadActive = true;
 		for (const auto& Func : device.seqParallel)
 			Func();
 		device.seqParallel.clear_and_free();
 		device.seqFrameMT.Process(rp_Frame);
+		device.m_IsSecondThreadActive = false;
 
 		device.syncFrameDone.Set();
 	}
@@ -352,6 +354,7 @@ void CRenderDevice::Run			()
 	}
 
 	// Start all threads
+	m_IsSecondThreadActive = false;
 	mt_bMustExit = false;
 	std::thread second_thread(SecondaryThreadProc, this);
 

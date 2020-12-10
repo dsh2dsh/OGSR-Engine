@@ -98,7 +98,7 @@ bool _give_news	(LPCSTR text, LPCSTR texture_name, const Frect& tex_rect, int de
 	news_data.tex_rect				= tex_rect;
 
 
-	if(delay==0)
+	if ( delay == 0 && !Device.is_second_thread_active() )
 		Actor()->AddGameNews(news_data);
 	else
 		Actor()->AddGameNews_deffered(news_data,delay);

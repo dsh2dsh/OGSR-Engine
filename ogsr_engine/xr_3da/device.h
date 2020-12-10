@@ -290,6 +290,7 @@ private:
 	// Multi-threading
 	Event syncProcessFrame, syncFrameDone, syncThreadExit; // Secondary thread events
 	std::atomic_bool mt_bMustExit;
+	bool m_IsSecondThreadActive;
 	static void SecondaryThreadProc(void* context);
 
 public:
@@ -304,6 +305,10 @@ public:
 			return false;
 		seqParallel.push_back( delegate );
 		return true;
+	}
+
+	ICF bool is_second_thread_active() {
+	  return m_IsSecondThreadActive;
 	}
 
 	ICF void remove_from_seq_parallel(const fastdelegate::FastDelegate<void()> &delegate)
