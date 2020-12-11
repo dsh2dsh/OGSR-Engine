@@ -990,6 +990,14 @@ CEffectorBobbing* get_effector_bobbing() {
   return Actor()->GetEffectorBobbing();
 }
 
+void map_iterate_user_spots_text( const luabind::functor<void>& funct ) {
+  for ( const auto& it : Level().MapManager().Locations() ) {
+    if ( it.location->IsUserDefined() && !xr_strcmp( it.location->LevelName(), Level().name() ) ) {
+      funct( it.location->GetHint() );
+    }
+  }
+}
+
 
 #pragma optimize("s",on)
 void CLevel::script_register(lua_State *L)
@@ -1159,6 +1167,8 @@ void CLevel::script_register(lua_State *L)
 		def( "is_actor_indoor", &is_actor_indoor ),
 		def( "get_effector_bobbing", &get_effector_bobbing ),
 		def( "get_patrol_path", &get_patrol_path ),
+		def( "map_iterate_user_spots_text", &map_iterate_user_spots_text ),
+
 		//--#SM+# Begin --
 		def("set_blender_mode_main", &set_blender_mode_main),
 		def("get_blender_mode_main", &get_blender_mode_main),
