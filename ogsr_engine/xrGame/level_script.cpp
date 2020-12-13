@@ -273,6 +273,10 @@ void prefetch_sound	(LPCSTR name)
 	Level().PrefetchSound(name);
 }
 
+void prefetch_many_sounds( LPCSTR prefix ) {
+  Level().PrefetchManySounds( prefix );
+}
+
 
 CClientSpawnManager	&get_client_spawn_manager()
 {
@@ -1074,6 +1078,7 @@ void CLevel::script_register(lua_State *L)
 		def("vertex_position",					vertex_position),
 		def("name",								get_name),
 		def("prefetch_sound",					prefetch_sound),
+		def( "prefetch_many_sounds", prefetch_many_sounds ),
 
 		def("client_spawn_manager",				get_client_spawn_manager),
 

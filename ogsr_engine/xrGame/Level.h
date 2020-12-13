@@ -178,6 +178,7 @@ private:
 
 public:
 	void						PrefetchSound (LPCSTR name);
+	void PrefetchManySounds( LPCSTR prefix );
 
 protected:
 	BOOL						net_start_result_total;
