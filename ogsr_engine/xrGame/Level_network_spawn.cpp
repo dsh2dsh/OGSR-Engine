@@ -104,10 +104,10 @@ void CLevel::g_cl_Spawn		(LPCSTR name, u8 rp, u16 flags, Fvector pos)
 void CLevel::g_sv_Spawn		(CSE_Abstract* E)
 {
 	//-----------------------------------------------------------------
-//	CTimer		T(false);
+	//CTimer T;
 
 #ifdef DEBUG
-	Msg					("* CLIENT: Spawn: %s, ID=%d", *E->s_name, E->ID);
+	MsgIfDbg( "* [%s]: %s ID[%d]", __FUNCTION__, E->name_replace(), E->ID );
 #endif
 
 	auto obj = Objects.net_Find( E->ID );
@@ -119,7 +119,7 @@ void CLevel::g_sv_Spawn		(CSE_Abstract* E)
 	// Client spawn
 //	T.Start		();
 	CObject*	O		= Objects.Create	(*E->s_name);
-	// Msg				("--spawn--CREATE: %f ms",1000.f*T.GetAsync());
+	//MsgIfDbg( "* [%s]: CREATE: %f sec", __FUNCTION__, T.GetElapsed_sec() );
 
 //	T.Start		();
 	if (0==O || (!O->net_Spawn	(E))) 
@@ -130,7 +130,7 @@ void CLevel::g_sv_Spawn		(CSE_Abstract* E)
 		Msg						("! Failed to spawn entity '%s'",*E->s_name);
 	} else {
 			client_spawn_manager().callback(O);
-		//Msg			("--spawn--SPAWN: %f ms",1000.f*T.GetAsync());
+		//MsgIfDbg( "* [%s]: SPAWN: %f sec", __FUNCTION__, T.GetElapsed_sec() );
 		if ((E->s_flags.is(M_SPAWN_OBJECT_LOCAL)) && (E->s_flags.is(M_SPAWN_OBJECT_ASPLAYER)))	{
 			if (CurrentEntity() != NULL) 
 			{
