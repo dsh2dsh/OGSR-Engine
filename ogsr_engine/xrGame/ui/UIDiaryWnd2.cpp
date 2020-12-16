@@ -82,7 +82,6 @@ void CUIDiaryWnd::Init()
 	xml_init.InitWindow				(uiXml, "main_wnd:left_frame:work_area", 0, m_UILeftWnd);
 	m_UILeftFrame->AttachChild		(m_UILeftWnd);
 
-//dsh:
 	if ( uiXml.NavigateToNode( "main_wnd:left_frame:work_area:search_news", 0 ) ) {
 	  m_UISearchNews = xr_new<CUIWindow>();
           m_UISearchNews->SetAutoDelete( false );

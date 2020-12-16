@@ -480,7 +480,7 @@ void   CAI_Bloodsucker::update_invisibility ()
 	}
 	else if ( CEntityAlive const * const enemy = EnemyMan.get_enemy() )
 	{
-		EMonsterState state = StateMan->get_state_type(); //dsh:
+		EMonsterState state = StateMan->get_state_type();
 		float const dist2enemy			=	enemy->Position().distance_to(Position());
 
 		if ( smart_cast<const CActor*>( enemy ) && is_state( state, eStatePanic ) )
