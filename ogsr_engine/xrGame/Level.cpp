@@ -193,6 +193,7 @@ CLevel::~CLevel()
 	// Unload sounds
 	// unload prefetched sounds
 	sound_registry.clear		();
+	sound_registry_defer.clear();
 
 	// unload static sounds
 	for (u32 i=0; i<static_Sounds.size(); ++i){
@@ -260,36 +261,69 @@ void CLevel::GetLevelInfo( CServerInfo* si )
 }
 
 
-void CLevel::PrefetchSound		(LPCSTR name)
-{
-	// preprocess sound name
-	string_path					tmp;
-	strcpy_s					(tmp,name);
-	xr_strlwr					(tmp);
-	if (strext(tmp))			*strext(tmp)=0;
-	shared_str	snd_name		= tmp;
-	// find in registry
-	SoundRegistryMapIt it		= sound_registry.find(snd_name);
-	// if find failed - preload sound
-	if (it==sound_registry.end())
-		sound_registry[snd_name].create(snd_name.c_str(),st_Effect,sg_SourceType);
+bool CLevel::PrefetchSound( LPCSTR name ) {
+  // preprocess sound name
+  string_path tmp;
+  strcpy_s( tmp, name );
+  xr_strlwr( tmp );
+  if ( strext( tmp ) )
+    *strext( tmp ) = 0;
+  shared_str snd_name = tmp;
+  // find in registry
+  SoundRegistryMapIt it = sound_registry.find( snd_name );
+  // if find failed - preload sound
+  if ( it == sound_registry.end() ) {
+    sound_registry[ snd_name ].create( snd_name.c_str(), st_Effect, sg_SourceType );
+    return true;
+  }
+  return false;
 }
 
-void CLevel::PrefetchManySounds( LPCSTR prefix ) {
+bool CLevel::PrefetchManySounds( LPCSTR prefix ) {
+  bool created = false;
   string_path fn;
   if ( FS.exist( fn, "$game_sounds$", prefix, ".ogg" ) )
-    PrefetchSound( prefix );
+    created = PrefetchSound( prefix ) || created;
   u32 i = 0;
   while ( true ) {
     string256 name;
     sprintf_s( name, "%s%d", prefix, i );
     if ( FS.exist( fn, "$game_sounds$", name, ".ogg" ) )
-      PrefetchSound( name );
+      created = PrefetchSound( name ) || created;
     else if ( i > 0 )
       break;
     i++;
   }
+  return created;
 }
+
+bool CLevel::PrefetchManySoundsLater( LPCSTR prefix ) {
+  std::string s( prefix );
+  for ( const auto& it : sound_registry_defer ) {
+    if ( it == s )
+      return false;
+  }
+  sound_registry_defer.push_back( s );
+  return true;
+}
+
+void CLevel::PrefetchDeferredSounds() {
+  while ( !sound_registry_defer.empty() ) {
+    std::string s = sound_registry_defer.front();
+    sound_registry_defer.pop_front();
+    if ( PrefetchManySounds( s.c_str() ) )
+      break;
+  }
+}
+
+void CLevel::CancelPrefetchManySounds( LPCSTR prefix ) {
+  std::string s( prefix );
+  sound_registry_defer.erase(
+    std::remove( sound_registry_defer.begin(), sound_registry_defer.end(), s ),
+    sound_registry_defer.end()
+  );
+}
+
 
 // Game interface ////////////////////////////////////////////////////
 int	CLevel::get_RPID(LPCSTR /**name/**/)
@@ -452,10 +486,15 @@ void CLevel::OnFrame	()
 		Device.add_to_seq_parallel(fastdelegate::MakeDelegate(m_level_sound_manager, &CLevelSoundManager::Update));
 		else								
 			m_level_sound_manager->Update	();
+
 	if ( g_mt_config.test( mtLUA_GC ) )
 	  Device.add_to_seq_parallel( fastdelegate::MakeDelegate( this, &CLevel::script_gc ) );
 	else
 	  script_gc();
+
+	if ( !sound_registry_defer.empty() )
+	  Device.add_to_seq_parallel( fastdelegate::MakeDelegate( this, &CLevel::PrefetchDeferredSounds ) );
+
 	//-----------------------------------------------------
 	if (pStatGraphR)
 	{	
