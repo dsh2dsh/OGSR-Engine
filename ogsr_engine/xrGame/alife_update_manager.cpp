@@ -22,6 +22,7 @@
 #include "restriction_space.h"
 #include "profiler.h"
 #include "mt_config.h"
+#include "gamepersistent.h"
 
 using namespace ALife;
 
@@ -230,6 +231,8 @@ bool CALifeUpdateManager::change_level	(NET_Packet &net_packet)
 
 	if ( !graph().actor()->m_holder_change_level )
 	  graph().actor()->m_holderID = holder_id;
+
+	GamePersistent().models_savePrefetch();
 
 	return							(true);
 }

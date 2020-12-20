@@ -2,6 +2,7 @@
 #pragma hdrstop
 
 #include "ModelPool.h"
+#include <xr_ini.h>
 
 #ifndef _EDITOR
 	#include "../../xr_3da/IGame_Persistent.h"
@@ -26,6 +27,10 @@
     #include "SkeletonAnimated.h"
 	#include "IGame_Persistent.h"
 #endif
+
+CInifile* vis_prefetch  = nullptr;
+bool      now_prefetch1 = false;
+bool      now_prefetch2 = false;
 
 dxRender_Visual*	CModelPool::Instance_Create(u32 type)
 {
@@ -192,6 +197,9 @@ void CModelPool::Destroy()
 
 	// cleanup motions container
 	g_pMotionsContainer->clean(false);
+
+	if ( vis_prefetch )
+	  vis_prefetch->save_as();
 }
 
 CModelPool::CModelPool()
@@ -200,12 +208,20 @@ CModelPool::CModelPool()
     bForceDiscard 			= FALSE;
     bAllowChildrenDuplicate	= TRUE; 
 	g_pMotionsContainer		= xr_new<motions_container>();
+
+	if ( !vis_prefetch ) {
+	  string_path fname;
+	  FS.update_path( fname, "$app_data_root$", "vis_prefetch.ltx" );
+	  vis_prefetch = xr_new<CInifile>( fname, FALSE );
+	  process_vis_prefetch();
+	}
 }
 
 CModelPool::~CModelPool()
 {
 	Destroy					();
 	xr_delete				(g_pMotionsContainer);
+	xr_delete( vis_prefetch );
 }
 
 dxRender_Visual* CModelPool::Instance_Find(LPCSTR N)
@@ -237,9 +253,19 @@ dxRender_Visual* CModelPool::Create(const char* name, IReader* data)
 	if (it!=Pool.end())
 	{
 		// 1. Instance found
-        dxRender_Visual*		Model	= it->second;
+		dxRender_Visual*		Model	= it->second;
 		Model->Spawn		();
 		Pool.erase			(it);
+
+		if ( vis_prefetch && !now_prefetch2 ) {
+		  dxRender_Visual* Base = Instance_Find( low_name );
+		  if ( Base && !Base->prefetched ) {
+		    if ( !now_prefetch1 )
+		      refresh_prefetch( low_name );
+		    Base->prefetched = true;
+		  }
+		}
+
 		return				Model;
 	} else {
 		// 1. Search for already loaded model (reference, base model)
@@ -249,17 +275,33 @@ dxRender_Visual* CModelPool::Create(const char* name, IReader* data)
 			// 2. If not found
 			bAllowChildrenDuplicate	= FALSE;
 			if (data)		Base = Instance_Load(low_name,data,TRUE);
-            else			Base = Instance_Load(low_name,TRUE);
+			else			Base = Instance_Load(low_name,TRUE);
 			bAllowChildrenDuplicate	= TRUE;
 #ifdef _EDITOR
 			if (!Base)		return 0;
 #endif
 		}
-        // 3. If found - return (cloned) reference
-        dxRender_Visual*		Model	= Instance_Duplicate(Base);
-        Registry.insert		( mk_pair(Model,low_name) );
-        return				Model;
+		// 3. If found - return (cloned) reference
+		dxRender_Visual*		Model	= Instance_Duplicate(Base);
+		Registry.insert		( mk_pair(Model,low_name) );
+
+		if ( vis_prefetch && !now_prefetch2 ) {
+		  if ( !Base->prefetched ) {
+		    if ( !now_prefetch1 )
+		      refresh_prefetch( low_name );
+		    Base->prefetched = true;
+		  }
+		}
+
+		return				Model;
 	}
+}
+
+void CModelPool::refresh_prefetch( LPCSTR low_name ) {
+  shared_str fname;
+  bool is_global = !!FS.exist( "$game_meshes$", *fname.sprintf( "%s.ogf", low_name ) );
+  if ( is_global )
+    vis_prefetch->w_float( "prefetch", low_name, 1.f );
 }
 
 dxRender_Visual* CModelPool::CreateChild(LPCSTR name, IReader* data)
@@ -374,6 +416,8 @@ void	CModelPool::Discard	(dxRender_Visual* &V, BOOL b_complete)
 void CModelPool::Prefetch()
 {
 	Logging					(FALSE);
+	now_prefetch1 = true;
+
 	// prefetch visuals
 	string256 section;
 	strconcat				(sizeof(section),section,"prefetch_visuals_",g_pGamePersistent->m_game_params.m_game_type);
@@ -383,6 +427,28 @@ void CModelPool::Prefetch()
 		dxRender_Visual* V	= Create(item.first.c_str());
 		Delete				(V,FALSE);
 	}
+	now_prefetch1 = false;
+
+	if ( !vis_prefetch || !vis_prefetch->section_exist( "prefetch" ) )
+	  return;
+
+	now_prefetch2 = true;
+	sect = vis_prefetch->r_section( "prefetch" );
+	for ( const auto& it : sect.Data ) {
+	  const shared_str& low_name = it.first;
+	  if ( !Instance_Find( low_name.c_str() ) ) {
+	    shared_str fname;
+	    fname.sprintf( "%s.ogf", low_name.c_str() );
+	    if ( FS.exist( "$game_meshes$", fname.c_str() ) ) {
+	      dxRender_Visual* V = Create( low_name.c_str() );
+	      Delete( V, FALSE );
+	    }
+	    else
+	      Msg( "! [%s]: %s not found in $game_meshes$", __FUNCTION__, fname.c_str() );
+	  }
+	}
+
+	now_prefetch2 = false;
 	Logging					(TRUE);
 }
 
@@ -611,3 +677,31 @@ void CModelPool::OnDeviceDestroy()
 	Destroy();
 }
 #endif
+
+
+void CModelPool::save_vis_prefetch() {
+  if ( vis_prefetch ) {
+    process_vis_prefetch();
+    vis_prefetch->save_as();
+  }
+}
+
+
+void CModelPool::process_vis_prefetch() {
+  if ( !vis_prefetch->section_exist( "prefetch" ) )
+    return;
+  auto &sect = vis_prefetch->r_section( "prefetch" );
+  std::vector<std::string> expired;
+  for ( auto& it : sect.Data ) {
+    float need = (float)atof( it.second.c_str() ) * 0.5f; // делить пополам
+    // -0.5..+0.5 - добавить случайность, чтобы не было общего выключения
+    float rnd  = Random.randF() - 0.5f;
+    float val  = need + rnd * 0.1f;
+    if ( val > 0.1f )
+      vis_prefetch->w_float( "prefetch", it.first.c_str(), val );
+    else
+      expired.emplace_back( it.first.c_str() );
+  }
+  for ( const auto& s : expired )
+    vis_prefetch->remove_line( "prefetch", s.c_str() );
+}

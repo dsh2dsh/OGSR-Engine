@@ -97,6 +97,7 @@ public:
 	virtual	void					LoadTitle(const char* title_name) = 0;
 
 	virtual bool					CanBePaused() { return true; }
+	virtual	void models_savePrefetch(); 
 };
 
 class IMainMenu
