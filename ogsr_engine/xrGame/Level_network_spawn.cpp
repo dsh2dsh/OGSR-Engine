@@ -42,9 +42,10 @@ void CLevel::cl_Process_Spawn(NET_Packet& P)
 	}
 
 	if ( Device.dwPrecacheFrame == 0 ) {
-	  CSE_ALifeTraderAbstract* trader = smart_cast<CSE_ALifeTraderAbstract*>( E );
-	  bool postpone = ( trader && !is_removing_objects() ) ? true : false;
-	  if ( !trader ) {
+	  CSE_ALifeMonsterAbstract* monster = smart_cast<CSE_ALifeMonsterAbstract*>( E );
+	  CSE_ALifeTraderAbstract*  trader  = smart_cast<CSE_ALifeTraderAbstract*>( E );
+	  bool postpone = ( ( trader || monster ) && !is_removing_objects() ) ? true : false;
+	  if ( !( monster || trader ) ) {
 	    for ( const auto& it : game_spawn_queue ) {
 	      if ( E->ID_Parent == it->ID ) {
 	        postpone = true;
@@ -202,7 +203,7 @@ void CLevel::ProcessGameSpawns() {
     game_spawn_queue.pop_front();
     MsgIfDbg( "* [%s]: delayed spawn dwFrame[%u] ID[%d] ID_Parent[%d] name_replace[%s]", __FUNCTION__, Device.dwFrame, E->ID, E->ID_Parent, E->name_replace() );
     g_sv_Spawn( E );
-    if ( smart_cast<CSE_ALifeTraderAbstract*>( E ) ) {
+    if ( smart_cast<CSE_ALifeMonsterAbstract*>( E ) || smart_cast<CSE_ALifeTraderAbstract*>( E ) ) {
       trader = E;
       break;
     }
