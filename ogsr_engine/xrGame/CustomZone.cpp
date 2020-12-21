@@ -1477,7 +1477,8 @@ void CCustomZone::enter_Zone( SZoneObjectInfo& io ) {
 
 void CCustomZone::exit_Zone( SZoneObjectInfo& io ) {
   StopObjectIdleParticles( io.object );
-  callback( GameObject::eZoneExit )( lua_game_object(), io.object->lua_game_object() );
+  if ( !getDestroy() )
+    callback( GameObject::eZoneExit )( lua_game_object(), io.object->lua_game_object() );
 }
 
 

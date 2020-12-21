@@ -817,8 +817,9 @@ void VisualCallback	(IKinematics *tpKinematics)
 
 CScriptGameObject *CGameObject::lua_game_object() const
 {
-	if (!m_spawned)
-		Msg("!! [%s] you are trying to use a destroyed object [%x]", __FUNCTION__, this);
+	//ASSERT_FMT( m_spawned, "[%s] you are trying to use a destroyed object [%s] ID[%u]", __FUNCTION__, cName().c_str(), ID() );
+	if ( !m_spawned )
+	  MsgIfDbg("!! [%s] you are trying to use a destroyed object [%s] ID[%u]", __FUNCTION__, cName().c_str(), ID() );
 
 	THROW							(m_spawned);
 	if (!m_lua_game_object)
