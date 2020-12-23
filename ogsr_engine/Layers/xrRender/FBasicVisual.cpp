@@ -27,7 +27,6 @@ dxRender_Visual::dxRender_Visual		()
 	Type				= 0;
 	shader				= 0;
 	vis.clear			();
-	prefetched = false;
 }
 
 dxRender_Visual::~dxRender_Visual		()

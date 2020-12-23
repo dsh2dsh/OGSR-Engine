@@ -200,6 +200,7 @@ void CModelPool::Destroy()
 
 	if ( vis_prefetch )
 	  vis_prefetch->save_as();
+	m_prefetched.clear();
 }
 
 CModelPool::CModelPool()
@@ -257,14 +258,7 @@ dxRender_Visual* CModelPool::Create(const char* name, IReader* data)
 		Model->Spawn		();
 		Pool.erase			(it);
 
-		if ( vis_prefetch && !now_prefetch2 ) {
-		  dxRender_Visual* Base = Instance_Find( low_name );
-		  if ( Base && !Base->prefetched ) {
-		    if ( !now_prefetch1 )
-		      refresh_prefetch( low_name );
-		    Base->prefetched = true;
-		  }
-		}
+		refresh_prefetch( low_name );
 
 		return				Model;
 	} else {
@@ -285,24 +279,31 @@ dxRender_Visual* CModelPool::Create(const char* name, IReader* data)
 		dxRender_Visual*		Model	= Instance_Duplicate(Base);
 		Registry.insert		( mk_pair(Model,low_name) );
 
-		if ( vis_prefetch && !now_prefetch2 ) {
-		  if ( !Base->prefetched ) {
-		    if ( !now_prefetch1 )
-		      refresh_prefetch( low_name );
-		    Base->prefetched = true;
-		  }
-		}
+		refresh_prefetch( low_name );
 
 		return				Model;
 	}
 }
 
+
 void CModelPool::refresh_prefetch( LPCSTR low_name ) {
-  shared_str fname;
-  bool is_global = !!FS.exist( "$game_meshes$", *fname.sprintf( "%s.ogf", low_name ) );
-  if ( is_global )
-    vis_prefetch->w_float( "prefetch", low_name, 1.f );
+  if ( now_prefetch2 )
+    return;
+
+  std::string s( low_name );
+  if ( std::find( m_prefetched.begin(), m_prefetched.end(), s ) != m_prefetched.end() )
+    return;
+
+  if ( now_prefetch1 )
+    m_prefetched.push_back( s );
+  else if ( vis_prefetch ) {
+    shared_str fname;
+    bool is_global = !!FS.exist( "$game_meshes$", *fname.sprintf( "%s.ogf", low_name ) );
+    if ( is_global )
+      vis_prefetch->w_float( "prefetch", low_name, 1.f );
+  }
 }
+
 
 dxRender_Visual* CModelPool::CreateChild(LPCSTR name, IReader* data)
 {
@@ -452,14 +453,16 @@ void CModelPool::Prefetch()
 	Logging					(TRUE);
 }
 
-void CModelPool::ClearPool( BOOL b_complete)
-{
-	POOL_IT	_I			=	Pool.begin();
-	POOL_IT	_E			=	Pool.end();
-	for (;_I!=_E;_I++)	{
-		Discard	(_I->second, b_complete)	;
-	}
-	Pool.clear			();
+void CModelPool::ClearPool( BOOL b_complete ) {
+  for ( auto& I : Pool ) {
+    if ( !b_complete && vis_prefetch ) {
+      std::string s( I.first.c_str() );
+      if ( std::find( m_prefetched.begin(), m_prefetched.end(), s ) == m_prefetched.end() && !vis_prefetch->line_exist( "prefetch", I.first.c_str() ) )
+        b_complete = TRUE;
+    }
+    Discard( I.second, b_complete );
+  }
+  Pool.clear();
 }
 
 dxRender_Visual* CModelPool::CreatePE	(PS::CPEDef* source)
