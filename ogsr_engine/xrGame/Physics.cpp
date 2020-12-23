@@ -7,6 +7,7 @@
 #include "gameobject.h"
 #include "PhysicsShellHolder.h"
 #include "PHCollideValidator.h"
+#include "PhysicObject.h"
 #ifdef DEBUG
 #include "PHDebug.h"
 #endif
@@ -277,7 +278,18 @@ IC static int CollideIntoGroup(dGeomID o1, dGeomID o2, dJointGroupID jointGroup,
 #endif
 			dJointID contact_joint = dJointCreateContact(0, jointGroup, &c);
 			world->ConnectJoint(contact_joint);
-			dJointAttach(contact_joint, dGeomGetBody(g1), dGeomGetBody(g2));
+
+			dBodyID body1 = dGeomGetBody( g1 );
+			dBodyID body2 = dGeomGetBody( g2 );
+			if ( do_collide && usr_data_1 && usr_data_2 ) {
+			  CPhysicsShellHolder* ps1 = smart_cast<CPhysicsShellHolder*>( usr_data_1->ph_ref_object );
+			  CPhysicsShellHolder* ps2 = smart_cast<CPhysicsShellHolder*>( usr_data_2->ph_ref_object );
+			  if ( ps1 && smart_cast<CPhysicObject*>( usr_data_1->ph_ref_object ) && ps1->hasFixedBones() )
+			    body1 = 0;
+			  else if ( ps2 && smart_cast<CPhysicObject*>( usr_data_2->ph_ref_object ) && ps2->hasFixedBones() )
+			    body2 = 0;
+			}
+			dJointAttach( contact_joint, body1, body2 );
 		}
 	}
 	return collided_contacts;
