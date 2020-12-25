@@ -172,7 +172,8 @@ MotionID CKinematicsAnimated::ID_Cycle_Safe(LPCSTR  N)
 }
 MotionID CKinematicsAnimated::ID_Cycle	(shared_str  N)
 {
-	MotionID motion_ID		= ID_Cycle_Safe	(N);	R_ASSERT3(motion_ID.valid(),"! MODEL: can't find cycle: ", N.c_str());
+	MotionID motion_ID		= ID_Cycle_Safe	(N);
+	ASSERT_FMT( motion_ID.valid(), "[%s]: %s can't find cycle: [%s]", __FUNCTION__, getDebugName().c_str(), N.c_str() );
     return motion_ID;
 }
 MotionID CKinematicsAnimated::ID_Cycle_Safe(shared_str  N)
@@ -187,7 +188,8 @@ MotionID CKinematicsAnimated::ID_Cycle_Safe(shared_str  N)
 }
 MotionID CKinematicsAnimated::ID_Cycle	(LPCSTR  N)
 {
-	MotionID motion_ID		= ID_Cycle_Safe	(N);	R_ASSERT3(motion_ID.valid(),"! MODEL: can't find cycle: ", N);
+	MotionID motion_ID		= ID_Cycle_Safe	(N);
+	ASSERT_FMT( motion_ID.valid(), "[%s]: %s can't find cycle: [%s]", __FUNCTION__, getDebugName().c_str(), N );
 	return motion_ID;
 }
 void	CKinematicsAnimated::LL_FadeCycle(u16 part, float falloff, u8 mask_channel /*= (1<<0)*/)
