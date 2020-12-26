@@ -36,6 +36,7 @@ private:
 	SPAWN_IDS								m_temp0;
 	SPAWN_IDS								m_temp1;
 	SPAWN_STORY_IDS							m_spawn_story_ids;
+	std::unordered_map<std::string, ALife::_SPAWN_ID> m_spawn_ids;
 
 protected:
 			//void							save_updates				(IWriter &stream);
@@ -64,6 +65,7 @@ public:
 	IC		const SPAWN_GRAPH				&spawns						() const;
 	//IC		void							assign_artefact_position	(CSE_ALifeAnomalousZone	*anomaly, CSE_ALifeDynamicObject *object) const;
 	IC		const ALife::_SPAWN_ID			&spawn_id					(const ALife::_SPAWN_STORY_ID &spawn_story_id) const;
+	ALife::_SPAWN_ID spawn_id_by_name( LPCSTR obj_name ) const;
 };
 
 #include "alife_spawn_registry_inline.h"

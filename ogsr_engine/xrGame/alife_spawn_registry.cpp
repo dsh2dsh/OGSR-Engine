@@ -225,14 +225,24 @@ void CALifeSpawnRegistry::build_story_spawns()
 	for ( ; I != E; ++I) {
 		CSE_ALifeObject					*object = smart_cast<CSE_ALifeObject*>(&(*I).second->data()->object());
 		VERIFY							(object);
+		std::string s( object->name_replace() );
+		auto object_id = (*I).first;
+		m_spawn_ids.emplace( s, object_id );
 		if (object->m_spawn_story_id == INVALID_SPAWN_STORY_ID)
 			continue;
 
 		auto spawn_story_id = object->m_spawn_story_id;
-		auto object_id = (*I).first;
 #ifdef DEBUG
 		Msg("~~[CALifeSpawnRegistry::build_story_spawns] Object [%s] spawn_story_id [%u] object_id [%u]", object->name(), spawn_story_id, object_id);
 #endif
 		m_spawn_story_ids.insert({ spawn_story_id, object_id });
 	}
+}
+
+ALife::_SPAWN_ID CALifeSpawnRegistry::spawn_id_by_name( LPCSTR obj_name ) const {
+  std::string s( obj_name );
+  auto it = m_spawn_ids.find( s );
+  if ( it != m_spawn_ids.end() )
+    return it->second;
+  return ALife::_SPAWN_ID(-1);
 }
