@@ -291,11 +291,11 @@ void CModelPool::refresh_prefetch( LPCSTR low_name ) {
     return;
 
   std::string s( low_name );
-  if ( std::find( m_prefetched.begin(), m_prefetched.end(), s ) != m_prefetched.end() )
+  if ( m_prefetched.find( s ) != m_prefetched.end() )
     return;
 
   if ( now_prefetch1 )
-    m_prefetched.push_back( s );
+    m_prefetched.emplace( s, true );
   else if ( vis_prefetch ) {
     shared_str fname;
     bool is_global = !!FS.exist( "$game_meshes$", *fname.sprintf( "%s.ogf", low_name ) );
@@ -457,7 +457,7 @@ void CModelPool::ClearPool( BOOL b_complete ) {
   for ( auto& I : Pool ) {
     if ( !b_complete && vis_prefetch ) {
       std::string s( I.first.c_str() );
-      if ( std::find( m_prefetched.begin(), m_prefetched.end(), s ) == m_prefetched.end() && !vis_prefetch->line_exist( "prefetch", I.first.c_str() ) )
+      if ( m_prefetched.find( s ) == m_prefetched.end() && !vis_prefetch->line_exist( "prefetch", I.first.c_str() ) )
         b_complete = TRUE;
     }
     Discard( I.second, b_complete );

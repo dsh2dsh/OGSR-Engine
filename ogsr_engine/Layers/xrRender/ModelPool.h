@@ -41,7 +41,7 @@ private:
 	BOOL						bLogging;
     BOOL						bForceDiscard;
     BOOL						bAllowChildrenDuplicate;
-	std::vector<std::string> m_prefetched;
+	std::unordered_map<std::string, bool> m_prefetched;
 
 	void						Destroy	();
 	void refresh_prefetch( LPCSTR low_name );
