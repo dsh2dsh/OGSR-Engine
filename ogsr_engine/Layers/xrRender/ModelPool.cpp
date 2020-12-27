@@ -210,7 +210,7 @@ CModelPool::CModelPool()
     bAllowChildrenDuplicate	= TRUE; 
 	g_pMotionsContainer		= xr_new<motions_container>();
 
-	if ( !vis_prefetch ) {
+	if ( !strstr( Core.Params, "-noprefetch" ) && !vis_prefetch ) {
 	  string_path fname;
 	  FS.update_path( fname, "$app_data_root$", "vis_prefetch.ltx" );
 	  vis_prefetch = xr_new<CInifile>( fname, FALSE );
@@ -222,7 +222,9 @@ CModelPool::~CModelPool()
 {
 	Destroy					();
 	xr_delete				(g_pMotionsContainer);
-	xr_delete( vis_prefetch );
+
+	if ( vis_prefetch )
+	  xr_delete( vis_prefetch );
 }
 
 dxRender_Visual* CModelPool::Instance_Find(LPCSTR N)
