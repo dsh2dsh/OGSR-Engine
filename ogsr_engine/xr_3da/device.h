@@ -280,6 +280,7 @@ private:
 	std::atomic_bool mt_bMustExit;
 	bool m_IsSecondThreadActive;
 	static void SecondaryThreadProc(void* context);
+	std::chrono::duration<double, std::milli> SecondThreadTasksElapsedTime;
 
 public:
 	ICF bool add_to_seq_parallel(const fastdelegate::FastDelegate<void()> &delegate)
