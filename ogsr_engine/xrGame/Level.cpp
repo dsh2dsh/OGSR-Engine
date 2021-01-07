@@ -41,6 +41,7 @@
 #include "Debug_Renderer.h"
 #include "Actor_Flags.h"
 #include "level_changer.h"
+#include "ui/UIGameTutorial.h"
 
 #ifdef DEBUG
 #	include "level_debug.h"
@@ -49,6 +50,8 @@
 #endif
 
 extern BOOL	g_bDebugDumpPhysicsStep;
+extern CUISequencer* g_tutorial;
+extern CUISequencer* g_tutorial2;
 
 CPHWorld	*ph_world			= 0;
 float		g_cl_lvInterp		= 0;
@@ -248,6 +251,12 @@ CLevel::~CLevel()
 	// because they should be new for each saved/loaded game
 	// and I didn't find better place to put this code in
 	CTradeParameters::clean		();
+
+	if ( g_tutorial && g_tutorial->m_pStoredInputReceiver == this )
+	  g_tutorial->m_pStoredInputReceiver = NULL;
+
+	if ( g_tutorial2 && g_tutorial2->m_pStoredInputReceiver == this )
+	  g_tutorial2->m_pStoredInputReceiver = NULL;
 }
 
 shared_str	CLevel::name		() const

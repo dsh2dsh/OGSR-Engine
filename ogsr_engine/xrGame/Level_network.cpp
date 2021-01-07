@@ -15,6 +15,7 @@
 #include "seniority_hierarchy_holder.h"
 #include "xrServer_Object_Base.h"
 #include "object_destroyer.h"
+#include "ui/UIGameTutorial.h"
 
 constexpr int max_objects_size			= 2*1024;
 constexpr int max_objects_size_in_save	= 6*1024;
@@ -98,9 +99,19 @@ void CLevel::remove_objects	()
 	extern void	show_animation_stats	();
 #endif // DEBUG
 
+extern CUISequencer* g_tutorial;
+extern CUISequencer* g_tutorial2;
+
 void CLevel::net_Stop		()
 {
 	Msg							("- Disconnect");
+
+	if ( g_tutorial && !g_tutorial->Persistent() )
+	  g_tutorial->Stop();
+
+	if ( g_tutorial2 && !g_tutorial->Persistent() )
+	  g_tutorial2->Stop();
+
 	bReady						= false;
 	m_bGameConfigStarted		= FALSE;
 	game_configured				= FALSE;

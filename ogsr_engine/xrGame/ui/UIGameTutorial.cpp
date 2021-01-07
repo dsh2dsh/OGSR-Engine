@@ -71,15 +71,22 @@ bool CUISequenceItem::Stop(bool bForce)
 
 CUISequencer::CUISequencer()
 {
+	m_flags.zero();
 	m_bActive					= false;
 	m_bPlayEachItem				= false;
+	m_StartOnFrame = false;
 }
 
 void CUISequencer::Start(LPCSTR tutor_name)
 {
 	VERIFY(m_items.size()==0);
 	Device.seqFrame.Add			(this, REG_PRIORITY_LOW-10000);
-	Device.seqRender.Add		(this, 3);
+	if ( Device.is_second_thread_active() )
+	  m_StartOnFrame = true;
+	else {
+	  m_StartOnFrame = false;
+	  Device.seqRender.Add( this, 3 );
+	}
 	
 	m_UIWindow					= xr_new<CUIWindow>();
 
@@ -90,6 +97,7 @@ void CUISequencer::Start(LPCSTR tutor_name)
 	uiXml.SetLocalRoot			(uiXml.NavigateToNode(tutor_name,0));
 
 	m_bPlayEachItem				= !!uiXml.ReadInt("play_each_item",0,0);
+	m_flags.set( etsPersistent, !!uiXml.Read( "persistent", 0, 0 ) );
 
 	CUIXmlInit xml_init;
 	xml_init.InitWindow			(uiXml, "global_wnd", 0,	m_UIWindow);
@@ -105,12 +113,15 @@ void CUISequencer::Start(LPCSTR tutor_name)
 		pItem->Load				(&uiXml,i);
 	}
 
-	CUISequenceItem* pCurrItem	= m_items.front();
-	pCurrItem->Start			();
+	CUISequenceItem* pCurrItem = m_items.front();
+	pCurrItem->Start();
 	m_pStoredInputReceiver		= pInput->CurrentIR();
 	IR_Capture					();
 	m_bActive					= true;
 }
+
+extern CUISequencer* g_tutorial;
+extern CUISequencer* g_tutorial2;
 
 void CUISequencer::Destroy()
 {
@@ -121,6 +132,11 @@ void CUISequencer::Destroy()
 	IR_Release					();
 	m_bActive					= false;
 	m_pStoredInputReceiver		= NULL;
+
+	if ( g_tutorial == this )
+	  g_tutorial = NULL;
+	if ( g_tutorial2 == this )
+	  g_tutorial2 = NULL;
 }
 
 void CUISequencer::Stop()
@@ -139,14 +155,21 @@ void CUISequencer::Stop()
 
 void CUISequencer::OnFrame()
 {  
+	if ( m_StartOnFrame ) {
+	  m_StartOnFrame = false;
+	  Device.seqRender.Add( this, 3 );
+	}
+
 	if(!m_bActive)				return;
 
 	if(!m_items.size()){
 		Stop					();
 		return;
-	}else{
-		CUISequenceItem* pCurrItem	= m_items.front();
-		if(!pCurrItem->IsPlaying())	Next();
+	}
+	else {
+	  CUISequenceItem* pCurrItem = m_items.front();
+	  if ( !pCurrItem->IsPlaying() )
+	    Next();
 	}
 	
 	if(!m_items.size()){

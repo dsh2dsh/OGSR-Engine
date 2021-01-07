@@ -12,6 +12,7 @@ protected:
 	xr_deque<CUISequenceItem*>m_items;
 	bool					m_bActive;
 	bool					m_bPlayEachItem;
+	bool m_StartOnFrame;
 	bool					GrabInput			();
 public:
 	IInputReceiver* m_pStoredInputReceiver{};
@@ -41,7 +42,18 @@ public:
 
 	virtual void			IR_OnMouseWheel		(int direction)	;
 	virtual void			IR_OnActivate		(void);
+	bool Persistent() { return !!m_flags.test( etsPersistent ); }
 
+	enum {	
+		etsNeedPauseOn		= (1<<0),
+		etsNeedPauseOff		= (1<<1),
+		etsStoredPauseState	= (1<<2),
+		etsPersistent		= (1<<3),
+		etsPlayEachItem		= (1<<4),
+		etsActive			= (1<<5),
+		etsOverMainMenu		= (1<<6),
+	};
+	Flags32					m_flags;
 };
 
 class CUISequenceItem
