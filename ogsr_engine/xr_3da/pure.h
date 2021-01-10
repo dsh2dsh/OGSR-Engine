@@ -50,11 +50,13 @@ public:
 		u32		in_process	:1;
 		u32		changed		:1;
 	};
+ 	std::mutex m;
 	CRegistrator()			{ in_process=false; changed=false;}
 
 	//
 	void Add	(T *obj, int priority=REG_PRIORITY_NORMAL, u32 flags=0)
 	{
+		std::scoped_lock lock( m );
 #ifdef DEBUG
 		VERIFY	(priority!=REG_PRIORITY_INVALID);
 		VERIFY	(obj);
@@ -71,26 +73,44 @@ public:
 	};
 	void Remove	(T *obj)
 	{
+		std::scoped_lock lock( m );
 		for (u32 i=0; i<R.size(); i++) {
 			if (R[i].Object==obj) R[i].Prio = REG_PRIORITY_INVALID;
 		}
 		if(in_process)		changed=true;
 		else Resort			( );
 	};
-	void Process(RP_FUNC *f)
-	{
-		in_process = true;
-    	if (R.empty()) return;
-		if (R[0].Prio==REG_PRIORITY_CAPTURE)	f(R[0].Object);
-		else {
-			for (u32 i=0; i<R.size(); i++)
-				if(R[i].Prio!=REG_PRIORITY_INVALID)
-					f(R[i].Object);
 
-		}
-		if(changed)	Resort();
-		in_process = false;
+	void Process( RP_FUNC* f ) {
+	  in_process = true;
+	  _REG_INFO I{ nullptr, 0, 0 };
+	  u32 idx = 0;
+	  while ( true ) {
+	    bool found = false;
+	    {
+	      std::scoped_lock lock( m );
+	      if ( idx < R.size() ) {
+	        I = R[ idx ];
+	        found = true;
+	      }
+	    }
+	    if ( !found )
+	      break;
+	    int prio = I.Prio;
+	    if ( prio != REG_PRIORITY_INVALID )
+	      f( I.Object );
+	    if ( idx == 0 && prio == REG_PRIORITY_CAPTURE )
+	      break;
+	    idx++;
+	  }
+	  if ( changed ) {
+	    std::scoped_lock lock( m );
+	    Resort();
+	  }
+	  in_process = false;
 	};
+
+private:
 	void Resort	(void)
 	{
 		qsort	(&*R.begin(),R.size(),sizeof(_REG_INFO),_REG_Compare);
