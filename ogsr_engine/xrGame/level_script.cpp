@@ -1003,6 +1003,14 @@ void map_iterate_user_spots_text( const luabind::functor<void>& funct ) {
 }
 
 
+void pre_init_inventory() {
+  CUIGameSP* pGameSP = smart_cast<CUIGameSP*>( HUD().GetUI()->UIGame() );
+  if ( !pGameSP )
+    return;
+  pGameSP->InventoryMenu->PreInitInventory();
+}
+
+
 #pragma optimize("s",on)
 void CLevel::script_register(lua_State *L)
 {
@@ -1173,6 +1181,7 @@ void CLevel::script_register(lua_State *L)
 		def( "get_effector_bobbing", &get_effector_bobbing ),
 		def( "get_patrol_path", &get_patrol_path ),
 		def( "map_iterate_user_spots_text", &map_iterate_user_spots_text ),
+		def( "pre_init_inventory", &pre_init_inventory ),
 
 		//--#SM+# Begin --
 		def("set_blender_mode_main", &set_blender_mode_main),

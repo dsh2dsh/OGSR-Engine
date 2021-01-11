@@ -25,6 +25,7 @@ private:
 	typedef CUIDialogWnd	inherited;
 	bool					m_b_need_reinit;
 	bool					m_b_need_update_stats;
+	bool m_preinited;
 public:
 							CUIInventoryWnd				();
 	virtual					~CUIInventoryWnd			();
@@ -173,4 +174,5 @@ public:
 	PIItem						CurrentIItem();
 	void UpdateWeight();
 	void UpdateOutfit();
+	void PreInitInventory();
 };

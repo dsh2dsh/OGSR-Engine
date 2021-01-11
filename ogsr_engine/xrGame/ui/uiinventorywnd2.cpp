@@ -60,8 +60,19 @@ void CUIInventoryWnd::InitInventory_delayed()
 	m_b_need_update_stats = true;
 }
 
+void CUIInventoryWnd::PreInitInventory() {
+  m_preinited = false;
+  InitInventory();
+  m_preinited = true;
+}
+
 void CUIInventoryWnd::InitInventory() 
 {
+	if ( m_preinited ) {
+	  m_preinited = false;
+	  return;
+	}
+
 	CInventoryOwner *pInvOwner	= smart_cast<CInventoryOwner*>(Level().CurrentEntity());
 	if(!pInvOwner)				return;
 

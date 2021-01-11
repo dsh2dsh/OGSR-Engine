@@ -51,6 +51,7 @@ CUIInventoryWnd::CUIInventoryWnd() :
 	g_pInvWnd							= this;	
 	m_b_need_reinit						= false;
 	m_b_need_update_stats = false;
+	m_preinited = false;
 	Hide								();	
 }
 
