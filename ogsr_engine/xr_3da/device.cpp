@@ -178,12 +178,10 @@ void CRenderDevice::SecondaryThreadProc(void* context)
 		const auto SecondThreadTasksStartTime = std::chrono::high_resolution_clock::now();
 #endif
 
-		device.m_IsSecondThreadActive = true;
 		for (const auto& Func : device.seqParallel)
 			Func();
 		device.seqParallel.clear_and_free();
 		device.seqFrameMT.Process(rp_Frame);
-		device.m_IsSecondThreadActive = false;
 
 #ifdef SHOW_SECOND_THREAD_STATS
 		const auto SecondThreadTasksEndTime = std::chrono::high_resolution_clock::now();
@@ -378,9 +376,9 @@ void CRenderDevice::Run			()
 	}
 
 	// Start all threads
-	m_IsSecondThreadActive = false;
 	mt_bMustExit = false;
 	std::thread second_thread(SecondaryThreadProc, this);
+	m_second_thread_id = second_thread.get_id();
 
 	// Message cycle
 	seqAppStart.Process			(rp_AppStart);

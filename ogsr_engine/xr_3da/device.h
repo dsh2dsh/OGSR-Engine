@@ -278,9 +278,9 @@ private:
 	// Multi-threading
 	Event syncProcessFrame, syncFrameDone, syncThreadExit; // Secondary thread events
 	std::atomic_bool mt_bMustExit;
-	bool m_IsSecondThreadActive;
 	static void SecondaryThreadProc(void* context);
 	std::chrono::duration<double, std::milli> SecondThreadTasksElapsedTime;
+	std::thread::id m_second_thread_id;
 
 public:
 	ICF bool add_to_seq_parallel(const fastdelegate::FastDelegate<void()> &delegate)
@@ -297,7 +297,7 @@ public:
 	}
 
 	ICF bool is_second_thread_active() {
-	  return m_IsSecondThreadActive;
+	  return std::this_thread::get_id() == m_second_thread_id;
 	}
 
 	ICF void remove_from_seq_parallel(const fastdelegate::FastDelegate<void()> &delegate)
