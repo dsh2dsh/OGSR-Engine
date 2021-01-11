@@ -208,7 +208,7 @@ void CCar::SWheelDrive::Load( LPCSTR section ) {
   IKinematics *K = PKinematics( pwheel->car->Visual() );
   CInifile  *ini = K->LL_UserData();
   VERIFY( ini );
-  pos_fvd       = READ_IF_EXISTS( ini, r_float, section, "pos_fvd", 1.f );
+  pos_fvd       = READ_IF_EXISTS( ini, r_float, section, "pos_fvd", -1.f );
   pos_fvd_debug = READ_IF_EXISTS( ini, r_bool,  section, "pos_fvd_debug", false );
   if ( pos_fvd_debug )
     Msg( "[%s]: %s section[%s] pos_fvd[%f]", __FUNCTION__, pwheel->car->cName().c_str(), section, pos_fvd );
