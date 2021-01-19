@@ -92,8 +92,6 @@ static Fvector	vFootExt;
 Flags32 psActorFlags = { AF_3D_SCOPES | AF_KEYPRESS_ON_START };
 float g_shotmarks_dist = 25.f;
 
-static bool updated;
-
 CActor::CActor() : CEntityAlive(),current_ik_cam_shift(0)
 {
 	encyclopedia_registry	= xr_new<CEncyclopediaRegistryWrapper	>();
@@ -202,12 +200,12 @@ CActor::CActor() : CEntityAlive(),current_ik_cam_shift(0)
 	m_fDrugRadProtectionCoeff	= 1.f;
 	
 	m_loaded_ph_box_id = 0;
-	updated = false;
 
 	// Alex ADD: for smooth crouch fix
 	CurrentHeight = 0.f;
 
         hit_slowmo = 0.f;
+	m_updated = false;
 }
 
 
@@ -923,7 +921,7 @@ void CActor::shedule_Update	(u32 DT)
 		pHudItem->SetHUDmode(HUDview());
 
 	//обновление инвентаря
-	if ( !updated )
+	if ( !m_updated )
           inventory().RestoreBeltOrder();
 	UpdateInventoryOwner			(DT);
 
@@ -1179,7 +1177,7 @@ void CActor::shedule_Update	(u32 DT)
 	if ( !m_holder )
 	  m_pPhysics_support->in_shedule_Update( DT );
 
-	updated = true;
+	m_updated = true;
 };
 #include "debug_renderer.h"
 void CActor::renderable_Render	()
@@ -1978,4 +1976,9 @@ void CActor::RepackAmmo() {
 bool CActor::unlimited_ammo()
 {
 	return !!psActorFlags.test(AF_UNLIMITEDAMMO);
+}
+
+
+bool CActor::hasUpdated() {
+  return m_updated;
 }

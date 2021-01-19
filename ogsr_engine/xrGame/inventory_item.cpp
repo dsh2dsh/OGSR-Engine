@@ -25,6 +25,7 @@
 #include "alife_registry_wrappers.h"
 #include "alife_simulator_header.h"
 #include "grenade.h"
+#include "ui\UICellCustomItems.h"
 
 #ifdef DEBUG
 #	include "debug_renderer.h"
@@ -109,6 +110,8 @@ CInventoryItem::CInventoryItem()
 CInventoryItem::~CInventoryItem() 
 {
 	delete_data			(m_net_updateData);
+	if ( m_cell_item )
+	  m_cell_item->m_pData = NULL;
 
         ASSERT_FMT( (int)m_slots.size() >= 0, "m_slots.size() returned negative value inside destructor!" ); // alpet: для детекта повреждения объекта
 

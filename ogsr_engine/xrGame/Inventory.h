@@ -190,4 +190,7 @@ protected:
 
 private:
 	u32 UpdatesCount{};
+	bool m_need_cell_items;
+
+	void MoreCellItems();
 };

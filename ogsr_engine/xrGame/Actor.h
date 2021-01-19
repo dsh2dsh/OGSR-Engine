@@ -830,10 +830,12 @@ private:
 	// иммунитеты от препаратов, применяемые для ослабления хита
 	float m_fDrugPsyProtectionCoeff;
 	float m_fDrugRadProtectionCoeff;
+	bool m_updated;
 
 public:
 	IC void	SetDrugRadProtection(float _prot) { m_fDrugRadProtectionCoeff = _prot; };
 	IC void	SetDrugPsyProtection(float _prot) { m_fDrugPsyProtectionCoeff = _prot; };
+	bool hasUpdated();
 };
 
 extern bool		isActorAccelerated			(u32 mstate, bool ZoomMode);

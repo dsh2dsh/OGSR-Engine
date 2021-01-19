@@ -45,8 +45,8 @@ public:
 	virtual		void		OnAfterChild			(CUIDragDropListEx* parent_list)						{};
 
 				u32			ChildsCount				();
-				void		 PushChild				(CUICellItem*);
-				CUICellItem* PopChild				();
+	void  PushChild( CUICellItem* c, bool update = true );
+	CUICellItem* PopChild( bool update = true );
 				CUICellItem* Child					(u32 idx)				{return m_childs[idx];};
 				bool		HasChild					(CUICellItem* item);
 	virtual		bool		EqualTo					(CUICellItem* itm);
@@ -70,6 +70,9 @@ public:
 				bool		m_select_armament;
 				bool		m_select_equipped;
 				bool		m_select_untradable;
+
+	void ClearItem();
+	virtual void ReuseItem();
 };
 
 class CUIDragItem: public CUIWindow, public pureRender, public pureFrame

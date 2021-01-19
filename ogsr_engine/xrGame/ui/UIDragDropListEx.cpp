@@ -842,15 +842,21 @@ void CUICellContainer::ClearAll(bool bDestroy)
 		
 		while( wc->ChildsCount() )
 		{
-			CUICellItem* ci		= wc->PopChild();
+			CUICellItem* ci = wc->PopChild( false );
 			R_ASSERT			(ci->ChildsCount()==0);
-
-			if(bDestroy)
-				delete_data		(ci);
+			if ( bDestroy ) {
+			  if ( ci->m_pData )
+			    ci->ClearItem();
+			  else
+			    delete_data( ci );
+			}
 		}
 		
-		if(bDestroy){
-			delete_data			(wc);
+		if ( bDestroy ) {
+		  if ( wc->m_pData )
+		    wc->ClearItem();
+		  else
+		    delete_data( wc );
 		}
 	}
 

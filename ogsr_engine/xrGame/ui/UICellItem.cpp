@@ -18,10 +18,8 @@ CUICellItem* CUICellItem::m_mouse_selected_item = nullptr;
 
 CUICellItem::CUICellItem()
 {
-	m_pParentList		= NULL;
 	m_pData				= NULL;
 	m_custom_draw		= NULL;
-	m_b_already_drawn	= false;
 	SetAccelerator		(0);
 	m_b_destroy_childs	= true;
 	if (Core.Features.test(xrCore::Feature::show_inv_item_condition)) {
@@ -30,10 +28,7 @@ CUICellItem::CUICellItem()
 		m_condition_auto_width = false;
 		init();
 	}
-	m_selected		= false;
-	m_select_armament	= false;
-	m_select_equipped	= false;
-	m_select_untradable	= false;
+	ClearItem();
 }
 
 CUICellItem::~CUICellItem()
@@ -136,20 +131,31 @@ u32 CUICellItem::ChildsCount()
 	return m_childs.size();
 }
 
-void CUICellItem::PushChild(CUICellItem* c)
+void CUICellItem::PushChild( CUICellItem* c, bool update )
 {
 	R_ASSERT(c->ChildsCount()==0);
 	VERIFY				(this!=c);
 	m_childs.push_back	(c);
-	UpdateItemText		();
+	if ( update )
+	  UpdateItemText();
 }
 
-CUICellItem* CUICellItem::PopChild()
+CUICellItem* CUICellItem::PopChild( bool update )
 {
 	CUICellItem* itm	= m_childs.back();
 	m_childs.pop_back	();
-	std::swap			(itm->m_pData, m_pData);
-	UpdateItemText		();
+	if ( update ) {
+	  std::swap( itm->m_pData, m_pData );
+	  PIItem ii1 = (PIItem)m_pData;
+	  PIItem ii2 = (PIItem)itm->m_pData;
+	  if ( ii1 && ii2 )
+	    std::swap( ii1->m_cell_item, ii2->m_cell_item );
+	  else if ( ii1 )
+	    ii1->m_cell_item = (CUIInventoryCellItem*)this;
+	  else
+	    ii2->m_cell_item = (CUIInventoryCellItem*)itm;
+	  UpdateItemText();
+	}
 	R_ASSERT			(itm->ChildsCount()==0);
 	itm->SetOwnerList	(NULL);
 	return				itm;
@@ -439,4 +445,23 @@ void CUICellItem::ColorizeItems( std::initializer_list<CUIDragDropListEx*> args 
   else { //Надо подумать, какое условие тут сделать. Аддоны например, могут быть не именно аддонами, а фейк-предметами, например. Лушчше наверно вообще без каких-либо условий.
 	  ColorizeWeapons(inventoryitem->object().cNameSect());
   }
+}
+
+
+void CUICellItem::ClearItem() {
+  m_childs.clear();
+  delete_data( m_custom_draw );
+  m_pParentList       = NULL;
+  m_b_already_drawn   = false;
+  m_selected          = false;
+  m_select_armament   = false;
+  m_select_equipped   = false;
+  m_select_untradable = false;
+}
+
+
+void CUICellItem::ReuseItem() {
+  ClearItem();
+  SetTextureColor( 0xffffffff );
+  UpdateItemText();
 }

@@ -94,8 +94,7 @@ void CUIInventoryCellItem::OnFocusLost()
 
 	inherited::OnFocusLost();
 
-	if (object()->object().m_spawned)
-	{
+	if ( object() && object()->object().m_spawned ) {
 		auto script_obj = object()->object().lua_game_object();
 		g_actor->callback(GameObject::eCellItemFocusLost)(script_obj);
 	}
@@ -499,6 +498,15 @@ bool CUIWeaponCellItem::EqualTo(CUICellItem* itm)
 	
 	return							b_addons && b_place;
 }
+
+
+void CUIWeaponCellItem::ReuseItem() {
+  inherited::ReuseItem();
+  for ( auto* Child : m_addons )
+    if ( Child )
+      Child->SetTextureColor( 0xffffffff );
+}
+
 
 CBuyItemCustomDrawCell::CBuyItemCustomDrawCell	(LPCSTR str, CGameFont* pFont)
 {

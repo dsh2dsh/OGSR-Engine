@@ -21,6 +21,7 @@
 #include "UIGameSP.h"
 #include "HudManager.h"
 #include "ui/UIInventoryWnd.h"
+#include "ui\UICellItemFactory.h"
 
 using namespace InventoryUtilities;
 
@@ -109,6 +110,7 @@ CInventory::CInventory()
 	m_drop_last_frame							= false;
 	m_iLoadActiveSlotFrame						= u32(-1);
 	m_slots_block_cnt = 0;
+	m_need_cell_items = false;
 }
 
 
@@ -219,6 +221,9 @@ void CInventory::Take(CGameObject *pObj, bool bNotActivate, bool strict_placemen
 
 	pIItem->object().processing_deactivate();
 	VERIFY								(pIItem->m_eItemPlace != eItemPlaceUndefined);
+
+	if ( !pIItem->m_cell_item && smart_cast<CActor*>( m_pOwner ) )
+	  m_need_cell_items = true;
 }
 
 bool CInventory::DropItem(CGameObject *pObj) 
@@ -674,6 +679,9 @@ void CInventory::Update()
 		m_iActiveSlot = m_iNextActiveSlot;
 	}
 	UpdateDropTasks	();
+
+	if ( m_need_cell_items )
+	  Device.add_to_seq_parallel( fastdelegate::MakeDelegate( this, &CInventory::MoreCellItems ) );
 }
 
 void CInventory::UpdateDropTasks()
@@ -1295,4 +1303,21 @@ PIItem CInventory::GetAmmoMinCurr( const char *name, bool forActor ) const {
   }
 
   return box;
+}
+
+
+void CInventory::MoreCellItems() {
+  u32 cnt  = 0;
+  u32 size = 0;
+  for ( auto pIItem : m_all ) {
+    size++;
+    if ( !pIItem->m_cell_item ) {
+      create_cell_item( pIItem );
+      cnt++;
+      if ( cnt == 10 )
+        break;
+    }
+  }
+  if ( size == m_all.size() )
+    m_need_cell_items = false;
 }
