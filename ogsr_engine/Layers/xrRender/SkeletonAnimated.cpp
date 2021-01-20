@@ -666,6 +666,7 @@ void CKinematicsAnimated::Load(const char* N, IReader *data, u32 dwFlags)
   Update_LastTime         = 0;
 
   // Load animation
+  bool load_embeded = true;
   std::vector<std::string> omfs;
   if ( pUserData && pUserData->section_exist( "omf_override" ) ) {
     LPCSTR nm, val;
@@ -684,6 +685,7 @@ void CKinematicsAnimated::Load(const char* N, IReader *data, u32 dwFlags)
       _GetItem( items_nm, k, nm );
       xr_strcat( nm, ".omf" );
       omfs.push_back( nm );
+      load_embeded = false;
     }
   }
   else if ( data->find_chunk( OGF_S_MOTION_REFS2 ) ) {
@@ -693,6 +695,7 @@ void CKinematicsAnimated::Load(const char* N, IReader *data, u32 dwFlags)
       data->r_stringZ( nm, sizeof( nm ) );
       xr_strcat( nm, ".omf" );
       omfs.push_back( nm );
+      load_embeded = false;
     }
   }
 
@@ -728,7 +731,8 @@ void CKinematicsAnimated::Load(const char* N, IReader *data, u32 dwFlags)
       }
     }
   }
-  else {
+
+  if ( load_embeded ) {
     string_path     nm;
     strconcat                       (sizeof(nm),nm,N,".ogf");
     m_Motions.emplace_back().motions.create(nm,data,bones);
