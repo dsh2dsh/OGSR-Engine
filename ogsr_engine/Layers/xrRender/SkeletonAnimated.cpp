@@ -699,9 +699,15 @@ void CKinematicsAnimated::Load(const char* N, IReader *data, u32 dwFlags)
     }
   }
 
+  if ( load_embeded ) {
+    string_path nm;
+    strconcat( sizeof( nm ), nm, N, ".ogf" );
+    m_Motions.emplace_back().motions.create( nm, data, bones );
+  }
+
   if ( omfs.size() ) {
-    R_ASSERT( omfs.size() < MAX_ANIM_SLOT );
-    m_Motions.reserve( omfs.size() );
+    R_ASSERT( m_Motions.size() + omfs.size() < MAX_ANIM_SLOT );
+    m_Motions.reserve( m_Motions.size() + omfs.size() );
     for ( const auto& s : omfs ) {
       auto nm = s.c_str();
       string_path fn;
@@ -730,12 +736,6 @@ void CKinematicsAnimated::Load(const char* N, IReader *data, u32 dwFlags)
         Msg( "! error in model [%s]. Unable to load motion file '%s'.", N, nm );
       }
     }
-  }
-
-  if ( load_embeded ) {
-    string_path     nm;
-    strconcat                       (sizeof(nm),nm,N,".ogf");
-    m_Motions.emplace_back().motions.create(nm,data,bones);
   }
 
   R_ASSERT                            (m_Motions.size());
