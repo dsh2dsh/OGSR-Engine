@@ -49,6 +49,7 @@ public:
 	}
 
 	virtual	    CGameObject& 			object()  { return *smart_cast<CGameObject*> (this); }
+	virtual BOOL UsedAI_Locations() { return FALSE; }
 };
 
 class  CInventoryBox : public CCustomInventoryBox<CGameObject> // CBasicInventoryBox

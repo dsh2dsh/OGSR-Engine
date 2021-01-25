@@ -303,6 +303,10 @@ public:
 		add_online_impl (smart_cast<CSE_ALifeDynamicObjectVisual*>(this), update_registries);
 		CSE_ALifeItem::add_online(update_registries);
 	};
+
+	virtual bool used_ai_locations () const {
+	  return false;
+	};
 };
 
 // KRodin: Закомментировал, попытка предотвратить повторную регистрацию cse_alife_item в луабинде.

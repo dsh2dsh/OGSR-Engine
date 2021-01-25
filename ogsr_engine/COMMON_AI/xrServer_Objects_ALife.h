@@ -594,6 +594,10 @@ public:
 		CSE_ALifeDynamicObjectVisual::add_online(update_registries);
 	};
 #endif
+
+	virtual bool used_ai_locations () const {
+	  return false;
+	};
 };
 
 #pragma warning(pop)
