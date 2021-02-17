@@ -675,6 +675,7 @@ void CKinematicsAnimated::Load(const char* N, IReader *data, u32 dwFlags)
       s += ".omf";
       omfs.push_back( s );
     }
+    load_embeded = data->find_chunk( OGF_S_SMPARAMS );
   }
   else if ( data->find_chunk( OGF_S_MOTION_REFS ) ) {
     string_path items_nm;
