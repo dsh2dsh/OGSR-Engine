@@ -136,6 +136,8 @@ void CParticleManager::Update(int effect_id, int alist_id, float dt)
 	VERIFY(pa);
 	VERIFY(pe);
 
+	if ( pa->locked() )
+	  return;
 	pa->lock();
 
 	// Step through all the actions in the action list.

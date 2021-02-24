@@ -44,6 +44,7 @@ namespace PAPI{
         void			copy			(ParticleActions* src);
 		void			lock			()						{R_ASSERT(!m_bLocked);m_bLocked=true;}
 		void			unlock			()						{R_ASSERT(m_bLocked);m_bLocked=false;}
+		bool locked() { return m_bLocked; }
 	};
 };
 //---------------------------------------------------------------------------
