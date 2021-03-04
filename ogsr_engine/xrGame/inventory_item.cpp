@@ -110,8 +110,10 @@ CInventoryItem::CInventoryItem()
 CInventoryItem::~CInventoryItem() 
 {
 	delete_data			(m_net_updateData);
-	if ( m_cell_item )
+	if ( m_cell_item ) {
 	  m_cell_item->m_pData = NULL;
+	  m_cell_item = NULL;
+	}
 
         ASSERT_FMT( (int)m_slots.size() >= 0, "m_slots.size() returned negative value inside destructor!" ); // alpet: для детекта повреждения объекта
 
@@ -457,6 +459,10 @@ void CInventoryItem::net_Destroy		()
 {
 	//инвентарь которому мы принадлежали
 //.	m_pCurrentInventory = NULL;
+	if ( m_cell_item ) {
+	  m_cell_item->m_pData = NULL;
+	  m_cell_item = NULL;
+	}
 }
 
 void CInventoryItem::save(NET_Packet &packet)

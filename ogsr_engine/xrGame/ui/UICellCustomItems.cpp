@@ -69,12 +69,13 @@ void CUIInventoryCellItem::OnFocusReceive()
 	if (auto InvWnd = smart_cast<CUIInventoryWnd*>(this->OwnerList()->GetTop()))
 	{
 		InvWnd->HideSlotsHighlight();
-		InvWnd->ShowSlotsHighlight(object());
+		if ( object() )
+		  InvWnd->ShowSlotsHighlight( object() );
 	}
 
 	inherited::OnFocusReceive();
 
-	if (object()->object().m_spawned)
+	if ( object() && object()->object().m_spawned )
 	{
 		auto script_obj = object()->object().lua_game_object();
 		g_actor->callback(GameObject::eCellItemFocus)(script_obj);
