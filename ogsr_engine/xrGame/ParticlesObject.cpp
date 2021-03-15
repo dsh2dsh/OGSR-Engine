@@ -102,66 +102,77 @@ const shared_str CParticlesObject::Name()
 }
 
 //----------------------------------------------------
-void CParticlesObject::Play		()
-{
-	IParticleCustom* V			= smart_cast<IParticleCustom*>(renderable.visual); VERIFY(V);
-	V->Play						();
-	dwLastTime					= Device.dwTimeGlobal-33ul;
-	mt_dt						= 0;
-	PerformAllTheWork			(0);
-	m_bStopping					= false;
+void CParticlesObject::Play() {
+  IParticleCustom* V = smart_cast<IParticleCustom*>( renderable.visual );
+  VERIFY( V );
+  V->Play();
+  mt_dt = 0;
+  m_bStopping = false;
+  if ( Device.is_second_thread_active() )
+    dwLastTime = Device.dwTimeGlobal;
+  else {
+    dwLastTime = Device.dwTimeGlobal - 33ul;
+    PerformAllTheWork( 0 );
+  }
 }
 
-void CParticlesObject::play_at_pos(const Fvector& pos, BOOL xform)
-{
-	IParticleCustom* V			= smart_cast<IParticleCustom*>(renderable.visual); VERIFY(V);
-	Fmatrix m; m.translate		(pos); 
-	V->UpdateParent				(m,zero_vel,xform);
-	V->Play						();
-	dwLastTime					= Device.dwTimeGlobal-33ul;
-	mt_dt						= 0;
-	PerformAllTheWork			(0);
-	m_bStopping					= false;
+void CParticlesObject::play_at_pos( const Fvector& pos, BOOL xform ) {
+  IParticleCustom* V = smart_cast<IParticleCustom*>( renderable.visual );
+  VERIFY( V );
+  Fmatrix m; m.translate( pos );
+  V->UpdateParent( m, zero_vel, xform );
+  V->Play();
+  mt_dt	= 0;
+  m_bStopping = false;
+  if ( Device.is_second_thread_active() )
+    dwLastTime = Device.dwTimeGlobal;
+  else {
+    dwLastTime = Device.dwTimeGlobal - 33ul;
+    PerformAllTheWork( 0 );
+  }
 }
 
-void CParticlesObject::Stop		(BOOL bDefferedStop)
-{
-	IParticleCustom* V			= smart_cast<IParticleCustom*>(renderable.visual); VERIFY(V);
-	V->Stop						(bDefferedStop);
-	m_bStopping					= true;
+void CParticlesObject::Stop( BOOL bDefferedStop ) {
+  IParticleCustom* V = smart_cast<IParticleCustom*>( renderable.visual );
+  VERIFY( V );
+  V->Stop( bDefferedStop );
+  m_bStopping = true;
 }
 
-void CParticlesObject::shedule_Update	(u32 _dt)
-{
-	inherited::shedule_Update		(_dt);
+void CParticlesObject::shedule_Update( u32 _dt ) {
+  inherited::shedule_Update( _dt );
 
-	// Update
-	if (m_bDead)					return;
-	u32 dt							= Device.dwTimeGlobal - dwLastTime;
-	if (dt)							{
-		if constexpr(false) { //. AlexMX comment this line// NO UNCOMMENT - DON'T WORK PROPERLY
-			mt_dt					= dt;
-			Device.add_to_seq_parallel(fastdelegate::MakeDelegate(this, &CParticlesObject::PerformAllTheWork_mt));
-		} else {
-			mt_dt					= 0;
-			IParticleCustom* V		= smart_cast<IParticleCustom*>(renderable.visual); VERIFY(V);
-			V->OnFrame				(dt);
-		}
-		dwLastTime					= Device.dwTimeGlobal;
-	}
-	UpdateSpatial					();
+  // Update
+  if ( m_bDead )
+    return;
+
+  u32 dt = Device.dwTimeGlobal - dwLastTime;
+  if ( dt ) {
+    if constexpr( false ) { //. AlexMX comment this line// NO UNCOMMENT - DON'T WORK PROPERLY
+      mt_dt = dt;
+      Device.add_to_seq_parallel( fastdelegate::MakeDelegate( this, &CParticlesObject::PerformAllTheWork_mt ) );
+    }
+    else {
+      mt_dt = 0;
+      IParticleCustom* V = smart_cast<IParticleCustom*>( renderable.visual );
+      VERIFY( V );
+      V->OnFrame( dt );
+    }
+    dwLastTime = Device.dwTimeGlobal;
+  }
+  UpdateSpatial();
 }
 
-void CParticlesObject::PerformAllTheWork(u32 _dt)
-{
-	// Update
-	u32 dt							= Device.dwTimeGlobal - dwLastTime;
-	if (dt)							{
-		IParticleCustom* V		= smart_cast<IParticleCustom*>(renderable.visual); VERIFY(V);
-		V->OnFrame				(dt);
-		dwLastTime				= Device.dwTimeGlobal;
-	}
-	UpdateSpatial					();
+void CParticlesObject::PerformAllTheWork( u32 _dt ) {
+  // Update
+  u32 dt = Device.dwTimeGlobal - dwLastTime;
+  if ( dt ) {
+    IParticleCustom* V = smart_cast<IParticleCustom*>( renderable.visual );
+    VERIFY( V );
+    V->OnFrame( dt );
+    dwLastTime = Device.dwTimeGlobal;
+  }
+  UpdateSpatial();
 }
 
 void CParticlesObject::PerformAllTheWork_mt()
