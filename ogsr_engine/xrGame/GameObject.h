@@ -137,6 +137,9 @@ public:
 	virtual bool			shedule_Needed		();
 	virtual float			shedule_Scale		();
 
+	virtual void ForceTransform(const Fmatrix& m) override {}
+	virtual void ForceTransformAndDirection(const Fmatrix& m) override { ForceTransform(m); }
+
 	virtual void			renderable_Render	();
 	virtual void			OnEvent				(NET_Packet& P, u16 type);
 	virtual	void			Hit					(SHit* pHDS) {};
