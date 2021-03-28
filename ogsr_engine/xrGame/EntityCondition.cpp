@@ -62,6 +62,7 @@ CEntityCondition::CEntityCondition(CEntityAlive *object)
 	m_fHealthLost			= 0.f;
 	m_pWho					= NULL;
 	m_iWhoID				= 0;
+	m_pWhoWpn = nullptr;
 
 	m_WoundVector.clear		();
 
@@ -133,6 +134,7 @@ void CEntityCondition::reinit	()
 	m_fHealthLost			= 0.f;
 	m_pWho					= NULL;
 	m_iWhoID				= NULL;
+	m_pWhoWpn = nullptr;
 
 	ClearWounds				();
 
@@ -356,6 +358,7 @@ CWound* CEntityCondition::ConditionHit(SHit* pHDS)
 	//кто нанес последний хит
 	m_pWho = pHDS->who;
 	m_iWhoID = (NULL != pHDS->who) ? pHDS->who->ID() : 0;
+	m_pWhoWpn = Level().Objects.net_Find( pHDS->weaponID );
 
 	float hit_power_org = pHDS->damage();
 	float hit_power = hit_power_org;
@@ -597,6 +600,9 @@ float CEntityCondition::GetParamByName(LPCSTR name)
 
 void CEntityCondition::remove_links	(const CObject *object)
 {
+	if ( m_pWhoWpn == object )
+	  m_pWhoWpn = nullptr;
+
 	if (m_pWho != object)
 		return;
 

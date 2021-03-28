@@ -82,6 +82,7 @@ public:
 
 	CObject*				GetWhoHitLastTime		() {return m_pWho;}
 	u16						GetWhoHitLastTimeID		() {return m_iWhoID;}
+	CObject* GetWhoWpnHitLastTime() { return m_pWhoWpn; }
 
 	CWound*					AddWound				(float hit_power, ALife::EHitType hit_type, u16 element);
 
@@ -169,6 +170,8 @@ const	static int		PARAMS_COUNT = 7;
 	//кто нанес последний хит
 	CObject*			m_pWho;
 	u16					m_iWhoID;
+	// и каким оружием
+	CObject* m_pWhoWpn;
 
 	//для передачи параметров из DamageManager
 	float				m_fHitBoneScale;

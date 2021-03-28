@@ -230,6 +230,13 @@ LPCSTR CScriptGameObject::WhoHitSectionName()
 	}
 }
 
+CScriptGameObject* CScriptGameObject::WhoHitWpn() {
+  CEntityAlive* entity_alive = smart_cast<CEntityAlive*>( &object() );
+  ASSERT_FMT( entity_alive, "[%s]: %s not a CEntityAlive", __FUNCTION__, cName().c_str() );
+  CGameObject* GO = smart_cast<CGameObject*>( entity_alive->conditions().GetWhoWpnHitLastTime() );
+  return GO ? GO->lua_game_object() : nullptr;
+}
+
 bool CScriptGameObject::CheckObjectVisibility(const CScriptGameObject *tpLuaGameObject)
 {
 	if (!tpLuaGameObject) {

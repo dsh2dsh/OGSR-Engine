@@ -229,6 +229,7 @@ public:
 			bool				CheckTypeVisibility	(const char *section_name);
 			LPCSTR				WhoHitName			();
 			LPCSTR				WhoHitSectionName	();
+			CScriptGameObject* WhoHitWpn();
 
 			void				ChangeTeam			(u8 team, u8 squad, u8 group);
 

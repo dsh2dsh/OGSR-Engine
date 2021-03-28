@@ -128,6 +128,7 @@ class_<CScriptGameObject> script_register_game_object1(class_<CScriptGameObject>
 		.def("who_hit_name",				&CScriptGameObject::WhoHitName)
 		.def("who_hit_section_name",		&CScriptGameObject::WhoHitSectionName)
 		
+		.def( "who_hit_wpn", &CScriptGameObject::WhoHitWpn )
 		.def("rank",						&CScriptGameObject::GetRank)
 		.def("command",						&CScriptGameObject::AddAction)
 #ifdef LUABIND_09
