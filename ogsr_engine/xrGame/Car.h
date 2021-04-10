@@ -588,7 +588,7 @@ public:
 	virtual float			SetfHealth					(float value)	{return CEntity::SetfHealth(value);};
 
 	// Hits
-	virtual void			HitSignal					(float /**HitAmount/**/,	Fvector& /**local_dir/**/, CObject* /**who/**/, s16 /**element/**/)	{};
+	virtual void HitSignal( float /**HitAmount/**/, Fvector& /**local_dir/**/, CObject* /**who/**/, s16 /**element/**/, SHit* )	{};
 	virtual void			HitImpulse					(float /**amount/**/,		Fvector& /**vWorldDir/**/, Fvector& /**vLocalDir/**/)			{};
 	virtual void			g_fireParams				(const CHudItem* /**pHudItem/**/, Fvector& /**P/**/, Fvector& /**D/**/)											{};
 	virtual u16				Initiator					();

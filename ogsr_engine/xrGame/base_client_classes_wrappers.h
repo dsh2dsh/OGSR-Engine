@@ -124,12 +124,12 @@ public:
 	CEntityWrapper() = default;
 	virtual ~CEntityWrapper() = default;
 
-	virtual void			HitSignal			(float P, Fvector &local_dir,	CObject* who, s16 element)
+	virtual void HitSignal( float P, Fvector &local_dir, CObject* who, s16 element, SHit* pHDS )
 	{
-		luabind::call_member<void>(this,"HitSignal",P,local_dir,who,element);
+		luabind::call_member<void>( this, "HitSignal", P, local_dir, who, element, pHDS );
 	}
 
-	static	void			HitSignal_static	(CEntity *self, float P, Fvector &local_dir,	CObject* who, s16 element)
+	static void HitSignal_static( CEntity *self, float P, Fvector &local_dir, CObject* who, s16 element, SHit* pHDS )
 	{
 		ai().script_engine().script_log(eLuaMessageTypeError,"You are trying to call a pure virtual function CEntity::HitSignal!");
 	}

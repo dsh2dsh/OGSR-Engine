@@ -123,7 +123,7 @@ public:
 	virtual void	g_fireParams				(const CHudItem* /**pHudItem/**/, Fvector& /**P/**/, Fvector& /**D/**/)	{};
 	virtual void	g_WeaponBones				(int &/**L/**/, int &/**R1/**/, int &/**R2/**/)	{};
 
-	virtual void	HitSignal					(float	HitAmount,	Fvector& local_dir, CObject* who, s16 element);
+	virtual void HitSignal( float HitAmount, Fvector& local_dir, CObject* who, s16 element, SHit* pHDS );
 	virtual void	HitImpulse					(float	amount,		Fvector& vWorldDir, Fvector& vLocalDir);
 	virtual	void	Hit							(SHit* pHDS);
 	virtual void	Die							(CObject* who);

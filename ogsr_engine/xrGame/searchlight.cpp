@@ -246,7 +246,8 @@ void CProjector::Hit(SHit *pHDS)
 		HDS.power,
 		HDS.dir,
 		smart_cast<const CGameObject*>(HDS.who)->lua_game_object(),
-		HDS.bone()
+		HDS.bone(),
+		pHDS
 		);
 }
 

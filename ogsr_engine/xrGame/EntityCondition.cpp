@@ -360,6 +360,9 @@ CWound* CEntityCondition::ConditionHit(SHit* pHDS)
 	m_iWhoID = (NULL != pHDS->who) ? pHDS->who->ID() : 0;
 	m_pWhoWpn = Level().Objects.net_Find( pHDS->weaponID );
 
+	if ( pHDS->keep_conditions )
+	  return NULL;
+
 	float hit_power_org = pHDS->damage();
 	float hit_power = hit_power_org;
 	hit_power = HitOutfitEffect(hit_power, pHDS->hit_type, pHDS->boneID, pHDS->ap);

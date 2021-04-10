@@ -8,7 +8,7 @@
 
 #include "script_game_object.h"
 
-SHit::SHit(float aPower,Fvector &adir,CObject *awho, u16 aelement, Fvector ap_in_bone_space, float aimpulse,  ALife::EHitType ahit_type, float aAP, bool AimBullet)
+SHit::SHit(float aPower,Fvector &adir, CObject *awho, u16 aelement, Fvector ap_in_bone_space, float aimpulse,  ALife::EHitType ahit_type, float aAP, bool AimBullet)
 {
 		power					=aPower									;
 		dir						.set(adir)								;
@@ -26,7 +26,9 @@ SHit::SHit(float aPower,Fvector &adir,CObject *awho, u16 aelement, Fvector ap_in
 		BulletID				= 0										;
 		SenderID				= 0										;
 		aim_bullet				= AimBullet								;
+		ignore_flag = false;
 		full_power = aPower;
+		keep_conditions = false;
 }
 
 SHit::SHit()
@@ -55,7 +57,9 @@ void SHit::invalidate()
 	BulletID				= 0;
 	SenderID				= 0;
 	aim_bullet				= false									;
+	ignore_flag = false;
 	full_power = -dInfinity;
+	keep_conditions = false;
 }
 
 bool SHit::is_valide() const

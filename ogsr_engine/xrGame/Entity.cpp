@@ -128,10 +128,10 @@ void	CEntity::Hit		(SHit* pHDS)
 	if(pHDS->impulse) HitImpulse				(pHDS->impulse,pHDS->dir,vLocalDir); // @@@: WT
 	
 	// Calc amount (correct only on local player)
-	float lost_health = CalcCondition(pHDS->damage());
+	float lost_health = pHDS->keep_conditions ? pHDS->damage() : CalcCondition(pHDS->damage());
 
 	// Signal hit
-	if(BI_NONE!=pHDS->bone())	HitSignal(lost_health,vLocalDir,pHDS->who,pHDS->boneID);
+	if( BI_NONE!=pHDS->bone() ) HitSignal( lost_health, vLocalDir, pHDS->who, pHDS->boneID, pHDS );
 
 	// If Local() - perform some logic
 	if (Local() && !g_Alive() && !AlreadyDie() && (m_killer_id == ALife::_OBJECT_ID(-1))) {

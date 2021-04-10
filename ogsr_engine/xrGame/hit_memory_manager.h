@@ -9,6 +9,7 @@
 #pragma once
 
 #include "memory_space.h"
+#include "hit.h"
 
 #ifdef DEBUG
 #	define USE_SELECTED_HIT
@@ -57,9 +58,9 @@ public:
 			void				remove_links		(CObject *object);
 
 public:
-			void				add					(const CEntityAlive	*who);
-			void				add					(float amount, const Fvector &local_direction, const CObject *who, s16 element);
-			void				add					(const CHitObject &hit_object);
+			void add( CEntityAlive *who );
+			void add( float amount, const Fvector &local_direction, CObject *who, s16 element, SHit* pHDS );
+			void add( const CHitObject &hit_object );
 
 public:
 	IC		const HITS			&objects			() const;

@@ -284,13 +284,13 @@ void			CAI_Stalker::Hit					(SHit* pHDS)
 	inherited::Hit					(&HDS);
 }
 
-void CAI_Stalker::HitSignal				(float amount, Fvector& vLocalDir, CObject* who, s16 element)
+void CAI_Stalker::HitSignal( float amount, Fvector& vLocalDir, CObject* who, s16 element, SHit* pHDS )
 {
 	if (getDestroy())
 		return;
 
 	if (g_Alive())
-		memory().hit().add	(amount,vLocalDir,who,element);
+	  memory().hit().add( amount, vLocalDir, who, element, pHDS );
 }
 
 void CAI_Stalker::OnItemTake			(CInventoryItem *inventory_item)

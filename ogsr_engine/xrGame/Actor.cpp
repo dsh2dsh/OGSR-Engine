@@ -623,7 +623,7 @@ void CActor::HitMark	(float P,
 
 }
 
-void CActor::HitSignal(float perc, Fvector& vLocalDir, CObject* who, s16 element)
+void CActor::HitSignal( float perc, Fvector& vLocalDir, CObject* who, s16 element, SHit* pHDS)
 {
 	if (g_Alive()) 
 	{
@@ -656,7 +656,8 @@ void CActor::HitSignal(float perc, Fvector& vLocalDir, CObject* who, s16 element
 			perc,
 			vLocalDir,
 			smart_cast<const CGameObject*>(who)->lua_game_object(),
-			element
+			element,
+			pHDS
 			);
 	}
 }

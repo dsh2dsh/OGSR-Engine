@@ -404,7 +404,7 @@ void CAI_Crow::net_Import	(NET_Packet& P)
 	VERIFY2				( valid_pos( Position() ), dbg_valide_pos_string(Position(),this," CAI_Crow::net_Import	(NET_Packet& P)") );
 }
 //---------------------------------------------------------------------
-void CAI_Crow::HitSignal	(float /**HitAmount/**/, Fvector& /**local_dir/**/, CObject* who, s16 /**element/**/)
+void CAI_Crow::HitSignal( float /**HitAmount/**/, Fvector& /**local_dir/**/, CObject* who, s16 /**element/**/, SHit* )
 {
 	//bool				first_time = !!g_Alive(); 
 //	bool				first_time = !PPhysicsShell(); 

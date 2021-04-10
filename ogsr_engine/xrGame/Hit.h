@@ -4,7 +4,7 @@ class CScriptGameObject;
 
 struct SHit
 {
-	SHit										(float Power, Fvector &dir, CObject *who, u16 element, Fvector p_in_object_space, float impulse,  ALife::EHitType hit_type, float ap = 0.0f, bool AimBullet=false);
+	SHit( float Power, Fvector &dir, CObject *who, u16 element, Fvector p_in_object_space, float impulse,  ALife::EHitType hit_type, float ap = 0.0f, bool AimBullet=false );
 	SHit										();	
 	bool				is_valide				()		const	;	
 	void				invalidate				()				;
@@ -29,7 +29,7 @@ IC	ALife::EHitType		type					()		const	{VERIFY(is_valide());return hit_type;}
 	
 	float				power;
 	Fvector				dir;
-	CObject				*who;
+	CObject* who;
 	void set_hit_initiator(CScriptGameObject* script_obj);
 	CScriptGameObject* get_hit_initiator() const;
 	u16					whoID;
@@ -49,6 +49,7 @@ IC	ALife::EHitType		type					()		const	{VERIFY(is_valide());return hit_type;}
 	// Начальное значение хита, до обработок всякими защитами
 	// артефактов и броней.
 	float full_power;
+	bool keep_conditions = false;
 
 #ifdef DEBUG
 	void				_dump();

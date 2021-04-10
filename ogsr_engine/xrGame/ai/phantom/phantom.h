@@ -74,7 +74,7 @@ public:
 	virtual void		shedule_Update				(u32 DT); 
 	virtual void		UpdateCL					();
 
-	virtual void		HitSignal					(float	HitAmount,	Fvector& local_dir, CObject* who, s16 element){}
+	virtual void HitSignal( float HitAmount, Fvector& local_dir, CObject* who, s16 element, SHit* pHDS ) {}
 	virtual void		HitImpulse					(float	amount,		Fvector& vWorldDir, Fvector& vLocalDir){}
 	virtual	void		Hit							(SHit* pHDS);
 
