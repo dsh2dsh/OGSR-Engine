@@ -8,29 +8,34 @@
 
 int psSkeletonUpdate = 32;
 
-u16 CKinematics::LL_BoneID(const char* B) const
-{
-	if (const auto I = bone_map_N.find(B); I != bone_map_N.end())
-		return I->second;
-
-	return BI_NONE;
+//////////////////////////////////////////////////////////////////////
+// Construction/Destruction
+//////////////////////////////////////////////////////////////////////
+bool	pred_N(const std::pair<shared_str,u32>&	N, LPCSTR B)			{
+	return xr_strcmp(*N.first,B)<0;
+}
+u16		CKinematics::LL_BoneID		(LPCSTR B)			{
+	accel::iterator I	= std::lower_bound	(bone_map_N->begin(),bone_map_N->end(),B,pred_N);
+	if (I == bone_map_N->end())			return BI_NONE;
+	if (0 != xr_strcmp(*(I->first),B))	return BI_NONE;
+	return				u16(I->second);
+}
+bool	pred_P(const std::pair<shared_str,u32>&	N, const shared_str& B)	{
+	return N.first._get() < B._get();
+}
+u16		CKinematics::LL_BoneID		(const shared_str& B)	{
+	accel::iterator I	= std::lower_bound	(bone_map_P->begin(),bone_map_P->end(),B,pred_P);
+	if (I == bone_map_P->end())			return BI_NONE;
+	if (I->first._get() != B._get() )	return BI_NONE;
+	return				u16(I->second);
 }
 
-u16 CKinematics::LL_BoneID(const shared_str& B) const
+//
+LPCSTR CKinematics::LL_BoneName_dbg	(u16 ID)
 {
-	if (const auto I = bone_map_N.find(B); I != bone_map_N.end())
-		return I->second;
-
-	return BI_NONE;
-}
-
-const char* CKinematics::LL_BoneName_dbg(const u16 ID) const
-{
-	for (const auto& bone : bone_map_N)
-		if (bone.second == ID)
-			return bone.first.c_str();
-
-	return nullptr;
+	CKinematics::accel::iterator _I, _E=bone_map_N->end();
+	for (_I	= bone_map_N->begin(); _I!=_E; ++_I)	if (_I->second==ID) return *_I->first;
+	return 0;
 }
 
 #ifdef DEBUG
@@ -117,6 +122,13 @@ void	CKinematics::IBoneInstances_Destroy()
 	}
 }
 
+bool	pred_sort_N(const std::pair<shared_str,u32>& A, const std::pair<shared_str,u32>& B)	{
+	return xr_strcmp(A.first,B.first)<0;
+}
+bool	pred_sort_P(const std::pair<shared_str,u32>& A, const std::pair<shared_str,u32>& B)	{
+	return A.first._get() < B.first._get();
+}
+
 CSkeletonX* CKinematics::LL_GetChild	(u32 idx)
 {
 	IRenderVisual*	V	= children[idx];
@@ -182,6 +194,8 @@ void	CKinematics::Load(const char* N, IReader *data, u32 dwFlags)
 	}
 
 	// Globals
+	bone_map_N		= xr_new<accel>		();
+	bone_map_P		= xr_new<accel>		();
 	bones			= xr_new<vecBones>	();
 	bone_instances	= NULL;
 
@@ -192,14 +206,10 @@ void	CKinematics::Load(const char* N, IReader *data, u32 dwFlags)
 	R_ASSERT		(data->find_chunk(OGF_S_BONE_NAMES));
 
     visimask.zero	();
-
-	u32 dwCount = data->r_u32();
+	int dwCount 	= data->r_u32();
 	// Msg				("!!! %d bones",dwCount);
 	// if (dwCount >= 64)	Msg			("!!! More than 64 bones is a crazy thing! (%d), %s",dwCount,N);
-	//VERIFY3			(dwCount <= 64, "More than 64 bones is a crazy thing!",N);
-
-	bone_map_N.reserve(dwCount);
-
+	VERIFY3			(dwCount <= 64, "More than 64 bones is a crazy thing!",N);
 	for (; dwCount; dwCount--)		{
 		string256	buf;
 
@@ -207,11 +217,11 @@ void	CKinematics::Load(const char* N, IReader *data, u32 dwFlags)
 		u16			ID				= u16(bones->size());
 		data->r_stringZ				(buf,sizeof(buf));	strlwr(buf);
 		CBoneData* pBone 			= CreateBoneData(ID);
-		pBone->name					= buf;
+		pBone->name					= shared_str(buf);
 		pBone->child_faces.resize	(children.size());
 		bones->push_back			(pBone);
-
-		bone_map_N.emplace(pBone->name, ID);
+		bone_map_N->push_back		(mk_pair(pBone->name,ID));
+		bone_map_P->push_back		(mk_pair(pBone->name,ID));
 
 		// It's parent
 		data->r_stringZ				(buf,sizeof(buf));	strlwr(buf);
@@ -220,6 +230,8 @@ void	CKinematics::Load(const char* N, IReader *data, u32 dwFlags)
 		data->r						(&pBone->obb,sizeof(Fobb));
 		visimask.set(ID, true);
 	}
+	std::sort	(bone_map_N->begin(),bone_map_N->end(),pred_sort_N);
+	std::sort	(bone_map_P->begin(),bone_map_P->end(),pred_sort_P);
 
 	// Attach bones to their parents
 	iRoot = BI_NONE;
@@ -368,6 +380,7 @@ void CKinematics::Copy(dxRender_Visual *P)
 	bones	   = pFrom->bones;
 	iRoot	   = pFrom->iRoot;
 	bone_map_N = pFrom->bone_map_N;
+	bone_map_P = pFrom->bone_map_P;
 	visimask   = pFrom->visimask;
 
 	IBoneInstances_Create	();
@@ -430,7 +443,8 @@ void CKinematics::Release		()
 	// destroy shared data
     xr_delete(pUserData	);
 	xr_delete(bones		);
-	bone_map_N.clear();
+	xr_delete(bone_map_N);
+	xr_delete(bone_map_P);
 
 	inherited::Release();
 }

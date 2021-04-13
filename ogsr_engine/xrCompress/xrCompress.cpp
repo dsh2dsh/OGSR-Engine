@@ -9,7 +9,6 @@
 #include <iostream>
 #include <sstream>
 #include <iterator>
-#include <array> //для std::array
 
 #include "lzo\lzo1x.h"
 
@@ -22,21 +21,27 @@
 
 constexpr u32 XRP_MAX_SIZE_DEF = 1900; // Дефолтный максимальный размер создаваемого архива в МБ. Более ~1900 выставлять не рекомендую, т.к. архивы более 2гб двиг не поддерживает.
 
-constexpr std::array<const char*, 3> NoCompress{ //Расширения файлов, которые нельзя сжимать.
+static const std::vector<const char*> NoCompress = { //Расширения файлов, которые нельзя сжимать.
 	".geom", ".geomx", ".ogm"
 };
 
 
-static bool bStoreFiles{}, MOD_COMPRESS{};
+bool bStoreFiles = false;
+bool MOD_COMPRESS = false;
 
-static IWriter* fs{};
-static CMemoryWriter fs_desc{};
+IWriter* fs = nullptr;
+CMemoryWriter fs_desc;
 
-static u32 bytesSRC{}, bytesDST{}, filesTOTAL{}, filesSKIP{}, filesVFS{}, filesALIAS{};
-static CTimer t_compress{};
-static u8* c_heap{};
+u32 bytesSRC = 0;
+u32 bytesDST = 0;
+u32	filesTOTAL = 0;
+u32	filesSKIP = 0;
+u32	filesVFS = 0;
+u32	filesALIAS = 0;
+CTimer t_compress;
+u8* c_heap = nullptr;
 
-static u32 XRP_MAX_SIZE{ 1024 * 1024 * XRP_MAX_SIZE_DEF };
+u32 XRP_MAX_SIZE = 1024 * 1024 * XRP_MAX_SIZE_DEF;
 
 struct	ALIAS {
 	LPCSTR			path;
@@ -45,12 +50,12 @@ struct	ALIAS {
 	u32				c_size_real;
 	u32				c_size_compressed;
 };
-static xr_multimap<u32, ALIAS>	aliases;
+xr_multimap<u32, ALIAS>	aliases;
 
-static std::vector<std::string> exclude_exts;
+std::vector<std::string> exclude_exts;
 
 
-static bool testSKIP(LPCSTR path)
+bool testSKIP(LPCSTR path)
 {
 	string_path p_name, p_ext;
 	_splitpath(path, 0, 0, p_name, p_ext);
@@ -65,7 +70,7 @@ static bool testSKIP(LPCSTR path)
 	return false;
 }
 
-static bool testVFS(LPCSTR path)
+bool testVFS(LPCSTR path)
 {
 	if (bStoreFiles)
 		return true;
@@ -80,7 +85,7 @@ static bool testVFS(LPCSTR path)
 	return false;
 }
 
-static bool testEqual(LPCSTR path, IReader* base)
+bool testEqual(LPCSTR path, IReader* base)
 {
 	bool res = false;
 
@@ -95,7 +100,7 @@ static bool testEqual(LPCSTR path, IReader* base)
 	return res;
 }
 
-static ALIAS* testALIAS(IReader* base, u32 crc, u32& a_tests)
+ALIAS* testALIAS(IReader* base, u32 crc, u32& a_tests)
 {
 	auto I = aliases.lower_bound(base->length());
 
@@ -113,7 +118,7 @@ static ALIAS* testALIAS(IReader* base, u32 crc, u32& a_tests)
 }
 
 
-static void write_file_header(LPCSTR file_name, const u32 &crc, const u32 &ptr, const u32 &size_real, const u32 &size_compressed)
+IC void write_file_header(LPCSTR file_name, const u32 &crc, const u32 &ptr, const u32 &size_real, const u32 &size_compressed)
 {
 	u32 file_name_size = (xr_strlen(file_name) + 0) * sizeof(char);
 	u32 buffer_size = file_name_size + 4 * sizeof(u32);
@@ -141,7 +146,7 @@ static void write_file_header(LPCSTR file_name, const u32 &crc, const u32 &ptr, 
 	fs_desc.w(buffer_start, full_buffer_size);
 }
 
-static void Compress(LPCSTR path, LPCSTR base, BOOL bFast)
+void Compress(LPCSTR path, LPCSTR base, BOOL bFast)
 {
 	filesTOTAL++;
 
@@ -272,7 +277,7 @@ static void Compress(LPCSTR path, LPCSTR base, BOOL bFast)
 	FS.r_close(src);
 }
 
-static void OpenPack(LPCSTR tgt_folder, int num)
+void OpenPack(LPCSTR tgt_folder, int num)
 {
 	t_compress.Start();
 
@@ -296,7 +301,7 @@ static void OpenPack(LPCSTR tgt_folder, int num)
 	fs->open_chunk(0);
 }
 
-static void ClosePack()
+void ClosePack()
 {
 	fs->close_chunk();
 	// save list
@@ -331,7 +336,7 @@ static void ClosePack()
 	aliases.clear();
 }
 
-static void CompressList(LPCSTR in_name, xr_vector<char*>* list, xr_vector<char*>* fl_list, BOOL bFast)
+void CompressList(LPCSTR in_name, xr_vector<char*>* list, xr_vector<char*>* fl_list, BOOL bFast)
 {
 	if (!list->empty() && in_name && in_name[0]) {
 		string256 caption;
@@ -371,7 +376,7 @@ static void CompressList(LPCSTR in_name, xr_vector<char*>* list, xr_vector<char*
 }
 
 
-static void ProcessFolder(xr_vector<char*>& list, LPCSTR path)
+void ProcessFolder(xr_vector<char*>& list, LPCSTR path)
 {
 	auto i_list = FS.file_list_open("$target_folder$", path, FS_ListFiles | FS_RootOnly);
 	if (!i_list) {
@@ -387,7 +392,7 @@ static void ProcessFolder(xr_vector<char*>& list, LPCSTR path)
 	FS.file_list_close(i_list);
 }
 
-static bool IsFolderAccepted(CInifile& ltx, LPCSTR path, BOOL& recurse)
+bool IsFolderAccepted(CInifile& ltx, LPCSTR path, BOOL& recurse)
 {
 	// exclude folders
 	if (ltx.section_exist("exclude_folders"))
@@ -409,7 +414,7 @@ static bool IsFolderAccepted(CInifile& ltx, LPCSTR path, BOOL& recurse)
 	return true;
 }
 
-static void ProcessLTX(LPCSTR tgt_name, LPCSTR params, BOOL bFast)
+void ProcessLTX(LPCSTR tgt_name, LPCSTR params, BOOL bFast)
 {
 	LPCSTR ltx_nm = strstr(params, ".ltx");
 	VERIFY(ltx_nm != 0);

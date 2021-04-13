@@ -334,6 +334,29 @@ void CPhysicObject::set_collision_hit_callback(ICollisionHitCallback* cc)
     m_collision_hit_callback = cc;
 }
 
+//////////////////////////////////////////////////////////////////////////
+/*
+DEFINE_MAP_PRED	(LPCSTR,	CPhysicsJoint*,	JOINT_P_MAP,	JOINT_P_PAIR_IT,	pred_str);
+
+JOINT_P_MAP			*l_tpJointMap = new JOINT_P_MAP();
+
+l_tpJointMap->insert(std::make_pair(bone_name,joint*));
+JOINT_P_PAIR_IT		I = l_tpJointMap->find(bone_name);
+if (l_tpJointMap->end()!=I){
+//bone_name is found and is an pair_iterator
+(*I).second
+}
+
+JOINT_P_PAIR_IT		I = l_tpJointMap->begin();
+JOINT_P_PAIR_IT		E = l_tpJointMap->end();
+for ( ; I != E; ++I) {
+(*I).second->joint_method();
+Msg("%s",(*I).first);
+}
+
+*/
+
+//////////////////////////////////////////////////////////////////////////
 bool CPhysicObject::is_ai_obstacle() const
 {
   return m_is_ai_obstacle; //!!(READ_IF_EXISTS(pSettings, r_bool, cNameSect(), "is_ai_obstacle", true));

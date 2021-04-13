@@ -135,13 +135,15 @@ public:
     bool					StopAtEnd			();
     void SetSpeedKoeff(const float new_speed_k) { speed_k = new_speed_k; }
 };
-
-using accel_map = string_unordered_map<shared_str, u16>;
-
+struct accel_str_pred {	
+	IC bool operator()(const shared_str& x, const shared_str& y) const	{	return xr_strcmp(x,y)<0;	}
+};
+typedef xr_map<shared_str,u16,accel_str_pred> 	accel_map;
 DEFINE_VECTOR			(CMotionDef,MotionDefVec,MotionDefVecIt);
 
 DEFINE_VECTOR			(CMotion,MotionVec,MotionVecIt);
 DEFINE_VECTOR			(MotionVec*,BoneMotionsVec,BoneMotionsVecIt);
+DEFINE_MAP				(shared_str,MotionVec,BoneMotionMap,BoneMotionMapIt);
 
 // partition
 class 	ENGINE_API	CPartDef
@@ -173,7 +175,7 @@ struct 	ENGINE_API	motions_value
 	accel_map			m_fx;				// motion data itself	(shared)
 	CPartition			m_partition;		// partition
 	u32					m_dwReference;
-	string_unordered_map<shared_str, MotionVec> m_motions;
+	BoneMotionMap		m_motions;
     MotionDefVec		m_mdefs;
 
 	shared_str			m_id;
@@ -186,7 +188,7 @@ struct 	ENGINE_API	motions_value
 		size_t sz			=	sizeof(*this)+m_motion_map.size()*6+m_partition.mem_usage();
         for (MotionDefVecIt it=m_mdefs.begin(); it!=m_mdefs.end(); it++)
 			sz			+=	it->mem_usage();
-		for (auto bm_it=m_motions.begin(); bm_it!=m_motions.end(); bm_it++)
+		for (BoneMotionMapIt bm_it=m_motions.begin(); bm_it!=m_motions.end(); bm_it++)
 			for (MotionVecIt m_it=bm_it->second.begin(); m_it!=bm_it->second.end(); m_it++)
 				sz		+=	m_it->mem_usage();
 		return u32(sz);
@@ -195,7 +197,8 @@ struct 	ENGINE_API	motions_value
 
 class 	ENGINE_API	motions_container
 {
-	string_unordered_map<shared_str, motions_value*> container;
+	DEFINE_MAP			(shared_str,motions_value*,SharedMotionsMap,SharedMotionsMapIt);
+	SharedMotionsMap	container;
 public:
 						motions_container	();
 						~motions_container	();
