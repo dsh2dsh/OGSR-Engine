@@ -978,6 +978,7 @@ void CLevel::OnChangeCurrentWeather( LPCSTR sect ) {
 
 void CLevel::OnDestroyObject( u16 id ) {
   m_just_destroyed.push_back( id );
+  MapManager().RemoveMapLocationByObjectID( id );
 }
 
 
