@@ -1321,3 +1321,11 @@ void CInventory::MoreCellItems() {
   if ( size == m_all.size() )
     m_need_cell_items = false;
 }
+
+
+bool CInventory::IsActiveSlotBlocked() const {
+	for (const auto& slot : m_slots)
+		if (slot.CanBeActivated())
+			return false;
+	return true;
+}
