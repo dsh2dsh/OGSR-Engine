@@ -200,11 +200,14 @@ void CWeapon::UpdateFireDependencies_internal()
 
 			fire_mat.transform_tiny	(m_firedeps.vLastFP,fp);
 			parent.transform_tiny	(m_firedeps.vLastFP);
+			m_firedeps.vLastFP.add(Device.vCameraPosition);
 			fire_mat.transform_tiny	(m_firedeps.vLastFP2,fp2);
 			parent.transform_tiny	(m_firedeps.vLastFP2);
+			m_firedeps.vLastFP2.add(Device.vCameraPosition);
 		
 			fire_mat.transform_tiny	(m_firedeps.vLastSP,sp);
 			parent.transform_tiny	(m_firedeps.vLastSP);
+			m_firedeps.vLastSP.add(Device.vCameraPosition);
 
 			m_firedeps.vLastFD.set	(0.f,0.f,1.f);
 			parent.transform_dir	(m_firedeps.vLastFD);

@@ -201,6 +201,7 @@ void CHudItem::UpdateHudPosition	()
 			else
 				pActor->Cameras().camera_Matrix(trans);
 
+			trans.c.sub(Device.vCameraPosition);
 			UpdateHudInertion							(trans);
 			UpdateHudAdditonal							(trans);
 			m_pHUD->UpdatePosition						(trans);
