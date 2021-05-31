@@ -236,6 +236,7 @@ void CAnomalyDetectorScript::script_register( lua_State *L ) {
     .def( "deactivate", &CAnomalyDetector::deactivate )
     .def( "remove_all_restrictions", &CAnomalyDetector::remove_all_restrictions )
     .def( "remove_restriction", &CAnomalyDetector::remove_restriction )
+    .def( "set_ignore_zones", &CAnomalyDetector::set_ignore_zones )
   ];
 }
 

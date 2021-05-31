@@ -51,4 +51,5 @@ public:
 	void		deactivate( bool = false );
 	void		remove_all_restrictions();
 	void		remove_restriction( u16 );
+	void set_ignore_zones( LPCSTR ignore );
 };

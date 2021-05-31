@@ -21,13 +21,10 @@ void CAnomalyDetector::load(LPCSTR section)
 	m_time_to_rememeber	= READ_IF_EXISTS( pSettings, r_u32, section, "Anomaly_Detect_Time_Remember", 30000 );
 	m_detect_probability	= READ_IF_EXISTS( pSettings, r_float, section, "Anomaly_Detect_Probability", 1.f );
 
-        m_ignore_clsids.clear();
-        if ( pSettings->line_exist( section, "Anomaly_Detect_Ignore" ) ) {
-          LPCSTR ignore = pSettings->r_string( section, "Anomaly_Detect_Ignore" );
-          string64 temp;
-          for ( u32 i = 0, n = _GetItemCount( ignore ); i < n; ++i )
-            m_ignore_clsids.push_back( TEXT2CLSID( _GetItem( ignore, i, temp ) ) );
-        }
+	if ( pSettings->line_exist( section, "Anomaly_Detect_Ignore" ) )
+	  set_ignore_zones( pSettings->r_string( section, "Anomaly_Detect_Ignore" ) );
+	else
+	  m_ignore_clsids.clear();
 }
 
 void CAnomalyDetector::reinit()
@@ -175,5 +172,16 @@ void CAnomalyDetector::remove_restriction( u16 id ) {
     m_object->movement().restrictions()
       .remove_restrictions( temp_out_restrictors, temp_in_restrictors );
     m_storage.erase( it );
+  }
+}
+
+
+void CAnomalyDetector::set_ignore_zones( LPCSTR ignore ) {
+  m_ignore_clsids.clear();
+  string64 temp;
+  for ( u32 i = 0, n = _GetItemCount( ignore ); i < n; ++i ) {
+    _GetItem( ignore, i, temp );
+    CLASS_ID zone_cls = TEXT2CLSID( pSettings->r_string( temp, "class" ) );
+    m_ignore_clsids.push_back( zone_cls );
   }
 }
