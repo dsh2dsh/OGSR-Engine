@@ -347,6 +347,7 @@ public:
 
 
 			LPCSTR				ProfileName			();
+			LPCSTR ProfileCommunity();
 			LPCSTR				CharacterName		();
 			LPCSTR				CharacterCommunity	();
 			int					CharacterRank		();

@@ -1268,3 +1268,10 @@ bool CScriptGameObject::is_door_blocked_by_npc					() const
 	VERIFY2								( m_door, make_string("object %s hasn't been registered as a door already", m_game_object->cName().c_str()) );
 	return								ai().doors().is_door_blocked( m_door );
 }
+
+
+LPCSTR CScriptGameObject::ProfileCommunity() {
+  auto inventory_owner = smart_cast<CInventoryOwner*>( &this->object() );
+  ASSERT_FMT( inventory_owner, "[%s]: %s not an CInventoryOwner", __FUNCTION__, this->object().Name());
+  return *inventory_owner->SpecificCharacter().Community().id();
+}
