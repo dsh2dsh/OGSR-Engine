@@ -61,9 +61,6 @@
 //#define REMOVE_ARTICLES_ON_DISABLE_INFO
 
 //****************************************************************************************************
-// Использовать формат .thm файлов ТЧ вместо ЗП
-#define USE_SHOC_THM_FORMAT
-
 // Включить поддержку textures.ltx, parallax из OGSE так же поддерживается
 #define USE_TEXTURES_LTX
 
