@@ -115,9 +115,7 @@ void CScriptParticles::StopDeffered()
 void CScriptParticles::MoveTo	(const Fvector &pos, const Fvector& vel)
 {
 	VERIFY						(m_particles);
-	Fmatrix						XF;
-	XF.translate				(pos);
-	m_particles->UpdateParent	(XF,vel);
+	m_particles->MoveTo( pos, vel );
 }
 
 bool CScriptParticles::IsPlaying() const

@@ -59,6 +59,7 @@ void CParticlesObject::Init	(LPCSTR p_name, IRender_Sector* S, BOOL bAutoRemove)
 
 	dwLastTime				= Device.dwTimeGlobal;
 	mt_dt					= 0;
+	move_to_defer = false;
 }
 
 //----------------------------------------------------
@@ -140,6 +141,8 @@ void CParticlesObject::Stop( BOOL bDefferedStop ) {
 }
 
 void CParticlesObject::shedule_Update( u32 _dt ) {
+  if ( move_to_defer )
+    MoveTo( move_to_defer_pos, move_to_defer_vel, true );
   inherited::shedule_Update( _dt );
 
   // Update
@@ -211,6 +214,8 @@ float CParticlesObject::shedule_Scale		()
 void CParticlesObject::renderable_Render	()
 {
 	VERIFY					(renderable.visual);
+	if ( move_to_defer )
+	  MoveTo( move_to_defer_pos, move_to_defer_vel, true );
 	u32 dt					= Device.dwTimeGlobal - dwLastTime;
 	if (dt){
 		IParticleCustom* V	= smart_cast<IParticleCustom*>(renderable.visual); VERIFY(V);
@@ -238,4 +243,19 @@ bool CParticlesObject::IsPlaying()
 	IParticleCustom* V	= smart_cast<IParticleCustom*>(renderable.visual); 
 	VERIFY(V);
 	return !!V->IsPlaying();
+}
+
+
+void CParticlesObject::MoveTo( const Fvector pos, const Fvector vel, bool now ) {
+  if ( now || !Device.is_second_thread_active() ) {
+    move_to_defer     = false;
+    Fmatrix XF;
+    XF.translate( pos );
+    UpdateParent( XF, vel );
+  }
+  else {
+    move_to_defer     = true;
+    move_to_defer_pos = pos;
+    move_to_defer_vel = vel;
+  }
 }

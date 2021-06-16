@@ -19,6 +19,9 @@ protected:
 
 protected:
 	u32					mt_dt;
+	bool move_to_defer;
+	Fvector move_to_defer_pos;
+	Fvector move_to_defer_vel;
 
 public:
 	CParticlesObject(LPCSTR p_name, BOOL bAutoRemove, bool destroy_on_game_load);
@@ -60,6 +63,7 @@ public:
 			p					= 0;
 		}
 	}
+	void MoveTo( const Fvector pos, const Fvector vel, bool now = false );
 };
 
 #endif /*ParticlesObjectH*/
