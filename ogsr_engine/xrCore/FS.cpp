@@ -344,7 +344,7 @@ CFileReader::~CFileReader()
 CVirtualFileReader::CVirtualFileReader(const char *cFileName) 
 {
 	// Open the file
-	hSrcFile		= CreateFile(cFileName, GENERIC_READ, FILE_SHARE_READ|FILE_SHARE_WRITE, 0, OPEN_EXISTING, 0, 0);
+	hSrcFile		= CreateFile(cFileName, GENERIC_READ, FILE_SHARE_READ|FILE_SHARE_WRITE, 0, OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, 0);
 	R_ASSERT3		(hSrcFile!=INVALID_HANDLE_VALUE,cFileName,Debug.error2string(GetLastError()));
 	Size			= (int)GetFileSize(hSrcFile, NULL);
 	R_ASSERT3		(Size,cFileName,Debug.error2string(GetLastError()));

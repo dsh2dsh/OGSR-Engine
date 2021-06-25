@@ -167,12 +167,12 @@ public:
 
 private:
 	// Loading / Unloading
-	void							LoadBuffers					(CStreamReader	*fs,	BOOL	_alternative);
+	void LoadBuffers( IReader* fs, BOOL _alternative );
 	void							LoadVisuals					(IReader	*fs);
 	void							LoadLights					(IReader	*fs);
 	void							LoadPortals					(IReader	*fs);
 	void							LoadSectors					(IReader	*fs);
-	void							LoadSWIs					(CStreamReader	*fs);
+	void LoadSWIs( IReader* fs );
 	void							Load3DFluid					();
 
 	BOOL							add_Dynamic					(dxRender_Visual*pVisual, u32 planes);		// normal processing

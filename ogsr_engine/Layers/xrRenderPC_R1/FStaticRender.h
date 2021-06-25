@@ -86,11 +86,11 @@ public:
 
 private:
 	// Loading / Unloading
-	void								LoadBuffers				(CStreamReader	*fs);
+	void LoadBuffers( IReader* fs );
 	void								LoadVisuals				(IReader *fs);
 	void								LoadLights				(IReader *fs);
 	void								LoadSectors				(IReader *fs);
-	void								LoadSWIs				(CStreamReader	*fs);
+	void LoadSWIs( IReader* fs );
 
 	BOOL								add_Dynamic				(dxRender_Visual	*pVisual, u32 planes);		// normal processing
 	void								add_Static				(dxRender_Visual	*pVisual, u32 planes);

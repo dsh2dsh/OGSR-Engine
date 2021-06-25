@@ -62,7 +62,7 @@ void CRender::level_Load(IReader *fs)
 	if	(!g_dedicated_server)	{
 		// VB,IB,SWI
 		g_pGamePersistent->LoadTitle("st_loading_geometry");
-		CStreamReader				*geom = FS.rs_open	("$level$","level.geom");
+		IReader* geom = FS.r_open( "$level$", "level.geom" );
 		LoadBuffers					(geom);
 		LoadSWIs					(geom);
 		FS.r_close					(geom);
@@ -163,7 +163,7 @@ void CRender::level_Unload		()
 	b_loaded					= FALSE;
 }
 
-void CRender::LoadBuffers	(CStreamReader *base_fs)
+void CRender::LoadBuffers( IReader* base_fs )
 {
 	dxRenderDeviceRender::Instance().Resources->Evict	();
 	u32	dwUsage				= D3DUSAGE_WRITEONLY | (HW.Caps.geometry.bSoftware?D3DUSAGE_SOFTWAREPROCESSING:0);
@@ -172,7 +172,7 @@ void CRender::LoadBuffers	(CStreamReader *base_fs)
 	if (base_fs->find_chunk(fsL_VB))
 	{
 		// Use DX9-style declarators
-		CStreamReader			*fs	= base_fs->open_chunk(fsL_VB);
+		IReader* fs = base_fs->open_chunk( fsL_VB );
 		u32 count				= fs->r_u32();
 		DCL.resize				(count);
 		VB.resize				(count);
@@ -216,7 +216,7 @@ void CRender::LoadBuffers	(CStreamReader *base_fs)
 	// Index buffers
 	if (base_fs->find_chunk(fsL_IB))
 	{
-		CStreamReader			*fs	= base_fs->open_chunk(fsL_IB);
+		IReader* fs = base_fs->open_chunk( fsL_IB );
 		u32 count				= fs->r_u32();
 		IB.resize				(count);
 		for (u32 i=0; i<count; i++)
@@ -342,11 +342,11 @@ void CRender::LoadSectors(IReader* fs)
 	pLastSector = 0;
 }
 
-void CRender::LoadSWIs(CStreamReader* base_fs)
+void CRender::LoadSWIs( IReader* base_fs )
 {
 	// allocate memory for portals
 	if (base_fs->find_chunk(fsL_SWIS)){
-		CStreamReader		*fs = base_fs->open_chunk(fsL_SWIS);
+		IReader* fs = base_fs->open_chunk( fsL_SWIS );
 		u32 item_count		= fs->r_u32();	
 
 		xr_vector<FSlideWindowItem>::iterator it	= SWIs.begin();

@@ -60,7 +60,7 @@ void CRender::level_Load(IReader* fs)
 		// VB,IB,SWI
 		g_pGamePersistent->LoadTitle("st_loading_geometry");
 		{
-			CStreamReader			*geom = FS.rs_open("$level$","level.geom");
+			IReader* geom = FS.r_open( "$level$","level.geom" );
 			R_ASSERT2				(geom, "level.geom");
 			LoadBuffers				(geom,FALSE);
 			LoadSWIs				(geom);
@@ -69,7 +69,7 @@ void CRender::level_Load(IReader* fs)
 
 		//...and alternate/fast geometry
 		{
-			CStreamReader			*geom = FS.rs_open("$level$","level.geomx");
+			IReader* geom = FS.r_open( "$level$","level.geomx" );
 			R_ASSERT2				(geom, "level.geomX");
 			LoadBuffers				(geom,TRUE);
 			FS.r_close				(geom);
@@ -196,7 +196,7 @@ void CRender::level_Unload()
 	b_loaded					= FALSE;
 }
 
-void CRender::LoadBuffers		(CStreamReader *base_fs,	BOOL _alternative)
+void CRender::LoadBuffers( IReader* base_fs, BOOL _alternative )
 {
 	R_ASSERT2					(base_fs,"Could not load geometry. File not found.");
 	dxRenderDeviceRender::Instance().Resources->Evict		();
@@ -209,7 +209,7 @@ void CRender::LoadBuffers		(CStreamReader *base_fs,	BOOL _alternative)
 	// Vertex buffers
 	{
 		// Use DX9-style declarators
-		CStreamReader			*fs	= base_fs->open_chunk(fsL_VB);
+		IReader* fs = base_fs->open_chunk( fsL_VB );
 		R_ASSERT2				(fs,"Could not load geometry. File 'level.geom?' corrupted.");
 		u32 count				= fs->r_u32();
 		_DC.resize				(count);
@@ -255,7 +255,7 @@ void CRender::LoadBuffers		(CStreamReader *base_fs,	BOOL _alternative)
 
 	// Index buffers
 	{
-		CStreamReader			*fs	= base_fs->open_chunk(fsL_IB);
+		IReader* fs = base_fs->open_chunk( fsL_IB );
 		u32 count				= fs->r_u32();
 		_IB.resize				(count);
 		for (u32 i=0; i<count; i++)
@@ -385,11 +385,11 @@ void CRender::LoadSectors(IReader* fs)
 	pLastSector = 0;
 }
 
-void CRender::LoadSWIs(CStreamReader* base_fs)
+void CRender::LoadSWIs( IReader* base_fs )
 {
 	// allocate memory for portals
 	if (base_fs->find_chunk(fsL_SWIS)){
-		CStreamReader		*fs	= base_fs->open_chunk(fsL_SWIS);
+		IReader* fs = base_fs->open_chunk( fsL_SWIS );
 		u32 item_count		= fs->r_u32();
 
 		xr_vector<FSlideWindowItem>::iterator it	= SWIs.begin();
