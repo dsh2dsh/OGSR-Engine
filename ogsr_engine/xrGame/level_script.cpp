@@ -274,7 +274,7 @@ void prefetch_sound	(LPCSTR name)
 }
 
 void prefetch_many_sounds( LPCSTR prefix ) {
-  Level().PrefetchManySounds( prefix );
+  Level().PrefetchManySoundsLater( prefix );
 }
 
 
