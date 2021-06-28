@@ -334,13 +334,24 @@ void CResourceManager::Delete(const Shader* S)
 	Msg	("! ERROR: Failed to find complete shader");
 }
 
-void CResourceManager::DeferredUpload()
-{
-	if (!RDEVICE.b_is_Ready) return;
-	for (map_TextureIt t=m_textures.begin(); t!=m_textures.end(); t++)
-	{
-		t->second->Load();
-	}
+void CResourceManager::DeferredUpload() {
+  if ( !RDEVICE.b_is_Ready ) return;
+
+  CTimer timer;
+  timer.Start();
+
+  size_t nWorkers = TTAPI->threads.size();
+  if ( nWorkers > 1 && m_textures.size() > 1 ) {
+    for ( const auto& t : m_textures )
+      TTAPI->addJob([=] { t.second->Load(); });
+    TTAPI->wait();
+  }
+  else {
+    for ( const auto& t : m_textures )
+      t.second->Load();
+  }
+
+  Msg( "[%s] texture loading time (%zi) using %u threads: [%.2f s.]", __FUNCTION__, m_textures.size(), nWorkers, timer.GetElapsed_sec() );
 }
 
 void	CResourceManager::DeferredUnload	()
