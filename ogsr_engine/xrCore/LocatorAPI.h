@@ -51,6 +51,7 @@ private:
 
 	files_set					files			;
     archives_vec				archives		;
+	std::deque<std::mutex> archive_mutexes;
 	BOOL						bNoRecurse{};
 
 	xrCriticalSection			m_auth_lock		;

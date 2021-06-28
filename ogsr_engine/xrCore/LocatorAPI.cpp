@@ -291,6 +291,7 @@ void CLocatorAPI::ProcessArchive(LPCSTR _path, LPCSTR base_path)
 		g_temporary_stuff			= NULL;
 	}
 	// open archive
+	archive_mutexes.emplace_back();
 	auto& A = archives.emplace_back();
 	A.path					= path;
 	// Open the file
@@ -915,8 +916,12 @@ void CLocatorAPI::file_from_archive	(IReader *&R, LPCSTR fname, const file &desc
 
 	u8* dest = xr_alloc<u8>( desc.size_compressed );
 	DWORD bytes_read;
-	SetFilePointer( A.hSrcFile, desc.ptr, 0, FILE_BEGIN );
-	ReadFile( A.hSrcFile, dest, desc.size_compressed, &bytes_read, 0 );
+	{
+	  std::mutex &m = archive_mutexes[ desc.vfs ];
+	  std::scoped_lock<std::mutex> lock( m );
+	  SetFilePointer( A.hSrcFile, desc.ptr, 0, FILE_BEGIN );
+	  ReadFile( A.hSrcFile, dest, desc.size_compressed, &bytes_read, 0 );
+	}
 	if ( desc.size_real == desc.size_compressed )
 	  R = xr_new<CTempReader>( dest, desc.size_compressed, 0 );
 	return;
