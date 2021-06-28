@@ -81,11 +81,18 @@ public:
         std::unique_lock<std::mutex> lock(queueMutex);
         condition.wait(lock, [this]() { return jobQueue.empty(); });
     }
+
+  size_t jobs() {
+    std::lock_guard<std::mutex> lock( queueMutex );
+    return jobQueue.size();
+  }
 };
 
 class ThreadPool {
 public:
     std::vector<std::unique_ptr<Thread>> threads;
+    std::mutex queueMutex;
+    std::condition_variable condition;
 
     void initialize(std::uint32_t threads_count = std::thread::hardware_concurrency(), std::string thread_name = "") {
 		do {
@@ -99,4 +106,21 @@ public:
             thread->wait();
         }
     }
+
+  void addJob( std::function<void()> function ) {
+    while( true ) {
+      std::unique_lock<std::mutex> lock( queueMutex );
+      for ( auto& thread : threads ) {
+        if ( thread->jobs() < 2 ) {
+          thread->addJob( function );
+          thread->addJob( [this] {
+            std::lock_guard<std::mutex> lock( queueMutex );
+            condition.notify_one();
+          });
+          return;
+        }
+      }
+      condition.wait( lock );
+    }
+  }
 };
