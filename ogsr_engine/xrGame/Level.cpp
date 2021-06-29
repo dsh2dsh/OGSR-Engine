@@ -195,8 +195,11 @@ CLevel::~CLevel()
 
 	// Unload sounds
 	// unload prefetched sounds
-	sound_registry.clear		();
-	sound_registry_defer.clear();
+	{
+	  std::scoped_lock<std::mutex> lock( sound_registry_mutex );
+	  sound_registry.clear();
+	  sound_registry_defer.clear();
+	}
 
 	// unload static sounds
 	for (u32 i=0; i<static_Sounds.size(); ++i){
@@ -279,9 +282,17 @@ bool CLevel::PrefetchSound( LPCSTR name ) {
     *strext( tmp ) = 0;
   shared_str snd_name = tmp;
   // find in registry
-  SoundRegistryMapIt it = sound_registry.find( snd_name );
+  bool created = false;
+  {
+    std::scoped_lock<std::mutex> lock( sound_registry_mutex );
+    SoundRegistryMapIt it = sound_registry.find( snd_name );
+    if ( it == sound_registry.end() ) {
+      sound_registry[ snd_name ];
+      created = true;
+    }
+  }
   // if find failed - preload sound
-  if ( it == sound_registry.end() ) {
+  if ( created ) {
     sound_registry[ snd_name ].create( snd_name.c_str(), st_Effect, sg_SourceType );
     return true;
   }
@@ -289,21 +300,46 @@ bool CLevel::PrefetchSound( LPCSTR name ) {
 }
 
 bool CLevel::PrefetchManySounds( LPCSTR prefix ) {
-  bool created = false;
-  string_path fn;
-  if ( FS.exist( fn, "$game_sounds$", prefix, ".ogg" ) )
-    created = PrefetchSound( prefix ) || created;
-  u32 i = 0;
-  while ( true ) {
-    string256 name;
-    sprintf_s( name, "%s%d", prefix, i );
-    if ( FS.exist( fn, "$game_sounds$", name, ".ogg" ) )
-      created = PrefetchSound( name ) || created;
-    else if ( i > 0 )
-      break;
-    i++;
+  std::vector<std::string> load_queue;
+  {
+    std::scoped_lock<std::mutex> lock( sound_registry_mutex );
+    string_path fn;
+    if ( FS.exist( fn, "$game_sounds$", prefix, ".ogg" ) ) {
+      SoundRegistryMapIt it = sound_registry.find( prefix );
+      if ( it == sound_registry.end() ) {
+        std::string s( prefix );
+        load_queue.push_back( s );
+      }
+    }
+    u32 i = 0;
+    while ( true ) {
+      string256 name;
+      sprintf_s( name, "%s%d", prefix, i );
+      if ( FS.exist( fn, "$game_sounds$", name, ".ogg" ) ) {
+        SoundRegistryMapIt it = sound_registry.find( name );
+        if ( it == sound_registry.end() ) {
+          std::string s( name );
+          load_queue.push_back( s );
+        }
+      }
+      else if ( i > 0 )
+        break;
+      i++;
+    }
   }
-  return created;
+
+  size_t nWorkers = TTAPI->threads.size();
+  if ( nWorkers > 1 && load_queue.size() > 1 ) {
+    for ( const auto& s : load_queue )
+      TTAPI->addJob([=] { PrefetchSound( s.c_str() ); });
+    TTAPI->wait();
+  }
+  else {
+    for ( const auto& s : load_queue )
+      PrefetchSound( s.c_str() );
+  }
+
+  return load_queue.size() > 0;
 }
 
 bool CLevel::PrefetchManySoundsLater( LPCSTR prefix ) {

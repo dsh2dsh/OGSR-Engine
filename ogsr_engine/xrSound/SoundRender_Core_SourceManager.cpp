@@ -10,14 +10,23 @@ CSoundRender_Source*	CSoundRender_Core::i_create_source(LPCSTR name)
 	xr_strcpy(id, name);
 	strlwr(id);
 	if (strext(id))		*strext(id) = 0;
-	for (u32 it = 0; it < s_sources.size(); it++) {
-		if (0 == xr_strcmp(*s_sources[it]->fname, id))	return s_sources[it];
+	std::string s( id );
+
+	CSoundRender_Source* S;
+	{
+	  std::scoped_lock<std::mutex> lock( s_sources_mutex );
+	  auto it = s_sources.find( s );
+	  if ( it == s_sources.end() ) {
+	    S = xr_new<CSoundRender_Source>();
+	    s_sources[ s ] = S;
+	  }
+	  else
+	    S = it->second;
 	}
 
 	// Load a _new one
-	CSoundRender_Source* S = xr_new<CSoundRender_Source>();
 	S->load(id);
-	s_sources.push_back(S);
+
 	return S;
 }
 

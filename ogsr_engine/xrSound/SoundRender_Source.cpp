@@ -13,6 +13,7 @@ CSoundRender_Source::CSoundRender_Source()
 	fname = 0;
 	CAT.table = 0;
 	CAT.size = 0;
+	m_loaded = false;
 }
 
 CSoundRender_Source::~CSoundRender_Source()

@@ -131,6 +131,9 @@ void CSoundRender_Source::LoadWave(LPCSTR pName)
 
 void CSoundRender_Source::load(LPCSTR name)
 {
+	std::scoped_lock<std::mutex> lock( m_mutex );
+	if ( m_loaded ) return;
+
 	string_path			fn, N;
 	xr_strcpy(N, name);
 	strlwr(N);
@@ -150,6 +153,7 @@ void CSoundRender_Source::load(LPCSTR name)
 
 	LoadWave(fn);
 	SoundRender->cache.cat_create(CAT, dwBytesTotal);
+	m_loaded = true;
 }
 
 void CSoundRender_Source::unload()
@@ -157,4 +161,12 @@ void CSoundRender_Source::unload()
 	SoundRender->cache.cat_destroy(CAT);
 	fTimeTotal = 0.0f;
 	dwBytesTotal = 0;
+	m_loaded = false;
 }
+
+
+bool CSoundRender_Source::loaded() {
+  std::scoped_lock<std::mutex> lock( m_mutex );
+  return m_loaded;
+}
+

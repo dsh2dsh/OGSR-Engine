@@ -42,7 +42,8 @@ protected:
 	CDB::MODEL*							geom_ENV;
 
 	// Containers
-	xr_vector<CSoundRender_Source*>		s_sources;
+	std::unordered_map<std::string, CSoundRender_Source*> s_sources;
+	std::mutex s_sources_mutex;
 	xr_vector<CSoundRender_Emitter*>	s_emitters;
 	u32									s_emitters_u;			// emitter update marker
 	xr_vector<CSoundRender_Target*>		s_targets;

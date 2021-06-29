@@ -104,9 +104,12 @@ void CSoundRender_Core::_clear()
 	env_unload();
 
 	// remove sources
-	for (u32 sit = 0; sit < s_sources.size(); sit++)
-		xr_delete(s_sources[sit]);
-	s_sources.clear();
+	{
+	  std::scoped_lock<std::mutex> lock( s_sources_mutex );
+	  for ( auto it : s_sources )
+	    xr_delete( it.second );
+	  s_sources.clear();
+	}
 
 	// remove emmiters
 	for (u32 eit = 0; eit < s_emitters.size(); eit++)

@@ -24,6 +24,8 @@ public:
 	float					m_fMaxAIDist;
 	u32						m_uGameType;
 private:
+	bool m_loaded;
+	std::mutex m_mutex;
 	void 					i_decompress_fr(OggVorbis_File* ovf, char* dest, u32 size);
 	void					LoadWave(LPCSTR name);
 public:
@@ -31,6 +33,7 @@ public:
 	~CSoundRender_Source();
 
 	void					load(LPCSTR name);
+	bool loaded();
 	void					unload();
 	void					decompress(u32 line, OggVorbis_File* ovf);
 
