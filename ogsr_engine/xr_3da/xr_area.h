@@ -12,16 +12,18 @@ class ENGINE_API	CObject;
 //-----------------------------------------------------------------------------------------------------------
 //Space Area
 //-----------------------------------------------------------------------------------------------------------
-class	ENGINE_API						CObjectSpace
+struct CObjectSpaceData
 {
-private:
+    thread_local static xrXRC xrc;
+    thread_local static collide::rq_results r_temp;
+    thread_local static xr_vector<ISpatial*> r_spatial;
+};
+
+class ENGINE_API CObjectSpace : protected CObjectSpaceData {
 	// Debug
-	xrCriticalSection					Lock;
 	CDB::MODEL							Static;
 	Fbox								m_BoundingVolume;
-	xrXRC								xrc;				// MT: dangerous
-	collide::rq_results					r_temp;				// MT: dangerous
-	xr_vector<ISpatial*>				r_spatial;			// MT: dangerous
+
 public:
 
 #ifdef DEBUG

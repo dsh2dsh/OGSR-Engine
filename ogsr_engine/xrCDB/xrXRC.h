@@ -15,6 +15,8 @@ extern	XRCDB_API	CStatTimer	*cdb_clFRUSTUM;			// total: frustum query
 class XRCDB_API xrXRC  
 {
 	CDB::COLLIDER	CL;
+	const char* name;
+
 public:
 	IC void			ray_options		(u32 f)		
 	{ 
@@ -68,7 +70,7 @@ public:
 	IC void			r_clear			()	{	CL.r_clear();				};
 	IC void			r_clear_compact	()	{	CL.r_clear_compact();		};
 	
-	xrXRC();
+	xrXRC(const char* name = "<unknown>") : name(name) {}
 	~xrXRC();
 };
 XRCDB_API extern xrXRC XRC;

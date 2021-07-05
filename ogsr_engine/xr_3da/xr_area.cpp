@@ -8,6 +8,15 @@
 #include "x_ray.h"
 #include "GameFont.h"
 
+
+//----------------------------------------------------------------------
+// Class	: CObjectSpaceData
+// Purpose	: stores thread sensitive data
+//----------------------------------------------------------------------
+thread_local xrXRC CObjectSpaceData::xrc("object space");
+thread_local collide::rq_results CObjectSpaceData::r_temp;
+thread_local xr_vector<ISpatial*> CObjectSpaceData::r_spatial;
+
 using namespace	collide;
 
 extern	BOOL g_bLoaded;
@@ -95,9 +104,6 @@ void __stdcall _sound_event		(ref_sound_data_ptr S, float range)
 // Purpose	: stores space slots
 //----------------------------------------------------------------------
 CObjectSpace::CObjectSpace	( )
-#ifdef PROFILE_CRITICAL_SECTIONS
-	:Lock(MUTEX_PROFILE_ID(CObjectSpace::Lock))
-#endif // PROFILE_CRITICAL_SECTIONS
 {
 #ifdef DEBUG
 	sh_debug.create				("debug\\wireframe","$null");
