@@ -134,6 +134,7 @@ public:
 private:
 	VisMask				vis_mask;
 	ElementVec			elements;
+	std::mutex m_mutex;
 
 	u32					dwFrame{};		// The model itself
 	u32					dwFrameTL{};		// Top level
