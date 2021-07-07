@@ -297,12 +297,6 @@ void CLocatorAPI::ProcessArchive(LPCSTR _path, LPCSTR base_path)
 	// Open the file
 	A.hSrcFile		= CreateFile		(*path, GENERIC_READ, FILE_SHARE_READ|FILE_SHARE_WRITE, 0, OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, 0);
 	R_ASSERT							(A.hSrcFile!=INVALID_HANDLE_VALUE);
-#ifndef USE_READ_INSTEAD_MAP
-
-	A.hSrcMap		= CreateFileMapping	(A.hSrcFile, 0, PAGE_READONLY, 0, 0, 0);
-	R_ASSERT							(A.hSrcMap!=INVALID_HANDLE_VALUE);
-
-#endif  // USE_READ_INSTEAD_MAP
 	A.size			= GetFileSize		(A.hSrcFile,0);
 	R_ASSERT							(A.size>0);
 
@@ -706,11 +700,6 @@ void CLocatorAPI::_destroy		()
 	pathes.clear	();
 	for				(archives_it a_it=archives.begin(); a_it!=archives.end(); a_it++)
     {
-#ifndef USE_READ_INSTEAD_MAP
-
-		CloseHandle	(a_it->hSrcMap);
-
-#endif  // USE_READ_INSTEAD_MAP
 		CloseHandle	(a_it->hSrcFile);
     }
     archives.clear	();
@@ -875,30 +864,7 @@ int CLocatorAPI::file_list(FS_FileSet& dest, LPCSTR path, u32 flags, LPCSTR mask
 
 void CLocatorAPI::file_from_cache_impl	(IReader *&R, LPSTR fname, const file &desc)
 {
-#ifdef USE_READ_INSTEAD_MAP
-
 	R = xr_new<CFileReader>( fname );
-
-#else  // USE_READ_INSTEAD_MAP
-
-	if (desc.size_real<16*1024) {
-		R						= xr_new<CFileReader>(fname);
-		return;
-	}
-
-	R							= xr_new<CVirtualFileReader>(fname);
-
-#endif  // USE_READ_INSTEAD_MAP
-}
-
-void CLocatorAPI::file_from_cache_impl	(CStreamReader *&R, LPSTR fname, const file &desc)
-{
-#ifdef USE_READ_INSTEAD_MAP
-	ASSERT_FMT( false, "can't be" );
-#endif
-	CFileStreamReader			*r = xr_new<CFileStreamReader>();
-	r->construct				(fname,BIG_FILE_READER_WINDOW_SIZE);
-	R							= r;
 }
 
 template <typename T>
@@ -911,8 +877,6 @@ void CLocatorAPI::file_from_archive	(IReader *&R, LPCSTR fname, const file &desc
 {
 	// Archived one
 	archive& A					= archives[desc.vfs];
-
-#ifdef USE_READ_INSTEAD_MAP
 
 	u8* dest = xr_alloc<u8>( desc.size_compressed );
 	DWORD bytes_read;
@@ -931,63 +895,6 @@ void CLocatorAPI::file_from_archive	(IReader *&R, LPCSTR fname, const file &desc
 	rtc_decompress( dest2, desc.size_real, dest, desc.size_compressed );
 	xr_free( dest );
 	R = xr_new<CTempReader>( dest2, desc.size_real, 0 );
-
-#else // USE_READ_INSTEAD_MAP
-
-	u32 start					= (desc.ptr/dwAllocGranularity)*dwAllocGranularity;
-	u32 end						= (desc.ptr+desc.size_compressed)/dwAllocGranularity;
-	if ((desc.ptr+desc.size_compressed)%dwAllocGranularity)	end+=1;
-	end							*= dwAllocGranularity;
-	if (end>A.size)				end = A.size;
-	u32 sz						= (end-start);
-	u8* ptr						= (u8*)MapViewOfFile(A.hSrcMap, FILE_MAP_READ, 0, start, sz); VERIFY3(ptr,"cannot create file mapping on file",fname);
-
-	string512					temp;
-	sprintf_s(temp, "%s:%s", *A.path, fname);
-#	ifdef DEBUG
-	register_file_mapping		(ptr,sz,temp);
-#	endif // DEBUG
-
-	u32 ptr_offs				= desc.ptr-start;
-	if (desc.size_real == desc.size_compressed) {
-		R						= xr_new<CPackReader>(ptr,ptr+ptr_offs,desc.size_real);
-		return;
-	}
-
-	// Compressed
-	u8*							dest = xr_alloc<u8>(desc.size_real);
-	rtc_decompress				(dest,desc.size_real,ptr+ptr_offs,desc.size_compressed);
-	R							= xr_new<CTempReader>(dest,desc.size_real,0);
-	UnmapViewOfFile				(ptr);
-#	ifdef DEBUG
-	unregister_file_mapping		(ptr,sz);
-#	endif // DEBUG
-
-#endif // USE_READ_INSTEAD_MAP
-}
-
-void CLocatorAPI::file_from_archive	(CStreamReader *&R, LPCSTR fname, const file &desc)
-{
-#ifdef USE_READ_INSTEAD_MAP
-	ASSERT_FMT( false, "can't be" );
-#endif
-	archive						&A = archives[desc.vfs];
-	R_ASSERT2					(
-		desc.size_compressed == desc.size_real,
-		make_string(
-			"cannot use stream reading for compressed data %s, do not compress data to be streamed",
-			fname
-		)
-	);
-
-	R							= xr_new<CStreamReader>();
-	R->construct				(
-		A.hSrcMap,
-		desc.ptr,
-		desc.size_compressed,
-		A.size,
-		BIG_FILE_READER_WINDOW_SIZE
-	);
 }
 
 void CLocatorAPI::copy_file_to_build	(IWriter *W, IReader *r)
@@ -1121,11 +1028,6 @@ T *CLocatorAPI::r_open_impl	(LPCSTR path, LPCSTR _fname)
 		_register_open_file	(R,fname);
 
 	return					(R);
-}
-
-CStreamReader* CLocatorAPI::rs_open	(LPCSTR path, LPCSTR _fname)
-{
-	return					(r_open_impl<CStreamReader>(path,_fname));
 }
 
 IReader *CLocatorAPI::r_open	(LPCSTR path, LPCSTR _fname)

@@ -82,12 +82,10 @@ public:
 
 private:
 			void				file_from_cache_impl(IReader *&R, LPSTR fname, const file &desc);
-			void				file_from_cache_impl(CStreamReader *&R, LPSTR fname, const file &desc);
 	template <typename T>
 			void				file_from_cache		(T *&R, LPSTR fname, const file &desc, LPCSTR &source_name);
 			
 			void				file_from_archive	(IReader *&R, LPCSTR fname, const file &desc);
-			void				file_from_archive	(CStreamReader *&R, LPCSTR fname, const file &desc);
 
 			void				copy_file_to_build	(IWriter *W, IReader *r);
 			void				copy_file_to_build	(IWriter *W, CStreamReader *r);
@@ -105,7 +103,6 @@ public:
 	void						_initialize		(u32 flags, LPCSTR target_folder=0, LPCSTR fs_name=0);
 	void						_destroy		();
 
-	CStreamReader*				rs_open			(LPCSTR initial, LPCSTR N);
 	IReader*					r_open			(LPCSTR initial, LPCSTR N);
 	IC IReader*					r_open			(LPCSTR N){return r_open(0,N);}
 	void						r_close			(IReader* &S);
