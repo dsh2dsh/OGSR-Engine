@@ -340,18 +340,28 @@ void CResourceManager::DeferredUpload() {
   CTimer timer;
   timer.Start();
 
+  u32 cnt = 0;
   size_t nWorkers = TTAPI->threads.size();
   if ( nWorkers > 1 && m_textures.size() > 1 ) {
-    for ( const auto& t : m_textures )
-      TTAPI->addJob([=] { t.second->Load(); });
+    for ( const auto& t : m_textures ) {
+      if ( !t.second->flags.bLoaded ) {
+        TTAPI->addJob([=] { t.second->Load(); });
+        cnt++;
+      }
+    }
     TTAPI->wait();
   }
   else {
-    for ( const auto& t : m_textures )
-      t.second->Load();
+    for ( const auto& t : m_textures ) {
+      if ( !t.second->flags.bLoaded ) {
+        t.second->Load();
+        cnt++;
+      }
+    }
   }
 
-  Msg( "[%s] texture loading time (%zi) using %u threads: [%.2f s.]", __FUNCTION__, m_textures.size(), nWorkers, timer.GetElapsed_sec() );
+  if ( cnt )
+    Msg( "[%s] texture loading time (%zi) using %u threads: [%.2f s.]", __FUNCTION__, cnt, nWorkers, timer.GetElapsed_sec() );
 }
 
 void	CResourceManager::DeferredUnload	()
