@@ -425,15 +425,21 @@ void CModelPool::Prefetch()
 	string256 section;
 	strconcat				(sizeof(section),section,"prefetch_visuals_",g_pGamePersistent->m_game_params.m_game_type);
 	CInifile::Sect& sect	= pSettings->r_section(section);
+	CTimer timer;
+	timer.Start();
+	u32 cnt = 0;
 	for (auto I=sect.Data.begin(); I!=sect.Data.end(); I++)	{
 		const CInifile::Item& item= *I;
 		dxRender_Visual* V	= Create(item.first.c_str());
 		Delete				(V,FALSE);
+		cnt++;
 	}
 	now_prefetch1 = false;
 
-	if ( !vis_prefetch || !vis_prefetch->section_exist( "prefetch" ) )
+	if ( !vis_prefetch || !vis_prefetch->section_exist( "prefetch" ) ) {
+	  Msg( "[%s] models prefetching time (%zi): [%.2f s.]", __FUNCTION__, cnt, timer.GetElapsed_sec() );
 	  return;
+	}
 
 	now_prefetch2 = true;
 	sect = vis_prefetch->r_section( "prefetch" );
@@ -453,6 +459,7 @@ void CModelPool::Prefetch()
 
 	now_prefetch2 = false;
 	Logging					(TRUE);
+	Msg( "[%s] models prefetching time (%zi): [%.2f s.]", __FUNCTION__, cnt, timer.GetElapsed_sec() );
 }
 
 void CModelPool::ClearPool( BOOL b_complete ) {
