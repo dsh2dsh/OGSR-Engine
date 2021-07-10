@@ -93,6 +93,7 @@ public:
     std::vector<std::unique_ptr<Thread>> threads;
     std::mutex queueMutex;
     std::condition_variable condition;
+    u32 max_workers{ 0 };
 
     void initialize(std::uint32_t threads_count = std::thread::hardware_concurrency(), std::string thread_name = "") {
 		do {
@@ -101,22 +102,28 @@ public:
     }
 
     // Wait until all threads have finished their work items
-    void wait() {
+    u32 wait() {
         for (auto& thread : threads) {
             thread->wait();
         }
+        u32 n = max_workers;
+        max_workers = 0;
+        return n;
     }
 
   void addJob( std::function<void()> function ) {
     while( true ) {
       std::unique_lock<std::mutex> lock( queueMutex );
+      u32 n = 0;
       for ( auto& thread : threads ) {
+        n++;
         if ( thread->jobs() < 2 ) {
           thread->addJob( function );
           thread->addJob( [this] {
             std::lock_guard<std::mutex> lock( queueMutex );
             condition.notify_one();
           });
+          if ( n > max_workers ) max_workers = n;
           return;
         }
       }
