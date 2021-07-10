@@ -46,6 +46,7 @@ public:
 	virtual void	ResourcesDestroyNecessaryTextures();
 	virtual void	ResourcesStoreNecessaryTextures();
 	virtual void	ResourcesDumpMemoryUsage();
+	virtual bool hasDeferredTextures();
 
 	//	HWSupport
 	virtual bool	HWSupportsShaderYUV2RGB();

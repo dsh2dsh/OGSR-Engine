@@ -46,6 +46,7 @@ private:
 	// data
 	map_Blender											m_blenders;
 	map_Texture											m_textures;
+	std::vector<std::string> m_deferred_textures;
 	map_Matrix											m_matrices;
 	map_Constant										m_constants;
 	map_RT												m_rtargets;
@@ -217,6 +218,7 @@ public:
 	void			Dump					(bool bBrief);
 
 	std::vector<ITexture*> FindTexture(const char* Name) const override;
+	bool hasDeferredTextures() { return m_deferred_textures.size() > 0; };
 
 private:
 #ifdef USE_DX11

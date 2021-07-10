@@ -342,26 +342,36 @@ void CResourceManager::DeferredUpload() {
 
   u32 cnt = 0;
   size_t nWorkers = TTAPI->threads.size();
-  if ( nWorkers > 1 && m_textures.size() > 1 ) {
-    for ( const auto& t : m_textures ) {
-      if ( !t.second->flags.bLoaded ) {
-        TTAPI->addJob([=] { t.second->Load(); });
-        cnt++;
+  u32 max_workers = 1;
+  if ( nWorkers > 1 && m_deferred_textures.size() > 1 ) {
+    for ( const auto& n : m_deferred_textures ) {
+      const auto it = m_textures.find( n.c_str() );
+      if ( it != m_textures.end() ) {
+        CTexture* t = it->second;
+        if ( !t->flags.bLoaded ) {
+          TTAPI->addJob([&] { t->Load(); });
+          cnt++;
+        }
       }
     }
-    TTAPI->wait();
+    max_workers = TTAPI->wait();
   }
   else {
-    for ( const auto& t : m_textures ) {
-      if ( !t.second->flags.bLoaded ) {
-        t.second->Load();
-        cnt++;
+    for ( const auto& n : m_deferred_textures ) {
+      const auto it = m_textures.find( n.c_str() );
+      if ( it != m_textures.end() ) {
+        CTexture* t = it->second;
+        if ( !t->flags.bLoaded ) {
+          t->Load();
+          cnt++;
+        }
       }
     }
   }
+  m_deferred_textures.clear();
 
   if ( cnt )
-    Msg( "[%s] texture loading time (%zi) using %u threads: [%.2f s.]", __FUNCTION__, cnt, nWorkers, timer.GetElapsed_sec() );
+    Msg( "[%s] texture loading time (%zi) using %u/%u threads: [%.2f s.]", __FUNCTION__, cnt, max_workers, nWorkers, timer.GetElapsed_sec() );
 }
 
 void	CResourceManager::DeferredUnload	()

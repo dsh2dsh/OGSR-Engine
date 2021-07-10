@@ -467,9 +467,11 @@ void CLevel::ProcessGameEvents		()
 			{
 			case M_SPAWN:
 				{
+					Device.m_pRender->DeferredLoad( TRUE );
 					u16 dummy16;
 					P.r_begin(dummy16);
 					cl_Process_Spawn(P);
+					Device.m_pRender->DeferredLoad( FALSE );
 				}break;
 			case M_EVENT:
 				{
@@ -482,6 +484,9 @@ void CLevel::ProcessGameEvents		()
 			}			
 		}
 	}
+
+	if ( Device.m_pRender->hasDeferredTextures() )
+	  Device.m_pRender->ResourcesDeferredUpload();
 
 	if ( !is_removing_objects() )
 	  Device.add_to_seq_parallel( fastdelegate::MakeDelegate( this, &CLevel::ProcessGameSpawns ) );

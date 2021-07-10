@@ -432,7 +432,10 @@ CTexture* CResourceManager::_CreateTexture	(LPCSTR _Name)
 		T->dwFlags			|=	xr_resource_flagged::RF_REGISTERED;
 		m_textures.insert	(mk_pair(T->set_name(Name),T));
 		T->Preload			();
-		if (RDEVICE.b_is_Ready && !bDeferredLoad) T->Load();
+		if ( RDEVICE.b_is_Ready && !bDeferredLoad )
+		  T->Load();
+		else
+		  m_deferred_textures.emplace( m_deferred_textures.end(), Name );
 		return		T;
 	}
 }

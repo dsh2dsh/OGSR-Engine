@@ -412,3 +412,7 @@ IResourceManager* dxRenderDeviceRender::GetResourceManager() const
 {
 	return dynamic_cast<IResourceManager*>(Resources);
 }
+
+bool dxRenderDeviceRender::hasDeferredTextures() {
+  return Resources->hasDeferredTextures();
+}
