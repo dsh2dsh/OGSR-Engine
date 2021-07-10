@@ -24,6 +24,8 @@ void IGame_ObjectPool::prefetch	()
 	// prefetch objects
 	strconcat				(sizeof(section),section,"prefetch_objects_",g_pGamePersistent->m_game_params.m_game_type);
 	CInifile::Sect& sect	= pSettings->r_section(section);
+	CTimer T;
+	T.Start();
 	for ( const auto &item : sect.Data)	{
 		CLASS_ID CLS		= pSettings->r_clsid(item.first.c_str(),"class");
 		p_count				++;
@@ -32,6 +34,7 @@ void IGame_ObjectPool::prefetch	()
 		VERIFY2				(pObject->cNameSect().c_str(),item.first.c_str());
 		m_PrefetchObjects.push_back	(pObject);
 	}
+	Msg( "[%s] objects prefetching time (%zi): [%.2f s.]", __FUNCTION__, p_count, T.GetElapsed_sec() );
 
 	// out statistic
 	::Render->model_Logging	(TRUE);
@@ -42,8 +45,10 @@ void IGame_ObjectPool::clear()
 	// Clear POOL
 	ObjectVecIt it			= m_PrefetchObjects.begin();
 	ObjectVecIt itE			= m_PrefetchObjects.end();
-	for (; it!=itE; it++)	
+	for (; it!=itE; it++) {
+		(*it)->cNameVisual_set( 0 );
 		xr_delete			(*it);
+	}
 	m_PrefetchObjects.clear	(); 
 }
 

@@ -115,8 +115,8 @@ void IGame_Persistent::OnGameStart()
 	float	p_time		=			1000.f*Device.GetTimerGlobal()->GetElapsed_sec();
 	u32	mem_0			=			Memory.mem_usage()	;
 
-	//Log				("Loading objects...");
-	//ObjectPool.prefetch					();
+	Log( "Loading objects..." );
+	ObjectPool.prefetch();
 	Log				("Loading models...");
 	Render->models_Prefetch				();
 	Device.m_pRender->ResourcesDeferredUpload(); //Device.Resources->DeferredUpload	();
