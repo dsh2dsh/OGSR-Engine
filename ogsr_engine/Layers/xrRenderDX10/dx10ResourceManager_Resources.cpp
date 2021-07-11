@@ -588,7 +588,7 @@ CTexture* CResourceManager::_CreateTexture	(LPCSTR _Name)
 		if ( Device.b_is_Ready && !bDeferredLoad )
 		  T->Load();
 		else
-		  m_deferred_textures.emplace( m_deferred_textures.end(), Name );
+		  m_deferred_textures.emplace_back( Name );
 		return		T;
 	}
 }
