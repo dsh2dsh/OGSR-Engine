@@ -348,10 +348,8 @@ void CResourceManager::DeferredUpload() {
       const auto it = m_textures.find( n.c_str() );
       if ( it != m_textures.end() ) {
         CTexture* t = it->second;
-        if ( !t->flags.bLoaded ) {
-          TTAPI->addJob([&] { t->Load(); });
-          cnt++;
-        }
+        TTAPI->addJob([&] { t->Load(); });
+        cnt++;
       }
     }
     max_workers = TTAPI->wait();
@@ -361,10 +359,8 @@ void CResourceManager::DeferredUpload() {
       const auto it = m_textures.find( n.c_str() );
       if ( it != m_textures.end() ) {
         CTexture* t = it->second;
-        if ( !t->flags.bLoaded ) {
-          t->Load();
-          cnt++;
-        }
+        t->Load();
+        cnt++;
       }
     }
   }
