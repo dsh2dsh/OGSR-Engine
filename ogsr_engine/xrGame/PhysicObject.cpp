@@ -487,6 +487,11 @@ void CPhysicObject::net_Export_PH_Params(NET_Packet& P, SPHNetState& State, mask
     }
 }
 
+void CPhysicObject::net_Export( CSE_Abstract* E ) {
+  CSE_ALifeObjectPhysic* obj_ph = smart_cast<CSE_ALifeObjectPhysic*>( E );
+  obj_ph->m_u8NumItems = 0;
+};
+
 void CPhysicObject::net_Import(NET_Packet& P)
 {
     u8 NumItems = 0;

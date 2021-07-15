@@ -90,6 +90,7 @@ public:
     void set_ai_obstacle( bool flag ) { m_is_ai_obstacle = flag; }
 
     virtual void net_Export(NET_Packet& P);
+    virtual void net_Export( CSE_Abstract* E );
     virtual void net_Import(NET_Packet& P);
 
     virtual void PH_B_CrPr(); // actions & operations before physic correction-prediction steps

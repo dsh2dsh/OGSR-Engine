@@ -438,6 +438,10 @@ void CCustomZone::net_Export(NET_Packet& P)
 //	P.w_u32				(m_owner_id);
 }
 
+void CCustomZone::net_Export( CSE_Abstract* E ) {
+  inherited::net_Export( E );
+}
+
 bool CCustomZone::IdleState()
 {
 	if ( m_pIdleParticles && !m_pIdleParticles->IsLooped() && !m_pIdleParticles->IsPlaying() )
