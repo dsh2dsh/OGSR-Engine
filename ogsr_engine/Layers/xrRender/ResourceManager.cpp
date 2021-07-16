@@ -340,6 +340,7 @@ void CResourceManager::DeferredUpload() {
   CTimer timer;
   timer.Start();
 
+  std::scoped_lock<std::mutex> lock( m_textures_mutex );
   u32 cnt = 0;
   size_t nWorkers = TTAPI->threads.size();
   u32 max_workers = 1;
@@ -373,6 +374,7 @@ void CResourceManager::DeferredUpload() {
 void	CResourceManager::DeferredUnload	()
 {
 	if (!RDEVICE.b_is_Ready)				return;
+	std::scoped_lock<std::mutex> lock( m_textures_mutex );
 	for ( auto& texture : m_textures )
 	  texture.second->Unload();
 }
@@ -380,6 +382,7 @@ void	CResourceManager::DeferredUnload	()
 #ifdef _EDITOR
 void	CResourceManager::ED_UpdateTextures(AStringVec* names)
 {
+	std::scoped_lock<std::mutex> lock( m_textures_mutex );
 	// 1. Unload
 	if (names){
 		for (u32 nid=0; nid<names->size(); nid++)
@@ -401,6 +404,7 @@ void	CResourceManager::_GetMemoryUsage(u32& m_base, u32& c_base, u32& m_lmaps, u
 {
 	m_base=c_base=m_lmaps=c_lmaps=0;
 
+	std::scoped_lock<std::mutex> lock( m_textures_mutex );
 	map_Texture::iterator I = m_textures.begin	();
 	map_Texture::iterator E = m_textures.end	();
 	for (; I!=E; I++)
@@ -422,6 +426,7 @@ void	CResourceManager::_DumpMemoryUsage		()
 
 	// sort
 	{
+		std::scoped_lock<std::mutex> lock( m_textures_mutex );
 		map_Texture::iterator I = m_textures.begin	();
 		map_Texture::iterator E = m_textures.end	();
 		for (; I!=E; I++)
@@ -463,7 +468,7 @@ BOOL	CResourceManager::_GetDetailTexture(LPCSTR Name,LPCSTR& T, R_constant_setup
 	}
 }*/
 
-std::vector<ITexture*> CResourceManager::FindTexture(const char* Name) const
+std::vector<ITexture*> CResourceManager::FindTexture(const char* Name)
 {
 	R_ASSERT(Name && strlen(Name));
 
@@ -477,6 +482,7 @@ std::vector<ITexture*> CResourceManager::FindTexture(const char* Name) const
 
 	if (!ch) // no wildcard?
 	{
+		std::scoped_lock<std::mutex> lock( m_textures_mutex );
 		auto I = m_textures.find(filename);
 		if (I != m_textures.end())
 			res.emplace_back(dynamic_cast<ITexture*>(I->second));
@@ -486,6 +492,7 @@ std::vector<ITexture*> CResourceManager::FindTexture(const char* Name) const
 		// alpet: test for wildcard matching
 		ch[0] = 0; // remove *
 
+		std::scoped_lock<std::mutex> lock( m_textures_mutex );
 		for (const auto&[name, tex] : m_textures)
 			if (strstr(name, filename))
 				res.emplace_back(dynamic_cast<ITexture*>(tex));

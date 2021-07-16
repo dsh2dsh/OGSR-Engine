@@ -46,6 +46,7 @@ private:
 	// data
 	map_Blender											m_blenders;
 	map_Texture											m_textures;
+	std::mutex m_textures_mutex;
 	std::vector<std::string> m_deferred_textures;
 	map_Matrix											m_matrices;
 	map_Constant										m_constants;
@@ -217,7 +218,7 @@ public:
 	void			DestroyNecessaryTextures();
 	void			Dump					(bool bBrief);
 
-	std::vector<ITexture*> FindTexture(const char* Name) const override;
+	std::vector<ITexture*> FindTexture(const char* Name) override;
 	bool hasDeferredTextures() { return m_deferred_textures.size() > 0; };
 
 private:

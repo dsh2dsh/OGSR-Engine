@@ -113,6 +113,7 @@ CResourceManager::~CResourceManager		()
 
 void CResourceManager::Dump(bool bBrief)
 {
+	std::scoped_lock<std::mutex> lock( m_textures_mutex );
 	Msg		("* RM_Dump: textures  : %d",		m_textures.size());		if(!bBrief) mdump(m_textures);
 	Msg		("* RM_Dump: rtargets  : %d",		m_rtargets.size());		if(!bBrief) mdump(m_rtargets);
 //	DX10 cut 	Msg		("* RM_Dump: rtargetsc : %d",		m_rtargets_c.size());	if(!bBrief) mdump(m_rtargets_c);
