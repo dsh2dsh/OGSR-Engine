@@ -168,13 +168,25 @@ public:
 };
 
 // shared motions
-struct 	ENGINE_API	motions_value
+struct ENGINE_API motions_value
 {
+ private:
+  u32  m_dwReference{ 0 };
+  bool m_loaded{ false };
+  bool m_load_ok{ false };
+  std::mutex m_mutex;
+
+ public:
+  u32 decReference();
+  u32 incReference();
+  u32 getReference();
+  bool hasLoadedOK();
+
+ public:
 	accel_map			m_motion_map;		// motion associations
 	accel_map			m_cycle;			// motion data itself	(shared)
 	accel_map			m_fx;				// motion data itself	(shared)
 	CPartition			m_partition;		// partition
-	u32					m_dwReference;
 	BoneMotionMap		m_motions;
     MotionDefVec		m_mdefs;
 
@@ -199,6 +211,7 @@ class 	ENGINE_API	motions_container
 {
 	DEFINE_MAP			(shared_str,motions_value*,SharedMotionsMap,SharedMotionsMapIt);
 	SharedMotionsMap	container;
+	std::mutex m_mutex;
 public:
 						motions_container	();
 						~motions_container	();
@@ -216,10 +229,10 @@ private:
 	motions_value*		p_;
 protected:
 	// ref-counting
-	void				destroy			()							{	if (0==p_) return;	p_->m_dwReference--; 	if (0==p_->m_dwReference)	p_=0;	}
+	void destroy();
 public:
-	bool				create			(shared_str key, IReader *data, vecBones* bones);//{	motions_value* v = g_pMotionsContainer->dock(key,data,bones); if (0!=v) v->m_dwReference++; destroy(); p_ = v;	}
-	bool				create			(shared_motions const &rhs);//	{	motions_value* v = rhs.p_; if (0!=v) v->m_dwReference++; destroy(); p_ = v;	}
+	bool create( shared_str key, IReader *data, vecBones* bones );
+	bool create( shared_motions const &rhs );
 public:
 	// construction
 						shared_motions	()							{	p_ = 0;											}
