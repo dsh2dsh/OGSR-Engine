@@ -699,6 +699,8 @@ void CKinematicsAnimated::Load(const char* N, IReader *data, u32 dwFlags)
   }
   else if ( data->find_chunk( OGF_S_MOTIONS ) )
     load_embeded = true;
+  else
+    ASSERT_FMT( data->find_chunk( OGF_S_SMPARAMS ), "Old skinned model version unsupported! (%s)", N );
 
   if ( load_embeded ) {
     string_path nm;
