@@ -151,6 +151,9 @@ extern ECORE_API float    ps_pnv_mode;
 extern ECORE_API float    ps_pnv_noise;
 extern ECORE_API float    ps_pnv_scanlines;
 
+extern ECORE_API float ps_r2_visor_refl_intensity;
+extern ECORE_API float ps_r2_visor_refl_radius;
+
 #if RENDER==R_R4
 extern ECORE_API float ps_ext_SSLR_L;
 extern ECORE_API float ps_ext_SSLR_blur;
@@ -215,12 +218,14 @@ enum
 	R_FLAGEXT_HOM_DEPTH_DRAW		= (1<<7),
 	R2FLAGEXT_SUN_ZCULLING			= (1<<8),
 	R2FLAGEXT_SUN_OLD				= (1<<9),
-	R2FLAGEXT_SHADER_CACHE = 1 << 10,
-	R2FLAGEXT_DISABLE_HOM = 1 << 11,
-	R2FLAGEXT_RAIN_DROPS = 1 << 12,
-	R2FLAGEXT_RAIN_DROPS_CONTROL = 1 << 13,
-	R2FLAGEXT_ACTOR_SHADOW = 1 << 14,
-	R2FLAGEXT_SSLR = 1 << 15,
+	R2FLAGEXT_SHADER_CACHE 			= 1 << 10,
+	R2FLAGEXT_DISABLE_HOM 			= 1 << 11,
+	R2FLAGEXT_RAIN_DROPS 			= 1 << 12,
+	R2FLAGEXT_RAIN_DROPS_CONTROL 	= 1 << 13,
+	R2FLAGEXT_ACTOR_SHADOW 			= 1 << 14,
+	R2FLAGEXT_SSLR 					= 1 << 15,
+	R2FLAG_VISOR_REFL				= 1 << 16,
+	R2FLAG_VISOR_REFL_CONTROL		= 1 << 17,
 };
 
 extern void						xrRender_initconsole	();
