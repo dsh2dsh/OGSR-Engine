@@ -251,10 +251,7 @@ add_to_type_list(CPhysicsJoint)
 #define script_type_list save_type_list(CPhysicsJoint)
 // ABSTRACT: 
 class CPHIsland;
-
-#ifdef ANIMATED_PHYSICS_OBJECT_SUPPORT
-	class CPhysicsShellAnimator;
-#endif
+class CPhysicsShellAnimator;
 
 class CPhysicsShell			: public CPhysicsBase
 {
@@ -271,9 +268,7 @@ virtual	const		Fmatrix						&XFORM										()const															{ return CPhys
 virtual		CPhysicsElement				&Element									( u16 index )												{ return *get_ElementByStoreOrder( index );	};
 virtual				void						GetGlobalTransformDynamic					(Fmatrix* m) 																				= 0;
 
-#ifdef ANIMATED_PHYSICS_OBJECT_SUPPORT
 	virtual			CPhysicsShellAnimator*		PPhysicsShellAnimator						()																							= 0;
-#endif
 					void						set_Kinematics								(IKinematics* p)														{m_pKinematics=p	;}
 	virtual			void						set_JointResistance							(float force)																				= 0;
 	virtual			void						add_Element									(CPhysicsElement* E)																		= 0;
@@ -290,11 +285,9 @@ virtual				void						GetGlobalTransformDynamic					(Fmatrix* m) 																
 	virtual		const CLBits&					collide_bits()const = 0;
 	virtual		const _flags<CLClassBits>&		collide_class_bits()const = 0;
 
-#ifdef ANIMATED_PHYSICS_OBJECT_SUPPORT
-	virtual			void						SetAnimated									()																							= 0;
+	virtual			void						CreateShellAnimator							( CInifile* ini, LPCSTR section )															= 0;
 	virtual			void						SetIgnoreAnimated							()																							= 0;
-	virtual			bool						Animated									()																							= 0;
-#endif
+	virtual			void						AnimatorOnFrame								()																							= 0;
 
 	virtual			void						SetSmall									()																							= 0;
 	virtual			void						SetIgnoreSmall								()																							= 0;

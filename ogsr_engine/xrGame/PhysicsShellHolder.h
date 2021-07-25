@@ -120,6 +120,8 @@ public://IPhysicsShellHolder
 	virtual	ICollisionForm*				ObjectCollisionModel				()						;
 	//virtual	IRenderVisual*			ObjectVisual						()						;
 	virtual	IKinematics*				ObjectKinematics					()						;
+	virtual	void					ObjectProcessingDeactivate			()						;
+	virtual	void					ObjectProcessingActivate			()						;				
 	CPhysicsShell*&					ObjectPPhysicsShell					()						;
 	virtual bool					has_parent_object					()						;
 	CPHCapture*					PHCapture							()						;

@@ -10,9 +10,7 @@
 #include "physicsshellholder.h"
 #include "../Include/xrRender/Kinematics.h"
 
-#ifdef ANIMATED_PHYSICS_OBJECT_SUPPORT
-	#include "PhysicsShellAnimator.h"
-#endif
+#include "PhysicsShellAnimator.h"
 
 ///////////////////////////////////////////////////////////////
 ///#pragma warning(disable:4995)
@@ -222,14 +220,12 @@ void CPHShell::Deactivate()
 	VERIFY(ph_world);
 	ph_world->NetRelcase(this);
 
-#ifdef ANIMATED_PHYSICS_OBJECT_SUPPORT
 	if (m_pPhysicsShellAnimatorC)
 	{
 		VERIFY(PhysicsRefObject());
 		PhysicsRefObject()->ObjectProcessingDeactivate();
 		xr_delete<CPhysicsShellAnimator>(m_pPhysicsShellAnimatorC);
 	}
-#endif
 
 	if (!isActive())
 		return;

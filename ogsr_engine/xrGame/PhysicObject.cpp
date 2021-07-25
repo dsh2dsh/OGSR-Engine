@@ -11,9 +11,7 @@
 #include "game_object_space.h"
 #include "ExtendedGeom.h"
 
-#ifdef ANIMATED_PHYSICS_OBJECT_SUPPORT
-	#include "PhysicsShellAnimator.h"
-#endif
+#include "PhysicsShellAnimator.h"
 
 
 CPhysicObject::CPhysicObject(void)
@@ -39,12 +37,10 @@ BOOL CPhysicObject::net_Spawn(CSE_Abstract* DC)
     if (!PPhysicsShell()->isBreakable() && !CScriptBinder::object() && !CPHSkeleton::IsRemoving())
         SheduleUnregister();
 
-#ifdef ANIMATED_PHYSICS_OBJECT_SUPPORT
     // if (PPhysicsShell()->Animated())
     //{
     //	processing_activate();
     //}
-#endif
 
     if ( Visual() ) {
       IKinematics *K = Visual()->dcast_PKinematics();
@@ -147,12 +143,10 @@ void CPhysicObject::RunStartupAnim(CSE_Abstract *D)
 
 void CPhysicObject::net_Destroy()
 {
-#ifdef ANIMATED_PHYSICS_OBJECT_SUPPORT
     // if (PPhysicsShell()->Animated())
     //{
     //	processing_deactivate();
     //}
-#endif
 
     inherited::net_Destroy();
     CPHSkeleton::RespawnInit();
@@ -198,14 +192,12 @@ void CPhysicObject::UpdateCL()
 {
     inherited::UpdateCL();
 
-#ifdef ANIMATED_PHYSICS_OBJECT_SUPPORT
     //Если наш физический объект анимированный, то
     //двигаем объект за анимацией
     if (m_pPhysicsShell->PPhysicsShellAnimator())
     {
         m_pPhysicsShell->AnimatorOnFrame();
     }
-#endif
 
     PHObjectPositionUpdate();
 }
@@ -218,14 +210,12 @@ void CPhysicObject::PHObjectPositionUpdate()
             m_pPhysicsShell->Update();
             XFORM().set(m_pPhysicsShell->mXFORM);
         }
-#ifdef ANIMATED_PHYSICS_OBJECT_SUPPORT
         else if (m_pPhysicsShell->PPhysicsShellAnimator())
         {
             Fmatrix m;
             m_pPhysicsShell->InterpolateGlobalTransform(&m);
             XFORM().set(m);
         }
-#endif
         else
             m_pPhysicsShell->InterpolateGlobalTransform(&XFORM());
     }

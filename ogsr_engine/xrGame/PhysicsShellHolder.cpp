@@ -518,6 +518,14 @@ IKinematics	*CPhysicsShellHolder::ObjectKinematics()
 	VERIFY(Visual());
 	return Visual()->dcast_PKinematics();
 }
+void CPhysicsShellHolder::ObjectProcessingDeactivate()
+{
+	processing_deactivate();
+}
+void CPhysicsShellHolder::ObjectProcessingActivate()
+{
+	processing_activate();
+}
 
 #include <filesystem>
 

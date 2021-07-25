@@ -21,13 +21,9 @@ class CPHCollideValidator
 		cbClassRagDoll		=	1<<8,
 		cbNCClassRagDoll	=	1<<9,
 
-#ifdef ANIMATED_PHYSICS_OBJECT_SUPPORT
 		cbClassAnimated		=	1<<10,//класс анимированного физического объекта
 		cbNCClassAnimated	=	1<<11,//свойство игнорирования класса анимированного физического объекта
 		cbNone				=	1<<12
-#else
-		cbNone				=	1<<10
-#endif
 
 	};
 public:
@@ -41,9 +37,7 @@ static		void			RegisterObjToLastGroup		(CPHObject& obj)										;
 static		void			RestoreGroupObject			(const CPHObject& obj)									;
 static		bool			IsGroupObject				(const CPHObject& obj)									;
 
-#ifdef ANIMATED_PHYSICS_OBJECT_SUPPORT
 	static		bool			IsAnimatedObject			(const CPHObject& obj)									;
-#endif
 
 static		void			SetStaticNotCollide			(CPHObject& obj)										;
 static		void			SetNonDynamicObject			(CPHObject& obj)										;
@@ -53,10 +47,8 @@ static		void			SetCharacterClassNotCollide	(CPHObject& obj)										;
 static		void			SetRagDollClass				(CPHObject& obj)										;
 static		void			SetRagDollClassNotCollide	(CPHObject& obj)										;
 
-#ifdef ANIMATED_PHYSICS_OBJECT_SUPPORT
 	static		void			SetAnimatedClass			(CPHObject& obj)										;
 	static		void			SetAnimatedClassNotCollide	(CPHObject& obj)										;
-#endif
 
 static		void			SetClassSmall				(CPHObject& obj)										;
 static		void			SetClassSmallNotCollide		(CPHObject& obj)										;

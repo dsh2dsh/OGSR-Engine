@@ -11,9 +11,7 @@ class CPHShellSplitterHolder;
 #include "PHShellSplitter.h"
 #include "phmovestorage.h"
 
-#ifdef ANIMATED_PHYSICS_OBJECT_SUPPORT
-	class CPhysicsShellAnimator;
-#endif
+class CPhysicsShellAnimator;
 
 class CPHShell: public CPhysicsShell,public CPHObject {
 
@@ -31,9 +29,7 @@ class CPHShell: public CPhysicsShell,public CPHObject {
 	CPHShellSplitterHolder	*m_spliter_holder;
 	CPHMoveStorage			m_traced_geoms;
 
-#ifdef ANIMATED_PHYSICS_OBJECT_SUPPORT
 	CPhysicsShellAnimator*	m_pPhysicsShellAnimatorC;
-#endif
 
 protected:
 	dSpaceID			    m_space;
@@ -77,9 +73,7 @@ public:
 	virtual void Activate(bool disable = false, bool not_set_bone_callbacks = false);
 	virtual void Activate(const Fmatrix& start_from, bool disable = false) {};
 
-#ifdef ANIMATED_PHYSICS_OBJECT_SUPPORT
 	virtual	CPhysicsShellAnimator*	PPhysicsShellAnimator(){return	m_pPhysicsShellAnimatorC;};
-#endif
 
 private:
 			void			activate				(bool disable);	
@@ -100,11 +94,9 @@ public:
 	virtual			void	SetRagDoll				()											;
 	virtual			void	SetIgnoreRagDoll		()											;
 
-#ifdef ANIMATED_PHYSICS_OBJECT_SUPPORT
-	virtual			void	SetAnimated				()											;
+	virtual			void	CreateShellAnimator		( CInifile* ini, LPCSTR section )											;
 	virtual			void	SetIgnoreAnimated		()											;
 	virtual			bool	Animated				()											;
-#endif
 
 	virtual			void	SetSmall				()											;
 	virtual			void	SetIgnoreSmall			()											;
@@ -148,7 +140,8 @@ public:
 	virtual		void				set_CallbackData				(void * cd);
 	virtual		void				*get_CallbackData				();
 	virtual		void				set_PhysicsRefObject			(CPhysicsShellHolder* ref_object);
-	
+				CPhysicsShellHolder*PhysicsRefObject				(){ return (*elements.begin())->PhysicsRefObject(); }	
+
 	//breakbable interface
 	virtual		bool				isBreakable						();
 	virtual		bool				isFractured						();
@@ -227,6 +220,7 @@ public:
 	virtual		void				SmoothElementsInertia			(float k);
 	virtual		void				InterpolateGlobalTransform		(Fmatrix* m);
 	virtual		void				InterpolateGlobalPosition		(Fvector* v);
+	virtual		void				AnimatorOnFrame					();
 	virtual		void				GetGlobalTransformDynamic		(Fmatrix* m);
 	virtual		void				GetGlobalPositionDynamic		(Fvector* v);
 	virtual		Fmatrix&			ObjectInRoot					(){return m_object_in_root;}

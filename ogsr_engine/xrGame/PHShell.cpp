@@ -19,9 +19,7 @@
 #include "PHElementInline.h"
 #include "phshellbuildjoint.h"
 
-#ifdef ANIMATED_PHYSICS_OBJECT_SUPPORT
-	#include "PhysicsShellAnimator.h"
-#endif
+#include "PhysicsShellAnimator.h"
 
 IC		bool	PhOutOfBoundaries			(const Fvector& v)
 {
@@ -56,9 +54,7 @@ CPHShell::CPHShell()
 	m_object_in_root.identity();
 	m_active_count=0;
 
-#ifdef ANIMATED_PHYSICS_OBJECT_SUPPORT
 	m_pPhysicsShellAnimatorC=NULL;
-#endif
 
 }
 
@@ -1474,13 +1470,14 @@ void CPHShell::SetIgnoreRagDoll()
 	CPHCollideValidator::SetRagDollClassNotCollide(*this);
 }
 
-#ifdef ANIMATED_PHYSICS_OBJECT_SUPPORT
 	//Делает данный физический объек анимированным 
-	void CPHShell::SetAnimated()
+	void CPHShell::CreateShellAnimator( CInifile* ini, LPCSTR section )
 	{	
 		//Для фильтра коллизий относим данный объект к классу анимированных
 		CPHCollideValidator::SetAnimatedClass(*this);
-		m_pPhysicsShellAnimatorC=xr_new<CPhysicsShellAnimator>(this);
+		m_pPhysicsShellAnimatorC=xr_new<CPhysicsShellAnimator>( this,  ini, section );
+		VERIFY( PhysicsRefObject( ) );
+		PhysicsRefObject()->ObjectProcessingActivate();
 		//m_pPhysicsShellAnimatorC->ResetCallbacks();
 	}
 
@@ -1499,7 +1496,6 @@ void CPHShell::SetIgnoreRagDoll()
 	{
 		return	CPHCollideValidator::IsAnimatedObject(*this);
 	}
-#endif
 
 void	CPHShell::				SetSmall()
 {
@@ -1578,4 +1574,10 @@ void	CPHShell::SetAnimated( bool v )
 	for( ; i!=e; ++i )
 		(*i)->SetAnimated( v );
 	
+}
+
+void		CPHShell::	AnimatorOnFrame		()
+{
+	VERIFY( PPhysicsShellAnimator() );
+	PPhysicsShellAnimator()->OnFrame();
 }
