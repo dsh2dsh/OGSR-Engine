@@ -120,8 +120,10 @@ void CGraviArtefact::OnH_B_Independent( bool just_before_destroy ) {
 struct ray_query_param {
   CGraviArtefact* m_holder;
   float           m_range;
+  bool            m_valid;
   ray_query_param( CGraviArtefact* holder ) {
     m_holder = holder;
+    m_valid  = false;
   }
 };
 
@@ -148,6 +150,7 @@ static BOOL trace_callback( collide::rq_result& result, LPVOID params ) {
     }
   }
   param->m_range = result.range;
+  param->m_valid = true;
   return FALSE;
 }
 
@@ -157,12 +160,12 @@ void CGraviArtefact::process_gravity() {
   Fvector P = Position();
   P.y += Radius();
   Fbox level_box = Level().ObjectSpace.GetBoundingVolume();
-  collide::ray_defs RD( P, dir, _abs( P.y - level_box.y1 ) + 1.f, CDB::OPT_CULL, collide::rqtBoth );
+  collide::ray_defs RD( P, dir, _abs( P.y - level_box.y1 ) - 1.f, CDB::OPT_CULL, collide::rqtBoth );
   collide::rq_results RQR;
   ray_query_param params( this );
-  bool res = Level().ObjectSpace.RayQuery( RQR, RD, trace_callback, &params, NULL, this );
+  Level().ObjectSpace.RayQuery( RQR, RD, trace_callback, &params, NULL, this );
   float raise_speed = m_jump_raise_speed;
-  if ( !res ) {
+  if ( !params.m_valid ) {
     m_jump_jump = false;
     m_keep  = false;
     m_raise = true;
