@@ -232,6 +232,21 @@ void CPHActorCharacter::InitContact(dContact* c,bool &do_collide,u16 material_id
 	if((material_1&&material_1->Flags.test(SGameMtl::flActorObstacle))||(material_2&&material_2->Flags.test(SGameMtl::flActorObstacle)))
 		do_collide=true;
 
+	const dGeomID g1 = c->geom.g1;
+	const dGeomID g2 = c->geom.g2;
+	if ( ( g1 == m_wheel || g2 == m_wheel ) && !do_collide ) {
+	  u16 contact_material = g1 == m_wheel ? material_idx_2 : material_idx_1;
+	  SGameMtl* tri_material = GMLib.GetMaterialByIdx( contact_material );
+	  if ( tri_material->Flags.test( SGameMtl::flPassable ) ) {
+	    Fvector dir = { 0, -1, 0 };
+	    Fvector pos = cast_fv( c->geom.pos );
+	    Fbox level_box = Level().ObjectSpace.GetBoundingVolume();
+	    collide::rq_result RQ;
+	    if ( !Level().ObjectSpace.RayPick( pos, dir, _abs( pos.y - level_box.y1 ) - 1.f, collide::rqtStatic, RQ, Actor() ) )
+	      do_collide = true;
+	  }
+	}
+
 		if(b_restrictor)
 		{
 			b_side_contact=true;
