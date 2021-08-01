@@ -30,9 +30,8 @@ void FTreeVisual::Release	()
 	dxRender_Visual::Release	();
 }
 
-void FTreeVisual::Load		(const char* N, IReader *data, u32 dwFlags)
-{
-	dxRender_Visual::Load		(N,data,dwFlags);
+void FTreeVisual::Load( const char* N, IReader *data, u32 dwFlags, bool bAllowChildrenDuplicate ) {
+	dxRender_Visual::Load( N, data, dwFlags, bAllowChildrenDuplicate );
 
 	D3DVERTEXELEMENT9*	vFormat	= NULL;
 
@@ -180,9 +179,8 @@ void FTreeVisual_ST::Release	()
 {
 	inherited::Release			();
 }
-void FTreeVisual_ST::Load		(const char* N, IReader *data, u32 dwFlags)
-{
-	inherited::Load				(N,data,dwFlags);
+void FTreeVisual_ST::Load( const char* N, IReader *data, u32 dwFlags, bool bAllowChildrenDuplicate ) {
+	inherited::Load( N, data, dwFlags, bAllowChildrenDuplicate );
 }
 void FTreeVisual_ST::Render		(float LOD)
 {
@@ -211,9 +209,8 @@ void FTreeVisual_PM::Release	()
 {
 	inherited::Release			();
 }
-void FTreeVisual_PM::Load		(const char* N, IReader *data, u32 dwFlags)
-{
-	inherited::Load				(N,data,dwFlags);
+void FTreeVisual_PM::Load( const char* N, IReader *data, u32 dwFlags, bool bAllowChildrenDuplicate ) {
+	inherited::Load( N, data, dwFlags, bAllowChildrenDuplicate );
 	R_ASSERT					(data->find_chunk(OGF_SWICONTAINER));
 	{
 		u32 ID					= data->r_u32				();

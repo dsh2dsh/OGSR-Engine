@@ -220,7 +220,7 @@ public:
 
 	// General "Visual" stuff
     virtual void					Copy				(dxRender_Visual *pFrom);
-	virtual void					Load				(const char* N, IReader *data, u32 dwFlags);
+	virtual void Load( const char* N, IReader *data, u32 dwFlags, bool bAllowChildrenDuplicate );
 	virtual void 					Spawn				();
 	virtual void					Depart				();
     virtual void 					Release				();

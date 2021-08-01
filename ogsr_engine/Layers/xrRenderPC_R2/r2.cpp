@@ -398,7 +398,7 @@ void CRender::AfterWorldRender()
 IRender_ObjectSpecific*	CRender::ros_create				(IRenderable* parent)				{ return xr_new<CROS_impl>();			}
 void					CRender::ros_destroy			(IRender_ObjectSpecific* &p)		{ xr_delete(p);							}
 IRenderVisual*			CRender::model_Create			(LPCSTR name, IReader* data)		{ return Models->Create(name,data);		}
-IRenderVisual*			CRender::model_CreateChild		(LPCSTR name, IReader* data)		{ return Models->CreateChild(name,data);}
+IRenderVisual* CRender::model_CreateChild( LPCSTR name, IReader* data, bool bAllowChildrenDuplicate ) { return Models->CreateChild( name, data, bAllowChildrenDuplicate ); }
 IRenderVisual*			CRender::model_Duplicate		(IRenderVisual* V)					{ return Models->Instance_Duplicate((dxRender_Visual*)V);	}
 void					CRender::model_Delete			(IRenderVisual* &V, BOOL bDiscard)	
 { 

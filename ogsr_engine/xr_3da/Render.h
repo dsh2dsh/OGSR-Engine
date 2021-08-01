@@ -267,7 +267,7 @@ public:
 	//virtual IRenderDetailModel*		model_CreateDM			(IReader*	F)								= 0;
 	//virtual IRenderVisual*			model_Create			(LPCSTR name, IReader*	data=0)				= 0;
 	virtual IRenderVisual*			model_Create			(LPCSTR name, IReader*	data=0)				= 0;
-	virtual IRenderVisual*			model_CreateChild		(LPCSTR name, IReader*	data)				= 0;
+	virtual IRenderVisual* model_CreateChild( LPCSTR name, IReader* data, bool bAllowChildrenDuplicate ) = 0;
 	virtual IRenderVisual*			model_Duplicate			(IRenderVisual*	V)						= 0;
 	//virtual void					model_Delete			(IRenderVisual* &	V, BOOL bDiscard=FALSE)	= 0;
 	virtual void					model_Delete			(IRenderVisual* &	V, BOOL bDiscard=FALSE)	= 0;

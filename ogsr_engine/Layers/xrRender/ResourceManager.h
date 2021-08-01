@@ -46,6 +46,7 @@ private:
 	// data
 	map_Blender											m_blenders;
 	map_Texture											m_textures;
+	std::mutex m_mutex;
 	std::mutex m_textures_mutex;
 	std::vector<std::string> m_deferred_textures;
 	map_Matrix											m_matrices;

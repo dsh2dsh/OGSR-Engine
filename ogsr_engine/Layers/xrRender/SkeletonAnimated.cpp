@@ -656,9 +656,8 @@ CBlend*	CKinematicsAnimated::IBlend_Create	()
 	FATAL("Too many blended motions requisted");
 	return 0;
 }
-void CKinematicsAnimated::Load(const char* N, IReader *data, u32 dwFlags)
-{
-  inherited::Load (N, data, dwFlags);
+void CKinematicsAnimated::Load( const char* N, IReader *data, u32 dwFlags, bool bAllowChildrenDuplicate ) {
+  inherited::Load( N, data, dwFlags, bAllowChildrenDuplicate );
 
   // Globals
   blend_instances         = NULL;

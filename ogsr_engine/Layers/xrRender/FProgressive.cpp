@@ -33,9 +33,8 @@ void FProgressive::Release	()
 	}
 }
 
-void FProgressive::Load		(const char* N, IReader *data, u32 dwFlags)
-{
-	Fvisual::Load	(N,data,dwFlags);
+void FProgressive::Load( const char* N, IReader *data, u32 dwFlags, bool bAllowChildrenDuplicate ) {
+	Fvisual::Load( N, data, dwFlags, bAllowChildrenDuplicate );
 
 	// normal SWI
 	destructor<IReader> lods (data->open_chunk	(OGF_SWIDATA));

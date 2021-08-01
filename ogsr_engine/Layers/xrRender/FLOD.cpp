@@ -28,9 +28,8 @@ static D3DVERTEXELEMENT9 dwDecl[]	=
 	D3DDECL_END()
 };
 
-void FLOD::Load			(LPCSTR N, IReader *data, u32 dwFlags)
-{
-	inherited::Load		(N,data,dwFlags);
+void FLOD::Load( LPCSTR N, IReader *data, u32 dwFlags, bool bAllowChildrenDuplicate ) {
+	inherited::Load( N, data, dwFlags, bAllowChildrenDuplicate );
 
 	// LOD-def
 	R_ASSERT			(data->find_chunk(OGF_LODDEF2));
