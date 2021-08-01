@@ -150,7 +150,6 @@ void CResourceManager::StoreNecessaryTextures()
 	if (!m_necessary.empty())
 		return;
 	
-	std::scoped_lock<std::mutex> lock( m_textures_mutex );
 	map_TextureIt it			= m_textures.begin();
 	map_TextureIt it_e			= m_textures.end();
 

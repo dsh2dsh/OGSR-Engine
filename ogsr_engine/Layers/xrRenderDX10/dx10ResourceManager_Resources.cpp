@@ -577,27 +577,20 @@ CTexture* CResourceManager::_CreateTexture	(LPCSTR _Name)
 	fix_texture_name (Name);
 	// ***** first pass - search already loaded texture
 	LPSTR N			= LPSTR(Name);
-	CTexture* T;
-	bool load_right_now = false;
+	map_TextureIt I = m_textures.find	(N);
+	if (I!=m_textures.end())	return	I->second;
+	else
 	{
-	  std::scoped_lock<std::mutex> lock( m_textures_mutex );
-	  map_TextureIt I = m_textures.find( N );
-	  if ( I != m_textures.end() ) return I->second;
-
-	  T = xr_new<CTexture>();
-	  T->dwFlags |= xr_resource_flagged::RF_REGISTERED;
-	  m_textures.insert( mk_pair( T->set_name( Name ), T ) );
-	  T->Preload();
-	  if ( Device.b_is_Ready && !bDeferredLoad )
-	    load_right_now = true;
-	  else
-	    m_deferred_textures.emplace_back( Name );
+		CTexture *	T		=	xr_new<CTexture>();
+		T->dwFlags			|=	xr_resource_flagged::RF_REGISTERED;
+		m_textures.insert	(mk_pair(T->set_name(Name),T));
+		T->Preload			();
+		if ( Device.b_is_Ready && !bDeferredLoad )
+		  T->Load();
+		else
+		  m_deferred_textures.emplace_back( Name );
+		return		T;
 	}
-
-	if ( load_right_now )
-	  T->Load();
-
-	return T;
 }
 void	CResourceManager::_DeleteTexture		(const CTexture* T)
 {
@@ -605,7 +598,6 @@ void	CResourceManager::_DeleteTexture		(const CTexture* T)
 
 	if (0==(T->dwFlags&xr_resource_flagged::RF_REGISTERED))	return;
 	LPSTR N					= LPSTR		(*T->cName);
-	std::scoped_lock<std::mutex> lock( m_textures_mutex );
 	map_Texture::iterator I	= m_textures.find	(N);
 	if (I!=m_textures.end())	{
 		m_textures.erase(I);
@@ -617,7 +609,6 @@ void	CResourceManager::_DeleteTexture		(const CTexture* T)
 #ifdef DEBUG
 void	CResourceManager::DBG_VerifyTextures	()
 {
-	std::scoped_lock<std::mutex> lock( m_textures_mutex );
 	map_Texture::iterator I		= m_textures.begin	();
 	map_Texture::iterator E		= m_textures.end	();
 	for (; I!=E; I++) 
