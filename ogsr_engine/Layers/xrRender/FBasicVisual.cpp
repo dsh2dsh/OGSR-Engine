@@ -39,7 +39,8 @@ void dxRender_Visual::Release		()
 
 //CStatTimer						tscreate;
 
-void dxRender_Visual::Load( const char* N, IReader *data, u32, bool bAllowChildrenDuplicate ) {
+void dxRender_Visual::Load		(const char* N, IReader *data, u32 )
+{
 	dbg_name	= N;
 
 	// header

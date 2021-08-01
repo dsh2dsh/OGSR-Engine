@@ -40,7 +40,6 @@ private:
 class		ECORE_API			dxRender_Visual : public IRenderVisual
 {
 public:
-	std::mutex m_mutex;
 	shared_str					dbg_name	;
 	virtual shared_str	_BCL	getDebugName() { return dbg_name; }
 
@@ -50,7 +49,7 @@ public:
 	ref_shader					shader		;				// pipe state, shared
 
 	virtual void				Render						(float LOD)		{};		// LOD - Level Of Detail  [0..1], Ignored
-	virtual void Load( const char* N, IReader *data, u32 dwFlags, bool bAllowChildrenDuplicate );
+	virtual void				Load						(const char* N, IReader *data, u32 dwFlags);
 	virtual void				Release						();						// Shared memory release
 	virtual void				Copy						(dxRender_Visual* from);
 	virtual void				Spawn						()				{};

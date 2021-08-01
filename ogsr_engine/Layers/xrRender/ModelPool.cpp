@@ -101,74 +101,71 @@ dxRender_Visual*	CModelPool::Instance_Duplicate	(dxRender_Visual* V)
 	return N;
 }
 
-dxRender_Visual* CModelPool::Instance_Load( const char* N, BOOL allow_register, bool bAllowChildrenDuplicate ) {
-  string_path fn, name;
-  // Add default ext if no ext at all
-  if ( 0 == strext( N ) )
-    strconcat( sizeof( name ), name, N, ".ogf" );
-  else
-    xr_strcpy( name, sizeof( name ), N );
+dxRender_Visual*	CModelPool::Instance_Load		(const char* N, BOOL allow_register)
+{
+	dxRender_Visual	*V;
+	string_path		fn;
+	string_path		name;
 
-  // Load data from MESHES or LEVEL
-  if ( !FS.exist( N ) ) {
-    if ( !FS.exist( fn, "$level$", name ) )
-      if ( !FS.exist( fn, "$game_meshes$", name ) ) {
+	// Add default ext if no ext at all
+	if (0==strext(N))	strconcat	(sizeof(name),name,N,".ogf");
+	else				xr_strcpy	(name,sizeof(name),N);
+
+	// Load data from MESHES or LEVEL
+	if (!FS.exist(N))	{
+		if (!FS.exist(fn, "$level$", name))
+			if (!FS.exist(fn, "$game_meshes$", name)){
 #ifdef _EDITOR
-        Msg( "!Can't find model file '%s'.", name );
-        return 0;
+				Msg("!Can't find model file '%s'.",name);
+                return 0;
 #else            
-        Debug.fatal( DEBUG_INFO, "Can't find model file '%s'.", name );
+				Debug.fatal(DEBUG_INFO,"Can't find model file '%s'.",name);
 #endif
-      }
-  }
-  else
-    xr_strcpy( fn, N );
+			}
+	} else {
+		xr_strcpy			(fn,N);
+	}
 	
-  // Actual loading
+	// Actual loading
 #ifdef DEBUG
-  if ( bLogging )
-    Msg( "- Uncached model loading: %s", fn );
+	if (bLogging)		Msg		("- Uncached model loading: %s",fn);
 #endif // DEBUG
 
-  IReader* data = FS.r_open( fn );
-  ogf_header H;
-  data->r_chunk_safe( OGF_HEADER, &H, sizeof( H ) );
-  dxRender_Visual* V = Instance_Create( H.type );
+	IReader*			data	= FS.r_open(fn);
+	ogf_header			H;
+	data->r_chunk_safe	(OGF_HEADER,&H,sizeof(H));
+	V = Instance_Create (H.type);
+	V->Load				(N,data,0);
+	FS.r_close			(data);
+	g_pGamePersistent->RegisterModel(V);
 
-  // Registration
-  std::scoped_lock<std::mutex> lock( V->m_mutex );
-  if ( allow_register )
-    Instance_Register( N, V );
+	// Registration
+	if (allow_register) Instance_Register(N,V);
 
-  V->Load( N, data, 0, bAllowChildrenDuplicate );
-  FS.r_close( data );
-  g_pGamePersistent->RegisterModel( V );
-
-  return V;
+	return V;
 }
 
-dxRender_Visual* CModelPool::Instance_Load( LPCSTR name, IReader* data, BOOL allow_register, bool bAllowChildrenDuplicate ) {
-  ogf_header H;
-  data->r_chunk_safe( OGF_HEADER, &H, sizeof( H ) );
-  dxRender_Visual* V = Instance_Create( H.type );
+dxRender_Visual*	CModelPool::Instance_Load(LPCSTR name, IReader* data, BOOL allow_register)
+{
+	dxRender_Visual	*V;
+	
+	ogf_header			H;
+	data->r_chunk_safe	(OGF_HEADER,&H,sizeof(H));
+	V = Instance_Create (H.type);
+	V->Load				(name,data,0);
 
-  // Registration
-  std::scoped_lock<std::mutex> lock( V->m_mutex );
-  if ( allow_register )
-    Instance_Register( name, V );
-
-  V->Load( name, data, 0, bAllowChildrenDuplicate );
-
-  return V;
+	// Registration
+	if (allow_register) Instance_Register(name,V);
+	return V;
 }
 
-void CModelPool::Instance_Register( LPCSTR N, dxRender_Visual* V ) {
-  // Registration
-  ModelDef M;
-  M.name  = N;
-  M.model = V;
-  std::scoped_lock<std::recursive_mutex> lock( m_mutex );
-  Models.push_back( M );
+void		CModelPool::Instance_Register(LPCSTR N, dxRender_Visual* V)
+{
+	// Registration
+	ModelDef			M;
+	M.name				= N;
+	M.model				= V;
+	Models.push_back	(M);
 }
 
 
@@ -210,6 +207,7 @@ CModelPool::CModelPool()
 {
 	bLogging				= TRUE;
     bForceDiscard 			= FALSE;
+    bAllowChildrenDuplicate	= TRUE; 
 	g_pMotionsContainer		= xr_new<motions_container>();
 
 	if ( !strstr( Core.Params, "-noprefetch" ) && !vis_prefetch ) {
@@ -229,73 +227,64 @@ CModelPool::~CModelPool()
 	  xr_delete( vis_prefetch );
 }
 
-dxRender_Visual* CModelPool::Instance_Find( LPCSTR N ) {
-  dxRender_Visual* Model = 0;
-  xr_vector<ModelDef>::iterator I;
-  {
-    std::scoped_lock<std::recursive_mutex> lock( m_mutex );
-    for ( I = Models.begin(); I != Models.end(); I++ ) {
-      if ( I->name[ 0 ] && ( 0 == xr_strcmp( *I->name, N ) ) ) {
-        Model = I->model;
-        break;
-      }
-    }
-  }
-  if ( Model ) {
-    std::scoped_lock<std::mutex> lock( Model->m_mutex );
-    return Model;
-  }
-  return Model;
+dxRender_Visual* CModelPool::Instance_Find(LPCSTR N)
+{
+	dxRender_Visual*				Model=0;
+	xr_vector<ModelDef>::iterator	I;
+	for (I=Models.begin(); I!=Models.end(); I++)
+	{
+		if (I->name[0]&&(0==xr_strcmp(*I->name,N))) {
+			Model = I->model;
+			break;
+		}
+	}
+	return Model;
 }
 
-dxRender_Visual* CModelPool::Create( const char* name, IReader* data ) {
+dxRender_Visual* CModelPool::Create(const char* name, IReader* data)
+{
 #ifdef _EDITOR
-  if ( !name || !name[ 0 ] ) return 0;
+	if (!name||!name[0])	return 0;
 #endif
+	string_path low_name;	VERIFY	(xr_strlen(name)<sizeof(low_name));
+	xr_strcpy(low_name,name);	strlwr	(low_name);
+	if (strext(low_name))	*strext	(low_name)=0;
+//	Msg						("-CREATE %s",low_name);
 
-  string_path low_name; VERIFY( xr_strlen( name ) < sizeof( low_name ) );
-  xr_strcpy( low_name, name ); strlwr( low_name );
-  if ( strext( low_name ) ) *strext( low_name ) = 0;
-//  Msg( "-CREATE %s", low_name );
+	// 0. Search POOL
+	POOL_IT	it			=	Pool.find	(low_name);
+	if (it!=Pool.end())
+	{
+		// 1. Instance found
+		dxRender_Visual*		Model	= it->second;
+		Model->Spawn		();
+		Pool.erase			(it);
 
-  // 0. Search POOL
-  dxRender_Visual* Model = nullptr;
-  {
-    std::scoped_lock<std::recursive_mutex> lock( m_mutex );
-    POOL_IT it = Pool.find( low_name );
-    if ( it != Pool.end() ) {
-      // 1. Instance found
-      Model = it->second;
-      Pool.erase( it );
-      refresh_prefetch( low_name );
-    }
-  }
-  if ( Model ) {
-    Model->Spawn();
-    return Model;
-  }
+		refresh_prefetch( low_name );
 
-  // 1. Search for already loaded model (reference, base model)
-  dxRender_Visual* Base = Instance_Find( low_name );
-  if ( 0 == Base ) {
-    // 2. If not found
-    if ( data )
-      Base = Instance_Load( low_name, data, TRUE, false );
-    else
-      Base = Instance_Load( low_name, TRUE, false );
+		return				Model;
+	} else {
+		// 1. Search for already loaded model (reference, base model)
+		dxRender_Visual* Base		= Instance_Find		(low_name);
+
+		if (0==Base){
+			// 2. If not found
+			bAllowChildrenDuplicate	= FALSE;
+			if (data)		Base = Instance_Load(low_name,data,TRUE);
+			else			Base = Instance_Load(low_name,TRUE);
+			bAllowChildrenDuplicate	= TRUE;
 #ifdef _EDITOR
-    if ( !Base ) return 0;
+			if (!Base)		return 0;
 #endif
-  }
+		}
+		// 3. If found - return (cloned) reference
+		dxRender_Visual*		Model	= Instance_Duplicate(Base);
+		Registry.insert		( mk_pair(Model,low_name) );
 
-  // 3. If found - return (cloned) reference
-  std::scoped_lock<std::recursive_mutex> lock( m_mutex );
-  Model = Instance_Duplicate( Base );
-  Registry.insert( mk_pair( Model, low_name ) );
+		refresh_prefetch( low_name );
 
-  refresh_prefetch( low_name );
-
-  return Model;
+		return				Model;
+	}
 }
 
 
@@ -318,175 +307,159 @@ void CModelPool::refresh_prefetch( LPCSTR low_name ) {
 }
 
 
-dxRender_Visual* CModelPool::CreateChild( LPCSTR name, IReader* data, bool bAllowChildrenDuplicate ) {
-  string256 low_name; VERIFY( xr_strlen( name ) < 256 );
-  xr_strcpy( low_name, name ); strlwr( low_name );
-  if ( strext( low_name ) ) *strext( low_name ) = 0;
+dxRender_Visual* CModelPool::CreateChild(LPCSTR name, IReader* data)
+{
+	string256 low_name;		VERIFY	(xr_strlen(name)<256);
+	xr_strcpy(low_name,name);	strlwr	(low_name);
+	if (strext(low_name))	*strext	(low_name) = 0;
 
-  // 1. Search for already loaded model
-  dxRender_Visual* Base = Instance_Find( low_name );
-  if ( 0 == Base ) {
-    if ( data )
-      Base = Instance_Load( low_name, data, FALSE, bAllowChildrenDuplicate );
-    else
-      Base = Instance_Load( low_name, FALSE, bAllowChildrenDuplicate );
-  }
+	// 1. Search for already loaded model
+	dxRender_Visual* Base	= Instance_Find(low_name);
+//.	if (0==Base) Base	 	= Instance_Load(name,data,FALSE);
+	if(0==Base)
+	{
+		if (data)		Base = Instance_Load	(low_name,data,FALSE);
+		else			Base = Instance_Load	(low_name,FALSE);
+	}
 
-  std::scoped_lock<std::recursive_mutex> lock( m_mutex );
-  dxRender_Visual* Model = bAllowChildrenDuplicate ? Instance_Duplicate( Base ) : Base;
-
-  return Model;
+    dxRender_Visual* Model	= bAllowChildrenDuplicate?Instance_Duplicate(Base):Base;
+    return					Model;
 }
 
 extern  BOOL ENGINE_API g_bRendering; 
-void CModelPool::DeleteInternal( dxRender_Visual* &V, BOOL bDiscard ) {
-  VERIFY( !g_bRendering );
-  if ( !V )
-    return;
-  {
-    std::scoped_lock<std::mutex> lock( V->m_mutex );
-    V->Depart();
-  }
-  if ( bDiscard || bForceDiscard ) {
-    Discard( V, TRUE );
-  }
-  else {
-    REGISTRY_IT it = Registry.find( V );
-    if ( it != Registry.end() ) {
-      // Registry entry found - move it to pool
-      Pool.insert( mk_pair( it->second, V ) );
-    }
-    else {
-      // Registry entry not-found - just special type of visual / particles / etc.
-      xr_delete( V );
-    }
-  }
-  V = NULL;
+void	CModelPool::DeleteInternal	(dxRender_Visual* &V, BOOL bDiscard)
+{
+	VERIFY					(!g_bRendering);
+    if (!V)					return;
+	V->Depart				();
+	if (bDiscard||bForceDiscard){
+    	Discard	(V, TRUE); 
+	}else{
+		//
+		REGISTRY_IT	it		= Registry.find	(V);
+		if (it!=Registry.end())
+		{
+			// Registry entry found - move it to pool
+			Pool.insert			(mk_pair(it->second,V));
+		} else {
+			// Registry entry not-found - just special type of visual / particles / etc.
+			xr_delete			(V);
+		}
+	}
+	V	=	NULL;
 }
 
-void CModelPool::Delete( dxRender_Visual* &V, BOOL bDiscard ) {
-  std::scoped_lock<std::recursive_mutex> lock( m_mutex );
-  if ( !V )
-    return;
-  if ( g_bRendering ) {
-    VERIFY( !bDiscard );
-    ModelsToDelete.push_back( V );
-  }
-  else
-    DeleteInternal( V, bDiscard );
-  V = NULL;
+void	CModelPool::Delete		(dxRender_Visual* &V, BOOL bDiscard)
+{
+	if (NULL==V)				return;
+	if (g_bRendering){
+		VERIFY					(!bDiscard);
+		ModelsToDelete.push_back(V);
+	} else {
+		DeleteInternal			(V,bDiscard);
+	}	
+	V							=	NULL;
 }
 
-void CModelPool::DeleteQueue() {
-  for ( u32 it = 0; it < ModelsToDelete.size(); it++ )
-    DeleteInternal( ModelsToDelete[ it ] );
-  ModelsToDelete.clear();
+void	CModelPool::DeleteQueue		()
+{
+	for (u32 it=0; it<ModelsToDelete.size(); it++)
+		DeleteInternal(ModelsToDelete[it]);
+	ModelsToDelete.clear			();
 }
 
-void CModelPool::Discard( dxRender_Visual* &V, BOOL b_complete ) {
-  REGISTRY_IT it = Registry.find( V );
-  if ( it !=Registry.end() ) {
-    // Pool - OK
-    // Base
-    const shared_str& name = it->second;
-    xr_vector<ModelDef>::iterator I = Models.begin();
-    xr_vector<ModelDef>::iterator I_e = Models.end();
+void	CModelPool::Discard	(dxRender_Visual* &V, BOOL b_complete)
+{
+	//
+	REGISTRY_IT	it		= Registry.find	(V);
+	if (it!=Registry.end())
+	{
+		// Pool - OK
+
+			// Base
+			const shared_str&	name	= it->second;
+			xr_vector<ModelDef>::iterator I = Models.begin();
+			xr_vector<ModelDef>::iterator I_e = Models.end();
 			
-    for ( ; I != I_e; ++I ) {
-      if ( I->name == name ) {
-        if ( b_complete || strchr( *name, '#' ) ) {
-          VERIFY( I->refs > 0 );
-          I->refs--; 
-          if ( 0 == I->refs ) {
-            bForceDiscard = TRUE;
-            I->model->Release();
-            xr_delete( I->model );
-            Models.erase( I );
-            bForceDiscard =  FALSE;
-          }
-          break;
-        }
-        else {
-          if ( I->refs > 0 )
-            I->refs--;
-          break;
-        }
-      }
-    }
-    // Registry
-    xr_delete( V );	
-    Registry.erase( it );
-  }
-  else {
-    // Registry entry not-found - just special type of visual / particles / etc.
-    xr_delete( V );
-  }
-  V = NULL;
+			for (; I!=I_e; ++I)
+			{
+				if (I->name==name)
+				{
+					if(b_complete || strchr(*name,'#'))
+					{
+						VERIFY(I->refs>0);
+            			I->refs--; 
+						if (0==I->refs)
+						{
+                			bForceDiscard		= TRUE;
+	            			I->model->Release	();
+							xr_delete			(I->model);	
+							Models.erase		(I);
+							bForceDiscard		= FALSE;
+						}
+						break;
+					}else{
+					if(I->refs>0)
+						I->refs--;
+					break;
+					}
+				}
+			}
+		// Registry
+		xr_delete		(V);	
+//.		xr_free			(name);
+		Registry.erase	(it);
+	} else {
+		// Registry entry not-found - just special type of visual / particles / etc.
+		xr_delete		(V);
+	}
+	V	=	NULL;
 }
 
-void CModelPool::Prefetch() {
-  Logging( FALSE );
-  now_prefetch1 = true;
+void CModelPool::Prefetch()
+{
+	Logging					(FALSE);
+	now_prefetch1 = true;
 
-  // prefetch visuals
-  string256 section;
-  strconcat( sizeof( section ), section, "prefetch_visuals_", g_pGamePersistent->m_game_params.m_game_type );
-  CInifile::Sect& sect = pSettings->r_section( section );
-  CTimer timer;
-  timer.Start();
-  u32 cnt = 0;
-  size_t nWorkers = TTAPI->threads.size();
-  u32 max_workers = 1;
-  for ( const auto& it : sect.Data ) {
-    if ( nWorkers > 1 && sect.Data.size() > 1 )
-      TTAPI->addJob( [&] {
-        dxRender_Visual* V = Create( it.first.c_str() );
-        Delete( V, FALSE );
-      });
-    else {
-      dxRender_Visual* V = Create( it.first.c_str() );
-      Delete( V, FALSE );
-    }
-    cnt++;
-  }
-  now_prefetch1 = false;
+	// prefetch visuals
+	string256 section;
+	strconcat				(sizeof(section),section,"prefetch_visuals_",g_pGamePersistent->m_game_params.m_game_type);
+	CInifile::Sect& sect	= pSettings->r_section(section);
+	CTimer timer;
+	timer.Start();
+	u32 cnt = 0;
+	for (auto I=sect.Data.begin(); I!=sect.Data.end(); I++)	{
+		const CInifile::Item& item= *I;
+		dxRender_Visual* V	= Create(item.first.c_str());
+		Delete				(V,FALSE);
+		cnt++;
+	}
+	now_prefetch1 = false;
 
-  if ( !vis_prefetch || !vis_prefetch->section_exist( "prefetch" ) ) {
-    if ( nWorkers > 1 && sect.Data.size() > 1 )
-      max_workers = TTAPI->wait();
-    Msg( "[%s] models prefetching time (%zi) using %u/%u threads: [%.2f s.]", __FUNCTION__, cnt, max_workers, nWorkers, timer.GetElapsed_sec() );
-    return;
-  }
+	if ( !vis_prefetch || !vis_prefetch->section_exist( "prefetch" ) ) {
+	  Msg( "[%s] models prefetching time (%zi): [%.2f s.]", __FUNCTION__, cnt, timer.GetElapsed_sec() );
+	  return;
+	}
 
-  now_prefetch2 = true;
-  sect = vis_prefetch->r_section( "prefetch" );
-  for ( const auto& it : sect.Data ) {
-    const shared_str& low_name = it.first;
-    if ( !Instance_Find( low_name.c_str() ) ) {
-      shared_str fname;
-      fname.sprintf( "%s.ogf", low_name.c_str() );
-      if ( FS.exist( "$game_meshes$", fname.c_str() ) ) {
-        if ( nWorkers > 1 && sect.Data.size() > 1 )
-          TTAPI->addJob( [&] {
-            dxRender_Visual* V = Create( low_name.c_str() );
-            Delete( V, FALSE );
-          });
-        else {
-          dxRender_Visual* V = Create( low_name.c_str() );
-          Delete( V, FALSE );
-        }
-        cnt++;
-      }
-      else
-        Msg( "! [%s]: %s not found in $game_meshes$", __FUNCTION__, fname.c_str() );
-    }
-  }
+	now_prefetch2 = true;
+	sect = vis_prefetch->r_section( "prefetch" );
+	for ( const auto& it : sect.Data ) {
+	  const shared_str& low_name = it.first;
+	  if ( !Instance_Find( low_name.c_str() ) ) {
+	    shared_str fname;
+	    fname.sprintf( "%s.ogf", low_name.c_str() );
+	    if ( FS.exist( "$game_meshes$", fname.c_str() ) ) {
+	      dxRender_Visual* V = Create( low_name.c_str() );
+	      Delete( V, FALSE );
+	    }
+	    else
+	      Msg( "! [%s]: %s not found in $game_meshes$", __FUNCTION__, fname.c_str() );
+	  }
+	}
 
-  now_prefetch2 = false;
-  Logging( TRUE );
-  if ( nWorkers > 1 && sect.Data.size() > 1 )
-    max_workers = TTAPI->wait();
-  Msg( "[%s] models prefetching time (%zi) using %u/%u threads: [%.2f s.]", __FUNCTION__, cnt, max_workers, nWorkers, timer.GetElapsed_sec() );
+	now_prefetch2 = false;
+	Logging					(TRUE);
+	Msg( "[%s] models prefetching time (%zi): [%.2f s.]", __FUNCTION__, cnt, timer.GetElapsed_sec() );
 }
 
 void CModelPool::ClearPool( BOOL b_complete ) {

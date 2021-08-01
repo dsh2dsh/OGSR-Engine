@@ -140,9 +140,10 @@ CSkeletonX* CKinematics::LL_GetChild	(u32 idx)
 	return			B	;
 }
 
-void CKinematics::Load( const char* N, IReader *data, u32 dwFlags, bool bAllowChildrenDuplicate ) {
+void	CKinematics::Load(const char* N, IReader *data, u32 dwFlags)
+{
 	//Msg				("skeleton: %s",N);
-	inherited::Load( N, data, dwFlags, bAllowChildrenDuplicate );
+	inherited::Load	(N, data, dwFlags);
 
     pUserData		= NULL;
     m_lod			= NULL;
@@ -156,7 +157,7 @@ void CKinematics::Load( const char* N, IReader *data, u32 dwFlags, bool bAllowCh
 			string_path		lod_name;
 			LD->r_string	(lod_name, sizeof(lod_name));
 //.         strconcat		(sizeof(name_load),name_load, short_name, ":lod:", lod_name.c_str());
-            m_lod = (dxRender_Visual*)::Render->model_CreateChild( lod_name, NULL, bAllowChildrenDuplicate );
+            m_lod 			= (dxRender_Visual*) ::Render->model_CreateChild(lod_name, NULL);
 
 			if ( CKinematics* lod_kinematics = dynamic_cast<CKinematics*>(m_lod) )
 			{

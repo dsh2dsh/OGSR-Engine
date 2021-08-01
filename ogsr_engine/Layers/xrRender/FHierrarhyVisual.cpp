@@ -39,8 +39,9 @@ void FHierrarhyVisual::Release()
 	}
 }
 
-void FHierrarhyVisual::Load(const char* N, IReader *data, u32 dwFlags, bool bAllowChildrenDuplicate ) {
-	dxRender_Visual::Load( N, data, dwFlags, bAllowChildrenDuplicate );
+void FHierrarhyVisual::Load(const char* N, IReader *data, u32 dwFlags)
+{
+	dxRender_Visual::Load(N,data,dwFlags);
 	if (data->find_chunk(OGF_CHILDREN_L)) 
 	{
 		// From Link
@@ -69,7 +70,7 @@ void FHierrarhyVisual::Load(const char* N, IReader *data, u32 dwFlags, bool bAll
 					xr_strcpy				(short_name,N);
 					if (strext(short_name)) *strext(short_name)=0;
 					strconcat			(sizeof(name_load),name_load,short_name,":",itoa(count,num,10));
-					children.push_back( (dxRender_Visual*)::Render->model_CreateChild( name_load, O, bAllowChildrenDuplicate ) );
+					children.push_back	((dxRender_Visual*)::Render->model_CreateChild(name_load,O));
                     O->close			();
                     O = OBJ->open_chunk	(count);
                 }

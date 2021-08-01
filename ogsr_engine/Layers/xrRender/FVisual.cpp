@@ -35,8 +35,9 @@ void Fvisual::Release	()
 	dxRender_Visual::Release			();
 }
 
-void Fvisual::Load( const char* N, IReader *data, u32 dwFlags, bool bAllowChildrenDuplicate ) {
-	dxRender_Visual::Load( N, data, dwFlags, bAllowChildrenDuplicate );
+void Fvisual::Load		(const char* N, IReader *data, u32 dwFlags)
+{
+	dxRender_Visual::Load		(N,data,dwFlags);
 
 	D3DVERTEXELEMENT9	dcl		[MAX_FVF_DECL_SIZE];
 	D3DVERTEXELEMENT9*	vFormat	= 0;

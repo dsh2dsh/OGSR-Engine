@@ -296,8 +296,7 @@ void CRender::LoadVisuals(IReader *fs)
 	{
 		chunk->r_chunk_safe			(OGF_HEADER,&H,sizeof(H));
 		V = Models->Instance_Create	(H.type);
-		std::scoped_lock<std::mutex> lock( V->m_mutex );
-		V->Load( 0, chunk, 0, true );
+		V->Load(0,chunk,0);
 		Visuals.push_back(V);
 
 		chunk->close();

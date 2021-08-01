@@ -45,7 +45,7 @@ public:
 							CSkeletonX_ST	()	{}
 	virtual					~CSkeletonX_ST	()	{}
 	virtual void			Render			(float LOD);
-	virtual void Load( const char* N, IReader *data, u32 dwFlags, bool bAllowChildrenDuplicate );
+	virtual void			Load			(const char* N, IReader *data, u32 dwFlags);
 	virtual void			Copy			(dxRender_Visual *pFrom);
 	virtual void			Release			();
 	virtual void			AfterLoad		(CKinematics* parent, u16 child_idx);
@@ -66,7 +66,7 @@ public:
 							CSkeletonX_PM	()	{}
 	virtual					~CSkeletonX_PM	()	{}
 	virtual void			Render			(float LOD);
-	virtual void Load( const char* N, IReader *data, u32 dwFlags, bool bAllowChildrenDuplicate );
+	virtual void			Load			(const char* N, IReader *data, u32 dwFlags);
 	virtual void			Copy			(dxRender_Visual *pFrom);
 	virtual void			Release			();
 	virtual void			AfterLoad		(CKinematics* parent, u16 child_idx);

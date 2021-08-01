@@ -349,10 +349,11 @@ void CSkeletonX_ST::Release()
 	inherited1::Release();
 }
 //////////////////////////////////////////////////////////////////////
-void CSkeletonX_PM::Load( const char* N, IReader *data, u32 dwFlags, bool bAllowChildrenDuplicate ) {
+void CSkeletonX_PM::Load(const char* N, IReader *data, u32 dwFlags) 
+{
 	_Load							(N,data,vCount);
 	void*	_verts_					= data->pointer	();
-	inherited1::Load( N, data, dwFlags|VLOAD_NOVERTICES, bAllowChildrenDuplicate );
+	inherited1::Load				(N,data,dwFlags|VLOAD_NOVERTICES);
 	::Render->shader_option_skinning(-1);
 #if defined(USE_DX10) || defined(USE_DX11)
 	_DuplicateIndices(N, data);
@@ -360,10 +361,11 @@ void CSkeletonX_PM::Load( const char* N, IReader *data, u32 dwFlags, bool bAllow
 	vBase							= 0;
 	_Load_hw						(*this,_verts_);
 }
-void CSkeletonX_ST::Load( const char* N, IReader *data, u32 dwFlags, bool bAllowChildrenDuplicate ) {
+void CSkeletonX_ST::Load(const char* N, IReader *data, u32 dwFlags) 
+{
 	_Load							(N,data,vCount);
 	void*	_verts_					= data->pointer	();
-	inherited1::Load( N, data, dwFlags|VLOAD_NOVERTICES, bAllowChildrenDuplicate );
+	inherited1::Load				(N,data,dwFlags|VLOAD_NOVERTICES);
 	::Render->shader_option_skinning(-1);
 #if defined(USE_DX10) || defined(USE_DX11)
 	_DuplicateIndices(N, data);
