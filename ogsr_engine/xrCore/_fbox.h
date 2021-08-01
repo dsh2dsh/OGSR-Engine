@@ -544,7 +544,4 @@ using Dbox = _box3<double>;
 using Dbox3 = _box3<double>;
 
 template <class T>
-bool _valid(const _box3<T>& c)
-{
-    return _valid(c.min) && _valid(c.max);
-}
+BOOL	_valid			(const _box3<T>& c)	{ return _valid(c.min) && _valid(c.max); }
