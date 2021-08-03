@@ -94,6 +94,7 @@ public:
     std::mutex queueMutex;
     std::condition_variable condition;
     u32 max_workers{ 0 };
+    bool has_free_worker;
 
     void initialize(std::uint32_t threads_count = std::thread::hardware_concurrency(), std::string thread_name = "") {
 		do {
@@ -113,21 +114,29 @@ public:
 
   void addJob( std::function<void()> function ) {
     while( true ) {
-      std::unique_lock<std::mutex> lock( queueMutex );
+      {
+        std::lock_guard<std::mutex> lock( queueMutex );
+        has_free_worker = false;
+      }
       u32 n = 0;
       for ( auto& thread : threads ) {
         n++;
         if ( thread->jobs() < 2 ) {
           thread->addJob( function );
           thread->addJob( [this] {
-            std::lock_guard<std::mutex> lock( queueMutex );
+            std::unique_lock<std::mutex> lock( queueMutex );
+            has_free_worker = true;
+            lock.unlock();
             condition.notify_one();
           });
           if ( n > max_workers ) max_workers = n;
           return;
         }
       }
-      condition.wait( lock );
+      {
+        std::unique_lock<std::mutex> lock( queueMutex );
+        condition.wait( lock, [this]{ return has_free_worker; } );
+      }
     }
   }
 };
