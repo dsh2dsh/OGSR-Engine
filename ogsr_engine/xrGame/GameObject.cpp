@@ -46,8 +46,6 @@ CGameObject::CGameObject		()
 
 	init						();
 	//-----------------------------------------
-	m_bCrPr_Activated			= false;
-	m_dwCrPr_ActivationStep		= 0;
 	m_spawn_time				= 0;
 	m_ai_location				= xr_new<CAI_ObjectLocation>();
 	m_server_flags.one			();
@@ -145,8 +143,6 @@ void CGameObject::net_Destroy	()
 		Level().SetEntity						(0);
 		Level().SetControlEntity				(0);
 	}
-
-	Level().RemoveObject_From_4CrPr(this);
 
 //.	Parent									= 0;
 

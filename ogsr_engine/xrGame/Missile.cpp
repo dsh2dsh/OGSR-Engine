@@ -753,11 +753,6 @@ void CMissile::GetBriefInfo(xr_string& str_name, xr_string& icon_sect_name, xr_s
 	icon_sect_name	= "";
 }
 
-u16 CMissile::bone_count_to_synchronize	() const
-{
-	return CInventoryItem::object().PHGetSyncItemsNumber();
-}
-
 
 void CMissile::PlayAnimIdle( u8 state = MS_IDLE ) {
   VERIFY( GetState() == MS_IDLE );
