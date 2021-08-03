@@ -558,12 +558,12 @@ void CLevel::OnFrame	()
 
 int psLUA_GCSTEP = 100; //10;
 void CLevel::script_gc() {
+  lua_gc( ai().script_engine().lua(), LUA_GCSTEP, psLUA_GCSTEP );
   if ( !on_before_script_gc_callback.empty() && Device.dwPrecacheFrame == 0 && !Device.Paused() ) {
     luabind::functor<void> funct;
     if ( ai().script_engine().functor( on_before_script_gc_callback.c_str(), funct ) )
       funct();
   }
-  lua_gc( ai().script_engine().lua(), LUA_GCSTEP, psLUA_GCSTEP );
 }
 
 #ifdef DEBUG_PRECISE_PATH
