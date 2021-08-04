@@ -49,6 +49,9 @@
 #	include "physicobject.h"
 #endif
 
+extern CUISequencer* g_tutorial;
+extern CUISequencer* g_tutorial2;
+
 CPHWorld	*ph_world			= 0;
 
 //////////////////////////////////////////////////////////////////////
