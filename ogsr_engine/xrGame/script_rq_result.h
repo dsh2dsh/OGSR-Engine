@@ -15,6 +15,7 @@ public:
 	void					set_result		(collide::rq_result _res);
 /*	IC CScriptGameObject	*get_object		()		const				{ return object; };
 	IC float				get_range		()		const				{ return range; };*/
+	IC bool valid() { return element>=0; }
 
 	DECLARE_SCRIPT_REGISTER_FUNCTION
 };

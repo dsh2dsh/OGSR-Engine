@@ -58,7 +58,8 @@ void script_rq_result::script_register( lua_State *L ) {
     .def_readonly( "object",  &script_rq_result::object )
     .def_readonly( "element", &script_rq_result::element )
     .def_readonly( "result",  &script_rq_result::result )
-    .def_readonly( "mtl",     &script_rq_result::mtl ),
+    .def_readonly( "mtl",     &script_rq_result::mtl )
+    .def( "valid", &script_rq_result::valid ),
 
 	class_<enum_exporter<SGameMtl>>("SGameMtlFlags")
 	.enum_("SGameMtlFlags")
