@@ -88,6 +88,7 @@ CAI_Stalker::CAI_Stalker			()
 	m_debug_planner					= 0;
 #endif // DEBUG
 	m_registered_in_combat_on_migration	= false;
+	m_headshot = false;
 }
 
 CAI_Stalker::~CAI_Stalker			()
@@ -276,12 +277,14 @@ void CAI_Stalker::Die				(CObject* who)
 	SelectAnimation					(XFORM().k,movement().detail().direction(),movement().speed());
 
 	sound().set_sound_mask			(0);
-	if (is_special_killer(who))
-		sound().play				(eStalkerSoundDieInAnomaly);
-	else
-		sound().play				(eStalkerSoundDie);
-	
-	m_hammer_is_clutched			= m_clutched_hammer_enabled && !CObjectHandler::planner().m_storage.property(ObjectHandlerSpace::eWorldPropertyStrapped) && !::Random.randI(0,2);
+	if ( !m_headshot ) {
+	  if ( is_special_killer( who ) )
+	    sound().play( eStalkerSoundDieInAnomaly );
+	  else
+	    sound().play( eStalkerSoundDie );
+	}
+
+	m_hammer_is_clutched			= m_clutched_hammer_enabled && !m_headshot && !CObjectHandler::planner().m_storage.property(ObjectHandlerSpace::eWorldPropertyStrapped) && !::Random.randI(0,2);
 
 	inherited::Die					(who);
 	
