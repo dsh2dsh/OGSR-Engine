@@ -419,6 +419,29 @@ bool is_unloading(CALifeSimulator *sim)
 	return sim->is_unloading();
 }
 
+void iterate_alife_object( const CALifeSimulator* self, ALife::_OBJECT_ID id, const luabind::functor<bool>& functor) {
+  VERIFY( self );
+
+  std::vector<ALife::_OBJECT_ID> ids;
+  if ( id == ALife::_OBJECT_ID(-1) ) {
+    for ( const auto& it : self->objects().objects() )
+      if ( it.second->ID_Parent == id )
+        ids.push_back( it.first );
+  }
+  else {
+    CSE_ALifeDynamicObject* sobj = self->objects().object( id, true );
+    if ( sobj )
+      for ( const auto id2 : sobj->children )
+        ids.push_back( id2 );
+  }
+
+  for ( const auto& id : ids ) {
+    CSE_ALifeDynamicObject* sobj = self->objects().object( id, true );
+    if ( sobj && functor( sobj ) )
+      break;
+  }
+}
+
 #pragma optimize("s",on)
 void CALifeSimulator::script_register			(lua_State *L)
 {
@@ -463,6 +486,7 @@ void CALifeSimulator::script_register			(lua_State *L)
 			.def("teleport_object",			&CALifeSimulator__teleport_object)
 			.def("assign_story_id",			&CALifeSimulator__assign_story_id)
 			.def("use_ai_locations",		&CALifeSimulator__use_ai_locations)
+			.def( "iterate_object", &iterate_alife_object )
 			.property("save_name",			&get_save_name)
 			.property("loaded_save_name",	&get_loaded_save)
 
