@@ -424,15 +424,18 @@ void iterate_alife_object( const CALifeSimulator* self, ALife::_OBJECT_ID id, co
 
   std::vector<ALife::_OBJECT_ID> ids;
   if ( id == ALife::_OBJECT_ID(-1) ) {
+    ids.reserve( 32768 );
     for ( const auto& it : self->objects().objects() )
       if ( it.second->ID_Parent == id )
         ids.push_back( it.first );
   }
   else {
     CSE_ALifeDynamicObject* sobj = self->objects().object( id, true );
-    if ( sobj )
+    if ( sobj && sobj->children.size() > 0 ) {
+      ids.reserve( sobj->children.size() );
       for ( const auto id2 : sobj->children )
         ids.push_back( id2 );
+    }
   }
 
   for ( const auto& id : ids ) {
