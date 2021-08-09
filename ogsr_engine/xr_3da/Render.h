@@ -276,6 +276,7 @@ public:
 	virtual void					models_Prefetch			()											= 0;
 	virtual void					models_savePrefetch() = 0;
 	virtual void					models_Clear			(BOOL b_complete)							= 0;
+	virtual void models_begin_prefetch1( bool val ) = 0;
 
 	// Occlusion culling
 	virtual BOOL					occ_visible				(vis_data&	V)								= 0;

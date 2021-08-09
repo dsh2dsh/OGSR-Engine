@@ -419,7 +419,7 @@ void	CModelPool::Discard	(dxRender_Visual* &V, BOOL b_complete)
 void CModelPool::Prefetch()
 {
 	Logging					(FALSE);
-	now_prefetch1 = true;
+	begin_prefetch1( true );
 
 	// prefetch visuals
 	string256 section;
@@ -434,7 +434,7 @@ void CModelPool::Prefetch()
 		Delete				(V,FALSE);
 		cnt++;
 	}
-	now_prefetch1 = false;
+	begin_prefetch1( false );
 
 	if ( !vis_prefetch || !vis_prefetch->section_exist( "prefetch" ) ) {
 	  Msg( "[%s] models prefetching time (%zi): [%.2f s.]", __FUNCTION__, cnt, timer.GetElapsed_sec() );
@@ -716,4 +716,9 @@ void CModelPool::process_vis_prefetch() {
   }
   for ( const auto& s : expired )
     vis_prefetch->remove_line( "prefetch", s.c_str() );
+}
+
+
+void CModelPool::begin_prefetch1( bool val ) {
+  now_prefetch1 = val;
 }

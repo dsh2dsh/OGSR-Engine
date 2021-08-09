@@ -81,5 +81,6 @@ public:
 #endif
 
 	void save_vis_prefetch();
+	void begin_prefetch1( bool val );
 };
 #endif //ModelPoolH

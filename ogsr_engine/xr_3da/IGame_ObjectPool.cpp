@@ -26,14 +26,17 @@ void IGame_ObjectPool::prefetch	()
 	CInifile::Sect& sect	= pSettings->r_section(section);
 	CTimer T;
 	T.Start();
+	Render->models_begin_prefetch1( true );
 	for ( const auto &item : sect.Data)	{
 		CLASS_ID CLS		= pSettings->r_clsid(item.first.c_str(),"class");
 		p_count				++;
 		CObject* pObject	= (CObject*) NEW_INSTANCE(CLS);
 		pObject->Load		(item.first.c_str());
+		pObject->reload( item.first.c_str() );
 		VERIFY2				(pObject->cNameSect().c_str(),item.first.c_str());
 		m_PrefetchObjects.push_back	(pObject);
 	}
+	Render->models_begin_prefetch1( false );
 	Msg( "[%s] objects prefetching time (%zi): [%.2f s.]", __FUNCTION__, p_count, T.GetElapsed_sec() );
 
 	// out statistic
