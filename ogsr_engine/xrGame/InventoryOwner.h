@@ -177,8 +177,8 @@ public:
 	virtual bool			use_bolts				() const {return(true);}
 	virtual	void			spawn_supplies			();
 
-	CInventoryItem* CInventoryOwner::GetCurrentOutfit() const;
-	CInventoryItem* CInventoryOwner::GetCurrentTorch() const;
+	CInventoryItem* GetCurrentOutfit() const;
+	CInventoryItem* GetCurrentTorch() const;
 
 	//////////////////////////////////////////////////////////////////////////
 	// связь со скриптами

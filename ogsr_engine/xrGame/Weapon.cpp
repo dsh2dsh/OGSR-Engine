@@ -267,9 +267,9 @@ void CWeapon::ForceUpdateFireParticles()
 
 }
 
-LPCSTR wpn_scope_def_bone = "wpn_scope";
-LPCSTR wpn_silencer_def_bone = "wpn_silencer";
-LPCSTR wpn_launcher_def_bone = "wpn_launcher";
+constexpr const char* wpn_scope_def_bone = "wpn_scope";
+constexpr const char* wpn_silencer_def_bone = "wpn_silencer";
+constexpr const char* wpn_launcher_def_bone = "wpn_launcher";
 
 void CWeapon::Load		(LPCSTR section)
 {
