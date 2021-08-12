@@ -31,6 +31,7 @@
 
 #include <luabind/scope.hpp>
 #include <luabind/detail/calc_has_arg.hpp>
+#include <luabind/cdecl_cast.hpp>
 
 namespace luabind
 {
