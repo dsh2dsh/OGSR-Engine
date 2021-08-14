@@ -22,7 +22,6 @@
 #include "stdafx.h"
 
 #include <luabind/luabind.hpp>
-#include <luabind/detail/find_best_match.hpp>
 
 namespace luabind { namespace detail { namespace free_functions {
 
@@ -65,7 +64,7 @@ namespace luabind { namespace detail { namespace free_functions {
             ret = find_best_match(
                 L
               , &rep->overloads().front()
-              , rep->overloads().size()
+              , (int)rep->overloads().size()
               , sizeof(overload_rep)
               , ambiguous
               , min_match
@@ -113,7 +112,7 @@ namespace luabind { namespace detail { namespace free_functions {
                 find_exact_match(
                     L
                   , &rep->overloads().front()
-                  , rep->overloads().size()
+                  , (int)rep->overloads().size()
                   , sizeof(overload_rep)
                   , min_match
                   , num_params

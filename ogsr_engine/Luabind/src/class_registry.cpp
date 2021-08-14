@@ -25,7 +25,6 @@
 #include <luabind/detail/class_registry.hpp>
 #include <luabind/detail/class_rep.hpp>
 #include <luabind/detail/operator_id.hpp>
-#include <luabind/detail/garbage_collector.hpp>
 
 namespace luabind { namespace detail {
 
@@ -241,9 +240,10 @@ namespace luabind { namespace detail {
     {
         // class is already registered
 		if (m_classes.find(info) != m_classes.end())
-			Msg("!![%s] you are trying to register a class twice [%s]", __FUNCTION__, crep->name()); //To XRay Log
-
-        assert((m_classes.find(info) == m_classes.end()) && "you are trying to register a class twice");
+			Msg("!![LUABIND] you are trying to register a class twice [%s]", crep->name()); //To XRay Log
+		//
+		assert((m_classes.find(info) == m_classes.end())
+            && "you are trying to register a class twice");
         m_classes[info] = crep;
     }
 

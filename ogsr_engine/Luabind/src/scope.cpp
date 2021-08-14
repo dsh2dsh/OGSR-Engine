@@ -21,7 +21,8 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 #include "stdafx.h"
 
-#include <luabind/error.hpp>
+#include <luabind/luabind.hpp>
+
 #include <luabind/scope.hpp>
 #include <luabind/detail/debug.hpp>
 #include <luabind/detail/stack_utils.hpp>

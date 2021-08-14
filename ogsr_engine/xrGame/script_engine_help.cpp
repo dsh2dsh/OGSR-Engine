@@ -201,7 +201,7 @@ void print_class(lua_State *L, luabind::detail::class_rep *crep)
 			if (X != properties_rw.end())
 			{
 				luabind::detail::class_rep::callback  cb = properties_rw.at(pname);
-				if ((size_t)cb.sig > 0x1000u)
+				if ((u32)cb.sig > 0x1000)
 					cb.sig(L, cname);
 
 				FastMsg(" property\t\t\t%-25s%s;", pname, extract_last_params(cname).c_str());

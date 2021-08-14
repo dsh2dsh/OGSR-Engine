@@ -21,11 +21,8 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 #include "stdafx.h"
 
-#include <luabind/detail/class_rep.hpp>
 #include <luabind/detail/object_rep.hpp>
-#include <luabind/detail/method_rep.hpp>
-
-#include <luabind/detail/overload_rep_impl.hpp>
+#include <luabind/detail/class_rep.hpp>
 
 //#define TEST_GARBAGE_COLLECTOR
 

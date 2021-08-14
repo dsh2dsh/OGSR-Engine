@@ -22,7 +22,6 @@
 #include "stdafx.h"
 
 #include <luabind/luabind.hpp>
-#include <luabind/detail/decorate_type.hpp>
 #include <luabind/class_info.hpp>
 
 namespace luabind

@@ -11,7 +11,6 @@
 #pragma warning(disable:4913) // user defined binary operator 'x' exists but no overload could convert all operands
 #pragma warning(disable:4297) // function assumed not to throw exception but does
 
-#include <lua.hpp>
 #include <luabind/luabind.hpp>
 #include <luabind/class.hpp>
 #include <luabind/object.hpp>

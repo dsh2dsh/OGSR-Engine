@@ -41,18 +41,6 @@ namespace luabind { namespace detail {
         return x;
     }
 
-    template<typename... Policies>
-    void operator_result(lua_State* L, operator_void_return, const detail::policy_cons<Policies...>)
-    {
-    }
-
-    template<typename T, typename... Policies>
-    void operator_result(lua_State* L, T const& x, const detail::policy_cons<Policies...>)
-    {
-        using cv_policy = typename find_conversion_policy<0, Policies...>::type;
-        typename cv_policy::template generate_converter<T, Direction::cpp_to_lua>::type cv;
-        cv.apply(L, x);
-    }
 }} // namespace luabind
 
 namespace luabind { namespace operators {
@@ -155,6 +143,20 @@ namespace luabind { namespace detail {
             return Derived::name();
         }
     };
+
+    template<typename... Policies>
+    void operator_result(lua_State* L, operator_void_return, const detail::policy_cons<Policies...>)
+    {
+    }
+
+    template<typename T, typename... Policies>
+    void operator_result(lua_State* L, T const& x, const detail::policy_cons<Policies...>)
+    {
+        using cv_policy = typename find_conversion_policy<0, Policies...>::type;
+        typename cv_policy::template generate_converter<T, Direction::cpp_to_lua>::type cv;
+        cv.apply(L, x);
+    }
+
 }} // namespace detail::luabind
 
 namespace luabind {

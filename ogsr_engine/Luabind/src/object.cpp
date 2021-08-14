@@ -28,13 +28,6 @@ using namespace luabind::detail;
 
 namespace luabind
 {
-	LUABIND_API lua_State* GetFuckingLuaStateByObject(object** pObj)
-	{
-		lua_State* L = (*pObj)->lua_state();
-		(*pObj)->pushvalue();
-		return L;
-	}
-
 	namespace detail
 	{
 

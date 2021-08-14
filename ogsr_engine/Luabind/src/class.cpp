@@ -22,7 +22,6 @@
 #include "stdafx.h"
 
 #include <luabind/class.hpp>
-#include <luabind/detail/class_registry.hpp>
 
 namespace luabind { namespace detail {
     
