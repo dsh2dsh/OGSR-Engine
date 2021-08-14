@@ -45,8 +45,16 @@ void CSE_ALifeTraderAbstract::spawn_supplies	()
 
 		if (xr_strlen(dynamic_object->m_ini_string))
 		{
-			IReader r((void*)dynamic_object->m_ini_string.c_str(), xr_strlen(dynamic_object->m_ini_string));
-			CInifile ini(&r, FS.get_path("$game_config$")->m_Path);
+#pragma warning(push)
+#pragma warning(disable:4238)
+			CInifile					ini(
+				&IReader				(
+					(void*)(*dynamic_object->m_ini_string),
+					xr_strlen(dynamic_object->m_ini_string)
+				),
+				FS.get_path("$game_config$")->m_Path
+			);
+#pragma warning(pop)
 
 			if (ini.section_exist("dont_spawn_character_supplies")) 
 				specific_character_supply = false;

@@ -62,13 +62,13 @@ int SetBackTrajectoryCnt(const dReal* p, const dReal*last_pos, Triangle &neg_tri
 	return 1;
 }
 
-template<class _T>
-IC int dcTriListCollider::dSortTriPrimitiveCollide (
-							  _T primitive,
-							  dxGeom		*o1,		dxGeom			*o2,
-							  int			flags,		dContactGeom	*contact,	int skip,
-							  const Fvector&	AABB
-							  )
+template<class T>
+inline int dcTriListCollider::dSortTriPrimitiveCollide(
+	T primitive,
+	dxGeom		*o1, dxGeom			*o2,
+	int			flags, dContactGeom	*contact, int skip,
+	const Fvector&	AABB
+)
 {
 	dxGeomUserData* data = dGeomGetUserData(o1);
 	dReal* last_pos = data->last_pos;

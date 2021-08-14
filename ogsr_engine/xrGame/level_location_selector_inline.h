@@ -17,7 +17,7 @@
 
 TEMPLATE_SPECIALIZATION
 IC	CLevelLocationSelector::CBaseLocationSelector	(CRestrictedObject *object) :
-	inherited(object)
+	inherited(object,selector_manager)
 {
 }
 
