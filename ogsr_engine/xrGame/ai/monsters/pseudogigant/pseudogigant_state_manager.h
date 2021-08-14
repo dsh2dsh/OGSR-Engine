@@ -5,7 +5,6 @@ class CPseudoGigant;
 
 class CStateManagerGigant : public CMonsterStateManager<CPseudoGigant> {
 	typedef CMonsterStateManager<CPseudoGigant> inherited;
-	using inherited::add_state;
 public:
 
 					CStateManagerGigant	(CPseudoGigant *monster); 

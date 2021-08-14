@@ -60,9 +60,6 @@ protected:
 				_iteration_type
 			> inherited;
 
-	using inherited::graph;
-	using inherited::data_storage;
-	using inherited::path;
 protected:
 	_Parameters			*m_evaluator;
 

@@ -3,7 +3,6 @@
 template<typename _Object>
 class CStateMonsterPanicRun : public CState<_Object> {
 	typedef CState<_Object> inherited;
-	using inherited::object;
 
 public:
 						CStateMonsterPanicRun	(_Object *obj) : inherited(obj) {}

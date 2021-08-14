@@ -6,7 +6,6 @@ class CStateBurerAntiAim : public CState<Object>
 {
 private:
 	typedef				CState<Object>	inherited;
-	using inherited::object;
 
 public:
 						CStateBurerAntiAim		(Object *obj);

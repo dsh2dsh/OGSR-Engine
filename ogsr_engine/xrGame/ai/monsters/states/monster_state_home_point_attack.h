@@ -6,7 +6,6 @@ class CStateMonsterAttackMoveToHomePoint : public CState<_Object> {
 protected:
 	typedef CState<_Object>		inherited;
 	typedef CState<_Object>*	state_ptr;
-	using inherited::object;
 
 	u32					m_target_node;
 	Fvector				m_target_pos;

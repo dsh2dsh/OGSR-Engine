@@ -5,16 +5,8 @@
 template <typename _Object>
 class CMonsterStateManager : public IStateManagerBase, public CState<_Object> {
 	typedef CState<_Object> inherited;
-public:
-	using inherited::object;
-	using inherited::prev_substate;
-	using inherited::current_substate;
-	using inherited::select_state;
-	using inherited::get_state_current;
-	using inherited::get_state;
-	using inherited::add_state;
-	using inherited::execute;
 
+public:
 					CMonsterStateManager	(_Object *obj) : inherited(obj) {}
 	virtual void	reinit					();
 	virtual void	update					();

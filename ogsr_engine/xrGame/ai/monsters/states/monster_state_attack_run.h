@@ -5,7 +5,6 @@
 template<typename _Object>
 class CStateMonsterAttackRun : public CState<_Object> {
 	typedef CState<_Object> inherited;
-	using inherited::object;
 
 	TTime				m_time_path_rebuild{};
 

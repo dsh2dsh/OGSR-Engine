@@ -14,19 +14,8 @@ template <typename _VertexEvaluator, typename _vertex_id_type, typename _index_t
 class CBasePathManager<CLevelGraph, _VertexEvaluator, _vertex_id_type, _index_type>
     : public CAbstractPathManager<CLevelGraph, _VertexEvaluator, _vertex_id_type, _index_type>
 {
-	typedef CAbstractPathManager<
-		CLevelGraph,
-		_VertexEvaluator,
-		_vertex_id_type,
-		_index_type
-	> inherited;
+    typedef CAbstractPathManager<CLevelGraph, _VertexEvaluator, _vertex_id_type, _index_type> inherited;
 
-public:
-	using inherited::m_object;
-	using inherited::dest_vertex_id;
-	using inherited::m_failed_start_vertex_id;
-	using inherited::m_failed_dest_vertex_id;
-	using inherited::object;
 private:
     friend class CMovementManager;
     friend class CLevelPathBuilder;

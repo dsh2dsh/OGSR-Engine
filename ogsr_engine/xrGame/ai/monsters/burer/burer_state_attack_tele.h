@@ -6,7 +6,6 @@
 template<typename Object>
 class CStateBurerAttackTele : public CState<Object> {
 	typedef CState<Object> inherited;	
-	using inherited::object;
 
 	xr_vector<CPhysicsShellHolder *>	tele_objects;
 	CPhysicsShellHolder					*selected_object;

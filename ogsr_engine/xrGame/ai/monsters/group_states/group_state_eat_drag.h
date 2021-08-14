@@ -8,7 +8,6 @@
 template<typename _Object>
 class CStateGroupDrag : public CState<_Object> {
 	typedef CState<_Object>		inherited;
-	using inherited::object;
 
 	Fvector				m_cover_position;
 	u32					m_cover_vertex_id;

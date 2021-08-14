@@ -4,7 +4,6 @@
 template<typename _Object>
 class CStateMonsterHitObject : public CState<_Object> {
 	typedef CState<_Object> inherited;
-	using inherited::object;
 
 	xr_vector<CObject*>	m_nearest_objects;
 	CPhysicsShellHolder	*target;

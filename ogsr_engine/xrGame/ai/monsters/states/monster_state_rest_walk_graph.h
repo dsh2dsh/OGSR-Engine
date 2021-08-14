@@ -4,7 +4,6 @@
 template<typename _Object>
 class CStateMonsterRestWalkGraph : public CState<_Object> {
 	typedef CState<_Object> inherited;
-	using inherited::object;
 
 public:
 						CStateMonsterRestWalkGraph	(_Object *obj);

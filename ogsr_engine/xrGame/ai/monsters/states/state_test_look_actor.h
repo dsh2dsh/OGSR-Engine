@@ -4,7 +4,6 @@
 template<typename _Object>
 class CStateMonsterLookActor : public CState<_Object> {
 	typedef CState<_Object> inherited;
-	using inherited::object;
 public:
 						CStateMonsterLookActor	(_Object *obj) : inherited(obj) {}
 	virtual	void		execute					();
@@ -15,7 +14,6 @@ public:
 template<typename _Object>
 class CStateMonsterTurnAwayFromActor : public CState<_Object> {
 	typedef CState<_Object> inherited;
-	using inherited::object;
 public:
 						CStateMonsterTurnAwayFromActor	(_Object *obj) : inherited(obj) {}
 	virtual	void		execute					();
@@ -25,7 +23,6 @@ public:
 template<typename _Object>
 class CStateMonstertTestIdle : public CState<_Object> {
 	typedef CState<_Object> inherited;
-	using inherited::object;
 public:
 						CStateMonstertTestIdle	(_Object *obj) : inherited(obj) {}
 	virtual	void		execute					();

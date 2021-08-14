@@ -4,8 +4,6 @@
 template<typename Object>
 class ChimeraAttackState : public CState<Object> 
 {
-	using inherited = CState<Object>;
-	using inherited::object;
 public:
 							ChimeraAttackState				(Object* obj);
 	virtual void			initialize						();
@@ -30,6 +28,7 @@ private:
 	float					get_attack_radius				() const;
 	float					calculate_min_run_distance		() const;
 
+	typedef CState<Object>	inherited;
 	virtual void			remove_links	(CObject* object) { inherited::remove_links(object); }
 
 	CControl_Com*			m_capturer;

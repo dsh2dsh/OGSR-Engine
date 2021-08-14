@@ -4,7 +4,6 @@ template<typename _Object>
 class CStateControlHide : public CState<_Object> {
 	typedef	CState<_Object>		inherited;
 	typedef	CState<_Object>*	state_ptr;
-	using inherited::object;
 
 	bool			m_cover_reached;
 
