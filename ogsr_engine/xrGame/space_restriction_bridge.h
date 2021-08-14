@@ -9,8 +9,6 @@
 #pragma once
 
 #include "restriction_space.h"
-#include "ai_space.h"
-#include "level_graph.h"
 
 class CSpaceRestrictionBase;
 

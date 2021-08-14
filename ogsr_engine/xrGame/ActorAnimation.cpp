@@ -291,14 +291,13 @@ void CActor::g_SetSprintAnimation( u32 mstate_rl,MotionID &head,MotionID &torso,
 
 #ifdef DEBUG
 BOOL	g_ShowAnimationInfo = TRUE;
-constexpr const char* mov_state[] ={
+#endif // DEBUG
+char* mov_state[] ={
 	"idle",
 	"walk",
 	"run",
 	"sprint",
 };
-#endif
-
 void CActor::g_SetAnimation( u32 mstate_rl )
 {
 

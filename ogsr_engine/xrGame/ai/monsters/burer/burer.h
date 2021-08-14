@@ -2,7 +2,6 @@
 #include "../BaseMonster/base_monster.h"
 #include "../telekinesis.h"
 #include "../anim_triple.h"
-#include "Actor.h"
 #include "../scanning_ability.h"
 #include "script_export_space.h"
 
@@ -159,6 +158,7 @@ public:
 			bool	need_shotmark () const { return !m_shield_active; }
 
 	virtual bool	ability_distant_feel() {return true;}
+	virtual	char*	get_monster_class_name () { return "burer"; }
 
 /*
 #ifdef DEBUG

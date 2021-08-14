@@ -12,7 +12,7 @@ struct dxGeomTransform : public dxGeom {
 	// computeAABB(), and it is valid while the AABB is valid.
 	dVector3 final_pos;
 	dMatrix3 final_R;
-	dxGeomTransform(dSpaceID space) : dxGeom(space, 1)
+	dxGeomTransform::dxGeomTransform (dSpaceID space) : dxGeom (space,1)
 	{
 		type = dGeomTransformClass;
 		obj = 0;

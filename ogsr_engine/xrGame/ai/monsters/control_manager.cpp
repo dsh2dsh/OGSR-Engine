@@ -15,8 +15,7 @@ enum EActiveComAction {
 	eAdd			
 };
 
-/*
-static const char*   make_xrstr (ControlCom::EControlType e)
+char*   make_xrstr (ControlCom::EControlType e)
 {
 	switch ( e )
 	{
@@ -42,7 +41,7 @@ static const char*   make_xrstr (ControlCom::EControlType e)
 		default: return "eControlInvalid";
 	}
 }
-*/
+
 
 CControl_Manager::CControl_Manager(CBaseMonster *obj)
 {

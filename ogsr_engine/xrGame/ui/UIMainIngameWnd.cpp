@@ -246,7 +246,7 @@ void CUIMainIngameWnd::Init()
 		UIThirstIcon.Show(false);
 	}
 
-	constexpr const char* warningStrings[] =
+	constexpr char* warningStrings[] =
 	{
 		"jammed",
 		"radiation",

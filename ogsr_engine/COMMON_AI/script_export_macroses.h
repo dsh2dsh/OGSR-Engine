@@ -43,7 +43,7 @@
 		virtual ret_type v_func_name() const											\
 		{																				\
 			try {																		\
-				return luabind::call_member<ret_type>(this,#v_func_name);						\
+				return call_member<ret_type>(this,#v_func_name);						\
 			}																			\
 			CAST_FAILED(v_func_name,ret_type)											\
 			catch(...) {																\
@@ -60,7 +60,7 @@
 		virtual ret_type v_func_name(t1 p1) const										\
 		{																				\
 			try {																		\
-				return luabind::call_member<ret_type>(this,#v_func_name,p1);						\
+				return call_member<ret_type>(this,#v_func_name,p1);						\
 			}																			\
 			CAST_FAILED(v_func_name,ret_type)											\
 			catch(...) {																\
@@ -75,7 +75,7 @@
 #define DEFINE_LUA_WRAPPER_CONST_METHOD_1(v_func_name,ret_type,t1)						\
 		virtual ret_type v_func_name(t1 p1) const										\
 		{																				\
-			return luabind::call_member<ret_type>(this,#v_func_name,p1);							\
+			return call_member<ret_type>(this,#v_func_name,p1);							\
 		}																				\
 		static ret_type v_func_name##_static(const inherited* ptr, t1 p1)				\
 		{                                                                               \
@@ -87,7 +87,7 @@
 		virtual void v_func_name()														\
 		{																				\
 			try {																		\
-				luabind::call_member<void>(this,#v_func_name);									\
+				call_member<void>(this,#v_func_name);									\
 			}																			\
 			catch(...) {																\
 			}																			\
@@ -101,7 +101,7 @@
 		virtual void v_func_name(t1 p1)													\
 		{																				\
 			try {																		\
-				luabind::call_member<void>(this,#v_func_name,p1);								\
+				call_member<void>(this,#v_func_name,p1);								\
 			}																			\
 			catch(...) {																\
 			}																			\
@@ -115,7 +115,7 @@
 		virtual ret_type v_func_name()													\
 		{																				\
 			try {																		\
-				return luabind::call_member<ret_type>(this,#v_func_name);						\
+				return call_member<ret_type>(this,#v_func_name);						\
 			}																			\
 			CAST_FAILED(v_func_name,ret_type)											\
 			catch(...) {																\
@@ -131,7 +131,7 @@
 		virtual ret_type v_func_name(t1 p1)                                    			\
 		{																				\
 			try {																		\
-				return luabind::call_member<ret_type>(this,#v_func_name,p1);						\
+				return call_member<ret_type>(this,#v_func_name,p1);						\
 			}																			\
 			CAST_FAILED(v_func_name,ret_type)											\
 			catch(...) {																\
@@ -149,7 +149,7 @@
 		virtual void v_func_name(t1& p1)												\
 		{																				\
 			try {																		\
-				this->call<void>(#v_func_name,&p1);											\
+				call<void>(#v_func_name,&p1);											\
 			}																			\
 			catch(...) {																\
 			}																			\
@@ -163,7 +163,7 @@
 		virtual void v_func_name(t1& p1, t2 p2)											\
 		{																				\
 			try {																		\
-				this->call<void>(#v_func_name,&p1,p2);										\
+				call<void>(#v_func_name,&p1,p2);										\
 			}																			\
 			catch(...) {																\
 			}																			\
