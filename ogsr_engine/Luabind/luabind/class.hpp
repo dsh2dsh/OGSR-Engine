@@ -718,11 +718,11 @@ namespace luabind
 			void add_getter(const char* name, std::function<int(lua_State*, int)> g);
 
 #ifdef LUABIND_NO_ERROR_CHECKING
-			void add_setter(
+			void class_base::add_setter(
 				const char* name
 				, std::function<int(lua_State*, int)> s);
 #else
-			void add_setter(
+			void class_base::add_setter(
 				const char* name
 				, std::function<int(lua_State*, int)> s
 				, int (*match)(lua_State*, int)

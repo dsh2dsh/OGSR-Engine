@@ -62,12 +62,12 @@ public:
 	{
 		int				quantity;
 		float			afT[2];
-		auto result = intersect(start, dir, dist, quantity, afT);
+		Fsphere::ERP_Result	result	= intersect(start,dir,dist,quantity,afT);
 
-		if (result == ERP_Result::rpOriginInside || ((result== ERP_Result::rpOriginOutside)&&(afT[0]<dist))){
+		if (result == Fsphere::rpOriginInside || ((result==Fsphere::rpOriginOutside)&&(afT[0]<dist))){
 			switch(result){
-				case ERP_Result::rpOriginInside:	dist	= afT[0]<dist?afT[0]:dist;		break;
-				case ERP_Result::rpOriginOutside:	dist	= afT[0];						break;
+				case Fsphere::rpOriginInside:	dist	= afT[0]<dist?afT[0]:dist;		break;
+				case Fsphere::rpOriginOutside:	dist	= afT[0];						break;
 			}
 		}
 		return			result;
