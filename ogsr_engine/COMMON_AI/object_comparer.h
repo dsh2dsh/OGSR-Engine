@@ -56,8 +56,8 @@ struct CComparer {
 		if (_1.size() != _2.size())
 			return					(p());
 		
-		auto I = _1.begin(), J = _2.begin();
-		auto E = _1.end();
+		svector<T,size>::const_iterator	I = _1.begin(), J = _2.begin();
+		svector<T,size>::const_iterator	E = _1.end();
 		for ( ; I != E; ++I, ++J)
 			if (!compare(*I,*J,p))
 				return				(false);
@@ -128,8 +128,8 @@ struct CComparer {
 			if (_1.size() != _2.size())
 				return					(p());
 
-			auto I = _1.begin(), J = _2.begin();
-			auto E = _1.end();
+			T::const_iterator			I = _1.begin(), J = _2.begin();
+			T::const_iterator			E = _1.end();
 			for ( ; I != E; ++I, ++J)
 				if (!CComparer::compare(*I,*J,p))
 					return				(false);

@@ -7,7 +7,6 @@ namespace Feel
 {
 	class ENGINE_API Touch: private pure_relcase
 	{
-		friend class pure_relcase;
 	public:
 		struct DenyTouch
 		{

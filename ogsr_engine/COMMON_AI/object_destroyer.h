@@ -28,8 +28,8 @@ struct CDestroyer {
 	template <typename T, int size>
 	IC	static void delete_data(svector<T,size> &data)
 	{
-		auto I = data.begin();
-		auto E = data.end();
+		svector<T,size>::iterator	I = data.begin();
+		svector<T,size>::iterator	E = data.end();
 		for ( ; I != E; ++I)
 			delete_data				(*I);
 		data.clear					();
@@ -106,8 +106,8 @@ struct CDestroyer {
 		template <typename T>
 		IC	static void delete_data(T &data)
 		{
-			auto I = data.begin();
-			auto E = data.end();
+			T::iterator					I = data.begin();
+			T::iterator					E = data.end();
 			for ( ; I != E; ++I)
 				CDestroyer::delete_data	(*I);
 			data.clear					();

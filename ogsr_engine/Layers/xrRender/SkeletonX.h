@@ -5,11 +5,10 @@
 
 #include "SkeletonCustom.h"
 #include "SkeletonXVertRender.h"
-#include "cl_intersect.h"
-#include "FVisual.h"
 
 // refs
 class 	CKinematics;
+class Fvisual		;
 
 struct SEnumVerticesCallback;
 class 	CSkeletonX
