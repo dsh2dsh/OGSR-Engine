@@ -217,8 +217,8 @@ TEMPLATE_SPECIALIZATION
 IC	void CPlanner::set_use_log		(bool value)
 {
 	m_use_log							= value;
-	auto I = m_operators.begin();
-	auto E = m_operators.end();
+	OPERATOR_VECTOR::iterator			I = m_operators.begin();
+	OPERATOR_VECTOR::iterator			E = m_operators.end();
 	for ( ; I != E; ++I)
 		(*I).get_operator()->set_use_log(m_use_log);
 }
@@ -227,8 +227,8 @@ TEMPLATE_SPECIALIZATION
 IC	void CPlanner::show_current_world_state	()
 {
 	Msg						("Current world state :");
-	auto I = evaluators().cbegin();
-	auto E = evaluators().cend();
+	EVALUATORS::const_iterator	I = evaluators().begin();
+	EVALUATORS::const_iterator	E = evaluators().end();
 	for ( ; I != E; ++I) {
 		xr_vector<COperatorCondition>::const_iterator J = std::lower_bound(current_state().conditions().begin(),current_state().conditions().end(),CWorldProperty((*I).first,false));
 		char				temp = '?';
@@ -243,8 +243,8 @@ TEMPLATE_SPECIALIZATION
 IC	void CPlanner::show_target_world_state	()
 {
 	Msg						("Target world state :");
-	auto I = evaluators().cbegin();
-	auto E = evaluators().cend();
+	EVALUATORS::const_iterator	I = evaluators().begin();
+	EVALUATORS::const_iterator	E = evaluators().end();
 	for ( ; I != E; ++I) {
 		xr_vector<COperatorCondition>::const_iterator J = std::lower_bound(target_state().conditions().begin(),target_state().conditions().end(),CWorldProperty((*I).first,false));
 		char				temp = '?';
@@ -262,27 +262,27 @@ IC	void CPlanner::show				(LPCSTR offset)
 	strconcat		(sizeof(temp),temp,offset,"    ");
 	{
 		Msg			("\n%sEVALUATORS : %d\n",offset,evaluators().size());
-		auto I = evaluators().cbegin();
-		auto E = evaluators().cend();
+		EVALUATORS::const_iterator	I = evaluators().begin();
+		EVALUATORS::const_iterator	E = evaluators().end();
 		for ( ; I != E; ++I)
 			Msg		("%sevaluator   [%d][%s]",offset,(*I).first,property2string((*I).first));
 	}
 	{
 		Msg			("\n%sOPERATORS : %d\n",offset,operators().size());
-		auto I = operators().cbegin();
-		auto E = operators().cend();
+		OPERATOR_VECTOR::const_iterator	I = operators().begin();
+		OPERATOR_VECTOR::const_iterator	E = operators().end();
 		for ( ; I != E; ++I) {
 			Msg		("%soperator    [%d][%s]",offset,(*I).m_operator_id,(*I).m_operator->m_action_name);
 
 			{
-				auto i = (*I).m_operator->conditions().conditions().cbegin();
-				auto e = (*I).m_operator->conditions().conditions().cend();
+				xr_vector<COperatorCondition>::const_iterator	i = (*I).m_operator->conditions().conditions().begin();
+				xr_vector<COperatorCondition>::const_iterator	e = (*I).m_operator->conditions().conditions().end();
 				for ( ; i != e; ++i)
 					Msg	("%s	condition [%d][%s] = %s",offset,(*i).condition(),property2string((*i).condition()),(*i).value() ? "TRUE" : "FALSE");
 			}
 			{
-				auto i = (*I).m_operator->effects().conditions().cbegin();
-				auto e = (*I).m_operator->effects().conditions().cend();
+				xr_vector<COperatorCondition>::const_iterator	i = (*I).m_operator->effects().conditions().begin();
+				xr_vector<COperatorCondition>::const_iterator	e = (*I).m_operator->effects().conditions().end();
 				for ( ; i != e; ++i)
 					Msg	("%s	effect    [%d][%s] = %s",offset,(*i).condition(),property2string((*i).condition()),(*i).value() ? "TRUE" : "FALSE");
 			}
@@ -298,15 +298,15 @@ TEMPLATE_SPECIALIZATION
 IC	void CPlanner::save	(NET_Packet &packet)
 {
 	{
-		auto I = m_evaluators.begin();
-		auto E = m_evaluators.end();
+		EVALUATORS::iterator		I = m_evaluators.begin();
+		EVALUATORS::iterator		E = m_evaluators.end();
 		for ( ; I != E; ++I)
 			(*I).second->save		(packet);
 	}
 
 	{
-		auto I = m_operators.begin();
-		auto E = m_operators.end();
+		OPERATOR_VECTOR::iterator	I = m_operators.begin();
+		OPERATOR_VECTOR::iterator	E = m_operators.end();
 		for ( ; I != E; ++I)
 			(*I).m_operator->save	(packet);
 	}
@@ -327,15 +327,15 @@ TEMPLATE_SPECIALIZATION
 IC	void CPlanner::load	(IReader &packet)
 {
 	{
-		auto I = m_evaluators.begin();
-		auto E = m_evaluators.end();
+		EVALUATORS::iterator		I = m_evaluators.begin();
+		EVALUATORS::iterator		E = m_evaluators.end();
 		for ( ; I != E; ++I)
 			(*I).second->load		(packet);
 	}
 
 	{
-		auto I = m_operators.begin();
-		auto E = m_operators.end();
+		OPERATOR_VECTOR::iterator	I = m_operators.begin();
+		OPERATOR_VECTOR::iterator	E = m_operators.end();
 		for ( ; I != E; ++I)
 			(*I).m_operator->load	(packet);
 	}

@@ -56,7 +56,7 @@ IC	void CEdgePathBuilder::get_edge_path	(xr_vector<_edge_type> &path, CGraphVert
 			*I = t2->edge();
 	}
 	else {
-		auto I = path.begin() + n;
+		xr_vector<_edge_type>::iterator	I = path.begin() + n;
 		for (; t2->back() ; t2 = t2->back(), ++I)
 			*I = t2->edge();
 	}

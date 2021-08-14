@@ -214,8 +214,8 @@ EMonsterState CStateAbstract::get_state_type()
 TEMPLATE_SPECIALIZATION
 void CStateAbstract::remove_links	(CObject* object)
 {
-	auto i = substates.begin();
-	auto e = substates.end();
+	SubStates::iterator	i = substates.begin();
+	SubStates::iterator	e = substates.end();
 	for ( ; i != e; ++i)
 		(*i).second->remove_links	(object);
 }
