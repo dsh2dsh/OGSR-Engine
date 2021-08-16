@@ -135,9 +135,12 @@ void CUIEventsWnd::ReloadList(bool bClearOnly)
 	if ( m_currFilter == eActiveTask )
 	  std::sort(
 	    game_tasks.begin(), game_tasks.end(), []( const auto& a, const auto& b ) {
+/*
 	      if ( a->m_priority == b->m_priority )
 	        return a->m_ReceiveTime > b->m_ReceiveTime;
 	      return a->m_priority < b->m_priority;
+*/
+	      return a->m_ReceiveTime > b->m_ReceiveTime;
 	    }
 	  );
 
