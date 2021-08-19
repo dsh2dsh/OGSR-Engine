@@ -591,14 +591,6 @@ public:
 private:
 	bool	m_can_select_items;
 
-private:
-	shared_str	m_aim_bone_id;
-
-public:
-			void						aim_bone_id									(shared_str const &bone_id);
-			shared_str const			&aim_bone_id								() const;
-			void						aim_target									(Fvector &result, const CGameObject *object);
-
 public:
 	IC		const u32					&throw_time_interval						() const;
 	IC		void						throw_time_interval							(const u32 &value);

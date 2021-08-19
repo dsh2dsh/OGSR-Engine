@@ -1275,25 +1275,3 @@ LPCSTR CScriptGameObject::ProfileCommunity() {
   ASSERT_FMT( inventory_owner, "[%s]: %s not an CInventoryOwner", __FUNCTION__, this->object().Name());
   return *inventory_owner->SpecificCharacter().Community().id();
 }
-
-void CScriptGameObject::aim_bone_id					(LPCSTR bone_id)
-{
-	CAI_Stalker							*stalker = smart_cast<CAI_Stalker*>(&object());
-	if (!stalker) {
-		ai().script_engine().script_log	(ScriptStorage::eLuaMessageTypeError,"CAI_Stalker : cannot access class member aim_bone_id!");
-		return;
-	}
-
-	stalker->aim_bone_id				(bone_id);
-}
-
-LPCSTR CScriptGameObject::aim_bone_id				() const
-{
-	CAI_Stalker							*stalker = smart_cast<CAI_Stalker*>(&object());
-	if (!stalker) {
-		ai().script_engine().script_log	(ScriptStorage::eLuaMessageTypeError,"CAI_Stalker : cannot access class member aim_bone_id!");
-		return							(false);
-	}
-
-	return								(stalker->aim_bone_id().c_str());
-}

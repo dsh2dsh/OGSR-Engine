@@ -13,9 +13,7 @@ IC	CSightAction::CSightAction		() :
 	m_torso_look		(false),
 	m_path				(false),
 	m_object_to_look	(0),
-	m_memory_object		(0),
-	m_state_fire_object	(0),
-	m_initialized		(false)
+	m_memory_object		(0)
 {
 }
 
@@ -24,9 +22,7 @@ IC	CSightAction::CSightAction		(const ESightType &sight_type, bool	torso_look, b
 	m_torso_look		(torso_look),
 	m_path				(path),
 	m_object_to_look	(0),
-	m_memory_object		(0),
-	m_state_fire_object	(0),
-	m_initialized		(false)
+	m_memory_object		(0)
 {
 }
 
@@ -36,9 +32,7 @@ IC	CSightAction::CSightAction		(const ESightType &sight_type, const Fvector &vec
 	m_path				(false),
 	m_torso_look		(torso_look),
 	m_object_to_look	(0),
-	m_memory_object		(0),
-	m_state_fire_object	(0),
-	m_initialized		(false)
+	m_memory_object		(0)
 {
 }
 
@@ -48,9 +42,7 @@ IC	CSightAction::CSightAction		(const CGameObject *object_to_look, bool torso_lo
 	m_path				(false),
 	m_object_to_look	(object_to_look),
 	m_memory_object		(0),
-	m_no_pitch			(no_pitch),
-	m_state_fire_object	(0),
-	m_initialized		(false)
+	m_no_pitch			(no_pitch)
 {
 }
 
@@ -59,26 +51,21 @@ IC	CSightAction::CSightAction		(const CMemoryInfo *memory_object, bool torso_loo
 	m_torso_look		(torso_look),
 	m_path				(false),
 	m_memory_object		(memory_object),
-	m_object_to_look	(0),
-	m_state_fire_object	(0),
-	m_initialized		(false)
+	m_object_to_look	(0)
 {
 }
 
-IC	CSightAction::CSightAction		(const ESightType &sight_type, const Fvector *vector3d) :
-	m_sight_type		(sight_type),
-	m_path				(false),
-	m_object_to_look	(0),
-	m_state_fire_object	(0),
-	m_initialized		(false)
+IC	CSightAction::CSightAction		(const ESightType &sight_type, const Fvector *vector3d)
 {
+	m_sight_type		= sight_type;
+	m_path				= false;
+	m_object_to_look	= 0;
 	if (sight_type == SightManager::eSightTypeFirePosition) {
 		m_sight_type	= SightManager::eSightTypePosition;
 		m_torso_look	= true;
 	}
 	else
 		m_torso_look	= false;
-
 	if (vector3d)
 		m_vector3d		= *vector3d;
 }
@@ -107,8 +94,6 @@ IC	bool CSightAction::operator==		(const CSightAction &sight_action) const
 			return		(m_time == sight_action.m_time);
 		case SightManager::eSightTypeFireObject :
 			return		((m_torso_look == sight_action.m_torso_look) && (m_object_to_look == sight_action.m_object_to_look));
-		case SightManager::eSightTypeAnimationDirection :
-			return		(true);
 		default	: NODEFAULT;
 	}
 
@@ -145,10 +130,4 @@ IC	const CGameObject *CSightAction::object_to_look		() const
 IC	const Fvector &CSightAction::vector3d				() const
 {
 	return				(m_vector3d);
-}
-
-IC	u32 const& CSightAction::state_fire_object			() const
-{
-	VERIFY				(m_sight_type == SightManager::eSightTypeFireObject);
-	return				(m_state_fire_object);
 }

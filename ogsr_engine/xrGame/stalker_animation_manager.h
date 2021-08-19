@@ -79,32 +79,6 @@ private:
 	float							m_target_speed;
 	float							m_last_non_zero_speed;
 
-public:
-	struct callback_params {
-		Fmatrix const*				m_rotation;
-		CAI_Stalker const*			m_object;
-		CBlend const* const*		m_blend;
-		bool						m_forward;
-
-							callback_params	()
-		{
-			invalidate				();
-		}
-
-		inline	void		invalidate		()
-		{
-			m_rotation				= 0;
-			m_object				= 0;
-			m_blend					= 0;
-			m_forward				= false;
-		}
-	}; // struct callback_params
-
-private:
-	callback_params					m_spine_params;
-	callback_params					m_shoulder_params;
-	callback_params					m_head_params;
-
 private:
 	IC		bool					strapped				() const;
 	IC		bool					standing				() const;
@@ -132,12 +106,12 @@ private:
 			MotionID				global_critical_hit		();
 
 private:
+			void					assign_bone_callbacks	();
 			MotionID				assign_global_animation	();
 			MotionID				assign_head_animation	();
 			MotionID				assign_torso_animation	();
 			MotionID				assign_legs_animation	();
 	const CStalkerAnimationScript	&assign_script_animation() const;
-		void					clear_unsafe_callbacks	();
 
 public:
 	IC		bool					non_script_need_update	() const;
@@ -196,13 +170,6 @@ private:
 public:
 			void					add_animation_stats		();
 #endif // DEBUG
-
-public:
-			void					remove_bone_callbacks		();
-			void					assign_bone_callbacks		();
-			void					assign_bone_blend_callbacks	(bool const& forward_direction);
-			bool					forward_blend_callbacks		() const;
-			bool					backward_blend_callbacks	() const;
 };
 
 #include "stalker_animation_manager_inline.h"

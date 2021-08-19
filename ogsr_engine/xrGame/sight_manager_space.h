@@ -21,7 +21,6 @@ namespace SightManager {
 		eSightTypeCoverLookOver,
 		eSightTypeFireObject,
 		eSightTypeFirePosition,		// must be removed
-		eSightTypeAnimationDirection,
 		eSightTypeDummy				= u32(-1),
 	};
 };

@@ -24,13 +24,6 @@ animation_movement_controller::~animation_movement_controller( )
 	if(isActive())
 		deinitialize();
 }
-
-IC bool is_blending_in( CBlend &b)
-{
-	return b.blend_state() == CBlend::eAccrue && b.blendPower - EPS > b.blendAmount;
-
-}
-
 void	animation_movement_controller::	deinitialize					()
 {
 	CBoneInstance& B=m_pKinematicsC->LL_GetBoneInstance( m_pKinematicsC->LL_GetBoneRoot( ) );
@@ -39,12 +32,6 @@ void	animation_movement_controller::	deinitialize					()
 	B.reset_callback( );
 	m_control_blend =  0 ;
 }
-
-bool	animation_movement_controller::IsBlending( ) const
-{
-  return  is_blending_in( *m_control_blend );//inital_position_blending ||
-}
-
 void animation_movement_controller::OnFrame( )
 {
 	m_pKinematicsC->CalculateBones( );

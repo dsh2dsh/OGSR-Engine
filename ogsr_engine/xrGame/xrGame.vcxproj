@@ -687,12 +687,6 @@
     <ClInclude Include="agent_manager_actions.h" />
     <ClInclude Include="agent_manager_properties.h" />
     <ClInclude Include="agent_manager_properties_inline.h" />
-    <ClInclude Include="aimers_base.h" />
-    <ClInclude Include="aimers_base_inline.h" />
-    <ClInclude Include="aimers_bone.h" />
-    <ClInclude Include="aimers_bone_inline.h" />
-    <ClInclude Include="aimers_weapon.h" />
-    <ClInclude Include="aimers_weapon_inline.h" />
     <ClInclude Include="alife_simulator.h" />
     <ClInclude Include="alife_simulator_inline.h" />
     <ClInclude Include="..\COMMON_AI\alife_space.h" />
@@ -1797,7 +1791,6 @@
     <ClCompile Include="script_world_state_script.cpp" />
     <ClCompile Include="script_world_property_script.cpp" />
     <ClCompile Include="sight_manager.cpp" />
-    <ClCompile Include="sight_manager_target.cpp" />
     <ClCompile Include="sight_action.cpp" />
     <ClCompile Include="sound_player.cpp" />
     <ClCompile Include="sound_collection_storage.cpp" />
@@ -1830,8 +1823,6 @@
     <ClCompile Include="agent_manager_planner.cpp" />
     <ClCompile Include="agent_manager_actions.cpp" />
     <ClCompile Include="agent_manager_properties.cpp" />
-    <ClCompile Include="aimers_base.cpp" />
-    <ClCompile Include="aimers_weapon.cpp" />
     <ClCompile Include="alife_simulator.cpp" />
     <ClCompile Include="alife_simulator_script.cpp" />
     <ClCompile Include="..\COMMON_AI\alife_space.cpp" />

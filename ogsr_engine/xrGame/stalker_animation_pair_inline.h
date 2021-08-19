@@ -52,7 +52,7 @@ IC	const MotionID &CStalkerAnimationPair::animation() const
 	return						(m_animation);
 }
 
-IC	CBlend * const&CStalkerAnimationPair::blend		() const
+IC	CBlend *CStalkerAnimationPair::blend			() const
 {
 	return						(m_blend);
 }

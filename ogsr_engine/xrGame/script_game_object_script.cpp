@@ -45,7 +45,6 @@ void CScriptGameObject::script_register(lua_State *L)
 				value("eSightTypeCoverLookOver",	int(SightManager::eSightTypeCoverLookOver	)),
 				value("eSightTypeFireObject",		int(SightManager::eSightTypeFireObject		)),
 				value("eSightTypeFirePosition",		int(SightManager::eSightTypeFirePosition	)),
-				value("eSightTypeAnimationDirection",	int(SightManager::eSightTypeAnimationDirection	)),
 				value("eSightTypeDummy",			int(SightManager::eSightTypeDummy			))
 			]
 			.def(							constructor<>())

@@ -68,7 +68,7 @@ public:
 	IC		bool			actual					() const;
 	IC		bool			animation				(const MotionID &animation);
 	IC		const MotionID	&animation				() const;
-	IC		CBlend * const&	blend					() const;
+	IC		CBlend			*blend					() const;
 	IC		void			step_dependence			(bool value);
 	IC		bool			step_dependence			() const;
 	IC		void			global_animation		(bool global_animation);

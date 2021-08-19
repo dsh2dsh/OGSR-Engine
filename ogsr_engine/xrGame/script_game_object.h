@@ -839,9 +839,6 @@ public:
 	void configure_scheduler( u32, u32 );
 	u16  killer_id();
 
-	void   aim_bone_id( LPCSTR value );
-	LPCSTR aim_bone_id() const;
-
 	DECLARE_SCRIPT_REGISTER_FUNCTION
 };
 add_to_type_list(CScriptGameObject)
