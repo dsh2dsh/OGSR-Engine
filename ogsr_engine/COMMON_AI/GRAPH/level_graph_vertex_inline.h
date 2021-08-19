@@ -523,6 +523,44 @@ IC	float CLevelGraph::compute_square(float fAngle, float fAngleOfView, u32 dwNod
 	return(compute_square(fAngle, fAngleOfView,vertex(dwNodeID)));
 }
 
+IC	float CLevelGraph::compute_high_square(float fAngle, float fAngleOfView, const CLevelGraph::CVertex *vertex) const
+{
+	return(
+		compute_square(
+			fAngle, 
+			fAngleOfView,
+			NORMALIZE_NODE_COVER(vertex,0),
+			NORMALIZE_NODE_COVER(vertex,1),
+			NORMALIZE_NODE_COVER(vertex,2),
+			NORMALIZE_NODE_COVER(vertex,3)
+		)
+	);
+}
+
+IC	float CLevelGraph::compute_low_square(float fAngle, float fAngleOfView, const CLevelGraph::CVertex *vertex) const
+{
+	return(
+		compute_square(
+			fAngle, 
+			fAngleOfView,
+			NORMALIZE_NODE_COVER(vertex,0),
+			NORMALIZE_NODE_COVER(vertex,1),
+			NORMALIZE_NODE_COVER(vertex,2),
+			NORMALIZE_NODE_COVER(vertex,3)
+		)
+	);
+}
+
+IC	float CLevelGraph::compute_high_square(float fAngle, float fAngleOfView, u32 dwNodeID) const
+{
+	return(compute_high_square(fAngle, fAngleOfView,vertex(dwNodeID)));
+}
+
+IC	float CLevelGraph::compute_low_square(float fAngle, float fAngleOfView, u32 dwNodeID) const
+{
+	return(compute_low_square(fAngle, fAngleOfView,vertex(dwNodeID)));
+}
+
 IC	float CLevelGraph::vertex_cover(const CLevelGraph::CVertex *vertex) const
 {
 	float			_cover = 0.f;

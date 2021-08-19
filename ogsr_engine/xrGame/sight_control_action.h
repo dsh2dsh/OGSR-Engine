@@ -9,8 +9,12 @@
 #pragma once
 
 #include "sight_action.h"
+#include "ai_monster_space.h"
 
 class CSightControlAction : public CSightAction {
+public:
+	typedef MonsterSpace::SBoneRotation	SBoneRotation;
+
 protected:
 	float								m_weight;
 	u32									m_inertia_time;

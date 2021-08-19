@@ -87,6 +87,7 @@ extern BOOL		b_death_anim_velocity;
 #endif
 int g_AI_inactive_time = 0;
 Flags32 g_uCommonFlags;
+float			g_aim_predict_time = 0.44f;
 
 enum E_COMMON_FLAGS{
 	flAiUseTorchDynamicLights = 1
@@ -1401,4 +1402,5 @@ void CCC_RegisterCommands()
 	CMD4( CCC_Float, "g_cam_lookout_speed", &cam_LookoutSpeed,             1.0f,  4.0f );
 
 	CMD4( CCC_Float, "g_shotmarks_dist", &g_shotmarks_dist, 5.f, 100.f );
+	CMD4(CCC_Float,		"ai_aim_predict_time",	&g_aim_predict_time, 0.f, 10.f);
 }

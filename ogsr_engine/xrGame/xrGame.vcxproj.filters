@@ -187,6 +187,18 @@
     <Filter Include="AI\AComponents\SightManager\sight_control_action">
       <UniqueIdentifier>{866248de-0586-4423-a2ae-f605dcccaa70}</UniqueIdentifier>
     </Filter>
+    <Filter Include="AI\AComponents\SightManager\aimers">
+      <UniqueIdentifier>{ad2f83e9-06b0-4c83-aa67-dfb277898a11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AI\AComponents\SightManager\aimers\weapon">
+      <UniqueIdentifier>{ebb1a4b5-a0b7-4db5-b9d3-b69c62405b14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AI\AComponents\SightManager\aimers\bone">
+      <UniqueIdentifier>{d4b6a296-63bd-47df-9fff-551c8d29afd4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AI\AComponents\SightManager\aimers\base">
+      <UniqueIdentifier>{62a620bf-812d-4d6a-a005-15c6d31280ad}</UniqueIdentifier>
+    </Filter>
     <Filter Include="AI\AComponents\SoundPlayer">
       <UniqueIdentifier>{14c4652a-e6d3-4d30-bf27-f9f620a0d96e}</UniqueIdentifier>
     </Filter>
@@ -2540,6 +2552,24 @@
     </ClInclude>
     <ClInclude Include="sight_control_action_inline.h">
       <Filter>AI\AComponents\SightManager\sight_control_action</Filter>
+    </ClInclude>
+    <ClInclude Include="aimers_weapon.h">
+      <Filter>AI\AComponents\SightManager\aimers\weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="aimers_weapon_inline.h">
+      <Filter>AI\AComponents\SightManager\aimers\weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="aimers_bone.h">
+      <Filter>AI\AComponents\SightManager\aimers\bone</Filter>
+    </ClInclude>
+    <ClInclude Include="aimers_bone_inline.h">
+      <Filter>AI\AComponents\SightManager\aimers\bone</Filter>
+    </ClInclude>
+    <ClInclude Include="aimers_base.h">
+      <Filter>AI\AComponents\SightManager\aimers\base</Filter>
+    </ClInclude>
+    <ClInclude Include="aimers_base_inline.h">
+      <Filter>AI\AComponents\SightManager\aimers\base</Filter>
     </ClInclude>
     <ClInclude Include="sound_player.h">
       <Filter>AI\AComponents\SoundPlayer</Filter>
@@ -6421,8 +6451,17 @@
     <ClCompile Include="sight_manager.cpp">
       <Filter>AI\AComponents\SightManager</Filter>
     </ClCompile>
+    <ClCompile Include="sight_manager_target.cpp">
+      <Filter>AI\AComponents\SightManager</Filter>
+    </ClCompile>
     <ClCompile Include="sight_action.cpp">
       <Filter>AI\AComponents\SightManager\sight_action</Filter>
+    </ClCompile>
+    <ClCompile Include="aimers_weapon.cpp">
+      <Filter>AI\AComponents\SightManager\aimers\weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="aimers_base.cpp">
+      <Filter>AI\AComponents\SightManager\aimers\base</Filter>
     </ClCompile>
     <ClCompile Include="sound_player.cpp">
       <Filter>AI\AComponents\SoundPlayer</Filter>

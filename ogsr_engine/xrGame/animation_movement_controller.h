@@ -20,4 +20,11 @@ public:
 			CBlend*	ControlBlend				( ) const { return m_control_blend; }
 			bool	isActive					( ) const ;
 			void	OnFrame						( );
+
+public:
+			bool	IsBlending					( ) const;
+	inline	Fmatrix const& start_transform		( ) const
+	{
+		return		(m_startObjXForm);
+	}
 };
