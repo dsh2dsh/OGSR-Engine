@@ -151,12 +151,12 @@ BOOL motions_value::load( LPCSTR N, IReader *data, vecBones* bones ) {
         D.Load( MP, dwFlags, vers );
 //.             m_mdefs.push_back	(D);
 
-        if ( dwFlags&esmFX )
+        if ( dwFlags & esmFX )
           m_fx.insert( mk_pair( nm, mot_i ) );
         else
           m_cycle.insert( mk_pair( nm, mot_i ) );
 
-        m_motion_map.insert( mk_pair( nm, mot_i ) );
+        m_motion_map.emplace( nm, mot_i );
       }
     }
     MP->close();
@@ -193,7 +193,7 @@ BOOL motions_value::load( LPCSTR N, IReader *data, vecBones* bones ) {
 
     // sanity check
     xr_strlwr( mname );
-    accel_map::iterator I = m_motion_map.find( mname );
+    auto I = m_motion_map.find( mname );
     VERIFY3( I != m_motion_map.end(), "Can't find motion:", mname );
     VERIFY3( I->second == m_idx, "Invalid motion index:", mname );
 
@@ -245,12 +245,11 @@ BOOL motions_value::load( LPCSTR N, IReader *data, vecBones* bones ) {
 
 MotionVec* motions_value::bone_motions(shared_str bone_name)
 {
-	BoneMotionMapIt I = m_motions.find(bone_name);
-//	VERIFY			(I != m_motions.end());
+	auto I = m_motions.find(bone_name);
 	if (I == m_motions.end())
-		return		(0);
+		return 0;
 
-	return			(&(*I).second);
+	return &(*I).second;
 }
 
 u32 motions_value::decReference() {
@@ -306,7 +305,7 @@ motions_value* motions_container::dock( shared_str key, IReader *data, vecBones*
     auto I = container.find( key );
     if ( I == container.end() ) {
       result = xr_new<motions_value>();
-      container.insert( mk_pair( key, result ) );
+      container.emplace( key, result );
     }
     else
       result = I->second;
@@ -320,8 +319,8 @@ motions_value* motions_container::dock( shared_str key, IReader *data, vecBones*
 void motions_container::clean(bool force_destroy)
 {
 	std::scoped_lock<std::mutex> lock( m_mutex );
-	SharedMotionsMapIt it	= container.begin();
-	SharedMotionsMapIt _E	= container.end();
+	autp it	= container.begin();
+	auto _E	= container.end();
 	if (force_destroy){
 		for (; it!=_E; it++){
 			motions_value*	sv = it->second;
@@ -333,8 +332,8 @@ void motions_container::clean(bool force_destroy)
 			motions_value*	sv = it->second;
 			if ( sv->getReference() == 0 )	
 			{
-				SharedMotionsMapIt	i_current	= it;
-				SharedMotionsMapIt	i_next		= ++it;
+				auto i_current = it;
+				auto i_next = ++it;
 				xr_delete			(sv);
 				container.erase		(i_current);
 				it					= i_next;
@@ -347,8 +346,8 @@ void motions_container::clean(bool force_destroy)
 void motions_container::dump()
 {
 	std::scoped_lock<std::mutex> lock( m_mutex );
-	SharedMotionsMapIt it	= container.begin();
-	SharedMotionsMapIt _E	= container.end();
+	auto it	= container.begin();
+	auto _E	= container.end();
 	Log	("--- motion container --- begin:");
 	u32 sz					= sizeof(*this);
 	for (u32 k=0; it!=_E; k++,it++){

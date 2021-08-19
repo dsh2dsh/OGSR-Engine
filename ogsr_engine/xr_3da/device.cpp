@@ -31,7 +31,7 @@ u32 g_dwFPSlimit = 60;
 ENGINE_API int g_3dscopes_fps_factor = 2; // На каком кадре с момента прошлого рендера во второй вьюпорт мы начнём новый (не может быть меньше 2 - каждый второй кадр, чем больше тем более низкий FPS во втором вьюпорте)
 
 BOOL		g_bLoaded = FALSE;
-ref_light	precache_light = 0;
+//static ref_light precache_light{};
 
 BOOL CRenderDevice::Begin	()
 {
@@ -121,8 +121,8 @@ void CRenderDevice::End		(void)
 			//Gamma.Update		();
 			m_pRender->updateGamma();
 
-			if(precache_light) precache_light->set_active	(false);
-			if(precache_light) precache_light.destroy		();
+			//if(precache_light) precache_light->set_active	(false);
+			//if(precache_light) precache_light.destroy		();
 			::Sound->set_master_volume						(1.f);
 //			pApp->destroy_loading_shaders					();
 
@@ -203,14 +203,14 @@ void CRenderDevice::PreCache	(u32 amount, bool b_draw_loadscreen, bool b_wait_us
 #endif
 	// Msg			("* PCACHE: start for %d...",amount);
 	dwPrecacheFrame	= dwPrecacheTotal = amount;
-	if (amount && !precache_light && g_pGameLevel && g_loading_events.empty()) {
+	/*if (amount && !precache_light && g_pGameLevel && g_loading_events.empty()) {
 		precache_light					= ::Render->light_create();
 		precache_light->set_shadow		(false);
 		precache_light->set_position	(vCameraPosition);
 		precache_light->set_color		(255,255,255);
 		precache_light->set_range		(5.0f);
 		precache_light->set_active		(true);
-	}
+	}*/
 
 	if(amount && b_draw_loadscreen && load_screen_renderer.b_registered==false)
 	{
