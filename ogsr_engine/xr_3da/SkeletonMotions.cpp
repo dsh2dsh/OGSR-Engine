@@ -319,7 +319,7 @@ motions_value* motions_container::dock( shared_str key, IReader *data, vecBones*
 void motions_container::clean(bool force_destroy)
 {
 	std::scoped_lock<std::mutex> lock( m_mutex );
-	autp it	= container.begin();
+	auto it	= container.begin();
 	auto _E	= container.end();
 	if (force_destroy){
 		for (; it!=_E; it++){
