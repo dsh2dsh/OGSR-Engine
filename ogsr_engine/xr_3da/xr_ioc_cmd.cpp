@@ -754,5 +754,8 @@ void CCC_Register()
 	extern BOOL debug_destroy;
 	CMD4(CCC_Integer, "debug_destroy", &debug_destroy, FALSE, TRUE );
 #endif
+
+	extern float psShedulerMax;
+	CMD4( CCC_Float, "rs_sheduler_max", &psShedulerMax, 3.f, 66.f );
 };
  
