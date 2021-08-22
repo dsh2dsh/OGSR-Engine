@@ -32,9 +32,9 @@ TEMPLATE_SPECIALIZATION
 IC	CPlanner::CActionPlanner			()
 {
 	m_initialized			= false;
-#ifdef LOG_ACTION
+//#ifdef LOG_ACTION
 	m_use_log				= false;
-#endif
+//#endif
 }
 
 TEMPLATE_SPECIALIZATION
@@ -64,71 +64,62 @@ IC	_object_type &CPlanner::object		() const
 TEMPLATE_SPECIALIZATION
 void CPlanner::update				()
 {
-	__try {
+	solve();
 
-		solve();
-
-#ifdef LOG_ACTION
-		// printing solution
-		if (m_use_log) {
-			if (m_solution_changed) {
-				show_current_world_state();
-				show_target_world_state();
-				Msg("%6d : Solution for object %s [%d vertices searched]", Device.dwTimeGlobal, object_name(), ai().graph_engine().solver_algorithm().data_storage().get_visited_node_count());
-				for (int i = 0; i < (int)solution().size(); ++i)
-					Msg("%s", action2string(solution()[i]));
-			}
-		}
-#endif
-
-#ifdef LOG_ACTION
-		if (m_failed) {
-			// printing current world state
-			show();
-
-			Msg("! ERROR : there is no action sequence, which can transfer current world state to the target one");
-			Msg("Time : %6d", Device.dwTimeGlobal);
-			Msg("Object : %s", object_name());
-
+//#ifdef LOG_ACTION
+	// printing solution
+	if (m_use_log) {
+		if (m_solution_changed) {
 			show_current_world_state();
 			show_target_world_state();
-			//		VERIFY2						(!m_failed,"Problem solver couldn't build a valid path - verify your conditions, effects and goals!");
-		}
-#endif
-
-		THROW(!solution().empty());
-
-		if ( solution().empty() ) {
-		  if ( initialized() ) {
-		    Msg( "! [CPlanner::update]: %s has solution().empty()", m_object->cName().c_str() );
-                    if ( current_action_id() != _action_id_type(-1) ) {
-                      current_action().finalize();
-                      m_current_action_id = _action_id_type(-1);
-                    }
-		    m_initialized = false;
-		  }
-		}
-		else {
-		  if ( initialized() ) {
-			if (current_action_id() != solution().front()) {
-				current_action().finalize();
-				m_current_action_id = solution().front();
-				current_action().initialize();
-			}
-		  }
-		  else {
-			m_initialized = true;
-			m_current_action_id = solution().front();
-			current_action().initialize();
-		  }
-		  current_action().execute();
+			Msg("%6d : Solution for object %s [%d vertices searched]", Device.dwTimeGlobal, object_name(), ai().graph_engine().solver_algorithm().data_storage().get_visited_node_count());
+			for (int i = 0; i < (int)solution().size(); ++i)
+				Msg("%s", action2string(solution()[i]));
 		}
 	}
-	//KRodin: чтоб не вылетать при вызове апдейта из скрипта, тут ловим ошибку, шедулер в любом случае повиснет - и с зависшим неписем будет разбираться уже специальный скрипт.
-	__except (ExceptStackTrace("[CPlanner::update] stack_trace:\n")) {
-#ifdef LOG_ACTION
-		Msg("!![CPlanner::update] Fatal Error in object: [%s]", object_name());
-#endif
+//#endif
+
+//#ifdef LOG_ACTION
+	if (m_failed) {
+		// printing current world state
+		show();
+
+		Msg("! ERROR : there is no action sequence, which can transfer current world state to the target one");
+		Msg("Time : %6d", Device.dwTimeGlobal);
+		Msg("Object : %s", object_name());
+
+		show_current_world_state();
+		show_target_world_state();
+		//		VERIFY2						(!m_failed,"Problem solver couldn't build a valid path - verify your conditions, effects and goals!");
+	}
+//#endif
+
+	THROW(!solution().empty());
+
+	if ( solution().empty() ) {
+	  if ( initialized() ) {
+	    Msg( "! [CPlanner::update]: %s has solution().empty()", m_object->cName().c_str() );
+	    if ( current_action_id() != _action_id_type(-1) ) {
+	      current_action().finalize();
+	      m_current_action_id = _action_id_type(-1);
+            }
+	    m_initialized = false;
+	  }
+	}
+	else {
+	  if ( initialized() ) {
+	    if (current_action_id() != solution().front()) {
+	      current_action().finalize();
+	      m_current_action_id = solution().front();
+	      current_action().initialize();
+	    }
+	  }
+	  else {
+	    m_initialized = true;
+	    m_current_action_id = solution().front();
+	    current_action().initialize();
+	  }
+	  current_action().execute();
 	}
 }
 
@@ -175,7 +166,7 @@ IC	void CPlanner::add_effect		(_world_operator *action, _condition_type conditio
 	action->add_effect		(CWorldProperty(condition_id,condition_value));
 }
 
-#ifdef LOG_ACTION
+//#ifdef LOG_ACTION
 TEMPLATE_SPECIALIZATION
 LPCSTR CPlanner::action2string		(const _action_id_type &action_id)
 {
@@ -193,16 +184,16 @@ LPCSTR CPlanner::object_name		() const
 {
 	return			(*m_object->cName());
 }
-#endif
+//#endif
 
 TEMPLATE_SPECIALIZATION
 IC	void CPlanner::add_operator		(const _edge_type &operator_id,	_operator_ptr _operator)
 {
 	inherited::add_operator	(operator_id,_operator);
 	_operator->setup		(m_object,&m_storage);
-#ifdef LOG_ACTION
+//#ifdef LOG_ACTION
 	_operator->set_use_log	(m_use_log);
-#endif
+//#endif
 }
 
 TEMPLATE_SPECIALIZATION
@@ -212,7 +203,7 @@ IC	void CPlanner::add_evaluator	(const _condition_type &condition_id, _condition
 	evaluator->setup		(m_object,&m_storage);
 }
 
-#ifdef LOG_ACTION
+//#ifdef LOG_ACTION
 TEMPLATE_SPECIALIZATION
 IC	void CPlanner::set_use_log		(bool value)
 {
@@ -292,7 +283,7 @@ IC	void CPlanner::show				(LPCSTR offset)
 		}
 	}
 }
-#endif
+//#endif
 
 TEMPLATE_SPECIALIZATION
 IC	void CPlanner::save	(NET_Packet &packet)

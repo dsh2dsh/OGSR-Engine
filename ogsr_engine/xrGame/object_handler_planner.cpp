@@ -109,7 +109,7 @@ void CObjectHandlerPlanner::set_goal	(MonsterSpace::EObjectAction object_action,
 	}
 }
 
-#ifdef LOG_ACTION
+//#ifdef LOG_ACTION
 LPCSTR CObjectHandlerPlanner::action2string(const _action_id_type &id)
 {
 	LPSTR S = m_temp_string;
@@ -212,7 +212,7 @@ LPCSTR CObjectHandlerPlanner::property2string(const _condition_type &id)
 	}
 	return		(S);
 }
-#endif
+//#endif
 
 
 void CObjectHandlerPlanner::remove_evaluators( CObject *object ) {

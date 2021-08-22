@@ -35,7 +35,7 @@ CStalkerPlanner::~CStalkerPlanner	()
 {
 }
 
-#ifdef LOG_ACTION
+//#ifdef LOG_ACTION
 LPCSTR CStalkerPlanner::action2string	(const _action_id_type &action_id)
 {
 	return					(inherited::action2string(action_id));
@@ -51,7 +51,7 @@ LPCSTR CStalkerPlanner::object_name		() const
 	VERIFY					(m_object);
 	return					(*m_object->cName());
 }
-#endif
+//#endif
 
 void CStalkerPlanner::setup			(CAI_Stalker *object)
 {

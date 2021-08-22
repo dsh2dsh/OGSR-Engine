@@ -31,11 +31,11 @@ private:
 protected:
 			void			add_evaluators		();
 			void			add_actions			();
-#ifdef LOG_ACTION
+//#ifdef LOG_ACTION
 public:
 	virtual LPCSTR			action2string		(const _action_id_type &action_id);
 	virtual LPCSTR			property2string		(const _condition_type &property_id);
-#endif
+//#endif
 
 public:
 							CStalkerPlanner		();
@@ -47,9 +47,9 @@ public:
 	IC void active( bool );
 	IC bool active() const;
 
-#ifdef LOG_ACTION
+//#ifdef LOG_ACTION
 	virtual	LPCSTR			object_name			() const;
-#endif
+//#endif
 };
 
 #include "stalker_planner_inline.h"

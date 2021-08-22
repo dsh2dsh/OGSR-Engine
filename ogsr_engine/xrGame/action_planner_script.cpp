@@ -54,8 +54,10 @@ void CActionPlanner<CScriptGameObject>::script_register(lua_State *L)
 			.def("set_goal_world_state",		&set_goal_world_state)
 			//KRodin: Это теперь не нужно, т.к. планировщик НПС теперь принудительно останавливается при их смерти.
 			//.def("clear",						&CScriptActionPlanner::clear)
-#ifdef LOG_ACTION
+//#ifdef LOG_ACTION
 			.def("show",						&CScriptActionPlanner::show)
-#endif
+			.def( "action2string",   &CScriptActionPlanner::action2string )
+			.def( "property2string", &CScriptActionPlanner::property2string )
+//#endif
 	];
 }
