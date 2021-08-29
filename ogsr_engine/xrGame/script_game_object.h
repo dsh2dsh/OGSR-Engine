@@ -230,6 +230,7 @@ public:
 			LPCSTR				WhoHitName			();
 			LPCSTR				WhoHitSectionName	();
 			CScriptGameObject* WhoHitWpn();
+			CScriptGameObject* WhoHit();
 
 			void				ChangeTeam			(u8 team, u8 squad, u8 group);
 
