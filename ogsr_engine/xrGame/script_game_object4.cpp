@@ -899,24 +899,21 @@ bool CScriptGameObject::can_fire_to_enemy( const CScriptGameObject* obj, u32 fir
   auto enemy = smart_cast<CEntityAlive*>( &(obj->object()) );
   ASSERT_FMT( enemy, "[%s]: %s not a CEntityAlive", __FUNCTION__, obj->cName().c_str() );
 
-  bool can_kill = stalker->can_kill_enemy( enemy );
-  bool vis = stalker->memory().visual().visible_right_now( enemy );
+  bool vis = stalker->memory().visual().visible_now( enemy );
   if ( !vis && fire_make_sense_interval ) {
     u32 last_time_seen = stalker->memory().visual().visible_object_time_last_seen( enemy );
-    if ( last_time_seen != u32(-1) && last_time_seen <= Device.dwTimeGlobal && Device.dwTimeGlobal <= last_time_seen + fire_make_sense_interval ) {
-      MemorySpace::CVisibleObject* obj = stalker->memory().visual().visible_object( enemy );
-      if ( obj && obj->m_object_params.m_position.distance_to( enemy->Position() ) < 5 ) {
-        vis = true;
-      }
-    }
+    if ( last_time_seen != u32(-1) && last_time_seen + fire_make_sense_interval >= Device.dwTimeGlobal )
+      vis = true;
   }
-  if ( ( vis || can_kill ) && stalker->can_fire_to_enemy( enemy ) ) {
-    if ( can_kill ) return true; // на линии огня
-    float pick_dist = stalker->pick_distance();
-    if ( pick_dist < 2.5f ) return false;
-    float enemy_dist = stalker->Position().distance_to( enemy->Position() );
-    if ( pick_dist < enemy_dist - pick_dist ) return false;
-    return true;
+  if ( stalker->can_fire_to_enemy( enemy ) ) {
+    if ( stalker->can_kill_enemy( enemy ) )
+      return true; // на линии огня
+    if ( vis ) {
+      float pick_dist  = stalker->pick_distance();
+      float enemy_dist = stalker->Position().distance_to( enemy->Position() );
+      if ( pick_dist >= 2.5f && pick_dist >= enemy_dist - pick_dist )
+        return true;
+    }
   }
 
   return false;
