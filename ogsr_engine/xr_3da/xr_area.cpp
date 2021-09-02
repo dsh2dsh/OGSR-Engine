@@ -9,14 +9,6 @@
 #include "GameFont.h"
 
 
-//----------------------------------------------------------------------
-// Class	: CObjectSpaceData
-// Purpose	: stores thread sensitive data
-//----------------------------------------------------------------------
-thread_local xrXRC CObjectSpaceData::xrc("object space");
-thread_local collide::rq_results CObjectSpaceData::r_temp;
-thread_local xr_vector<ISpatial*> CObjectSpaceData::r_spatial;
-
 using namespace	collide;
 
 extern	BOOL g_bLoaded;
@@ -146,6 +138,7 @@ int CObjectSpace::GetNearest		( xr_vector<ISpatial*>& q_spatial, xr_vector<CObje
 //----------------------------------------------------------------------
 IC int	CObjectSpace::GetNearest	( xr_vector<CObject*>&	q_nearest, const Fvector &point, float range, CObject* ignore_object )
 {
+	xr_vector<ISpatial*> r_spatial;
 	return							(
 		GetNearest(
 			r_spatial,

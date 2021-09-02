@@ -20,14 +20,15 @@ using namespace	collide;
 BOOL CObjectSpace::RayTest	( const Fvector &start, const Fvector &dir, float range, collide::rq_target tgt, collide::ray_cache* cache, CObject* ignore_object)
 {
 	BOOL	_ret	= _RayTest(start,dir,range,tgt,cache,ignore_object);
-	r_spatial.clear	();
 	return			_ret;
 }
 BOOL CObjectSpace::_RayTest	( const Fvector &start, const Fvector &dir, float range, collide::rq_target tgt, collide::ray_cache* cache, CObject* ignore_object)
 {
 	VERIFY					(_abs(dir.magnitude()-1)<EPS);
-	r_temp.r_clear			();
+	collide::rq_results r_temp;
+	xr_vector<ISpatial*> r_spatial;
 
+	xrXRC xrc;
 	xrc.ray_options			(CDB::OPT_ONLYFIRST);
 	collide::ray_defs	Q	(start,dir,range,CDB::OPT_ONLYFIRST,tgt);
 
@@ -95,15 +96,16 @@ BOOL CObjectSpace::_RayTest	( const Fvector &start, const Fvector &dir, float ra
 BOOL CObjectSpace::RayPick	( const Fvector &start, const Fvector &dir, float range, rq_target tgt, rq_result& R, CObject* ignore_object)
 {
 	BOOL	_res	= _RayPick(start,dir,range,tgt,R,ignore_object);
-	r_spatial.clear	();
 	return	_res;
 }
 BOOL CObjectSpace::_RayPick	( const Fvector &start, const Fvector &dir, float range, rq_target tgt, rq_result& R, CObject* ignore_object)
 {
-	r_temp.r_clear			();
+	collide::rq_results r_temp;
+	xr_vector<ISpatial*> r_spatial;
 	R.O		= 0; R.range = range; R.element = -1;
 	// static test
 	if (tgt&rqtStatic){ 
+		xrXRC xrc;
 		xrc.ray_options		(CDB::OPT_ONLYNEAREST | CDB::OPT_CULL);
 		xrc.ray_query		(&Static,start,dir,range);
 		if (xrc.r_count())  R.set_if_less(xrc.r_begin());
@@ -150,14 +152,14 @@ BOOL CObjectSpace::_RayPick	( const Fvector &start, const Fvector &dir, float ra
 BOOL CObjectSpace::RayQuery		(collide::rq_results& dest, const collide::ray_defs& R, collide::rq_callback* CB, LPVOID user_data, collide::test_callback* tb, CObject* ignore_object)
 {
 	BOOL						_res = _RayQuery2(dest,R,CB,user_data,tb,ignore_object);
-	r_spatial.clear_not_free	();
 	return						(_res);
 }
 BOOL CObjectSpace::_RayQuery2	(collide::rq_results& r_dest, const collide::ray_defs& R, collide::rq_callback* CB, LPVOID user_data, collide::test_callback* tb, CObject* ignore_object)
 {
 	// initialize query
+	collide::rq_results r_temp;
+	xr_vector<ISpatial*> r_spatial;
 	r_dest.r_clear		();
-	r_temp.r_clear		();
 
 	rq_target	s_mask	=	rqtStatic;
 	rq_target	d_mask	=	rq_target(	((R.tgt&rqtObject)	?rqtObject:rqtNone		)|
@@ -167,6 +169,7 @@ BOOL CObjectSpace::_RayQuery2	(collide::rq_results& r_dest, const collide::ray_d
 
 	// Test static
 	if (R.tgt&s_mask){ 
+		xrXRC xrc;
 		xrc.ray_options	(R.flags);
 		xrc.ray_query	(&Static,R.start,R.dir,R.range);
 		if (xrc.r_count()){	
@@ -212,8 +215,9 @@ BOOL CObjectSpace::_RayQuery	(collide::rq_results& r_dest, const collide::ray_de
 		Debug.fatal			(DEBUG_INFO,"Invalid RayQuery range passed: %f.",R.range);
 #endif
 	// initialize query
+	collide::rq_results r_temp;
+	xr_vector<ISpatial*> r_spatial;
 	r_dest.r_clear			();
-	r_temp.r_clear			();
 
 	Flags32		sd_test;	sd_test.assign	(R.tgt);
 	rq_target	next_test	= R.tgt;
@@ -233,6 +237,7 @@ BOOL CObjectSpace::_RayQuery	(collide::rq_results& r_dest, const collide::ray_de
 			s_res.set		(0,s_rd.range,-1);
 			// Test static model
 			if (s_rd.range>EPS){
+				xrXRC xrc;
 				xrc.ray_options	(s_rd.flags);
 				xrc.ray_query	(&Static,s_rd.start,s_rd.dir,s_rd.range);
 				if (xrc.r_count()){	

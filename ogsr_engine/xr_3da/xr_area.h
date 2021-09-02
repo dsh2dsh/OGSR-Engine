@@ -12,14 +12,7 @@ class ENGINE_API	CObject;
 //-----------------------------------------------------------------------------------------------------------
 //Space Area
 //-----------------------------------------------------------------------------------------------------------
-struct CObjectSpaceData
-{
-    thread_local static xrXRC xrc;
-    thread_local static collide::rq_results r_temp;
-    thread_local static xr_vector<ISpatial*> r_spatial;
-};
-
-class ENGINE_API CObjectSpace : protected CObjectSpaceData {
+class ENGINE_API CObjectSpace {
 	// Debug
 	CDB::MODEL							Static;
 	Fbox								m_BoundingVolume;
