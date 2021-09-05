@@ -15,7 +15,7 @@ class CMonsterCorpseManager {
 
 public:
 						CMonsterCorpseManager	(); 
-						~CMonsterCorpseManager() = default;
+						~CMonsterCorpseManager	();
 	void				init_external			(CBaseMonster *M);
 
 	void				update					();

@@ -27,8 +27,8 @@ class CMonsterMorale {
 	float			m_morale;
 
 public:
-	CMonsterMorale() = default;
-	~CMonsterMorale() = default;
+				CMonsterMorale		(){}
+				~CMonsterMorale		(){}
 	
 		void	init_external		(CBaseMonster *obj);
 		void	load				(LPCSTR section);

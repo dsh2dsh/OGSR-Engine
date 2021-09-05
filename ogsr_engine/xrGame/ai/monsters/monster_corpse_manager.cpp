@@ -10,6 +10,10 @@ CMonsterCorpseManager::CMonsterCorpseManager()
 	forced		= false;
 }
 
+CMonsterCorpseManager::~CMonsterCorpseManager()
+{
+
+}
 void CMonsterCorpseManager::init_external(CBaseMonster *M)
 {
 	monster = M;

@@ -6,7 +6,7 @@ class dx10StateManager
 {
 public:
 	dx10StateManager();
-	~dx10StateManager() = default;
+	~dx10StateManager();
 
 	//	Set all states to default
 	void	Reset();

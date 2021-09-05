@@ -5,7 +5,7 @@
 		public:
 
 		//! Empty constructor
-		Point() = default;
+		IC				Point()														{}
 		//! Constructor from floats
 		IC				Point(float _x, float _y, float _z) : x(_x), y(_y), z(_z)	{}
 		//! Constructor from array
@@ -15,7 +15,7 @@
 		//! Copy constructor
 		IC				Point(const Point& p) : x(p.x), y(p.y), z(p.z)				{}
 		//! Destructor
-		~Point() = default;
+		IC				~Point()													{}
 
 		//! Returns MIN(x, y, z);
 		//IC	float		Min()								const		{ return MIN(x, MIN(y, z));												}

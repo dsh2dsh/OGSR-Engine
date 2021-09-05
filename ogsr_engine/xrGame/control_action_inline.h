@@ -8,6 +8,10 @@
 
 #pragma once
 
+IC	CControlAction::CControlAction		()
+{
+}
+
 IC	void CControlAction::set_object		(CAI_Stalker *object)
 {
 	VERIFY				(object);

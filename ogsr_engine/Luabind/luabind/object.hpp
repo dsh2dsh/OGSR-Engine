@@ -496,7 +496,7 @@ namespace luabind
 			{
 			}
 
-			~array_iterator() = default;
+			~array_iterator() {}
 
 			array_iterator& operator=(const array_iterator& rhs)
 			{
@@ -1055,7 +1055,7 @@ private:
 
 			struct assign_into
 			{
-				assign_into() = default;
+				assign_into() {}
 
 				template<class T>
 				assign_into(tuple_object_ref& to, const T& val)

@@ -571,7 +571,10 @@ class CSE_InventoryBoxAbstract {
 protected:
 	bool			m_opened;
 public:
-	CSE_InventoryBoxAbstract() = default;
+
+	CSE_InventoryBoxAbstract()
+	{
+	}
 };
 
 class CSE_InventoryBox :public CSE_ALifeDynamicObjectVisual, public CSE_InventoryBoxAbstract

@@ -60,6 +60,11 @@ occRasterizer::occRasterizer()
 	
 }
 
+occRasterizer::~occRasterizer	()
+{
+	
+}
+
 void occRasterizer::clear()
 {
 	for (u32 mit = 0; mit < occ_dim; mit++)

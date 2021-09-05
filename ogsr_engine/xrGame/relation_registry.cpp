@@ -19,6 +19,10 @@ SRelation::SRelation()
 	m_iGoodwill = NEUTRAL_GOODWILL;
 }
 
+SRelation::~SRelation()
+{
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 void RELATION_DATA::clear	()

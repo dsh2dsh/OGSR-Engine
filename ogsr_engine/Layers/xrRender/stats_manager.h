@@ -13,7 +13,7 @@ class stats_manager
 {
 
 public:
-	~stats_manager() = default;
+	~stats_manager ();
  	void increment_stats		( u32 size, enum_stats_buffer_type type, _D3DPOOL location );
 	void decrement_stats		( u32 size, enum_stats_buffer_type type, _D3DPOOL location );
 
