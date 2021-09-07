@@ -70,6 +70,7 @@ protected:
 public:
 	bool						m_use_log;
 	string64					m_temp_string;
+	bool						m_log_failed;
 
 public:
 	virtual	void				set_use_log				(bool value);

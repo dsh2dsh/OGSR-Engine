@@ -34,6 +34,7 @@ IC	CPlanner::CActionPlanner			()
 	m_initialized			= false;
 //#ifdef LOG_ACTION
 	m_use_log				= false;
+	m_log_failed = true;
 //#endif
 }
 
@@ -80,7 +81,7 @@ void CPlanner::update				()
 //#endif
 
 //#ifdef LOG_ACTION
-	if (m_failed) {
+	if ( m_failed && m_log_failed && psAI_Flags.test( aiGOAP ) ) {
 		// printing current world state
 		show();
 

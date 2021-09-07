@@ -1215,7 +1215,11 @@ void CCC_RegisterCommands()
 	CMD3(CCC_Mask,				"ai_dbg_funcs",			&psAI_Flags,	aiFuncs);
 	CMD3(CCC_Mask,				"ai_dbg_alife",			&psAI_Flags,	aiALife);
 	CMD3(CCC_Mask,				"ai_dbg_lua",			&psAI_Flags,	aiLua);
+#endif
+
 	CMD3(CCC_Mask,				"ai_dbg_goap",			&psAI_Flags,	aiGOAP);
+
+#ifdef DEBUG
 	CMD3(CCC_Mask,				"ai_dbg_goap_script",	&psAI_Flags,	aiGOAPScript);
 	CMD3(CCC_Mask,				"ai_dbg_goap_object",	&psAI_Flags,	aiGOAPObject);
 	CMD3(CCC_Mask,				"ai_dbg_cover",			&psAI_Flags,	aiCover);

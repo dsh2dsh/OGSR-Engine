@@ -16,7 +16,9 @@
 #	define aiFuncs						(1<<4)
 #	define aiALife						(1<<5)
 #	define aiLua						(1<<6)
+#endif // DEBUG
 #	define aiGOAP						(1<<7)
+#ifdef DEBUG
 #	define aiCover						(1<<8)
 #	define aiAnimation					(1<<9)
 #	define aiVision						(1<<10)
@@ -37,8 +39,8 @@
 
 #ifndef MASTER_GOLD
 #	define aiIgnoreActor				(1<<24)
-	extern Flags32						psAI_Flags;
 #endif // MASTER_GOLD
+	extern Flags32						psAI_Flags;
 
 #ifdef DEBUG
 #	define aiDrawVisibilityRays			(1<<26)
