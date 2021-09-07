@@ -534,7 +534,9 @@ void CLevel::OnFrame	()
 
 int psLUA_GCSTEP = 100; //10;
 void CLevel::script_gc() {
+  lua_gc( ai().script_engine().lua(), LUA_GCRESTART, 0 );
   lua_gc( ai().script_engine().lua(), LUA_GCSTEP, psLUA_GCSTEP );
+  lua_gc( ai().script_engine().lua(), LUA_GCSTOP, 0 );
   if ( !on_before_script_gc_callback.empty() && Device.dwPrecacheFrame == 0 && !Device.Paused() ) {
     luabind::functor<void> funct;
     if ( ai().script_engine().functor( on_before_script_gc_callback.c_str(), funct ) )
