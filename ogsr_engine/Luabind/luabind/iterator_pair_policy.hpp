@@ -45,12 +45,12 @@ namespace luabind { namespace detail
 		template<typename T>
 		void apply(lua_State* L, T& c)
 		{
-			auto it_begin = c.begin();
+			auto it_begin = c.crbegin();
 			using state_t = iterator_pair_state<decltype( it_begin )>;
 
 			// note that this should be destructed, for now.. just hope that iterator is a pod
 			void* iter = lua_newuserdata(L, sizeof(state_t));
-			new (iter) state_t(std::move(it_begin), c.end());
+			new (iter) state_t(std::move(it_begin), c.crend());
 			lua_pushcclosure(L, state_t::step, 1);
 		}
 	};
