@@ -8,6 +8,7 @@
 #pragma warning(disable:4995)
 #include <io.h>
 #pragma warning(pop)
+#include <atomic>
 
 #include "LocatorAPI_defs.h"
 
@@ -45,7 +46,7 @@ private:
 	DEFINE_SET_PRED				(file,files_set,files_it,file_pred);
     DEFINE_VECTOR				(archive,archives_vec,archives_it);
 
-    int							m_iLockRescan	; 
+    std::atomic<int> m_iLockRescan; 
     void						rescan_path		(LPCSTR full_path, BOOL bRecurse);
     void						check_pathes	();
 
