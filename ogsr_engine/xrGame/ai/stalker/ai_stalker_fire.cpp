@@ -216,6 +216,7 @@ void			CAI_Stalker::Hit					(SHit* pHDS)
 			HDS.power				= 1000.f;
 	}
 
+	inherited::Hit( &HDS );
 	if (g_Alive()) {
 		bool						already_critically_wounded = critically_wounded();
 
@@ -280,8 +281,6 @@ void			CAI_Stalker::Hit					(SHit* pHDS)
 			}
 		}
 	}
-
-	inherited::Hit					(&HDS);
 }
 
 void CAI_Stalker::HitSignal( float amount, Fvector& vLocalDir, CObject* who, s16 element, SHit* pHDS )
