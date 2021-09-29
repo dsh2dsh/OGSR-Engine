@@ -1733,7 +1733,7 @@ void CCar::OnEvent(NET_Packet& P, u16 type)
 			CObject* O	= Level().Objects.net_Find	(id);
 
 			if (!O) {
-				Msg("! [%s] Error: No object to reject/sell [%u]", __FUNCTION__, id);
+				MsgIfDbg( "! [%s] Error: No object to reject/sell [%u] from %s[%u]", __FUNCTION__, id, cName().c_str(), ID() );
 				break;
 			}
 

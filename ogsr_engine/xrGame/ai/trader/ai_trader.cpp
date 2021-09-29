@@ -180,7 +180,7 @@ void CAI_Trader::OnEvent		(NET_Packet& P, u16 type)
 				Obj = Level().Objects.net_Find	(id);
 
 				if (!Obj) {
-					Msg("! [%s] Error: No object to reject/sell [%u]", __FUNCTION__, id);
+					MsgIfDbg( "! [%s] Error: No object to reject/sell [%u] from %s[%u]", __FUNCTION__, id, cName().c_str(), ID() );
 					break;
 				}
 

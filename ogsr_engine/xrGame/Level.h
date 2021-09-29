@@ -311,6 +311,7 @@ public:
 	virtual void			OnSessionTerminate			(LPCSTR reason);
 	virtual void OnChangeCurrentWeather( LPCSTR sect );
 	virtual void OnDestroyObject( u16 id );
+	bool MaybeJustDestroyedObject( u16 id );
 
 	DECLARE_SCRIPT_REGISTER_FUNCTION
 };
