@@ -113,7 +113,7 @@ void IGame_Persistent::OnGameStart()
 
 	// prefetch game objects & models
 	float	p_time		=			1000.f*Device.GetTimerGlobal()->GetElapsed_sec();
-	u32	mem_0			=			Memory.mem_usage()	;
+	size_t	mem_0			=			Memory.mem_usage()	;
 
 	Log( "Loading objects..." );
 	ObjectPool.prefetch();
@@ -122,7 +122,7 @@ void IGame_Persistent::OnGameStart()
 	Device.m_pRender->ResourcesDeferredUpload(); //Device.Resources->DeferredUpload	();
 
 	p_time				=			1000.f*Device.GetTimerGlobal()->GetElapsed_sec() - p_time;
-	u32		p_mem		=			Memory.mem_usage() - mem_0	;
+	size_t		p_mem		=			Memory.mem_usage() - mem_0	;
 
 	Msg					("* [prefetch] time:    %d ms",	iFloor(p_time));
 	Msg					("* [prefetch] memory:  %dKb",	p_mem/1024);

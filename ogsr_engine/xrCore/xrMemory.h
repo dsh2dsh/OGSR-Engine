@@ -8,7 +8,7 @@ public:
 
   u32 stat_calls;
 
-  u32 mem_usage( u32* pBlocksUsed = nullptr, u32* pBlocksFree = nullptr );
+  size_t mem_usage();
   void mem_compact();
 
   void* mem_alloc( size_t size );

@@ -497,7 +497,7 @@ void CLocatorAPI::_initialize	(u32 flags, LPCSTR target_folder, LPCSTR fs_name)
 	CTimer t;
 	t.Start();
 	Log				("Initializing File System...");
-	u32	M1			= Memory.mem_usage();
+	size_t	M1			= Memory.mem_usage();
 
 	m_Flags.set		(flags,TRUE);
 
@@ -657,7 +657,7 @@ void CLocatorAPI::_initialize	(u32 flags, LPCSTR target_folder, LPCSTR fs_name)
 		ProcessExternalArch();
 #endif
 
-	u32	M2			= Memory.mem_usage();
+	size_t	M2			= Memory.mem_usage();
 	Msg				("FS: %d files cached, %dKb memory used.",files.size(),(M2-M1)/1024);
 
 	m_Flags.set		(flReady,TRUE);

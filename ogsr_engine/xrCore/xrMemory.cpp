@@ -137,8 +137,13 @@ size_t mem_usage_impl( u32* pBlocksUsed, u32* pBlocksFree ) {
   return total;
 }
 
-u32 xrMemory::mem_usage( u32* pBlocksUsed, u32* pBlocksFree ) {
-  return u32( mem_usage_impl( pBlocksUsed, pBlocksFree ) );
+size_t xrMemory::mem_usage() {
+  PROCESS_MEMORY_COUNTERS pmc = {};
+  if ( HANDLE h = OpenProcess( PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, GetCurrentProcessId() ) ) {
+    GetProcessMemoryInfo( h, &pmc, sizeof( pmc ) );
+    CloseHandle(h);
+  }
+  return pmc.PagefileUsage;
 }
 
 
