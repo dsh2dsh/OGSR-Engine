@@ -37,7 +37,7 @@ private:
 	struct	archive
 	{
 		shared_str				path;
-		void					*hSrcFile, *hSrcMap;
+		void					*hSrcFile;
 		u32						size;
 	};
 	DEFINE_MAP_PRED				(LPCSTR,FS_Path*,PathMap,PathPairIt,pred_str);
