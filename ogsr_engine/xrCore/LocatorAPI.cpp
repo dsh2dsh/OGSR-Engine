@@ -295,7 +295,7 @@ void CLocatorAPI::ProcessArchive(LPCSTR _path, LPCSTR base_path)
 	auto& A = archives.emplace_back();
 	A.path					= path;
 	// Open the file
-	A.hSrcFile		= CreateFile		(*path, GENERIC_READ, FILE_SHARE_READ|FILE_SHARE_WRITE, 0, OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, 0);
+	A.hSrcFile		= CreateFile		(*path, GENERIC_READ, FILE_SHARE_READ|FILE_SHARE_WRITE, 0, OPEN_EXISTING, FILE_FLAG_RANDOM_ACCESS, 0);
 	R_ASSERT							(A.hSrcFile!=INVALID_HANDLE_VALUE);
 	A.size			= GetFileSize		(A.hSrcFile,0);
 	R_ASSERT							(A.size>0);
