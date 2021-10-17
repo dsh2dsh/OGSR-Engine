@@ -185,7 +185,7 @@ SVS*	CResourceManager::_CreateVS		(LPCSTR _name)
 		//Msg("compiling shader: [%s], c_target: [%s], c_entry: [%s]", name, c_target, c_entry);
 		HRESULT const _hr		= ::Render->shader_compile( name, (DWORD const*)data, size, c_entry, c_target, D3DXSHADER_DEBUG | D3DXSHADER_PACKMATRIX_ROWMAJOR, (void*&)_vs);
 
-		R_ASSERT(
+		CHECK_OR_EXIT			(
 			!FAILED(_hr),
 			make_string("Your video card doesn't meet game requirements.\n\nTry to lower game settings.")
 		);
@@ -252,7 +252,7 @@ SPS*	CResourceManager::_CreatePS			(LPCSTR name)
 		//Msg("compiling shader: [%s], c_target: [%s], c_entry: [%s]", name, c_target, c_entry);
 		HRESULT const _hr		= ::Render->shader_compile( name, (DWORD const*)data, size, c_entry, c_target, D3DXSHADER_DEBUG | D3DXSHADER_PACKMATRIX_ROWMAJOR, (void*&)_ps);
 
-		R_ASSERT(
+		CHECK_OR_EXIT		(
 			!FAILED(_hr),
 			make_string("Your video card doesn't meet game requirements.\n\nTry to lower game settings.")
 		);
@@ -747,7 +747,7 @@ SVS*	CResourceManager::_CreateVS		(LPCSTR _name)
 		_RELEASE	(pErrorBuf);
 		pConstants	= NULL;
 
-		R_ASSERT(
+		CHECK_OR_EXIT		(
 			!FAILED(_hr),
 			make_string("Your video card doesn't meet game requirements.\n\nTry to lower game settings.")
 		);
@@ -852,7 +852,7 @@ SPS*	CResourceManager::_CreatePS			(LPCSTR name)
 		_RELEASE		(pErrorBuf);
 		pConstants		= NULL;
 
-		R_ASSERT(
+		CHECK_OR_EXIT		(
 			!FAILED(_hr),
 			make_string("Your video card doesn't meet game requirements.\n\nTry to lower game settings.")
 		);
