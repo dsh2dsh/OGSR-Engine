@@ -69,26 +69,23 @@ void VerifyPath(const std::string_view path) //Проверяет путь до 
 	(void)e;
 }
 
-void*  FileDownload(LPCSTR fn, u32* pdwSize)
-{
-	int		hFile;
-	u32		size;
-	void*	buf;
 
-	hFile	= _open(fn,O_RDONLY|O_BINARY|O_SEQUENTIAL,_S_IREAD);
-	if (hFile<=0)	{
-		Sleep	(1);
-		hFile	= _open(fn,O_RDONLY|O_BINARY|O_SEQUENTIAL,_S_IREAD);
-	}
-	R_ASSERT2(hFile>0,fn);
-	size	= _filelength(hFile);
+void* FileDownload( LPCSTR fn, u32* pdwSize ) {
+  HANDLE hFile = CreateFile( fn, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, 0 );
+  R_ASSERT3( hFile != INVALID_HANDLE_VALUE, fn, Debug.error2string( GetLastError() ) );
 
-	buf		= Memory.mem_alloc	(size);
-	int r_bytes	= _read	(hFile,buf,size);
-	R_ASSERT3(r_bytes==(int)size,"Can't read file data:",fn);
-	_close	(hFile);
-	if (pdwSize) *pdwSize = size;
-	return buf;
+  u32 size = (int)GetFileSize( hFile, NULL );
+  R_ASSERT3( size, fn, Debug.error2string( GetLastError() ) );
+
+  void* buf = Memory.mem_alloc( size );
+  DWORD read_byte;
+  bool res  = ReadFile( hFile, buf, size, &read_byte, NULL ); 
+  R_ASSERT3( res && read_byte == size, "Can't read file data:", fn );
+  CloseHandle( hFile );
+
+  if ( pdwSize ) *pdwSize = size;
+
+  return buf;
 }
 
 
