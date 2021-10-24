@@ -101,7 +101,7 @@ void CMemoryWriter::w	(const void* ptr, u32 count)
 {
 	if (position+count > mem_size) {
 		// reallocate
-		if (mem_size==0)	mem_size=128;
+		if ( mem_size == 0 ) mem_size = 1024 * 1024;
 		while (mem_size <= (position+count)) mem_size*=2;
 		if (0==data)		data = (BYTE*)	Memory.mem_alloc	(mem_size);
 		else				data = (BYTE*)	Memory.mem_realloc	(data,mem_size);
@@ -109,6 +109,11 @@ void CMemoryWriter::w	(const void* ptr, u32 count)
 	CopyMemory	(data+position,ptr,count);
 	position		+=count;
 	if (position>file_size) file_size=position;
+}
+
+void CMemoryWriter::reserve( u32 count ) {
+  mem_size = count;
+  data = (BYTE*)Memory.mem_alloc( mem_size );
 }
 
 //static const u32 mb_sz = 0x1000000;

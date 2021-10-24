@@ -123,6 +123,7 @@ public:
 	IC void			free		()			{	file_size=0; position=0; mem_size=0; xr_free(data);	}
 #pragma warning(pop)
 	bool			save_to		(LPCSTR fn);
+	void reserve( u32 count );
 };
 
 //------------------------------------------------------------------------------------
