@@ -206,15 +206,13 @@ CSightParams CScriptGameObject::sight_params	()
 	return							(result);
 }
 
-bool CScriptGameObject::critically_wounded		()
-{
-	CCustomMonster						*custom_monster = smart_cast<CCustomMonster*>(&object());
-	if (!custom_monster) {
-		ai().script_engine().script_log	(ScriptStorage::eLuaMessageTypeError,"CCustomMonster : cannot access class member critically_wounded!");
-		return							(false);
-	}
-
-	return								(custom_monster->critically_wounded());
+bool CScriptGameObject::critically_wounded() {
+  auto stalker = smart_cast<CAI_Stalker*>( &object() );
+  if ( stalker )
+    return stalker->critically_wounded();
+  auto custom_monster = smart_cast<CCustomMonster*>( &object() );
+  ASSERT_FMT( custom_monster, "[%s]: %s not a CAI_Stalker or CCustomMonster", __FUNCTION__, object().cName().c_str() );
+  return custom_monster->critically_wounded();
 }
 
 bool CScriptGameObject::IsInvBoxEmpty()
