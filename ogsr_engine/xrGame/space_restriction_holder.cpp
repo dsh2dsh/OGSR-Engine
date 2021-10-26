@@ -14,6 +14,7 @@
 #include "space_restriction_shape.h"
 #include "space_restriction_composition.h"
 #include "restriction_space.h"
+#include "smart_zone.h"
 
 #pragma warning(push)
 #pragma warning(disable:4995)
@@ -111,6 +112,11 @@ SpaceRestrictionHolder::CBaseRestrictionPtr CSpaceRestrictionHolder::restriction
 
 void CSpaceRestrictionHolder::register_restrictor				(CSpaceRestrictor *space_restrictor, const RestrictionSpace::ERestrictorTypes &restrictor_type)
 {
+	if ( smart_cast<CSmartZone*>( space_restrictor ) ) {
+	  MsgIfDbg( "dsh: [%s]: skip CSmartZone[%s]", __FUNCTION__, space_restrictor->cName().c_str() );
+	  return;
+	}
+
 	string8192					m_temp_string;
 	shared_str					space_restrictors = space_restrictor->cName();
 	if (restrictor_type != RestrictionSpace::eDefaultRestrictorTypeNone) {
@@ -179,6 +185,9 @@ bool try_remove_string				(shared_str &search_string, const shared_str &string_t
 
 void CSpaceRestrictionHolder::unregister_restrictor			(CSpaceRestrictor *space_restrictor)
 {
+	if ( smart_cast<CSmartZone*>( space_restrictor ) )
+	  return;
+
 	shared_str				restrictor_id = space_restrictor->cName();
 	auto I = m_restrictions.find(restrictor_id);
 	bool found = I != m_restrictions.end();
