@@ -103,19 +103,19 @@ _value_type CStalkerPropertyEvaluatorEnemies::evaluate	()
 	    if ( stalker->wounded( &object().movement().restrictions() ) ) {
 	      ASSERT_FMT( object().get_agent_manager(), "[%s]: %s has no agent_manager()", __FUNCTION__, object().cName().c_str() );
 	      ALife::_OBJECT_ID processor_id = object().agent_manager().enemy().wounded_processor( enemy );
-	      return ( processor_id == ALife::_OBJECT_ID(-1) || processor_id == object().ID() );
+	      return processor_id == object().ID();
 	    }
 	    else
 	      return false;
 	  }
-		return			(true);
+	  return true;
 	}
 
 	if (m_dont_wait && *m_dont_wait)
 		return			(false);
 
-	if (Device.dwTimeGlobal < m_object->memory().enemy().last_enemy_time() + m_time_to_wait)
-		return			(true);
+	// if (Device.dwTimeGlobal < m_object->memory().enemy().last_enemy_time() + m_time_to_wait)
+	// 	return			(true);
 
 	return				(false);
 }
