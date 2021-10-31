@@ -969,6 +969,7 @@ void CAI_Stalker::load (IReader &packet)
 	inherited::load			(packet);
 	CInventoryOwner::load	(packet);
 	brain().load			(packet);
+	brain().CStalkerPlanner::m_storage.set_property( StalkerDecisionSpace::eWorldPropertyCriticallyWounded,	false );
 }
 
 void CAI_Stalker::load_critical_wound_bones()
