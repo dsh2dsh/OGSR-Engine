@@ -35,6 +35,7 @@ void CActionBase<CScriptGameObject>::script_register(lua_State *L)
 			.def("set_weight",					&CScriptActionBase::set_weight)
 //#ifdef LOG_ACTION
 			.def("show",						&CScriptActionBase::show)
+			.def( "set_use_log", &CScriptActionBase::set_use_log )
 //#endif
 	];
 }
