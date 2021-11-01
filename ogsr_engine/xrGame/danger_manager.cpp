@@ -142,7 +142,11 @@ void CDangerManager::update			()
 	STOP_PROFILE
 }
 
-void CDangerManager::remove_links	(const CObject *object)
+void CDangerManager::remove_links( const CObject *object ) {
+  remove_object( object, true );
+}
+
+void CDangerManager::remove_object( const CObject *object, bool remove_links )
 {
 	if (m_selected && m_selected->object() && (m_selected->object()->ID() == object->ID()))
 		m_selected			= 0;

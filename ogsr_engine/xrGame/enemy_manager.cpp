@@ -171,7 +171,11 @@ void CEnemyManager::reload					(LPCSTR section)
 	m_useful_callback.clear		();
 }
 
-void CEnemyManager::remove_links			(CObject *object)
+void CEnemyManager::remove_links( CObject *object ) {
+  remove_object( object, true );
+}
+
+void CEnemyManager::remove_object( CObject *object, bool remove_links )
 {
 	// since we use no members in CEntityAlive during search,
 	// we just use the pinter itself, we can just statically cast object
@@ -179,8 +183,11 @@ void CEnemyManager::remove_links			(CObject *object)
 	if (I != m_objects.end())
 		m_objects.erase			(I);
 
-	if (m_last_enemy == object)
-		m_last_enemy			= 0;
+	if ( m_last_enemy == object ) {
+	  m_last_enemy      = 0;
+	  if ( !remove_links )
+	    m_last_enemy_time = 0;
+	}
 
 	if (m_selected == object)
 		m_selected				= 0;

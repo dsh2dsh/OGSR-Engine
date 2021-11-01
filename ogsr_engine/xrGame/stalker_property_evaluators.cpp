@@ -114,8 +114,8 @@ _value_type CStalkerPropertyEvaluatorEnemies::evaluate	()
 	if (m_dont_wait && *m_dont_wait)
 		return			(false);
 
-	// if (Device.dwTimeGlobal < m_object->memory().enemy().last_enemy_time() + m_time_to_wait)
-	// 	return			(true);
+	if (Device.dwTimeGlobal < m_object->memory().enemy().last_enemy_time() + m_time_to_wait)
+		return			(true);
 
 	return				(false);
 }

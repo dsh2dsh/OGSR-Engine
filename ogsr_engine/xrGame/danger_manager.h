@@ -49,6 +49,7 @@ public:
 	virtual	float		evaluate			(const CDangerObject &object) const;
 	virtual	float		do_evaluate			(const CDangerObject &object) const;
 			void		remove_links		(const CObject *object);
+	void remove_object( const CObject *object, bool remove_links = true );
 	IC		void		reset				();
 
 public:

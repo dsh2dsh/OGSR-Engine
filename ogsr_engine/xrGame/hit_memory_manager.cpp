@@ -233,7 +233,11 @@ void CHitMemoryManager::enable			(const CObject *object, bool enable)
 	(*J).m_enabled				= enable;
 }
 
-void CHitMemoryManager::remove_links	(CObject *object)
+void CHitMemoryManager::remove_links( CObject *object ) {
+  remove_object( object, true );
+}
+
+void CHitMemoryManager::remove_object( CObject *object, bool remove_links )
 {
 	VERIFY				(m_hits);
 	HITS::iterator		I = std::find_if(m_hits->begin(),m_hits->end(),CHitObjectPredicate(object));

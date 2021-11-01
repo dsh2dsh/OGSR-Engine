@@ -479,5 +479,5 @@ bool CScriptGameObject::is_ready_to_explode() {
 void CScriptGameObject::remove_memory_object( CScriptGameObject *game_object ) {
   CCustomMonster* monster = smart_cast<CCustomMonster*>( &object() );
   ASSERT_FMT( monster, "[%s]: %s not a CCustomMonster", __FUNCTION__, cName().c_str() );
-  monster->memory().remove_links( &game_object->object() );
+  monster->memory().remove_object( &game_object->object(), false );
 }

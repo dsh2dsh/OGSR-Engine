@@ -29,6 +29,7 @@ public:
 	virtual	float		do_evaluate		(const CGameObject *object) const;
 	virtual void		update			();
 			void		remove_links	(CObject *object);
+	void remove_object( CObject *object, bool remove_links = true );
 	virtual	void		on_restrictions_change	();
 };
 

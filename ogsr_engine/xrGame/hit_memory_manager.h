@@ -56,6 +56,7 @@ public:
 	virtual	void				reload				(LPCSTR section);
 	virtual void				update				();
 			void				remove_links		(CObject *object);
+	void remove_object( CObject *object, bool remove_links = true );
 
 public:
 			void add( CEntityAlive *who );

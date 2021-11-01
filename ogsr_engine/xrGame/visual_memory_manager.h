@@ -90,6 +90,7 @@ public:
 	virtual	void	update					(float time_delta);
 	virtual	float	feel_vision_mtl_transp	(CObject* O, u32 element);	
 			void	remove_links			(CObject *object);
+	void remove_object( CObject *object, bool remove_links = true );
 
 public:
 			bool	visible					(const CGameObject *game_object, float time_delta);

@@ -584,7 +584,11 @@ struct CVisibleObjectPredicateEx {
 	}
 };
 
-void CVisualMemoryManager::remove_links	(CObject *object)
+void CVisualMemoryManager::remove_links( CObject *object ) {
+  remove_object( object, true );
+}
+
+void CVisualMemoryManager::remove_object( CObject *object, bool remove_links )
 {
 	{
 		VERIFY						(m_objects);

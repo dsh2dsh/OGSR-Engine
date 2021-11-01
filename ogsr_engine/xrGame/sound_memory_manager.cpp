@@ -369,7 +369,11 @@ struct CSoundObjectPredicate {
 	}
 };
 
-void CSoundMemoryManager::remove_links	(CObject *object)
+void CSoundMemoryManager::remove_links( CObject *object ) {
+  remove_object( object, true );
+}
+
+void CSoundMemoryManager::remove_object( CObject *object, bool remove_links )
 {
 	VERIFY					(m_sounds);
 	SOUNDS::iterator		I = std::find_if(m_sounds->begin(),m_sounds->end(),CSoundObjectPredicate(object));

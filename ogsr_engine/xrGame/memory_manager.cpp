@@ -301,17 +301,8 @@ Fvector CMemoryManager::memory_position	(const CObject *object) const
 	return				(result);
 }
 
-void CMemoryManager::remove_links	(CObject *object)
-{
-	if (m_object->g_Alive()) {
-		visual().remove_links	(object);
-		sound().remove_links	(object);
-		hit().remove_links		(object);
-	}
-
-	danger().remove_links		(object);
-	enemy().remove_links		(object);
-	item().remove_links			(object);
+void CMemoryManager::remove_links( CObject *object ) {
+  remove_object( object, true );
 }
 
 void CMemoryManager::on_restrictions_change	()
@@ -364,4 +355,17 @@ void CMemoryManager::on_requested_spawn				(CObject *object)
 	visual().on_requested_spawn	(object);
 	sound().on_requested_spawn	(object);
 	hit().on_requested_spawn	(object);
+}
+
+
+void CMemoryManager::remove_object( CObject *object, bool remove_links ) {
+  if ( m_object->g_Alive() ) {
+    visual().remove_object( object, remove_links );
+    sound().remove_object( object, remove_links );
+    hit().remove_object( object, remove_links );
+  }
+
+  danger().remove_object( object, remove_links );
+  enemy().remove_object( object, remove_links );
+  item().remove_object( object, remove_links );
 }

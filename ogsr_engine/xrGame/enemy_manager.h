@@ -58,6 +58,7 @@ public:
 	IC		const CEntityAlive	*last_enemy			() const;
 	IC		USEFULE_CALLBACK	&useful_callback	();
 			void				remove_links		(CObject *object);
+	void remove_object( CObject *object, bool remove_links = true );
 
 public:
 			void				ignore_monster_threshold			(const float &ignore_monster_threshold);
