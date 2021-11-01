@@ -2,6 +2,10 @@
 
 // maps unsigned 8 bits/channel to D3DCOLOR
 constexpr u32 color_argb(u32 a, u32 r, u32 g, u32 b) noexcept {
+	a = clampr( a, (u32)0, (u32)0xff );
+	r = clampr( r, (u32)0, (u32)0xff );
+	g = clampr( g, (u32)0, (u32)0xff );
+	b = clampr( b, (u32)0, (u32)0xff );
 	return ((a & 0xff) << 24) | ((r & 0xff) << 16) | ((g & 0xff) << 8) | (b & 0xff);
 }
 constexpr u32 color_rgba(u32 r, u32 g, u32 b, u32 a) noexcept {
