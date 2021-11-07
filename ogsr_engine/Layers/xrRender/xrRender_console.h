@@ -154,11 +154,6 @@ extern ECORE_API float    ps_pnv_scanlines;
 extern ECORE_API float ps_r2_visor_refl_intensity;
 extern ECORE_API float ps_r2_visor_refl_radius;
 
-#if RENDER==R_R4
-extern ECORE_API float ps_ext_SSLR_L;
-extern ECORE_API float ps_ext_SSLR_blur;
-#endif
-
 enum
 {
 	R2FLAG_SUN					= (1<<0),
