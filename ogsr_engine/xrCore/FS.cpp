@@ -75,7 +75,10 @@ void* FileDownload( LPCSTR fn, u32* pdwSize ) {
   R_ASSERT3( hFile != INVALID_HANDLE_VALUE, fn, Debug.error2string( GetLastError() ) );
 
   u32 size = (int)GetFileSize( hFile, NULL );
-  R_ASSERT3( size, fn, Debug.error2string( GetLastError() ) );
+  R_ASSERT3( size != INVALID_FILE_SIZE, fn, Debug.error2string( GetLastError() ) );
+  if ( pdwSize ) *pdwSize = size;
+  if ( size == 0 )
+    return nullptr;
 
   void* buf = Memory.mem_alloc( size );
   DWORD read_byte;
@@ -83,7 +86,6 @@ void* FileDownload( LPCSTR fn, u32* pdwSize ) {
   R_ASSERT3( res && read_byte == size, "Can't read file data:", fn );
   CloseHandle( hFile );
 
-  if ( pdwSize ) *pdwSize = size;
 
   return buf;
 }
