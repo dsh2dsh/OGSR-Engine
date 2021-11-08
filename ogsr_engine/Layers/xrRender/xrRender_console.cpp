@@ -42,7 +42,7 @@ constexpr xr_token qssao_mode_token[] = {
 	{ 0,							0											}
 };
 
-u32			ps_r_sun_shafts				=	2;
+u32			ps_r_sun_shafts				=	0;
 constexpr xr_token qsun_shafts_token[] = {
 	{ "st_opt_off",					0												},
 	{ "st_opt_low",					1												},
