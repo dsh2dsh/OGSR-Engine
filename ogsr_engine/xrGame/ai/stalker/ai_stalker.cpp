@@ -277,8 +277,9 @@ void CAI_Stalker::Die				(CObject* who)
 
 	SelectAnimation					(XFORM().k,movement().detail().direction(),movement().speed());
 
-	sound().set_sound_mask			(0);
+	sound().clear_playing_sounds();
 	if ( !m_headshot ) {
+	  sound().set_sound_mask( (u32)eStalkerSoundMaskDie );
 	  if ( is_special_killer( who ) )
 	    sound().play( eStalkerSoundDieInAnomaly );
 	  else
