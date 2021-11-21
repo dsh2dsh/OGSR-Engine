@@ -354,11 +354,13 @@ void	collide_camera( CCameraBase & camera, float _viewport_near, CPhysicsShellHo
 	if( clamp_change( old_form, xform, EPS,EPS,EPS,EPS) &&  Fvector().sub( old_box_size, box_size ).magnitude() < EPS )
 		return;
 
+	static Fvector cam_vDirection     = { 0.f, 0.f, 0.f };
 	static Fvector cam_vPosition      = { 0.f, 0.f, 0.f };
 	static Fvector collided_vPosition = camera.vPosition;
 	static bool    collided = false;
-	float cam_diff  = Fvector().sub( cam_vPosition, camera.vPosition ).magnitude();
-	bool  cam_moved = !fis_zero( cam_diff, 0.01f );
+	float cam_diff  = Fvector().sub( cam_vPosition,  camera.vPosition  ).magnitude();
+	float cam_ddiff = Fvector().sub( cam_vDirection, camera.vDirection ).magnitude();
+	bool  cam_moved = !fis_zero( cam_diff, 0.01f ) || !fis_zero( cam_ddiff, 0.001f );
 	if ( collided && !cam_moved ) {
 	  camera.vPosition = collided_vPosition;
 	  return;
@@ -366,7 +368,8 @@ void	collide_camera( CCameraBase & camera, float _viewport_near, CPhysicsShellHo
 	else if ( !cam_moved ) {
 	  return;
 	}
-	cam_vPosition = camera.vPosition;
+	cam_vDirection = camera.vDirection;
+	cam_vPosition  = camera.vPosition;
 	collided = false;
 
 	if ( on_ladder )
