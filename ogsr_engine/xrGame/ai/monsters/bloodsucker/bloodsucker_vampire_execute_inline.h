@@ -40,7 +40,7 @@ void CStateBloodsuckerVampireExecuteAbstract::initialize()
 	//Actor()->set_inventory_disabled	(true);
 
 	m_effector_activated			= false;
-	m_health_loss_activated			= false;
+//	m_health_loss_activated			= false;
 }
 
 TEMPLATE_SPECIALIZATION
@@ -124,12 +124,14 @@ void CStateBloodsuckerVampireExecuteAbstract::cleanup()
 	if (object->CControlledActor::is_controlling())
 		object->CControlledActor::release		();
 
+/*
 	if (m_health_loss_activated) {
 		const CEntityAlive	*enemy = object->EnemyMan.get_enemy();
 		if ( enemy )
 			enemy->conditions().GetChangeValues().m_fV_HealthRestore += object->m_vampire_loss_health_speed;
 		m_health_loss_activated = false;
 	}
+*/
 
 	show_hud();
 }
@@ -224,10 +226,12 @@ void CStateBloodsuckerVampireExecuteAbstract::execute_vampire_continue()
 	
 	object->sound().play(CAI_Bloodsucker::eVampireSucking);
 
+/*
 	if ( !m_health_loss_activated && !fis_zero( object->m_vampire_loss_health_speed ) ) {
 		enemy->conditions().GetChangeValues().m_fV_HealthRestore -= object->m_vampire_loss_health_speed;
 		m_health_loss_activated = true;
 	}
+*/
 
 	if (time_vampire_started + object->m_vampire_hold_time < Device.dwTimeGlobal) {
 		m_action = eActionFire;
@@ -241,6 +245,7 @@ void CStateBloodsuckerVampireExecuteAbstract::execute_vampire_hit()
 	object->sound().play						(CAI_Bloodsucker::eVampireHit);
 	object->SatisfyVampire						();
 
+/*
 	const CEntityAlive	*enemy = object->EnemyMan.get_enemy();
 
 	if (m_health_loss_activated) {
@@ -253,6 +258,7 @@ void CStateBloodsuckerVampireExecuteAbstract::execute_vampire_hit()
 		IKinematics *pK = smart_cast<IKinematics*>(const_cast<CEntityAlive*>(enemy)->Visual());
 		enemy->conditions().AddWound(object->m_vampire_wound, ALife::eHitTypeWound, pK->LL_BoneID("bip01_head"));
 	}
+*/
 }
 
 //////////////////////////////////////////////////////////////////////////
