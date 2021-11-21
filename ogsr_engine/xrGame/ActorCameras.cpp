@@ -205,34 +205,28 @@ void	CActor::cam_Lookout	( const Fmatrix &xform, float camera_height )
 			Fmatrix33			mat;
 			get_cam_oob( bc, bd, mat, xform, r_torso, alpha, radius, c );
 
-			/*
-			xrXRC				xrc			;
-			xrc.box_options		(0)			;
-			xrc.box_query		(Level().ObjectSpace.GetStaticModel(), bc, bd)		;
-			u32 tri_count		= xrc.r_count();
-			*/
-			//if (tri_count)		
-			{
-				float da		= 0.f;
-				BOOL bIntersect	= FALSE;
-				Fvector	ext		= {w,h,VIEWPORT_NEAR/2};
-				Fvector				pt;
-				calc_gl_point	( pt, xform, radius, alpha );
-				if ( test_point( pt, mat, ext, this  ) )
-				{
-					da			= PI/1000.f;
-					if (!fis_zero(r_torso.roll))
-						da		*= r_torso.roll/_abs(r_torso.roll);
-					float angle;
-					for (angle=0.f; _abs(angle)<_abs(alpha); angle+=da)
-					{
-						Fvector				pt;
-						calc_gl_point( pt, xform, radius, angle );
-						if (test_point( pt, mat,ext, this )) 
-							{ bIntersect=TRUE; break; } 
-					}
-					valid_angle	= bIntersect?angle:alpha;
-				} 
+			Fvector	ext = { w, h, VIEWPORT_NEAR / 2 };
+			Fvector pt;
+			calc_gl_point( pt, xform, radius, alpha );
+			if ( test_point( pt, mat, ext, this  ) ) {
+			  float da = PI / 1000.f;
+			  if ( !fis_zero( r_torso.roll ) )
+			    da *= r_torso.roll / _abs( r_torso.roll );
+			  valid_angle = 0.f;
+			  float min   = 0.f, max = _abs( alpha );
+			  float min_diff = _abs( da );
+			  while ( max - min > min_diff ) {
+			    float angle = min + ( max - min ) / 2;
+			    if ( da < 0 ) angle = -angle;
+			    calc_gl_point( pt, xform, radius, angle );
+			    if ( test_point( pt, mat, ext, this ) ) {
+			      max = _abs( angle );
+			    }
+			    else {
+			      min         = _abs( angle );
+			      valid_angle = angle;
+			    }
+			  }
 			}
 			r_torso.roll		= valid_angle*2.f;
 			r_torso_tgt_roll	= r_torso.roll;
