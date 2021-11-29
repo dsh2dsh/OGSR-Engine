@@ -341,7 +341,7 @@ void CResourceManager::DeferredUpload() {
   timer.Start();
 
   u32 cnt = 0;
-  size_t nWorkers = TTAPI->threads.size();
+  size_t nWorkers = 1; //TTAPI->threads.size();
   u32 max_workers = 1;
   if ( nWorkers > 1 && m_deferred_textures.size() > 1 ) {
     for ( const auto& n : m_deferred_textures ) {
