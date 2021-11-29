@@ -54,6 +54,10 @@ void	CRenderTarget::u_setrt			(const ref_rt& _1, const ref_rt& _2, const ref_rt&
 	if (_1) RCache.set_RT(_1->pRT,	0); else RCache.set_RT(NULL,0);
 	if (_2) RCache.set_RT(_2->pRT,	1); else RCache.set_RT(NULL,1);
 	if (_3) RCache.set_RT(_3->pRT,	2); else RCache.set_RT(NULL,2);
+
+	if (ps_r2_ls_flags_ext.test(R2FLAGEXT_SSLR))
+		RCache.set_RT(nullptr, 3); //rt_Wetness
+
 	RCache.set_ZB							(zb);
 }
 
@@ -798,6 +802,11 @@ CRenderTarget::CRenderTarget		()
 		s_ssss_ogse.create("effects\\ss_sunshafts_ogse");
 	}
 
+	// SSLR
+	rt_SSLR_0.create(r2_RT_SSLR0, w, h, D3DFMT_A8R8G8B8);
+	rt_SSLR_1.create(r2_RT_SSLR1, w, h, D3DFMT_A8R8G8B8);
+	s_SSLR.create("ogsr_sslr");
+	rt_Wetness.create(r2_RT_Wetness, w, h, D3DFMT_A8R8G8B8);
 
 	// Build textures
 	{
