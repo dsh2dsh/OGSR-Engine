@@ -1608,11 +1608,8 @@ void CWeapon::OnZoomOut()
 }
 
 bool CWeapon::UseScopeTexture() {
-	return (( GetAddonsState() & CSE_ALifeItemWeapon::eForcedNotexScope ) == 0) 
-		&& !is_second_zoom_offset_enabled
-		&& !SecondVPEnabled()
-		&& m_UIScope; // только если есть текстура прицела - для простого создания коллиматоров
-};
+	return !SecondVPEnabled() && m_UIScope; // только если есть текстура прицела - для простого создания коллиматоров
+}
 
 CUIStaticItem* CWeapon::ZoomTexture()
 {
