@@ -43,4 +43,5 @@ public:
 	virtual float			base_volume() const { return m_fBaseVolume; }
 	virtual u16				channels_num() const { return m_wformat.nChannels; }
 	virtual u32				bytes_total() const { return dwBytesTotal; }
+	virtual float max_distance() const { return m_fMaxDist; }
 };

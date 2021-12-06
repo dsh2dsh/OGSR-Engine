@@ -51,9 +51,9 @@ BOOL CBulletManager::test_callback( const collide::ray_defs& rd, CObject* object
     ICollisionForm* cform = entity->collidable.model;
     if ( cform != NULL && cform->Type() == cftObject ) {
       CActor* actor = smart_cast<CActor*>( entity );
-      //CAI_Stalker* stalker = smart_cast<CAI_Stalker*>( entity );
+      CAI_Stalker* stalker = smart_cast<CAI_Stalker*>( entity );
       // в кого попали?
-      if ( actor/* || stalker*/ ) {
+      if ( actor || stalker ) {
         // попали в актера или сталкера
         Fsphere S = cform->getSphere();
         entity->XFORM().transform_tiny( S.P );

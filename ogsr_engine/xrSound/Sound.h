@@ -146,6 +146,7 @@ public:
 	virtual LPCSTR			file_name() const = 0;
 	virtual u16				channels_num() const = 0;
 	virtual u32				bytes_total() const = 0;
+	virtual float max_distance() const = 0;
 };
 
 /// definition (Sound Source)
