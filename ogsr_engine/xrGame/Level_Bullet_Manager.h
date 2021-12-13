@@ -134,6 +134,7 @@ protected:
 	static float			m_fMinBulletSpeed;
 
 	float					m_fHPMaxDist;
+	float					m_fHPMaxDist2;
 
 	//константа G
 	float					m_fGravityConst;

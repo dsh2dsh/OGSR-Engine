@@ -112,6 +112,7 @@ void CBulletManager::Load		()
 	m_fCollisionEnergyMax	= pSettings->r_float(BULLET_MANAGER_SECTION, "collision_energy_max");
 
 	m_fHPMaxDist			= pSettings->r_float(BULLET_MANAGER_SECTION, "hit_probability_max_dist");
+	m_fHPMaxDist2 = READ_IF_EXISTS( pSettings, r_float, BULLET_MANAGER_SECTION, "hit_probability_max_dist2", 0.f );
 
 	LPCSTR whine_sounds		= pSettings->r_string(BULLET_MANAGER_SECTION, "whine_sounds");
 	int cnt					= _GetItemCount(whine_sounds);

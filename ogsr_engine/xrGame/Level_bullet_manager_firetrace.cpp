@@ -78,7 +78,12 @@ BOOL CBulletManager::test_callback( const collide::ray_defs& rd, CObject* object
               if ( weapon ) {
                 game_difficulty_hit_probability = weapon->hit_probability();
                 float fly_dist = bullet->fly_dist + dist;
-                dist_factor = _min( 1.f, fly_dist / Level().BulletManager().m_fHPMaxDist );
+                if ( Level().BulletManager().m_fHPMaxDist2 > 0 && fly_dist >= Level().BulletManager().m_fHPMaxDist2 )
+                  dist_factor = 0.f;
+                else if ( fly_dist > Level().BulletManager().m_fHPMaxDist && fly_dist < Level().BulletManager().m_fHPMaxDist2 )
+                  dist_factor = 1.f - (  fly_dist - Level().BulletManager().m_fHPMaxDist ) / ( Level().BulletManager().m_fHPMaxDist2 - Level().BulletManager().m_fHPMaxDist );
+                else
+                  dist_factor = _min( 1.f, fly_dist / Level().BulletManager().m_fHPMaxDist );
               }
             }
             ahp = dist_factor * game_difficulty_hit_probability + ( 1.f - dist_factor ) * 1.f;
