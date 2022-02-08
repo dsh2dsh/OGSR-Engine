@@ -32,7 +32,7 @@ protected:
 	Fvector m_camera_omni_offset;
 private:
 	inline	bool	can_use_dynamic_lights	();
-
+	bool useVolumetric{}, useVolumetricForActor{};
 public:
 					CTorch				(void);
 	virtual			~CTorch				(void);
