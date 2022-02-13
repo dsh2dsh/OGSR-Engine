@@ -45,7 +45,7 @@ public:
 	virtual BOOL			net_Spawn			(CSE_Abstract* DC);
 	virtual void			net_Destroy			();
 	virtual void net_Export( CSE_Abstract* E );
-	
+
 	virtual CWeapon			*cast_weapon			()					{return this;}
 	virtual CWeaponMagazined*cast_weapon_magazined	()					{return 0;}
 
@@ -97,7 +97,7 @@ public:
 	virtual CInventoryItem	*can_kill			(CInventory *inventory) const;
 	virtual const CInventoryItem *can_kill		(const xr_vector<const CGameObject*> &items) const;
 	virtual bool			ready_to_kill		() const;
-	virtual bool			NeedToDestroyObject	() const; 
+	virtual bool			NeedToDestroyObject	() const;
 	virtual ALife::_TIME_ID	TimePassedAfterIndependant() const;
 protected:
 	//время удаления оружия
@@ -105,7 +105,7 @@ protected:
 	ALife::_TIME_ID			m_dwWeaponIndependencyTime;
 
 //////////////////////////////////////////////////////////////////////////
-//  Animation 
+//  Animation
 //////////////////////////////////////////////////////////////////////////
 public:
 
@@ -165,7 +165,7 @@ protected:
 	// Weapon fires now
 	bool					bWorking2;
 	// a misfire happens, you'll need to rearm weapon
-	bool					bMisfire;				
+	bool					bMisfire;
 
 	BOOL					m_bAutoSpawnAmmo;
 //////////////////////////////////////////////////////////////////////////
@@ -236,7 +236,7 @@ protected:
 	int	m_iScopeX, m_iScopeY;
 	int	m_iSilencerX, m_iSilencerY;
 	int	m_iGrenadeLauncherX, m_iGrenadeLauncherY;
-		
+
 ///////////////////////////////////////////////////
 //	для режима приближения и снайперского прицела
 ///////////////////////////////////////////////////
@@ -262,7 +262,7 @@ protected:
 	//когда режим приближения включен
 	bool			m_bZoomMode;
 	//от 0 до 1, показывает насколько процентов
-	//мы перемещаем HUD  
+	//мы перемещаем HUD
 	float			m_fZoomRotationFactor;
 	//коэффициент увеличения во втором вьюпорте при зуме
 	float			m_fSecondVPZoomFactor;
@@ -297,7 +297,7 @@ public:
 	virtual void			OnZoomIn			();
 	virtual void			OnZoomOut			();
 			bool			IsZoomed			()	const	{return m_bZoomMode;};
-	CUIStaticItem*			ZoomTexture			();	
+	CUIStaticItem*			ZoomTexture			();
 	bool ZoomHideCrosshair()
 	{
 		auto* pA = smart_cast<CActor*>(H_Parent());
@@ -316,7 +316,7 @@ public:
 
 			void			LoadZoomOffset		(LPCSTR section, LPCSTR prefix);
 
-	virtual float			Weight				() const;		
+	virtual float			Weight				() const;
 	virtual u32				Cost				() const;
 	virtual float			GetControlInertionFactor() const;
 
@@ -354,7 +354,7 @@ private:
 		Fmatrix				m_FireParticlesXForm;	//направление для партиклов огня и дыма
 		Fvector				vLastFP, vLastFP2	;	//огня
 		Fvector				vLastFD				;	// direction
-		Fvector				vLastSP				;	//гильз	
+		Fvector				vLastSP				;	//гильз
 
 		_firedeps()			{
 			m_FireParticlesXForm.identity();
@@ -377,7 +377,7 @@ protected:
 	IC		void			UpdateFireDependencies	()			{ if (dwFP_Frame==Device.dwFrame) return; UpdateFireDependencies_internal(); };
 
 	virtual void			LoadFireParams		(LPCSTR section, LPCSTR prefix);
-public:	
+public:
 	IC		const Fvector&	get_LastFP				()			{ UpdateFireDependencies(); return m_firedeps.vLastFP;	}
 	IC		const Fvector&	get_LastFP2				()			{ UpdateFireDependencies(); return m_firedeps.vLastFP2;	}
 	IC		const Fvector&	get_LastFD				()			{ UpdateFireDependencies(); return m_firedeps.vLastFD;	}
@@ -405,7 +405,7 @@ protected:
 	virtual void			Fire2End			();
 	virtual void			Reload				();
 			void			StopShooting		();
-    
+
 
 	// обработка визуализации выстрела
 	virtual void			OnShot				(){};
@@ -426,7 +426,7 @@ public:
 	virtual	float			GetConditionToShow				() const;
 
 public:
-	//отдача при стрельбе 
+	//отдача при стрельбе
 	float					camMaxAngle;
 	float					camRelaxSpeed;
 	float					camRelaxSpeed_AI;
@@ -437,7 +437,7 @@ public:
 	float					camStepAngleHorz;
 
 protected:
-	//фактор увеличения дисперсии при максимальной изношености 
+	//фактор увеличения дисперсии при максимальной изношености
 	//(на сколько процентов увеличится дисперсия)
 	float					fireDispersionConditionFactor;
 	//вероятность осечки при максимальной изношености
@@ -460,7 +460,7 @@ protected:
 	//для отдачи оружия
 	Fvector					m_vRecoilDeltaAngle;
 
-	//для сталкеров, чтоб они знали эффективные границы использования 
+	//для сталкеров, чтоб они знали эффективные границы использования
 	//оружия
 	float					m_fMinRadius;
 	float					m_fMaxRadius;
@@ -469,7 +469,7 @@ protected:
 // партиклы
 //////////////////////////////////////////////////////////////////////////
 
-protected:	
+protected:
 	//для второго ствола
 			void			StartFlameParticles2();
 			void			StopFlameParticles2	();
@@ -495,8 +495,8 @@ public:
 	void					SetAmmoElapsed		(int ammo_count);
 
 	virtual void			OnMagazineEmpty		();
-			void			SpawnAmmo			(u32 boxCurr = 0xffffffff, 
-													LPCSTR ammoSect = NULL, 
+			void			SpawnAmmo			(u32 boxCurr = 0xffffffff,
+													LPCSTR ammoSect = NULL,
 													u32 ParentID = 0xffffffff);
 
 	//  [8/3/2005]

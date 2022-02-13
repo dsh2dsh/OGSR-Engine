@@ -39,7 +39,7 @@ namespace doors { class door; }
 class NET_Packet;
 class CGameTask;
 
-namespace PatrolPathManager { 
+namespace PatrolPathManager {
 	enum EPatrolStartType;
 	enum EPatrolRouteType;
 };
@@ -159,7 +159,7 @@ public:
 	_DECLARE_FUNCTION10	(getVisible	,	BOOL		);
 	_DECLARE_FUNCTION10	(getEnabled	,	BOOL		);
 	_DECLARE_FUNCTION10	(story_id	,	ALife::_STORY_ID);
-	
+
 			LPCSTR				Name				() const;
 			shared_str			cName				() const;
 			LPCSTR				Section				() const;
@@ -209,13 +209,13 @@ public:
 			bool			IsRelationEnemy ( CScriptGameObject* );
 
 	// CScriptEntity
-	
+
 	_DECLARE_FUNCTION12	(SetScriptControl,	void, bool,				LPCSTR);
 	_DECLARE_FUNCTION10	(GetScriptControl	,			bool	);
 	_DECLARE_FUNCTION10	(GetScriptControlName,			LPCSTR	);
 	_DECLARE_FUNCTION10	(GetEnemyStrength, int);
 	_DECLARE_FUNCTION10	(can_script_capture, bool);
-	
+
 
 			CScriptEntityAction	*GetCurrentAction	() const;
 			void				AddAction			(const CScriptEntityAction *tpEntityAction, bool bHighPriority = false);
@@ -240,7 +240,7 @@ public:
 			CScriptGameObject	*GetMedikit			() const;
 
 	// CAI_Bloodsucker
-	
+
 			void				set_invisible			(bool val);
 			bool				get_invisible			();
 			void				set_manual_invisibility (bool val);
@@ -298,14 +298,14 @@ public:
 			void				SetGameTaskState	(ETaskState state, LPCSTR task_id, int objective_num);
 			void				GiveTaskToActor		(CGameTask* t, u32 dt, bool bCheckExisting);
 
-			
+
 			bool				IsTalking			();
 			void				StopTalk			();
-			void				EnableTalk			();	
+			void				EnableTalk			();
 			void				DisableTalk			();
 			bool				IsTalkEnabled		();
 
-			void				EnableTrade			();	
+			void				EnableTrade			();
 			void				DisableTrade		();
 			bool				IsTradeEnabled		();
 
@@ -327,7 +327,7 @@ public:
 			void				SetMoney(u32 money);
 
 			void				SetRelation			(ALife::ERelationType relation, CScriptGameObject* pWhoToSet);
-	
+
 			int					GetAttitude			(CScriptGameObject* pToWho);
 
 			int					GetGoodwill			(CScriptGameObject* pToWho);
@@ -340,7 +340,7 @@ public:
 			void				RestoreDefaultStartDialog();
 
 			void				SwitchToTrade		();
-			void				SwitchToTalk		();	
+			void				SwitchToTalk		();
 			void				RunTalkDialog		(CScriptGameObject* pToWho);
 
 			void				HideWeapon			();
@@ -359,7 +359,7 @@ public:
 			void ChangeCharacterRank		(int);
 			void ChangeCharacterReputation	(int);
 			void SetCharacterCommunity		(LPCSTR,int,int);
-		
+
 
 			u32					GetInventoryObjectCount() const;
 
@@ -368,8 +368,8 @@ public:
 			CScriptGameObject	*GetObjectByName	(LPCSTR caObjectName) const;
 			CScriptGameObject	*GetObjectByIndex	(int iIndex) const;
 
-			
-	// Callbacks			
+
+	// Callbacks
 			void				SetCallback			(GameObject::ECallbackType type, const luabind::functor<void> &functor);
 			void				SetCallback			(GameObject::ECallbackType type, const luabind::functor<void> &functor, const luabind::object &object);
 			void				SetCallback			(GameObject::ECallbackType type);
@@ -381,7 +381,7 @@ public:
 			void				set_enemy_callback	(const luabind::functor<bool> &functor);
 			void				set_enemy_callback	(const luabind::functor<bool> &functor, const luabind::object &object);
 			void				set_enemy_callback	();
-	
+
 	//////////////////////////////////////////////////////////////////////////////////////
 	////////////////////////////use calback///////////////////////////////////////////////
 			void				SetTipText			(LPCSTR tip_text);
@@ -402,7 +402,7 @@ public:
 			CScriptGameObject	*GetBestItem		();
 
 	_DECLARE_FUNCTION10			(GetActionCount,u32);
-	
+
 			const				CScriptEntityAction	*GetActionByIndex(u32 action_index = 0);
 
 //////////////////////////////////////////////////////////////////////////
@@ -429,7 +429,7 @@ public:
 			void					bind_object		(CScriptBinderObject *object);
 			CScriptGameObject		*GetCurrentOutfit() const;
 			float					GetCurrentOutfitProtection(int hit_type);
-			
+
 
 	//////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////
@@ -543,8 +543,8 @@ public:
 			void				DisableAnomaly( bool = false );
 			float				GetAnomalyPower			();
 			void				SetAnomalyPower			(float p);
-			
-	
+
+
 			// HELICOPTER
 			CHelicopter*		get_helicopter			();
 			//CAR
@@ -565,10 +565,10 @@ public:
 
 			Fvector				head_orientation		() const;
 			u32					vertex_in_direction		(u32 level_vertex_id, Fvector direction, float max_distance) const;
-			
+
 			void				info_add				(LPCSTR text);
 			void				info_clear				();
-			
+
 			// Monster Jumper
 			void				jump					(const Fvector &position, float factor);
 
@@ -615,8 +615,8 @@ public:
 
 			bool				invulnerable						() const;
 			void				invulnerable						(bool invulnerable);
-			
-			/************************************************** added by Ray Twitty (aka Shadows) START **************************************************/	
+
+			/************************************************** added by Ray Twitty (aka Shadows) START **************************************************/
 			// инвентарь
 			float				GetActorMaxWeight					() const;
 			void				SetActorMaxWeight					(float max_weight);
@@ -784,7 +784,7 @@ public:
 			CUIStatic* GetCellItem() const;
 			LPCSTR GetBoneName(u16) const;
 
-			// alpet: visual functions for CWeapon descedants 
+			// alpet: visual functions for CWeapon descedants
 			_DECLARE_FUNCTION10 (alife_object			,			CSE_ALifeDynamicObject*);
 			_DECLARE_FUNCTION10 (GetWeaponHUD_Visual	,			IRenderVisual*);
 			_DECLARE_FUNCTION10 (GetWeaponHUD			,			CWeaponHUD*);
@@ -858,13 +858,13 @@ extern void	lua_pushgameobject(lua_State *L, CGameObject *obj);
 
 template <typename T>
 IC bool test_pushobject(lua_State *L, CGameObject* obj)
-{	
+{
 	using namespace luabind::detail;
 	T *pObj = smart_cast<T*> (obj);
 	if (pObj && get_class_rep<T>(L))
-	{		
+	{
 		convert_to_lua<T*>(L, pObj);  // обязательно конвертировать указатель, а не значение. Иначе вызов деструктора при сборке мусора!
-		return true;		
+		return true;
 	}
 	return false;
 }

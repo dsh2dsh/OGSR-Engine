@@ -62,9 +62,9 @@ void _AddIconedTalkMessage(LPCSTR text, LPCSTR texture_name, const Frect& tex_re
 void  CScriptGameObject::AddIconedTalkMessage		(LPCSTR text, LPCSTR texture_name, Frect tex_rect, LPCSTR templ_name)
 {
 	return _AddIconedTalkMessage	(text,
-									texture_name, 
-									tex_rect, 
-									templ_name); 
+									texture_name,
+									tex_rect,
+									templ_name);
 }
 
 void _AddIconedTalkMessage(LPCSTR text, LPCSTR texture_name, const Frect& tex_rect, LPCSTR templ_name)
@@ -80,9 +80,9 @@ bool _give_news	(LPCSTR news, LPCSTR texture_name, const Frect& tex_rect, int de
 bool  CScriptGameObject::GiveGameNews		(LPCSTR news, LPCSTR texture_name, Frect tex_rect, int delay, int show_time)
 {
 	return _give_news				(news,
-									texture_name, 
-									tex_rect, 
-									delay, 
+									texture_name,
+									tex_rect,
+									delay,
 									show_time);
 }
 bool _give_news	(LPCSTR text, LPCSTR texture_name, const Frect& tex_rect, int delay, int show_time)
@@ -196,7 +196,7 @@ void CScriptGameObject::ForEachInventoryItems(const luabind::functor<void> &func
 		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError,"CScriptGameObject::ForEachInventoryItems non-CInventoryOwner object !!!");
 		return;
 	}
-	
+
 	TIItemContainer item_list;
 	owner->inventory().AddAvailableItems(item_list, true);
 
@@ -324,7 +324,7 @@ void CScriptGameObject::TransferItem(CScriptGameObject* pItem, CScriptGameObject
 		return ;
 	}
 
-	// выбросить у себя 
+	// выбросить у себя
 	NET_Packet						P;
 	CGameObject::u_EventGen			(P,GE_TRANSFER_REJECT, object().ID());
 	P.w_u16							(pIItem->object().ID());
@@ -448,7 +448,7 @@ LPCSTR CScriptGameObject::ProfileName			()
 		ai().script_engine().script_log		(ScriptStorage::eLuaMessageTypeError,"ProfileName available only for InventoryOwner");
 		return NULL;
 	}
-	
+
 	shared_str profile_id =  pInventoryOwner->CharacterInfo().Profile();
 	if(!profile_id || !profile_id.size() )
 		return NULL;
@@ -478,7 +478,7 @@ int CScriptGameObject::CharacterRank			()
 			return 0;
 		}
 		return pInventoryOwner->Rank();
-	} 	
+	}
 	return monster->Rank();
 }
 void CScriptGameObject::SetCharacterRank			(int char_rank)
@@ -612,7 +612,7 @@ void  CScriptGameObject::SwitchToTalk		()
 
 void  CScriptGameObject::RunTalkDialog			(CScriptGameObject* pToWho)
 {
-	CActor* pActor = smart_cast<CActor*>(&object());	
+	CActor* pActor = smart_cast<CActor*>(&object());
 //	R_ASSERT2(pActor, "RunTalkDialog applicable only for actor");
 
 	if (!pActor) {
@@ -664,7 +664,7 @@ void CScriptGameObject::add_restrictions		(LPCSTR out, LPCSTR in)
 		ai().script_engine().script_log		(ScriptStorage::eLuaMessageTypeError,"CRestrictedObject : cannot access class member add_restrictions!");
 		return;
 	}
-	
+
 //	xr_vector<ALife::_OBJECT_ID>			temp0;
 //	xr_vector<ALife::_OBJECT_ID>			temp1;
 
@@ -677,7 +677,7 @@ void CScriptGameObject::add_restrictions		(LPCSTR out, LPCSTR in)
 //			int j = 0;
 //		}
 //	}
-	
+
 	monster->movement().restrictions().add_restrictions(out,in);
 }
 
