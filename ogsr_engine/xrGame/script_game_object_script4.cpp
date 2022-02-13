@@ -384,6 +384,7 @@ class_<CScriptGameObject> script_register_game_object3(class_<CScriptGameObject>
 		.def( "configure_scheduler",   &CScriptGameObject::configure_scheduler   )
 
 		.def( "killer_id", &CScriptGameObject::killer_id )
+		.def( "reload_next_ammo", &CScriptGameObject::ReloadNextAmmo )
 
 		.property("inventory",				&get_obj_inventory)
 		.property("immunities",				&get_obj_immunities)

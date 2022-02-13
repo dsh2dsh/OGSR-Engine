@@ -591,4 +591,6 @@ public:
 
 	virtual void OnBulletHit( CBulletManager::_event& E );
 	bool IsPartlyReloading();
+
+  void ReloadNextAmmo( u32 );
 };

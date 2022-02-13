@@ -1275,3 +1275,10 @@ LPCSTR CScriptGameObject::ProfileCommunity() {
   ASSERT_FMT( inventory_owner, "[%s]: %s not an CInventoryOwner", __FUNCTION__, this->object().Name());
   return *inventory_owner->SpecificCharacter().Community().id();
 }
+
+
+void CScriptGameObject::ReloadNextAmmo( u32 next_ammo_type) {
+  auto weapon = smart_cast<CWeapon*>(&object());
+  ASSERT_FMT( weapon, "[%s]: %s not a CWeapon", __FUNCTION__, this->object().Name());
+  weapon->ReloadNextAmmo( next_ammo_type );
+}

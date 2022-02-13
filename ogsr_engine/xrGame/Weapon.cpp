@@ -2282,3 +2282,11 @@ bool CWeapon::IsPartlyReloading() {
 bool CWeapon::use_crosshair() const {
   return psActorFlags.test( AF_CROSSHAIR_DBG ) || !psHUD_Flags.test( HUD_CROSSHAIR_ZOOM );
 }
+
+
+void CWeapon::ReloadNextAmmo( u32 next_ammoType ) {
+  ASSERT_FMT( next_ammoType < m_ammoTypes.size(), "[%s]: wrong next_ammoType[%u] >= m_ammoTypes[%u]", __FUNCTION__, next_ammoType, m_ammoTypes.size() );
+  ASSERT_FMT( unlimited_ammo() || m_pCurrentInventory->GetAmmo( m_ammoTypes[ next_ammoType ].c_str(), ParentIsActor() ), "[%s]: ammo of next_ammoType[%u] not found", __FUNCTION__, next_ammoType );
+  m_set_next_ammoType_on_reload = next_ammoType;
+  Reload();
+}
