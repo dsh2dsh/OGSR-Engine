@@ -108,34 +108,18 @@ void CActor::IR_OnKeyboardPress(int cmd)
 			xr_vector<CAttachableItem*>::const_iterator it_e = all.end();
 			for(;it!=it_e;++it){
 				CTorch* torch = smart_cast<CTorch*>(*it);
-				if (torch){		
+				if (torch){
 					torch->SwitchNightVision();
 					break;
 				}
 			}
-		}break;
-	case kTORCH:{ 
-		const xr_vector<CAttachableItem*>& all = CAttachmentOwner::attached_objects();
-		xr_vector<CAttachableItem*>::const_iterator it = all.begin();
-		xr_vector<CAttachableItem*>::const_iterator it_e = all.end();
-		for(;it!=it_e;++it){
-				CTorch* torch = smart_cast<CTorch*>(*it);
-				if (torch){		
-					torch->Switch();
-					break;
-				}
-		}
-		}break;
-	case kWPN_1:	
-	case kWPN_2:	
-	case kWPN_3:	
-	case kWPN_4:	
-	case kWPN_5:	
-	case kWPN_6:	
-	case kWPN_8:
-	case kWPN_RELOAD:
-		//Weapons->ActivateWeaponID	(cmd-kWPN_1);			
-		break;
+		} break;
+	case kTORCH: {
+			CTorch* pTorch = smart_cast<CTorch*>(inventory().ItemFromSlot(TORCH_SLOT));
+			if (pTorch) {
+				pTorch->Switch();
+			}
+		} break;
 	case kUSE:
 		ActorUse();
 		break;
@@ -179,7 +163,7 @@ void CActor::IR_OnMouseWheel(int direction)
 	if(inventory().Action( (direction>0)? kWPN_ZOOM_DEC:kWPN_ZOOM_INC , CMD_START)) return;
 
 
-	if (!Core.Features.test(xrCore::Feature::no_mouse_wheel_switch_slot)) {
+	if (psActorFlags.test(AF_MOUSE_WHEEL_SWITCH_SLOTS)) {
 		if (direction > 0)
 			OnNextWeaponSlot();
 		else
