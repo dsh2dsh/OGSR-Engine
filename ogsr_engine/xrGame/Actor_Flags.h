@@ -29,5 +29,4 @@ enum {
 extern Flags32 psActorFlags;
 extern Flags32 psCallbackFlags;
 
-extern BOOL		GodMode	();	
-
+extern BOOL		GodMode	();

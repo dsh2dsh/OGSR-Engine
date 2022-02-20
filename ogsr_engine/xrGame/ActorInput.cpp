@@ -42,7 +42,7 @@ void CActor::IR_OnKeyboardPress(int cmd)
 
 //	if (psCallbackFlags.test(CF_KEY_PRESS))
 //		callback(GameObject::eOnKeyPress)(cmd);
-	
+
 	switch (cmd)
 	{
 	case kWPN_FIRE:
@@ -54,7 +54,7 @@ void CActor::IR_OnKeyboardPress(int cmd)
 			if (OnServer())
 			{
 				NET_Packet P;
-				P.w_begin(M_PLAYER_FIRE); 
+				P.w_begin(M_PLAYER_FIRE);
 				P.w_u16(ID());
 				u_EventSend(P);
 			}
@@ -75,7 +75,7 @@ void CActor::IR_OnKeyboardPress(int cmd)
 		if(inventory().Action(cmd, CMD_START))					return;
 
 	switch(cmd){
-	case kJUMP:		
+	case kJUMP:
 		{
 			mstate_wishful |= mcJump;
 			{
@@ -91,12 +91,12 @@ void CActor::IR_OnKeyboardPress(int cmd)
 				mstate_wishful |= mcCrouch;
 
 		}break;
-	case kSPRINT_TOGGLE:	
+	case kSPRINT_TOGGLE:
 		{
 			if (mstate_wishful & mcSprint)
 				mstate_wishful &=~mcSprint;
 			else
-				mstate_wishful |= mcSprint;					
+				mstate_wishful |= mcSprint;
 		}break;
 	case kCAM_1:	cam_Set			(eacFirstEye);				break;
 	case kCAM_2:	cam_Set			(eacLookAt);				break;
@@ -141,7 +141,7 @@ void CActor::IR_OnKeyboardPress(int cmd)
 		{
 			if(!(GetTrade()->IsInTradeState()))
 			{
-				PIItem itm = inventory().item((cmd==kUSE_BANDAGE)?  CLSID_IITEM_BANDAGE:CLSID_IITEM_MEDKIT );	
+				PIItem itm = inventory().item((cmd==kUSE_BANDAGE)?  CLSID_IITEM_BANDAGE:CLSID_IITEM_MEDKIT );
 				if(itm)
 				{
 					inventory().Eat				(itm);
@@ -179,18 +179,18 @@ void CActor::IR_OnKeyboardRelease(int cmd)
 //	if (conditions().IsSleeping())	return;
 	if (m_input_external_handler && !m_input_external_handler->authorized(cmd))	return;
 
-	if (g_Alive())	
+	if (g_Alive())
 	{
 //		int dik = get_action_dik((EGameActions)cmd);
 //		if ((dik != DIK_LALT) && (dik != DIK_RALT) && (dik != DIK_F4) /*&& psCallbackFlags.test(CF_KEY_RELEASE)*/)
 //			this->callback(GameObject::eOnKeyRelease)(cmd);
-		if (cmd == kUSE) 
+		if (cmd == kUSE)
 			PickupModeOff();
 
 		if(m_holder)
 		{
 			m_holder->OnKeyboardRelease(cmd);
-			
+
 			if(m_holder->allowWeapon() && inventory().Action(cmd, CMD_STOP))		return;
 			return;
 		}else
@@ -230,10 +230,10 @@ void CActor::IR_OnKeyboardHold(int cmd)
 	switch(cmd)
 	{
 	case kUP:
-	case kDOWN: 
+	case kDOWN:
 		cam_Active()->Move( (cmd==kUP) ? kDOWN : kUP, 0, LookFactor);									break;
-	case kCAM_ZOOM_IN: 
-	case kCAM_ZOOM_OUT: 
+	case kCAM_ZOOM_IN:
+	case kCAM_ZOOM_OUT:
 		cam_Active()->Move(cmd);												break;
 	case kLEFT:
 	case kRIGHT:
@@ -260,7 +260,7 @@ void CActor::IR_OnMouseMove(int dx, int dy)
 //	if (psCallbackFlags.test(CF_MOUSE_MOVE))
 //		this->callback(GameObject::eOnMouseMove)(dx, dy);
 
-	if(m_holder) 
+	if(m_holder)
 	{
 		m_holder->OnMouseMove(dx,dy);
 		return;
@@ -286,7 +286,7 @@ bool CActor::use_Holder				(CHolderCustom* holder)
 	if(m_holder){
 		bool b = false;
 		CGameObject* holderGO			= smart_cast<CGameObject*>(m_holder);
-		
+
 		if(smart_cast<CCar*>(holderGO))
 			b = use_Vehicle(0);
 		else
@@ -309,7 +309,7 @@ bool CActor::use_Holder				(CHolderCustom* holder)
 		if (holderGO->CLS_ID==CLSID_OBJECT_W_MOUNTED ||
 			holderGO->CLS_ID==CLSID_OBJECT_W_STATMGUN)
 			b = use_MountedWeapon(holder);
-		
+
 		if(b){//used succesfully
 			// switch off torch...
 			CAttachableItem *I = CAttachmentOwner::attachedItem(CLSID_DEVICE_TORCH);
@@ -357,7 +357,7 @@ void CActor::ActorUse() {
     if ( pGameSP ) pGameSP->StartCarBody( this, m_pInvBoxWeLookingAt );
     return;
   }
-  
+
   else if ( !m_pUsableObject || m_pUsableObject->nonscript_usable() ) {
     if ( m_pPersonWeLookingAt ) {
       CEntityAlive* pEntityAliveWeLookingAt = smart_cast<CEntityAlive*>( m_pPersonWeLookingAt );
@@ -398,11 +398,11 @@ void CActor::ActorUse() {
   PickupModeOn();
   PickupModeUpdate_COD();
 }
-BOOL CActor::HUDview				( )const 
-{ 
+BOOL CActor::HUDview				( )const
+{
 	return IsFocused()
-		&&(cam_active==eacFirstEye)		
-		&&((!m_holder) || (m_holder && m_holder->allowWeapon() && m_holder->HUDView() ) ); 
+		&&(cam_active==eacFirstEye)
+		&&((!m_holder) || (m_holder && m_holder->allowWeapon() && m_holder->HUDView() ) );
 }
 
 //void CActor::IR_OnMousePress(int btn)
@@ -418,12 +418,12 @@ constexpr u32 SlotsToCheck[] = {
 void	CActor::OnNextWeaponSlot()
 {
 	u32 ActiveSlot = inventory().GetActiveSlot();
-	if (ActiveSlot == NO_ACTIVE_SLOT) 
+	if (ActiveSlot == NO_ACTIVE_SLOT)
 		ActiveSlot = inventory().GetPrevActiveSlot();
 
-	if (ActiveSlot == NO_ACTIVE_SLOT) 
+	if (ActiveSlot == NO_ACTIVE_SLOT)
 		ActiveSlot = KNIFE_SLOT;
-	
+
 	constexpr u32 NumSlotsToCheck = sizeof(SlotsToCheck)/sizeof(u32);
 	u32 CurSlot = 0;
 	for (; CurSlot<NumSlotsToCheck; CurSlot++)
@@ -444,10 +444,10 @@ void	CActor::OnNextWeaponSlot()
 void	CActor::OnPrevWeaponSlot()
 {
 	u32 ActiveSlot = inventory().GetActiveSlot();
-	if (ActiveSlot == NO_ACTIVE_SLOT) 
+	if (ActiveSlot == NO_ACTIVE_SLOT)
 		ActiveSlot = inventory().GetPrevActiveSlot();
 
-	if (ActiveSlot == NO_ACTIVE_SLOT) 
+	if (ActiveSlot == NO_ACTIVE_SLOT)
 		ActiveSlot = KNIFE_SLOT;
 
 	constexpr u32 NumSlotsToCheck = sizeof(SlotsToCheck)/sizeof(u32);
@@ -469,10 +469,10 @@ void	CActor::OnPrevWeaponSlot()
 
 float	CActor::GetLookFactor()
 {
-	if (m_input_external_handler) 
+	if (m_input_external_handler)
 		return m_input_external_handler->mouse_scale_factor();
 
-	
+
 	float factor	= 1.f;
 
 	PIItem pItem	= inventory().ActiveItem();
@@ -485,10 +485,10 @@ float	CActor::GetLookFactor()
 	return factor;
 }
 
-void CActor::set_input_external_handler(CActorInputHandler *handler) 
+void CActor::set_input_external_handler(CActorInputHandler *handler)
 {
 	// clear state
-	if (handler) 
+	if (handler)
 		mstate_wishful			= 0;
 
 	// release fire button
@@ -498,6 +498,3 @@ void CActor::set_input_external_handler(CActorInputHandler *handler)
 	// set handler
 	m_input_external_handler	= handler;
 }
-
-
-

@@ -37,7 +37,7 @@
 
 #ifdef DEBUG
 #	include "PHDebug.h"
-#	include "ui/UIDebugFonts.h" 
+#	include "ui/UIDebugFonts.h"
 #	include "game_graph.h"
 #endif // DEBUG
 
@@ -83,7 +83,7 @@ u32		g_dwDebugNodeSource		= 0;
 u32		g_dwDebugNodeDest		= 0;
 extern	BOOL	g_bDrawBulletHit;
 #endif
-#ifdef DEBUG 
+#ifdef DEBUG
 extern LPSTR	dbg_stalker_death_anim;
 extern BOOL		b_death_anim_velocity;
 #endif
@@ -111,7 +111,7 @@ public:
 		u32		_eco_strings	= g_pStringContainer->stat_economy			();
 		u32		_eco_smem		= g_pSharedMemoryContainer->stat_economy	();
 		u32		m_base=0,c_base=0,m_lmaps=0,c_lmaps=0;
-		
+
 		//	Resource check moved to m_pRender
 		if (Device.m_pRender) Device.m_pRender->ResourcesGetMemoryUsage(m_base, c_base, m_lmaps, c_lmaps);
 
@@ -151,9 +151,9 @@ public:
 			game->OnDifficultyChanged	();
 		}
 	}
-	virtual void	Info	(TInfo& I)		
+	virtual void	Info	(TInfo& I)
 	{
-		strcpy_s(I,"game difficulty"); 
+		strcpy_s(I,"game difficulty");
 	}
 };
 
@@ -308,11 +308,11 @@ public:
         }
 
 		Console->Hide();
-		
+
 		if (MainMenu()->IsActive())
 			MainMenu()->Activate(false);
 
-		string_path		fn_; 
+		string_path		fn_;
 		strconcat		(sizeof(fn_),fn_, args, ".xrdemo");
 		string_path		fn;
 		FS.update_path	(fn, "$game_saves$", fn_);
@@ -325,8 +325,8 @@ public:
 class CCC_DemoPlay : public IConsole_Command
 {
 public:
-	CCC_DemoPlay(LPCSTR N) : 
-	  IConsole_Command(N) 
+	CCC_DemoPlay(LPCSTR N) :
+	  IConsole_Command(N)
 	  { bEmptyArgsHandled = TRUE; };
 	  virtual void Execute(LPCSTR args) {
 		  if (0==g_pGameLevel)
@@ -381,7 +381,7 @@ public:
 		S[0]					= 0;
 //.		sscanf					(args ,"%s",S);
 		strcpy_s					(S,args);
-		
+
 #ifdef DEBUG
 		CTimer					timer;
 		timer.Start				();
@@ -416,7 +416,7 @@ public:
 
 		strcat					(S,".dds");
 		FS.update_path			(S1,"$game_saves$",S);
-		
+
 #ifdef DEBUG
 		timer.Start				();
 #endif
@@ -513,13 +513,13 @@ public:
 		strconcat				(sizeof(command),command,"start server(",g_last_saved_game,"/single/alife/load)");
 		Console->Execute		(command);
 	}
-	
+
 	virtual void	Save				(IWriter *F)
 	{
 		if (!*g_last_saved_game)
 			return;
 
-		F->w_printf				("%s %s\r\n",cName,g_last_saved_game); 
+		F->w_printf				("%s %s\r\n",cName,g_last_saved_game);
 	}
 };
 
@@ -611,9 +611,9 @@ public:
 		if(A)
 			A->DumpInfo();
 	}
-	virtual void	Info	(TInfo& I)		
+	virtual void	Info	(TInfo& I)
 	{
-		strcpy_s(I,"dumps all infoportions that actor have"); 
+		strcpy_s(I,"dumps all infoportions that actor have");
 	}
 };
 #include "map_manager.h"
@@ -623,9 +623,9 @@ public:
 	virtual void	Execute				(LPCSTR args) {
 		Level().MapManager().Dump();
 	}
-	virtual void	Info	(TInfo& I)		
+	virtual void	Info	(TInfo& I)
 	{
-		strcpy_s(I,"dumps all currentmap locations"); 
+		strcpy_s(I,"dumps all currentmap locations");
 	}
 
 };
@@ -635,7 +635,7 @@ class CCC_DumpCreatures : public IConsole_Command {
 public:
 	CCC_DumpCreatures	(LPCSTR N) : IConsole_Command(N)  { bEmptyArgsHandled = true; };
 	virtual void	Execute				(LPCSTR args) {
-		
+
 		typedef CSafeMapIterator<ALife::_OBJECT_ID,CSE_ALifeDynamicObject>::_REGISTRY::const_iterator const_iterator;
 
 		const_iterator I = ai().alife().graph().level().objects().begin();
@@ -645,12 +645,12 @@ public:
 			if (obj) {
 				Msg("\"%s\",",obj->name_replace());
 			}
-		}		
+		}
 
 	}
-	virtual void	Info	(TInfo& I)		
+	virtual void	Info	(TInfo& I)
 	{
-		strcpy_s(I,"dumps all creature names"); 
+		strcpy_s(I,"dumps all creature names");
 	}
 
 };
@@ -661,7 +661,7 @@ class CCC_DebugFonts : public IConsole_Command {
 public:
 	CCC_DebugFonts (LPCSTR N) : IConsole_Command(N) {bEmptyArgsHandled = true; }
 	virtual void Execute				(LPCSTR args) {
-		HUD().GetUI()->StartStopMenu( xr_new<CUIDebugFonts>(), true);		
+		HUD().GetUI()->StartStopMenu( xr_new<CUIDebugFonts>(), true);
 	}
 };
 
@@ -677,10 +677,10 @@ public:
 
 		u32 value1;
 		u32 value2;
-		
+
 		sscanf(param1,"%u",&value1);
 		sscanf(param2,"%u",&value2);
-		
+
 		if ((value1 > 0) && (value2 > 0)) {
 			g_bDebugNode		= TRUE;
 			g_dwDebugNodeSource	= value1;
@@ -704,9 +704,9 @@ public:
 		CObject			*obj = Level().Objects.FindObjectByName(param1);
 		CBaseMonster	*monster = smart_cast<CBaseMonster *>(obj);
 		if (!monster)	return;
-		
+
 		u32				value2;
-		
+
 		sscanf			(param2,"%u",&value2);
 		monster->set_show_debug_info (u8(value2));
 	}
@@ -725,10 +725,10 @@ public:
 			//}
 
 		}
-	
-	//virtual void	Info	(TInfo& I)		
+
+	//virtual void	Info	(TInfo& I)
 	//{
-	//	strcpy_s(I,"restart game fast"); 
+	//	strcpy_s(I,"restart game fast");
 	//}
 };
 #endif
@@ -756,14 +756,14 @@ public:
 		  ph_world->SetGravity(float(atof(args)));
 	  }
 	  virtual void	Status	(TStatus& S)
-	{	
+	{
 		if(ph_world)
 			sprintf_s	(S,"%3.5f",ph_world->Gravity());
 		else
 			sprintf_s	(S,"%3.5f",default_world_gravity);
 		while	(xr_strlen(S) && ('0'==S[xr_strlen(S)-1]))	S[xr_strlen(S)-1] = 0;
 	}
-	
+
 };
 
 class CCC_PHFps : public IConsole_Command {
@@ -778,8 +778,8 @@ public:
 		  CPHWorld::SetStep(1.f/step_count);
 	  }
 	  virtual void	Status	(TStatus& S)
-	  {	
-		 	sprintf_s	(S,"%3.5f",1.f/fixed_step);	  
+	  {
+		 	sprintf_s	(S,"%3.5f",1.f/fixed_step);
 	  }
 
 };
@@ -899,7 +899,7 @@ struct CCC_TimeFactorSingle : public CCC_Float {
 	virtual void	Execute	(LPCSTR args)
 	{
 		CCC_Float::Execute	(args);
-		
+
 		if (!g_pGameLevel)
 			return;
 
@@ -929,7 +929,7 @@ public:
 		group=G													;
 	}
 virtual	void	Execute		(LPCSTR args)						;
-	
+
 IC		void	Set			(BOOL V)
 	  {
 		  value->set(mask,V)									;
@@ -937,7 +937,7 @@ IC		void	Set			(BOOL V)
 
 };
 
-class CCC_RadioGroupMask2 
+class CCC_RadioGroupMask2
 {
 	CCC_RadioMask *mask0;
 	CCC_RadioMask *mask1;
@@ -996,7 +996,7 @@ public		:
 	virtual void	Execute	(LPCSTR args)
 	{
 		if( CAttachableItem::m_dbgItem){
-			CAttachableItem::m_dbgItem = NULL;	
+			CAttachableItem::m_dbgItem = NULL;
 			Msg("CCC_TuneAttachableItem switched to off");
 			return;
 		};
@@ -1013,7 +1013,7 @@ public		:
 	}
 
 	virtual void	Info	(TInfo& I)
-	{	
+	{
 		sprintf_s(I,"allows to change bind rotation and position offsets for attached item, <section_name> given as arguments");
 	}
 };
@@ -1033,7 +1033,7 @@ public:
 	CCC_DumpModelBones	(LPCSTR N) : IConsole_Command(N)
 	{
 	}
-	
+
 	virtual void Execute(LPCSTR arguments)
 	{
 		if (!arguments || !*arguments) {
@@ -1065,7 +1065,7 @@ public:
 		Msg						("bones for model \"%s\"",arguments);
 		for (u16 i=0, n=kinematics->LL_BoneCount(); i<n; ++i)
 			Msg					("%s",*kinematics->LL_GetData(i).name);
-		
+
 		Render->model_Delete	(visual);
 	}
 };
@@ -1157,7 +1157,7 @@ void CCC_RegisterCommands()
 #ifdef DEBUG
 	CMD1(CCC_ALifePath,			"al_path"				);		// build path
 #endif // DEBUG
-	
+
 	CMD1(CCC_ALifeSave,			"save"					);		// save game
 	CMD1(CCC_ALifeLoadFrom,		"load"					);		// load game from ...
 	CMD1(CCC_LoadLastSave,		"load_last_save"		);		// load last saved game from ...
@@ -1252,9 +1252,9 @@ void CCC_RegisterCommands()
 	CMD1(CCC_DrawGameGraphLevel,	"ai_draw_game_graph_level");
 
 	CMD4(CCC_Integer,			"ai_dbg_inactive_time",	&g_AI_inactive_time, 0, 1000000);
-	
+
 	CMD1(CCC_DebugNode,			"ai_dbg_node");
-	
+
 	CMD1(CCC_ShowMonsterInfo,	"ai_monster_info");
 	CMD1(CCC_DebugFonts,		"debug_fonts");
 	CMD1(CCC_TuneAttachableItem,"dbg_adjust_attachable_item");
@@ -1265,7 +1265,7 @@ void CCC_RegisterCommands()
 #ifdef DEBUG
 	CMD1(CCC_ShowAnimationStats,"ai_show_animation_stats");
 #endif // DEBUG
-	
+
 #ifndef MASTER_GOLD
 	CMD3(CCC_Mask,				"ai_ignore_actor",		&psAI_Flags,	aiIgnoreActor);
 #endif // MASTER_GOLD
