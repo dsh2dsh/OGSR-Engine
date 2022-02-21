@@ -21,7 +21,7 @@
 #include "weapon.h"
 #include "ai/monsters/BaseMonster/base_monster.h"
 
-//константы shoot_factor, определяющие 
+//константы shoot_factor, определяющие
 //поведение пули при столкновении с объектом
 #define RICOCHET_THRESHOLD		0.1
 #define STUCK_THRESHOLD			0.4
@@ -123,9 +123,9 @@ BOOL CBulletManager::test_callback( const collide::ray_defs& rd, CObject* object
 }
 
 
-//callback функция 
+//callback функция
 //	result.O;		// 0-static else CObject*
-//	result.range;	// range from start to element 
+//	result.range;	// range from start to element
 //	result.element;	// if (O) "num tri" else "num bone"
 //	params;			// user defined abstract data
 //	Device.Statistic.TEST0.End();
@@ -160,7 +160,7 @@ BOOL  CBulletManager::firetrace_callback(collide::rq_result& result, LPVOID para
 		//получить треугольник и узнать его материал
 		CDB::TRI* T			= Level().ObjectSpace.GetStaticTris()+result.element;
 		hit_material_idx	= T->material;
-		
+
 
 		SGameMtl* mtl = GMLib.GetMaterialByIdx(hit_material_idx);
 		if( fsimilar(mtl->fShootFactor,1.0f,EPS) )//Если материал полностью простреливаемый
@@ -263,7 +263,7 @@ void CBulletManager::DynamicObjectHit	(CBulletManager::_event& E)
 	if (g_clear) E.Repeated = false;
 	E.Repeated = false;
 	bool NeedShootmark = ( E.bullet.hit_type == ALife::eHitTypeFireWound || E.bullet.hit_type == ALife::eHitTypeWound  || E.bullet.hit_type == ALife::eHitTypeWound_2 ); //true;//!E.Repeated;
-	
+
 	if ( smart_cast<CActor*>( E.R.O ) )
 	{
 		game_PlayerState* ps = Game().GetPlayerByGameID(E.R.O->ID());
@@ -276,11 +276,11 @@ void CBulletManager::DynamicObjectHit	(CBulletManager::_event& E)
 	{
 		NeedShootmark = ( NeedShootmark && monster->need_shotmark() );
 	}
-	
+
 	//визуальное обозначение попадание на объекте
 //	Fvector			hit_normal;
 	FireShotmark	(&E.bullet, E.bullet.dir, E.point, E.R, E.tgt_material, E.normal, NeedShootmark);
-	
+
 	Fvector original_dir = E.bullet.dir;
 	float power, impulse;
 	std::pair<float,float> hit_result = E.result; //ObjectHit(&E.bullet, E.end_point, E.R, E.tgt_material, hit_normal);
@@ -315,7 +315,7 @@ void CBulletManager::DynamicObjectHit	(CBulletManager::_event& E)
 	{
 		//-------------------------------------------------
 		bool AddStatistic = false;
-/*		
+/*
 		NET_Packet		P;
 //		CGameObject::u_EventGen	(P,(AddStatistic)? GE_HIT_STATISTIC : GE_HIT,E.R.O->ID());
 		P.w_u16			(E.bullet.parent_id);
@@ -335,12 +335,12 @@ void CBulletManager::DynamicObjectHit	(CBulletManager::_event& E)
 		CGameObject::u_EventSend (P);
 */
 
-		SHit	Hit = SHit(	power, 
-							original_dir, 
-							NULL, 
-							u16(E.R.element), 
-							position_in_bone_space, 
-							impulse, 
+		SHit	Hit = SHit(	power,
+							original_dir,
+							NULL,
+							u16(E.R.element),
+							position_in_bone_space,
+							impulse,
 							E.bullet.hit_type,
 							E.bullet.ap,
 							E.bullet.flags.aim_bullet);
@@ -352,7 +352,7 @@ void CBulletManager::DynamicObjectHit	(CBulletManager::_event& E)
 
 		NET_Packet			np;
 		Hit.Write_Packet	(np);
-		
+
 //		Msg("Hit sended: %d[%d,%d]", Hit.whoID, Hit.weaponID, Hit.BulletID);
 		CGameObject::u_EventSend(np);
 	}
@@ -364,8 +364,8 @@ FvectorVec g_hit[3];
 
 extern void random_dir	(Fvector& tgt_dir, const Fvector& src_dir, float dispersion);
 
-std::pair<float, float>  CBulletManager::ObjectHit	(SBullet* bullet, const Fvector& end_point, 
-									collide::rq_result& R, u16 target_material, 
+std::pair<float, float>  CBulletManager::ObjectHit	(SBullet* bullet, const Fvector& end_point,
+									collide::rq_result& R, u16 target_material,
 									Fvector& hit_normal)
 {
 	//----------- normal - start
@@ -386,7 +386,7 @@ std::pair<float, float>  CBulletManager::ObjectHit	(SBullet* bullet, const Fvect
 		Fvector*	pVerts	= Level().ObjectSpace.GetStaticVerts();
 		CDB::TRI*	pTri	= Level().ObjectSpace.GetStaticTris()+R.element;
 		hit_normal.mknormal	(pVerts[pTri->verts[0]],pVerts[pTri->verts[1]],pVerts[pTri->verts[2]]);
-	}		
+	}
 	//----------- normal - end
 	float old_speed, energy_lost;
 	old_speed = bullet->speed;
@@ -395,11 +395,11 @@ std::pair<float, float>  CBulletManager::ObjectHit	(SBullet* bullet, const Fvect
 	float speed_factor = bullet->speed/bullet->max_speed;
 	//получить силу хита выстрела с учетом патрона
 	float power = bullet->hit_power*speed_factor;
-	
+
 	SGameMtl* mtl = GMLib.GetMaterialByIdx(target_material);
 
-	//shoot_factor: коеффициент указывающий на текущие свойства пули 
-	//(Если меньше 1, то пуля либо рикошетит(если контакт идёт по касательной), либо застряёт в текущем 
+	//shoot_factor: коеффициент указывающий на текущие свойства пули
+	//(Если меньше 1, то пуля либо рикошетит(если контакт идёт по касательной), либо застряёт в текущем
 	//объекте, если больше 1, то пуля прошивает объект)
 	float shoot_factor = mtl->fShootFactor * bullet->pierce*speed_factor;
 
@@ -415,7 +415,7 @@ std::pair<float, float>  CBulletManager::ObjectHit	(SBullet* bullet, const Fvect
 	{
 		#ifdef DEBUG
 		bullet_state = 2;
-		#endif	
+		#endif
 		return std::make_pair(power, impulse);
 	}
 
@@ -431,7 +431,7 @@ std::pair<float, float>  CBulletManager::ObjectHit	(SBullet* bullet, const Fvect
 	//float f				= Random.randF	(0.0f,0.3);
 //	if(shoot_factor<RICOCHET_THRESHOLD &&  )
 	if (((f+shoot_factor)<ricoshet_factor) && bullet->flags.allow_ricochet)	{
-		//уменьшение скорости полета в зависимости 
+		//уменьшение скорости полета в зависимости
 		//от угла падения пули (чем прямее угол, тем больше потеря)
 		float scale = 1.f -_abs(bullet->dir.dotproduct(hit_normal))*m_fCollisionEnergyMin;
 		clamp(scale, 0.f, m_fCollisionEnergyMax);
@@ -452,7 +452,7 @@ std::pair<float, float>  CBulletManager::ObjectHit	(SBullet* bullet, const Fvect
 
 		#ifdef DEBUG
 		bullet_state = 0;
-		#endif		
+		#endif
 	} else if(shoot_factor <  1.0) {
 		//застрявание пули в материале
 		bullet->speed  = 0.f;
@@ -460,18 +460,18 @@ std::pair<float, float>  CBulletManager::ObjectHit	(SBullet* bullet, const Fvect
 		impulse = bullet->hit_impulse*speed_factor;
 		#ifdef DEBUG
 		bullet_state = 1;
-		#endif		
+		#endif
 	} else {
 		//пробивание материала
 		//уменьшить скорость пропорцианально потраченому импульсу
 		//float speed_lost = fis_zero(bullet->hit_impulse) ?	1.f : 		1.f - impulse/bullet->hit_impulse;
 		//clamp (speed_lost, 0.f , 1.f);
 		//float speed_lost = shoot_factor;
-		
+
 		bullet->speed *=mtl->fShootFactor;
 		energy_lost = 1.f - bullet->speed/old_speed;
 		impulse = bullet->hit_impulse*speed_factor*energy_lost;
-		
+
 		bullet->pos.mad(bullet->pos,bullet->dir,EPS);//fake
 		//ввести коэффициент случайности при простреливании
 		Fvector rand_normal;
@@ -479,13 +479,13 @@ std::pair<float, float>  CBulletManager::ObjectHit	(SBullet* bullet, const Fvect
 		bullet->dir.set(rand_normal);
 		#ifdef DEBUG
 		bullet_state = 2;
-		#endif		
+		#endif
 	}
 #ifdef DEBUG
 	extern BOOL g_bDrawBulletHit;
 	if(g_bDrawBulletHit)
 		g_hit[bullet_state].push_back(dbg_bullet_pos);
-#endif 
+#endif
 
 	return std::make_pair(power, impulse);
 }
