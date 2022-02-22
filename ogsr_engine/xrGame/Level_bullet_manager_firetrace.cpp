@@ -51,18 +51,19 @@ BOOL CBulletManager::test_callback( const collide::ray_defs& rd, CObject* object
     ICollisionForm* cform = entity->collidable.model;
     if ( cform != NULL && cform->Type() == cftObject ) {
       CActor* actor = smart_cast<CActor*>( entity );
+      auto monster = smart_cast<CCustomMonster*>( entity );
       CAI_Stalker* stalker = smart_cast<CAI_Stalker*>( entity );
       // в кого попали?
-      if ( actor || stalker ) {
+      if ( actor || monster || stalker ) {
         // попали в актера или сталкера
         Fsphere S = cform->getSphere();
         entity->XFORM().transform_tiny( S.P );
         float dist = rd.range;
         // проверим попали ли мы в описывающую сферу
+        CObject* initiator = Level().Objects.net_Find( bullet->parent_id );
         if ( S.intersect_full( bullet->pos, bullet->dir, dist ) != Fsphere::rpNone ) {
           // да попали, найдем кто стрелял
           bool play_whine = true;
-          CObject* initiator = Level().Objects.net_Find( bullet->parent_id );
           if ( actor ) {
             // попали в актера
             float hpf = 1.f;
@@ -105,13 +106,27 @@ BOOL CBulletManager::test_callback( const collide::ray_defs& rd, CObject* object
             }
           }
           // play whine sound
-          if ( play_whine ) {
+          //
+          // Если пуля пролетает мимо сталкера или мутанта, то звук должен быть
+          // только в том случае, если пулю выпустил актор. Если сталкеры
+          // стреляют друг в друга или по мутантам, звук пули не нужен.
+          if ( play_whine && ( actor || smart_cast<CActor*>( initiator ) ) ) {
             Fvector pt;
             pt.mad( bullet->pos, bullet->dir, dist );
             Level().BulletManager().PlayWhineSound( bullet, initiator, pt );
           }
         }
-        else {
+        // Если пуля актора не попала в сферу сталкера или мутанта, который
+        // сейчас проигрывает анимацию хита, то мы не будем его игнорировать, а
+        // продолжим проверку лучом, что бы точно определить, вдруг мы все-таки
+        // в него попали. Возможно это поможет с ситуацией, когда сталкеры с
+        // анимацией будто неуязвимы.
+        else if ( actor                                // далеко от актора
+                  || !smart_cast<CActor*>( initiator ) // стреляет сталкер
+                                // актор стреляет в сталкера без анимация хита
+                  || ( stalker && !stalker->critically_wounded() )
+                                // или в мутанта
+                  || ( monster && !monster->critically_wounded() ) ) {
           // don't test this object again (return FALSE)
           bRes = FALSE;
         }
