@@ -277,22 +277,21 @@ void CUIEventsWnd::ShowDescription			(CGameTask* t, int idx)
 	}
 }
 
-bool CUIEventsWnd::ItemHasDescription(CUITaskItem* itm)
-{
-	if(itm->ObjectiveIdx()==0)// root
-	{
-		bool bHasLocation	= itm->GameTask()->HasLinkedMapLocations();
-		return bHasLocation;
-	}else
-	{
-		SGameTaskObjective	*obj				= itm->Objective();
-		CMapLocation* ml						= obj->LinkedMapLocation();
-		bool bHasLocation						= (NULL != ml);
-		bool bIsMapMode							= GetDescriptionMode(); 
-		bool b									= (bIsMapMode&&bHasLocation&&ml->SpotEnabled());
-		return b;
-	}
+bool CUIEventsWnd::ItemHasDescription( CUITaskItem* itm ) {
+  if ( itm->ObjectiveIdx() == 0 ) // root
+    return itm->GameTask()->HasLinkedMapLocations();
+
+  SGameTaskObjective* obj = itm->Objective();
+  if ( obj->TaskState() == eTaskStateInProgress ) {
+    CMapLocation* ml = obj->LinkedMapLocation();
+    bool bHasLocation = ( NULL != ml );
+    bool bIsMapMode = GetDescriptionMode(); 
+    return ( bIsMapMode && bHasLocation && ml->SpotEnabled() );
+  }
+
+  return false;
 }
+
 void CUIEventsWnd::Reset()
 {
 	inherited::Reset	();
