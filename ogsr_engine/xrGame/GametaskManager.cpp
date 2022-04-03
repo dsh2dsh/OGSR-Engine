@@ -143,7 +143,7 @@ void CGameTaskManager::SetTaskState(CGameTask* t, u16 objective_num, ETaskState 
 	m_flags.set						(eChanged, TRUE);
 	bool isRoot =					(objective_num==0);
 
-	CMapLocation* ml				= o->LinkedMapLocation();
+	CMapLocation* ml = o->LinkedMapLocation( false );
 	bool bActive					= ActiveObjective()==o;
 
 	if((state==eTaskStateFail||state==eTaskStateCompleted) && ml){

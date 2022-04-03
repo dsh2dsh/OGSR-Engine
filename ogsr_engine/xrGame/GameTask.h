@@ -54,8 +54,8 @@ public:
 	shared_str				map_location;
 	shared_str				object_story_id;
 	u16						object_id;
-	u16						get_object_id();
-	CMapLocation*			LinkedMapLocation	();
+	u16 get_object_id( bool strict = true );
+	CMapLocation* LinkedMapLocation( bool strict = true );
 	ETaskState				TaskState			()	{return task_state;};
 	ETaskState				UpdateState			();
 

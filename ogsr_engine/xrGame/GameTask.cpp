@@ -299,15 +299,15 @@ idx					(0)
 {
 }
 
-u16 SGameTaskObjective::get_object_id() {
+u16 SGameTaskObjective::get_object_id( bool strict ) {
   if ( object_story_id.size() ) {
     ALife::_STORY_ID _sid = story_id( object_story_id.c_str() );
     u16 id = storyId2GameId( _sid );
 #ifdef CRASH_ON_INVALID_STORY_ID
-    ASSERT_FMT( id != u16(-1), "[%s]: can't find object_id by object_story_id[%s] description[%s] m_Title[%s]", __FUNCTION__, object_story_id.c_str(), description.c_str(), parent ? parent->m_Title.c_str() : "" );
+    ASSERT_FMT( id != u16(-1) || !strict, "[%s]: can't find object_id by object_story_id[%s] description[%s] m_Title[%s]", __FUNCTION__, object_story_id.c_str(), description.c_str(), parent ? parent->m_Title.c_str() : "" );
     return id;
 #else
-    if ( id == u16(-1) )
+    if ( id == u16(-1) && strict )
       Msg( "! [%s]: can't find object_id by object_story_id[%s] description[%s] m_Title[%s]", __FUNCTION__, object_story_id.c_str(), description.c_str(), parent ? parent->m_Title.c_str() : "" );
     else
       return id;
@@ -316,10 +316,12 @@ u16 SGameTaskObjective::get_object_id() {
   return object_id;
 }
 
-CMapLocation* SGameTaskObjective::LinkedMapLocation		()
-{
-	if( map_location.size()==0) return NULL;
-	return Level().MapManager().GetMapLocation( map_location, get_object_id() );
+CMapLocation* SGameTaskObjective::LinkedMapLocation( bool strict ) {
+  if ( map_location.size() == 0 ) return nullptr;
+  u16 id = get_object_id( strict );
+  if ( !strict && id == u16(-1) )
+    return nullptr;
+  return Level().MapManager().GetMapLocation( map_location, id );
 }
 
 void SGameTaskObjective::SetTaskState		(ETaskState new_state)
