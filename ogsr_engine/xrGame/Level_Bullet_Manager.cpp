@@ -79,6 +79,7 @@ void SBullet::Init(const Fvector& position,
 
 	targetID			= 0;	
 	m_ExplodeParticles = cartridge.m_ExplodeParticles;
+        m_dwTimeRemainder = 0;
 }
 
 //////////////////////////////////////////////////////////
@@ -87,7 +88,6 @@ void SBullet::Init(const Fvector& position,
 CBulletManager::CBulletManager()
 {
 	m_Bullets.reserve( 1000 );
-	m_dwTimeRemainder = 0;
 }
 
 CBulletManager::~CBulletManager()
@@ -183,39 +183,34 @@ SBullet& CBulletManager::AddBullet(const Fvector& position,
 	return bullet;
 }
 
-void CBulletManager::UpdateWorkload()
-{
-	u32 delta_time		=	Device.dwTimeDelta + m_dwTimeRemainder;
-	u32 step_num		=	delta_time/m_dwStepTime;
-	m_dwTimeRemainder	=	delta_time%m_dwStepTime;
-	
-	rq_storage.r_clear			();
-	rq_spatial.clear_not_free	();
+void CBulletManager::UpdateWorkload() {
+  if ( m_Bullets.size() == 0 )
+    return;
 
-	int k = m_Bullets.size() - 1;
+  rq_storage.r_clear();
+  rq_spatial.clear_not_free();
 
-	for ( ; k >= 0; k-- ) {
-		SBullet& bullet = m_Bullets[k];
-		//для пули пущенной на этом же кадре считаем только 1 шаг
-		//(хотя по теории вообще ничего считать на надо)
-		//который пропустим на следующем кадре, 
-		//это делается для того чтоб при скачках FPS не промазать
-		//с 2х метров
-		u32 cur_step_num = step_num;
-
-		u32 frames_pass = Device.dwFrame - bullet.frame_num;
-		if(frames_pass == 0)						cur_step_num = 1;
-		else if (frames_pass == 1 && step_num>0)	cur_step_num -= 1;
-
-		// calculate bullet
-		for(u32 i=0; i<cur_step_num; i++){
-			if(!CalcBullet(rq_storage,rq_spatial,&bullet, m_dwStepTime)){
-				collide::rq_result res;
-				RegisterEvent(EVENT_REMOVE, FALSE, &bullet, Fvector().set(0, 0, 0), res, (u16)k);
-				break;
-			}
-		}
-	}
+  int k = m_Bullets.size() - 1;
+  for ( ; k >= 0; k-- ) {
+    SBullet& bullet = m_Bullets[ k ];
+    if ( bullet.frame_num == Device.dwFrame )
+      continue;
+    u32 delta_time = Device.dwTimeDelta + bullet.m_dwTimeRemainder;
+    u32 step_num   = delta_time / m_dwStepTime;
+    u32 step_time  = m_dwStepTime;
+    if ( step_num == 0 && Device.dwFrame - bullet.frame_num == 1 ) {
+      step_num  = 1;
+	  step_time = Device.dwTimeDelta;
+      bullet.m_dwTimeRemainder = 0;
+    }
+    else
+      bullet.m_dwTimeRemainder = delta_time % m_dwStepTime;
+    // calculate bullet
+    if ( step_num > 0 && !CalcBullet( rq_storage, rq_spatial, &bullet, step_time * step_num ) ) {
+      collide::rq_result res;
+      RegisterEvent( EVENT_REMOVE, FALSE, &bullet, Fvector().set( 0, 0, 0 ), res, (u16)k );
+    }
+  }
 }
 
 bool CBulletManager::CalcBullet (collide::rq_results & rq_storage, xr_vector<ISpatial*>& rq_spatial, SBullet* bullet, u32 delta_time)
@@ -440,9 +435,6 @@ void CBulletManager::CommitEvents			()	// @ the start of frame
 		}		
 	}
 	m_Events.clear();
-
-	if ( m_Bullets.empty() )
-	  m_dwTimeRemainder = 0;
 }
 
 void CBulletManager::RegisterEvent			(EventType Type, BOOL _dynamic, SBullet* bullet, const Fvector& end_point, collide::rq_result& R, u16 tgt_material)

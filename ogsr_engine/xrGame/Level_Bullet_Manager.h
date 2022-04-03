@@ -10,7 +10,10 @@
 //структура, описывающая пулю и ее свойства в полете
 struct SBullet
 {
-	u32				frame_num			;			//номер кадра на котором была запущена пуля
+        // номер кадра на котором была запущена пуля
+        u32 frame_num;
+        // остаток времени, который не был учтен на предыдущем кадре
+        u32 m_dwTimeRemainder;
 	union			{
 		struct			{
 			u16			ricochet_was	: 1	;			//пуля срикошетила
@@ -121,9 +124,6 @@ protected:
 	BulletVec				m_Bullets			;	// working set, locked
 	BulletVec				m_BulletsRendered	;	// copy for rendering
 	std::vector<_event>		m_Events			;	
-
-	//остаток времени, который не был учтен на предыдущем кадре
-	u32						m_dwTimeRemainder;
 
 	//отрисовка трассеров от пуль
 	CTracer					tracers;
