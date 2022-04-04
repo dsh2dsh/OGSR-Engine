@@ -44,34 +44,6 @@ public:
 		}
 		return result;
 	}
-/*
-			int				quantity;
-			float			afT[2];
-			Fsphere::ERP_Result	result	= sS.intersect(ray.pos,ray.fwd_dir,range,quantity,afT);
-
-			if (Fsphere::rpOriginInside || ((result==Fsphere::rpOriginOutside)&&(afT[0]<range))){
-				if (b_nearest)				{ 
-					switch(result){
-					case Fsphere::rpOriginInside:	range	= afT[0]<range?afT[0]:range;	break;
-					case Fsphere::rpOriginOutside:	range	= afT[0];						break;
-					}
-					range2			=range*range; 
-				}
-*/
-	ICF ERP_Result intersect_full	(const _vector3<T>& start, const _vector3<T>& dir, T& dist) const
-	{
-		int				quantity;
-		float			afT[2];
-		Fsphere::ERP_Result	result	= intersect(start,dir,dist,quantity,afT);
-
-		if (result == Fsphere::rpOriginInside || ((result==Fsphere::rpOriginOutside)&&(afT[0]<dist))){
-			switch(result){
-				case Fsphere::rpOriginInside:	dist	= afT[0]<dist?afT[0]:dist;		break;
-				case Fsphere::rpOriginOutside:	dist	= afT[0];						break;
-			}
-		}
-		return			result;
-	}
 
 	ICF ERP_Result intersect	(const _vector3<T>& start, const _vector3<T>& dir, T& dist) const
 	{
@@ -141,6 +113,34 @@ public:
 	{
 		return T( PI_MUL_4 / 3 ) * (R*R*R);
 	}
+
+  // https://gamedev.stackexchange.com/questions/96459/fast-ray-sphere-collision-code
+  ICF ERP_Result intersect_ray( const _vector3<T>& start, const _vector3<T>& dir, T& t ) const {
+    _vector3<T> m;
+    m.sub( start, P );
+    T b = m.dotproduct( dir );
+    T c = m.dotproduct( m ) - R * R;
+
+    // Exit if r’s origin outside s (c > 0) and r pointing away from s (b > 0).
+    if ( c > 0.0f && b > 0.0f )
+      return Fsphere::rpNone;
+    T discr = b * b - c;
+
+    // A negative discriminant corresponds to ray missing sphere.
+    if ( discr < 0.0f ) return Fsphere::rpNone;
+
+    // Ray now found to intersect sphere, compute smallest t value of
+    // intersection.
+    t = -b - _sqrt( discr );
+
+    // If t is negative, ray started inside sphere so clamp t to zero.
+    if ( t < 0.0f ) {
+      t = 0.0f;
+      return Fsphere::rpOriginInside;
+    }
+
+    return Fsphere::rpOriginOutside;
+  }
 };
 
 typedef _sphere<float>	Fsphere;
