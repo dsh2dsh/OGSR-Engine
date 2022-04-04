@@ -445,7 +445,7 @@ std::pair<float, float>  CBulletManager::ObjectHit	(SBullet* bullet, const Fvect
 	float f			= Random.randF	(0.5f,1.f);
 	//float f				= Random.randF	(0.0f,0.3);
 //	if(shoot_factor<RICOCHET_THRESHOLD &&  )
-	if (((f+shoot_factor)<ricoshet_factor) && bullet->flags.allow_ricochet)	{
+	if ( ( ( f + shoot_factor ) < ricoshet_factor ) && !mtl->Flags.test( SGameMtl::flNoRicoshet ) && bullet->flags.allow_ricochet ) {
 		//уменьшение скорости полета в зависимости
 		//от угла падения пули (чем прямее угол, тем больше потеря)
 		float scale = 1.f -_abs(bullet->dir.dotproduct(hit_normal))*m_fCollisionEnergyMin;
