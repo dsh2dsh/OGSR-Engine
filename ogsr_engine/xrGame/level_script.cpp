@@ -1011,6 +1011,16 @@ void pre_init_inventory() {
 }
 
 
+float is_ray_intersect_sphere( Fvector pos, Fvector dir, Fvector C, float R ) {
+  Fsphere sphere;
+  sphere.P = C;
+  sphere.R = R;
+  dir.normalize_safe();
+  float dist;
+  return sphere.intersect_ray( pos, dir, dist ) == Fsphere::rpNone ? -1.0f : dist;
+}
+
+
 #pragma optimize("s",on)
 void CLevel::script_register(lua_State *L)
 {
@@ -1182,6 +1192,7 @@ void CLevel::script_register(lua_State *L)
 		def( "get_patrol_path", &get_patrol_path ),
 		def( "map_iterate_user_spots_text", &map_iterate_user_spots_text ),
 		def( "pre_init_inventory", &pre_init_inventory ),
+		def( "is_ray_intersect_sphere", &is_ray_intersect_sphere ),
 
 		//--#SM+# Begin --
 		def("set_blender_mode_main", &set_blender_mode_main),
