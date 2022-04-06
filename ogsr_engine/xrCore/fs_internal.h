@@ -12,21 +12,25 @@ class CFileWriter : public IWriter
 {
 private:
 	FILE*			hf;
+
 public:
-	CFileWriter		(const char *name, bool exclusive)
-	{
-		R_ASSERT	(name && name[0]);
-		fName		= name;
-		VerifyPath	(*fName);
-        if (exclusive){
-    		int handle	= _sopen(*fName,_O_WRONLY|_O_TRUNC|_O_CREAT|_O_BINARY,SH_DENYWR);
-    		hf		= _fdopen(handle,"wb");
-        }else{
-			hf			= fopen(*fName,"wb");
-			if (hf==0)
-				Msg		("!Can't write file: '%s'. Error: '%s'.",*fName,_sys_errlist[errno]);
-		}
-	}
+
+  CFileWriter( const char *name, bool exclusive ) {
+    R_ASSERT( name && name[ 0 ] );
+    fName = name;
+    VerifyPath( *fName );
+    if ( exclusive ) {
+      int handle;
+      errno_t err = _sopen_s( &handle, *fName, _O_WRONLY|_O_TRUNC|_O_CREAT|_O_BINARY, SH_DENYWR, _S_IREAD|_S_IWRITE );
+      ASSERT_FMT( err == 0, "Can't open %s, because %s", *fName, strerror( err ) );
+      hf = _fdopen( handle, "wb" );
+      ASSERT_FMT( hf, "Can't open %s, because %s", *fName, strerror( errno ) );
+    }
+    else {
+      hf = fopen( *fName, "wb" );
+      ASSERT_FMT( hf, "Can't open %s, because %s", *fName, strerror( errno ) );
+    }
+  }
 
 	virtual 		~CFileWriter()
 	{
