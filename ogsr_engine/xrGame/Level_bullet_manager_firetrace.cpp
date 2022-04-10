@@ -61,7 +61,9 @@ BOOL CBulletManager::test_callback( const collide::ray_defs& rd, CObject* object
         float dist = rd.range;
         // проверим попали ли мы в описывающую сферу
         CObject* initiator = Level().Objects.net_Find( bullet->parent_id );
-        if ( S.intersect_ray( bullet->pos, bullet->dir, dist ) != Fsphere::rpNone ) {
+        Fsphere::ERP_Result result = S.intersect( bullet->pos, bullet->dir, dist );
+        if ( result != Fsphere::rpNone ) {
+          if ( result == Fsphere::rpOriginInside ) dist = 0.0f;
           // да попали, найдем кто стрелял
           bool play_whine = true;
           if ( actor ) {

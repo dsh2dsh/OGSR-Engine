@@ -16,78 +16,23 @@ public:
 		rpOriginOutside	= 2,
 		fcv_forcedword = u32(-1)
 	};
+
 	// Ray-sphere intersection
-	ICF ERP_Result intersect (const _vector3<T>& S, const _vector3<T>& D, T range, int& quantity, T afT[2]) const
-	{
-		// set up quadratic Q(t) = a*t^2 + 2*b*t + c
-		_vector3<T> kDiff;  kDiff.sub	(S,P);
-		T fA				= range*range;
-		T fB				= kDiff.dotproduct(D)		* range;
-		T fC				= kDiff.square_magnitude()	- R*R;
-		ERP_Result result	= rpNone;
+        ICF ERP_Result intersect( const _vector3<T>& start, const _vector3<T>& dir, T& dist ) const {
+          T t;
+          ERP_Result result = intersect_ray(start, dir, t);
+          if ( result == rpOriginInside || ( result == rpOriginOutside && t <= dist ) ) {
+            if ( t < dist ) dist = t;
+            return result;
+          }
+          return rpNone;
+        }
 
-		T fDiscr			= fB*fB - fA*fC;
-		if ( fDiscr < (T)0.0 ){
-			quantity		= 0;
-		} else if ( fDiscr > (T)0.0 ){
-			T fRoot 		= _sqrt(fDiscr);
-			T fInvA 		= ((T)1.0)/fA;
-			afT[0]			= range*(-fB - fRoot)*fInvA;
-			afT[1]			= range*(-fB + fRoot)*fInvA;
-			if ( afT[0] >= (T)0.0 )		{	quantity	= 2;					result = rpOriginOutside;	}
-			else if ( afT[1] >= (T)0.0 ){	quantity	= 1; afT[0] = afT[1];	result = rpOriginInside;	}
-			else							quantity	= 0;
-		} else {
-			afT[0]			= range*(-fB/fA);
-			if ( afT[0] >= (T)0.0 )		{	quantity	= 1;					result = rpOriginOutside;	}
-			else							quantity	= 0;
-		}
-		return result;
-	}
+        ICF BOOL intersect( const _vector3<T>& S, const _vector3<T>& D ) const {
+          T t;
+          return intersect_ray( S, D, t ) != rpNone;
+        }
 
-	ICF ERP_Result intersect	(const _vector3<T>& start, const _vector3<T>& dir, T& dist) const
-	{
-		int				quantity;
-		T				afT[2];
-		ERP_Result		result	= intersect(start,dir,dist,quantity,afT);
-		if (rpNone!=result){
-			VERIFY		(quantity>0);
-			if (afT[0]<dist){
-				dist	= afT[0];
-				return	result;
-			}
-		}
-		return			rpNone;
-	}
-
-	IC ERP_Result intersect2(const _vector3<T>& S, const _vector3<T>& D, T& range) const	
-    {
-		_vector3<T> Q;	Q.sub(P,S);
-	
-		T R2	= R*R;
-		T c2	= Q.square_magnitude	();
-		T v		= Q.dotproduct			(D);
-		T d		= R2 - (c2 - v*v);
-
-		if		(d > 0.f)
-		{
-			T _range	= v - _sqrt(d);
-			if (_range<range)	{
-				range = _range;
-				return (c2<R2)?rpOriginInside:rpOriginOutside;
-			}
-		}
-		return rpNone;
-	}
-	ICF BOOL		intersect(const _vector3<T>& S, const _vector3<T>& D) const	
-	{
-		_vector3<T> Q;	Q.sub(P,S);
-	
-		T c = Q.magnitude	();
-		T v = Q.dotproduct	(D);
-		T d = R*R - (c*c - v*v);
-		return (d > 0);
-	}
 	ICF BOOL		intersect(const _sphere<T>& S) const
 	{	
 		T SumR = R+S.R;
@@ -135,7 +80,9 @@ public:
 
     // If t is negative, ray started inside sphere so clamp t to zero.
     if ( t < 0.0f ) {
-      t = 0.0f;
+      t = -b + _sqrt( discr );
+      if ( t < 0.0f )
+        t = 0.0f;
       return Fsphere::rpOriginInside;
     }
 

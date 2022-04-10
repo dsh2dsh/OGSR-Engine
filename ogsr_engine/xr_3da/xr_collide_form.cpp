@@ -215,11 +215,9 @@ BOOL CCF_Skeleton::_RayQuery( const collide::ray_defs& Q, collide::rq_results& R
 	w_bv_sphere.R						= bv_sphere.R;
 
 	// 
-	float tgt_dist						= Q.range;
-	float aft[2];
-	int quant;
-	Fsphere::ERP_Result res				= w_bv_sphere.intersect(Q.start,Q.dir,tgt_dist,quant,aft);
-	if ((Fsphere::rpNone==res)||((Fsphere::rpOriginOutside==res)&&(aft[0]>tgt_dist)) ) return FALSE;
+        float tgt_dist = Q.range;
+        Fsphere::ERP_Result res = w_bv_sphere.intersect( Q.start, Q.dir, tgt_dist );
+        if ( res == Fsphere::rpNone ) return FALSE;
 
 	{
 	  std::scoped_lock<std::mutex> lock( m_mutex );
