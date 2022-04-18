@@ -436,11 +436,13 @@ void CCharacterPhysicsSupport::KillHit(SHit& H)
 	}
 }
 
-const u32 hit_valide_time = 1000;
+const u32 hit_valide_time = 100;
 void CCharacterPhysicsSupport::in_Hit(SHit& H, bool is_killing)
 {
-	m_sv_hit = H;
-	m_hit_valide_time = Device.dwTimeGlobal + hit_valide_time;
+	if ( !is_killing ) {
+	  m_sv_hit = H;
+	  m_hit_valide_time = Device.dwTimeGlobal + hit_valide_time;
+	}
 	if( m_EntityAlife.use_simplified_visual	( ) || esRemoved == m_eState )
 		return;
 	if( m_flags.test( fl_block_hit ) )
