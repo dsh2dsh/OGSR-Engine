@@ -147,6 +147,13 @@ void CUICarBodyWnd::Init()
 
 		uiXml.SetLocalRoot(stored_root);
 	}
+
+  if (
+    pSettings->section_exist( "engine_callbacks" )
+    && pSettings->line_exist( "engine_callbacks", "init_car_body" )
+  ) {
+    m_script_init_car_body = pSettings->r_string( "engine_callbacks", "init_car_body" );
+  }
 }
 
 void CUICarBodyWnd::InitCarBody(CInventoryOwner* pOur, IInventoryBox* pInvBox)
@@ -161,6 +168,7 @@ void CUICarBodyWnd::InitCarBody(CInventoryOwner* pOur, IInventoryBox* pInvBox)
 	m_pUIOthersIcon->Show							(false);
 	m_pUICharacterInfoRight->ClearInfo				();
 	m_pUIPropertiesBox->Hide						();
+	callScriptInitCarBody();
 	EnableAll										();
 	UpdateLists										();
 
@@ -201,6 +209,7 @@ void CUICarBodyWnd::InitCarBody(CInventoryOwner* pOur, CInventoryOwner* pOthers)
 	}
 
 	m_pUIPropertiesBox->Hide						();
+	callScriptInitCarBody();
 	EnableAll										();
 	UpdateLists										();
 
@@ -944,4 +953,18 @@ void CUICarBodyWnd::PlaySnd(eInventorySndAction a)
 {
 	if (sounds[a]._handle())
 		sounds[a].play(NULL, sm_2D);
+}
+
+
+void CUICarBodyWnd::callScriptInitCarBody() {
+  if ( m_script_init_car_body.empty() )
+    return;
+
+  luabind::functor<bool> funct;
+  if ( ai().script_engine().functor( m_script_init_car_body.c_str(), funct ) ) {
+    auto GO = m_pOthersObject
+      ? smart_cast<CGameObject*>( m_pOthersObject )
+      : smart_cast<CGameObject*>( m_pInventoryBox );
+    funct( GO->lua_game_object() );
+  }
 }

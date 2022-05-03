@@ -18,6 +18,8 @@ class CUICarBodyWnd: public CUIDialogWnd
 private:
 	typedef CUIDialogWnd	inherited;
 	bool					m_b_need_update;
+	std::string m_script_init_car_body;
+
 public:
 							CUICarBodyWnd				();
 	virtual					~CUICarBodyWnd				();
@@ -111,4 +113,5 @@ protected:
 	ref_sound					sounds[eInvSndMax];
 	void						PlaySnd(eInventorySndAction a);
 
+  void callScriptInitCarBody();
 };
