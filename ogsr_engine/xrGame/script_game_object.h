@@ -840,6 +840,11 @@ public:
 
   void ReloadNextAmmo( u32 );
 
+  void markItemHidden( CScriptGameObject* );
+  void markItemVisible( CScriptGameObject* );
+  void clearMarkedHidden();
+  void clearMarkedVisible();
+
 	DECLARE_SCRIPT_REGISTER_FUNCTION
 };
 add_to_type_list(CScriptGameObject)

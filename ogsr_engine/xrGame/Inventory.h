@@ -153,6 +153,13 @@ public:
 
 	// максимальный вес инвентаря
 	float				m_fMaxWeight;
+
+	void hideItemByID( ALife::_OBJECT_ID );
+	void showItemByID( ALife::_OBJECT_ID );
+	void clearHiddenItems();
+	void clearVisibleItems();
+	bool isItemHidden( CInventoryItem* );
+
 protected:
 	void					UpdateDropTasks		();
 	void					UpdateDropItem		(PIItem pIItem);
@@ -194,4 +201,7 @@ private:
 	bool m_need_cell_items;
 
 	void MoreCellItems();
+
+	std::vector<ALife::_OBJECT_ID> m_always_hidden_items;
+	std::vector<ALife::_OBJECT_ID> m_always_visible_items;
 };

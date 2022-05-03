@@ -1263,3 +1263,38 @@ void CScriptGameObject::ReloadNextAmmo( u32 next_ammo_type) {
   ASSERT_FMT( weapon, "[%s]: %s not a CWeapon", __FUNCTION__, this->object().Name());
   weapon->ReloadNextAmmo( next_ammo_type );
 }
+
+
+void CScriptGameObject::markItemHidden( CScriptGameObject* item ) {
+  CInventoryOwner* inventory_owner = smart_cast<CInventoryOwner*>( &object() );
+  ASSERT_FMT( inventory_owner, "[%s]: %s not a CInventoryOwner", __FUNCTION__, this->object().Name() );
+  CInventoryItem* inventory_item = smart_cast<CInventoryItem*>( &item->object() );
+  ASSERT_FMT( inventory_item, "[%s]: %s not a CInventoryItem", __FUNCTION__, item->object().Name() );
+
+  inventory_owner->inventory().hideItemByID( item->object().ID() );
+}
+
+
+void CScriptGameObject::markItemVisible( CScriptGameObject* item ) {
+  CInventoryOwner* inventory_owner = smart_cast<CInventoryOwner*>( &object() );
+  ASSERT_FMT( inventory_owner, "[%s]: %s not a CInventoryOwner", __FUNCTION__, this->object().Name() );
+  CInventoryItem* inventory_item = smart_cast<CInventoryItem*>( &item->object() );
+  ASSERT_FMT( inventory_item, "[%s]: %s not a CInventoryItem", __FUNCTION__, item->object().Name() );
+
+  inventory_owner->inventory().showItemByID( item->object().ID() );
+}
+
+
+void CScriptGameObject::clearMarkedHidden() {
+  CInventoryOwner* inventory_owner = smart_cast<CInventoryOwner*>( &object() );
+  ASSERT_FMT( inventory_owner, "[%s]: %s not a CInventoryOwner", __FUNCTION__, this->object().Name() );
+
+  inventory_owner->inventory().clearHiddenItems();
+}
+
+void CScriptGameObject::clearMarkedVisible() {
+  CInventoryOwner* inventory_owner = smart_cast<CInventoryOwner*>( &object() );
+  ASSERT_FMT( inventory_owner, "[%s]: %s not a CInventoryOwner", __FUNCTION__, this->object().Name() );
+
+  inventory_owner->inventory().clearVisibleItems();
+}

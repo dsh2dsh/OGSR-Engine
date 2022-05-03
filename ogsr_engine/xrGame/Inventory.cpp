@@ -1329,3 +1329,42 @@ bool CInventory::IsActiveSlotBlocked() const {
 			return false;
 	return true;
 }
+
+
+bool CInventory::isItemHidden( CInventoryItem* item ) {
+  if ( item->m_flags.test( CInventoryItem::FIHiddenForInventory ) )
+    return true;
+
+  const auto& item_id = smart_cast<CObject*>( item )->ID();
+
+  bool is_hidden = std::find(
+    m_always_hidden_items.begin(), m_always_hidden_items.end(), item_id
+  ) != m_always_hidden_items.end();
+  if ( is_hidden ) return true;
+
+  if ( m_always_visible_items.size() ) {
+    bool is_visible = std::find(
+      m_always_visible_items.begin(), m_always_visible_items.end(), item_id
+    ) != m_always_visible_items.end();
+    return !is_visible;
+  }
+
+  return false;
+}
+
+
+void CInventory::clearHiddenItems() {
+  m_always_hidden_items.clear();
+}
+
+void CInventory::clearVisibleItems() {
+  m_always_visible_items.clear();
+}
+
+void CInventory::hideItemByID( ALife::_OBJECT_ID id ) {
+  m_always_hidden_items.push_back( id );
+}
+
+void CInventory::showItemByID( ALife::_OBJECT_ID id ) {
+  m_always_visible_items.push_back( id );
+}

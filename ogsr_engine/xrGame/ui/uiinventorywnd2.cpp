@@ -172,7 +172,7 @@ void CUIInventoryWnd::InitInventory()
 	int i=1;
 	for(it=ruck_list.begin(),it_e=ruck_list.end(); it!=it_e; ++it,++i) 
 	{
-	  if ( !(*it)->m_flags.test( CInventoryItem::FIHiddenForInventory ) ) {
+	  if ( !m_pInv->isItemHidden( (*it) ) ) {
 	    CUICellItem* itm = create_cell_item( *it );
 	    m_pUIBagList->SetItem( itm );
 	  }
@@ -181,7 +181,7 @@ void CUIInventoryWnd::InitInventory()
 	_itm								= m_pInv->m_slots[GRENADE_SLOT].m_pIItem;
 	if(_itm)
 	{
-	  if ( !_itm->m_flags.test( CInventoryItem::FIHiddenForInventory ) ) {
+	  if ( !m_pInv->isItemHidden( _itm ) ) {
 	    CUICellItem* itm = create_cell_item( _itm );
 	    m_pUIBagList->SetItem( itm );
 	  }
