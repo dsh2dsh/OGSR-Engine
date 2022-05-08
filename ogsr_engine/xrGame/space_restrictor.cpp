@@ -106,6 +106,8 @@ void CSpaceRestrictor::net_Destroy	()
 
 bool CSpaceRestrictor::inside(const Fsphere &sphere)
 {
+	if ( getDestroy() ) return false;
+
 	if (!actual())
 	{
 		try
