@@ -192,7 +192,7 @@ Flags32		ps_r2_ls_flags				= { R2FLAG_SUN
 	};	// r2-only
 
 Flags32 ps_r2_ls_flags_ext = {
-	/*R2FLAGEXT_SSAO_OPT_DATA |*/ R2FLAGEXT_SSAO_HALF_DATA | R2FLAGEXT_ENABLE_TESSELLATION | R2FLAGEXT_RAIN_DROPS | R2FLAGEXT_RAIN_DROPS_CONTROL
+	/*R2FLAGEXT_SSAO_OPT_DATA |*/ R2FLAGEXT_SSAO_HALF_DATA | R2FLAGEXT_ENABLE_TESSELLATION | R2FLAGEXT_RAIN_DROPS | R2FLAGEXT_RAIN_DROPS_CONTROL | R2FLAGEXT_FLARES_CONTROL
 };
 
 BOOL		ps_no_scale_on_fade			= 0; //Alundaio
@@ -1038,6 +1038,8 @@ void		xrRender_initconsole	()
         CMD4( CCC_Float,   "r__pnv_mode",  &ps_pnv_mode, 0.f, 20.f );
         CMD4( CCC_Float,   "r__pnv_noise", &ps_pnv_noise, 0.f, 1.f );
         CMD4( CCC_Float,   "r__pnv_scanlines", &ps_pnv_scanlines, 0.f, 1.f );
+
+	CMD3( CCC_Mask, "r__flares_control", &ps_r2_ls_flags_ext, R2FLAGEXT_FLARES_CONTROL );
 }
 
 #endif

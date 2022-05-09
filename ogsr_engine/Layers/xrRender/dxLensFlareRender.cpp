@@ -65,6 +65,8 @@ void dxLensFlareRender::Render(CLensFlare &owner, BOOL bSun, BOOL bFlares, BOOL 
 			if (owner.m_Current->m_Flags.is(CLensFlareDescriptor::flFlare)){
 				for (CLensFlareDescriptor::FlareIt it=owner.m_Current->m_Flares.begin(); it!=owner.m_Current->m_Flares.end(); it++){
 					CLensFlareDescriptor::SFlare&	F = *it;
+					if ( !ps_r2_ls_flags_ext.test( R2FLAGEXT_FLARES_CONTROL ) && !fsimilar( F.fPosition, 1.f, .1f ) )
+					  continue;
 					vec.mul				(owner.vecAxis, F.fPosition);
 					vec.add				(owner.vecCenter);
 					vecSx.mul			(vecDx, F.fRadius*fDistance);
