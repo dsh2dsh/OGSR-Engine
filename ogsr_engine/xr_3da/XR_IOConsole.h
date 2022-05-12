@@ -98,6 +98,8 @@ public:
 
 	virtual	void	Initialize	();
 	virtual void	Destroy		();
+
+        void Execute( LPCSTR cmd, LPCSTR arg );
 };
 
 ENGINE_API extern CConsole* Console;

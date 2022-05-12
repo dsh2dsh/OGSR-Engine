@@ -634,3 +634,16 @@ char * CConsole::GetPrevValue(LPCSTR cmd)
 }
 
 */
+
+
+void CConsole::Execute( LPCSTR cmd, LPCSTR arg ) {
+  auto C = GetCommand( cmd );
+  if ( C ) {
+    if ( arg[ 0 ] == 0 && !C->bEmptyArgsHandled )
+      Msg( "! [%s]: command '%s' requires arg", __FUNCTION__, cmd );
+    else
+      C->Execute( arg );
+  }
+  else
+    Msg( "! [%s]: unknown command '%s'", __FUNCTION__, cmd );
+}
