@@ -134,11 +134,16 @@ void	CEntity::Hit		(SHit* pHDS)
 	if( BI_NONE!=pHDS->bone() ) HitSignal( lost_health, vLocalDir, pHDS->who, pHDS->boneID, pHDS );
 
 	// If Local() - perform some logic
+	bool die_now = false;
 	if (Local() && !g_Alive() && !AlreadyDie() && (m_killer_id == ALife::_OBJECT_ID(-1))) {
-		KillEntity	(pHDS->whoID);
+	  KillEntity_begin( pHDS->whoID );
+	  die_now = true;
 	}
 	//must be last!!! @slipch
 	inherited::Hit(pHDS);
+
+	if ( die_now )
+	  KillEntity_end();
 }
 
 void CEntity::Load		(LPCSTR section)
@@ -273,25 +278,19 @@ void CEntity::KillEntity(u16 whoID)
 			return;
 	}
 
-	m_killer_id			= whoID;
-
-	set_death_time		();
-
-	if (!getDestroy()){
-		NET_Packet		P;
-		u_EventGen		(P,GE_DIE,ID());
-		P.w_u16			(u16(whoID));
-		P.w_u32			(0);
-		if (OnServer())
-			u_EventSend	(P, net_flags(TRUE, TRUE, FALSE, TRUE));
-	}
+	KillEntity_begin( whoID );
+	KillEntity_end();
 };
 
-//void CEntity::KillEntity(CObject* who)
-//{
-//	VERIFY			(who);
-//	if (who) KillEntity(who->ID());	
-//}
+void CEntity::KillEntity_begin( u16 whoID ) {
+  m_killer_id = whoID;
+  set_death_time();
+}
+
+void CEntity::KillEntity_end() {
+  if ( !getDestroy() )
+    Die( Level().Objects.net_Find( m_killer_id ) );
+}
 
 void CEntity::reinit			()
 {
