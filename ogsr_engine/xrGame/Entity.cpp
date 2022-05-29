@@ -18,6 +18,8 @@
 #include "monster_community.h"
 #include "ai_space.h"
 #include "memory_space.h"
+#include "alife_simulator.h"
+#include "alife_object_registry.h"
 
 #define BODY_REMOVE_TIME		600000
 #define FORGET_KILLER_TIME 180
@@ -288,6 +290,17 @@ void CEntity::KillEntity_begin( u16 whoID ) {
 }
 
 void CEntity::KillEntity_end() {
+  if ( ai().get_alife() ) {
+    auto sobj1 = smart_cast<CSE_Abstract*>( alife_object() );
+    auto sobj2 = smart_cast<CSE_Abstract*>(
+      ai().get_alife()->objects().object( m_killer_id, true ) );
+    auto creature = smart_cast<CSE_ALifeCreatureAbstract*>( sobj1 );
+    if ( creature )
+      creature->m_killer_id = m_killer_id;
+    auto alife = const_cast<CALifeSimulator*>( ai().get_alife() );
+    alife->on_death( sobj1, sobj2 );
+  }
+
   if ( !getDestroy() )
     Die( Level().Objects.net_Find( m_killer_id ) );
 }
