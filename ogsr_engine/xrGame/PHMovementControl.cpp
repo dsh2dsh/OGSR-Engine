@@ -1198,38 +1198,37 @@ void CPHMovementControl::InterpolateBox		(DWORD id, float k)
 	dVectorInterpolate(size,to_size,k);
 	m_character->SetBox(size);
 }
-void CPHMovementControl::ApplyHit(const Fvector& dir,const float P,ALife::EHitType hit_type)
-{
 
-	VERIFY( m_character );
-	// stop-motion
-	if(!m_character->CastActorCharacter())
-		return;
-	if ( 	
-		(Environment()==CPHMovementControl::peOnGround || Environment()==CPHMovementControl::peAtWall) 
-		)
-	{
-		switch(hit_type)
-		{
-			case ALife::eHitTypeBurn  :												;//stop
-			case ALife::eHitTypeShock :												;//stop
-			case ALife::eHitTypeStrike:												;//stop
-			case ALife::eHitTypeWound:			SetVelocity(Fvector().set(0,0,0))	; break; // stop							;
-			//case ALife::eHitTypeLightBurn  :										;//not stop
-			case ALife::eHitTypeRadiation:											;//not stop
-			case ALife::eHitTypeTelepatic:											;//not stop
-			case ALife::eHitTypeChemicalBurn:										;break;//not stop
-			case ALife::eHitTypeExplosion:											;//stop
-			case ALife::eHitTypeFireWound:											;//stop
-			case ALife::eHitTypeWound_2:											;break;//stop		//knife's alternative fire
-//			case ALife::eHitTypePhysicStrike:	SetVelocity(Fvector().set(0,0,0))	;break;//stop
-			default:																NODEFAULT	;
-		}
-	}
-	//hit
-	if(hit_type==ALife::eHitTypeExplosion||hit_type==ALife::eHitTypeWound)
-																	ApplyImpulse(dir,P);
+
+void CPHMovementControl::ApplyHit( const Fvector& dir,const float P,ALife::EHitType hit_type ) {
+  VERIFY( m_character );
+
+  // stop-motion
+  if ( !m_character->CastActorCharacter() )
+    return;
+
+  if (
+    Environment() == CPHMovementControl::peOnGround ||
+    Environment() == CPHMovementControl::peAtWall
+  ) {
+    switch ( hit_type ) {
+    case ALife::eHitTypeBurn:   // stop
+    case ALife::eHitTypeShock:
+    case ALife::eHitTypeStrike:
+    case ALife::eHitTypeWound:
+      SetVelocity( Fvector().set( 0, 0, 0 ) );
+      break;
+    }
+
+    // hit
+    if (
+      hit_type == ALife::eHitTypeExplosion ||
+      hit_type == ALife::eHitTypeWound
+    )
+      ApplyImpulse( dir, P );
+  }
 }
+
 
 void CPHMovementControl::SetFrictionFactor(float f)
 {
