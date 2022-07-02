@@ -29,6 +29,7 @@ public:
   void        Load( const shared_str item_section );
   ui_shader& get_shader() const;
   Frect&      original_rect() const;
+  Frect&      original_rect( CUIStatic* ) const;
   void        set_shader( CUIStatic* );
   void        set_shader( CUIStaticItem* );
 };

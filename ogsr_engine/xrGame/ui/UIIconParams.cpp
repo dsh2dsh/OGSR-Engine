@@ -28,6 +28,14 @@ ui_shader& CIconParams::get_shader() const {
 }
 
 
+Frect& CIconParams::original_rect( CUIStatic* img ) const {
+  if ( name.size() > 0 )
+    return img->GetOriginalRect();
+  else
+    return original_rect();
+}
+
+
 Frect& CIconParams::original_rect() const {
   static Frect rect;
   rect.x1 = INV_GRID_WIDTH  * grid_x;

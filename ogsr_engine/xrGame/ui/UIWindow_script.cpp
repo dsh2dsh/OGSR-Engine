@@ -220,7 +220,8 @@ void CUIWindow::script_register(lua_State *L)
 		.def_readonly( "grid_x",      &CIconParams::grid_x      )
 		.def_readonly( "grid_y",      &CIconParams::grid_x      )
 		.property( "icon_name", &CIconParams__get_name )
-		.def( "original_rect", &CIconParams::original_rect )
+		.def( "original_rect", ( Frect& ( CIconParams::* )() const ) &CIconParams::original_rect )
+		.def( "original_rect", ( Frect& ( CIconParams::* )( CUIStatic* ) const ) &CIconParams::original_rect )
 		.def( "set_shader",    ( void( CIconParams::* )( CUIStatic* ) ) &CIconParams::set_shader ),
 
 
