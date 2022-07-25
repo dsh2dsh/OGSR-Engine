@@ -895,7 +895,8 @@ bool CUICarBodyWnd::OnItemSelected(CUICellItem* itm)
 bool CUICarBodyWnd::OnItemRButtonClick(CUICellItem* itm)
 {
 	SetCurrentItem				(itm);
-	ActivatePropertiesBox		();
+	if ( CanActivatePropertiesBox() )
+	  ActivatePropertiesBox();
 	return						false;
 }
 
@@ -967,4 +968,14 @@ void CUICarBodyWnd::callScriptInitCarBody() {
       : smart_cast<CGameObject*>( m_pInventoryBox );
     funct( GO->lua_game_object() );
   }
+}
+
+
+bool CUICarBodyWnd::CanActivatePropertiesBox() {
+  if ( m_pOthersObject && CurrentItem()->OwnerList() == m_pUIOurBagList ) {
+    if ( smart_cast<CBaseMonster*>( m_pOthersObject ) )
+      return false;
+  }
+
+  return true;
 }

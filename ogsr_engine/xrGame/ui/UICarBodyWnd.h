@@ -114,4 +114,5 @@ protected:
 	void						PlaySnd(eInventorySndAction a);
 
   void callScriptInitCarBody();
+  bool CanActivatePropertiesBox();
 };
