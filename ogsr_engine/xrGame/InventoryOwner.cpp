@@ -157,10 +157,15 @@ void CInventoryOwner::net_Destroy()
 
 void	CInventoryOwner::save	(NET_Packet &output_packet)
 {
-	if(inventory().GetActiveSlot() == NO_ACTIVE_SLOT)
-		output_packet.w_u8((u8)(-1));
+	if ( inventory().GetActiveSlot() == NO_ACTIVE_SLOT ) {
+	  u8 slot = (u8)(-1);
+	  auto pActor = smart_cast<CActor*>( this );
+	  if ( pActor && pActor->MovingState() & mcClimb && inventory().GetPrevActiveSlot() != NO_ACTIVE_SLOT )
+	    slot = u8( inventory().GetPrevActiveSlot() );
+	  output_packet.w_u8( slot );
+	}
 	else
-		output_packet.w_u8((u8)inventory().GetActiveSlot());
+	  output_packet.w_u8( (u8)inventory().GetActiveSlot() );
 
 	CharacterInfo().save(output_packet);
 	save_data	(m_game_name, output_packet);
