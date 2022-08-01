@@ -297,6 +297,7 @@ public:
 	float start_pick_distance( const CEntityAlive *enemy = nullptr ) const;
 	bool  fire_make_sense();
 	bool can_fire_to_enemy( const CEntityAlive *enemy );
+	void force_update_sell_info();
 
 	virtual LPCSTR						Name					() const;
 	virtual BOOL						feel_touch_contact		(CObject* O);

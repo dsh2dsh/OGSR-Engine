@@ -465,3 +465,8 @@ void CAI_Stalker::on_after_take						(const CGameObject *object)
 	for ( ; I != E; ++I)
 		update_conflicted		(*I,new_weapon);
 }
+
+
+void CAI_Stalker::force_update_sell_info() {
+  m_sell_info_actuality	= false;
+}
