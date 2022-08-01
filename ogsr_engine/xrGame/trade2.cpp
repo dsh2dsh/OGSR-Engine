@@ -156,17 +156,19 @@ u32	CTrade::GetItemPrice(PIItem pItem, bool b_buying)
 
 	// computing base_cost
 	float					base_cost;
-	if (pArtefact && (pThis.type == TT_ACTOR) && (pPartner.type == TT_TRADER)) {
+	if ( m_use_vcost )
+		base_cost = m_vcost;
+	else if ( pArtefact && pThis.type == TT_ACTOR && pPartner.type == TT_TRADER ) {
 		CAI_Trader			*pTrader = smart_cast<CAI_Trader*>(pPartner.inv_owner);
 		VERIFY				(pTrader);
 		base_cost			= (float)pTrader->ArtefactPrice(pArtefact);
 	}
 	else
 		base_cost			= (float)pItem->Cost();
-	
+
 	// computing condition factor
 	// for "dead" weapon we use 10% from base cost, for "good" weapon we use full base cost
-	float					condition_factor = powf(pItem->GetCondition()*0.9f + .1f, 0.75f); 
+	float condition_factor = m_ignore_cond_factor ? 1.f : powf( pItem->GetCondition() * 0.9f + .1f, 0.75f ); 
 	
 	// computing relation factor
 	float					relation_factor;

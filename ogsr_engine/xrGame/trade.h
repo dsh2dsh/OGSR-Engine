@@ -30,6 +30,10 @@ class CTrade
 	//если нужно провести синхронизацию с сервером для торговцев
 	bool	m_bNeedToUpdateArtefactTasks;
 
+	float m_vcost;
+	bool  m_use_vcost;
+	bool  m_ignore_cond_factor;
+
 public:
 	void TradeCB			(bool bStart);
 	SInventoryOwner			pThis;
@@ -61,6 +65,9 @@ public:
 
 	bool					SetPartner(CEntity *p);
 	void					RemovePartner();
+	void setVCost( float, bool );
+	void ignoreCondFactor( bool );
+
 private:
 
 	CInventory&				GetTradeInv				(SInventoryOwner owner);

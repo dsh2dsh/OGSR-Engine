@@ -45,6 +45,9 @@ CTrade::CTrade(CInventoryOwner *p_io)
 			if (pStalker) pThis.Set(TT_STALKER, pStalker, p_io);
 		}
 	}
+
+	setVCost( 0.f, false );
+	ignoreCondFactor( false );
 }
 
 CTrade::~CTrade()
@@ -181,4 +184,15 @@ void CTrade::StopTrade()
 
 void CTrade::UpdateTrade()
 {
+}
+
+
+void CTrade::setVCost( float vcost, bool override ) {
+	m_vcost = vcost;
+	m_use_vcost = override;
+}
+
+
+void CTrade::ignoreCondFactor( bool override ) {
+	m_ignore_cond_factor = override;
 }

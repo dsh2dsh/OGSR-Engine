@@ -596,6 +596,9 @@ public:
 			void				show_condition						(CScriptIniFile *ini_file, LPCSTR section);
 			void				buy_supplies						(CScriptIniFile *ini_file, LPCSTR section);
 
+	void setTradeVCost( float, bool );
+	void ignoreTradeCondFactor( bool );
+
 			LPCSTR				sound_prefix						() const;
 			void				sound_prefix						(LPCSTR sound_prefix);
 

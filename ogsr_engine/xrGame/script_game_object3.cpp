@@ -1230,3 +1230,17 @@ const CCoverPoint *CScriptGameObject::angle_cover( const Fvector &position, floa
   }
   return nullptr;
 }
+
+
+void CScriptGameObject::setTradeVCost( float vcost, bool override ) {
+  auto inv_owner = smart_cast<CInventoryOwner*>( &object() );
+  ASSERT_FMT( inv_owner, "[%s]: %s not a CInventoryOwner", __FUNCTION__, object().cName().c_str() );
+  inv_owner->GetTrade()->setVCost( vcost, override );
+}
+
+
+void CScriptGameObject::ignoreTradeCondFactor( bool override ) {
+  auto inv_owner = smart_cast<CInventoryOwner*>( &object() );
+  ASSERT_FMT( inv_owner, "[%s]: %s not a CInventoryOwner", __FUNCTION__, object().cName().c_str() );
+  inv_owner->GetTrade()->ignoreCondFactor( override );
+}

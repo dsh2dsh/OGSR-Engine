@@ -260,6 +260,8 @@ class_<CScriptGameObject> script_register_game_object2(class_<CScriptGameObject>
 		.def("sell_condition",				(void (CScriptGameObject::*)(CScriptIniFile*,LPCSTR))(&CScriptGameObject::sell_condition))
 		.def("sell_condition",				(void (CScriptGameObject::*)(float,float))(&CScriptGameObject::sell_condition))
 		.def("buy_supplies",				&CScriptGameObject::buy_supplies)
+		.def( "trade_virtual_cost", &CScriptGameObject::setTradeVCost )
+		.def( "ignore_trade_cond_factor", &CScriptGameObject::ignoreTradeCondFactor )
 
 		.def("sound_prefix",				(LPCSTR (CScriptGameObject::*)() const)(&CScriptGameObject::sound_prefix))
 		.def("sound_prefix",				(void (CScriptGameObject::*)(LPCSTR))(&CScriptGameObject::sound_prefix))
