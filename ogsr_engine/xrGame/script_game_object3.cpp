@@ -881,8 +881,8 @@ void CScriptGameObject::sell_condition			(CScriptIniFile *ini_file, LPCSTR secti
 	inventory_owner->trade_parameters().process	(CTradeParameters::action_sell(0),*ini_file,section);
 
 	CAI_Stalker* stalker = smart_cast<CAI_Stalker*>( &object() );
-	ASSERT_FMT( stalker, "[%s]: %s not a CAI_Stalker", __FUNCTION__, this->object().Name() );
-	stalker->force_update_sell_info();
+	if ( stalker )
+		stalker->force_update_sell_info();
 }
 
 void CScriptGameObject::sell_condition			(float friend_factor, float enemy_factor)
@@ -913,8 +913,8 @@ void CScriptGameObject::buy_condition			(CScriptIniFile *ini_file, LPCSTR sectio
 	inventory_owner->trade_parameters().process	(CTradeParameters::action_buy(0),*ini_file,section);
 
 	CAI_Stalker* stalker = smart_cast<CAI_Stalker*>( &object() );
-	ASSERT_FMT( stalker, "[%s]: %s not a CAI_Stalker", __FUNCTION__, this->object().Name() );
-	stalker->force_update_sell_info();
+	if ( stalker )
+		stalker->force_update_sell_info();
 }
 
 void CScriptGameObject::buy_condition			(float friend_factor, float enemy_factor)
