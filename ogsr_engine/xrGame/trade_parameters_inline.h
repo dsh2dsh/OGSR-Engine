@@ -122,7 +122,7 @@ IC	void CTradeParameters::process							(_action_type type, CInifile &ini_file, 
 
 		string256			temp0, temp1;
 		int cnt = _GetItemCount( *(*I).second );
-		ASSERT_FMT( cnt >= 2, "[%s]: invalid parameters in section %s", __FUNCTION__, *section );
+		ASSERT_FMT( cnt >= 2, "[%s]: invalid parameters in section %s: %s = %s", __FUNCTION__, *section, (*I).first.c_str(), (*I).second.c_str() );
 		float min_condition = 0.f;
 		if ( cnt > 2 ) {
 		  string256 str;
