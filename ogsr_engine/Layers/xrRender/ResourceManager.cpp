@@ -13,6 +13,7 @@
 #include "tss.h"
 #include "blenders\blender.h"
 #include "blenders\blender_recorder.h"
+#include <execution>
 
 //	Already defined in Texture.cpp
 void fix_texture_name(LPSTR fn);
@@ -337,37 +338,26 @@ void CResourceManager::Delete(const Shader* S)
 void CResourceManager::DeferredUpload() {
   if ( !RDEVICE.b_is_Ready ) return;
 
+  if ( m_deferred_textures.empty() )
+    return;
+
   CTimer timer;
   timer.Start();
 
-  u32 cnt = 0;
-  size_t nWorkers = 1; //TTAPI->threads.size();
-  u32 max_workers = 1;
-  if ( nWorkers > 1 && m_deferred_textures.size() > 1 ) {
-    for ( const auto& n : m_deferred_textures ) {
+  std::for_each(
+    std::execution::par_unseq,
+    m_deferred_textures.begin(),
+    m_deferred_textures.end(),
+    [&]( auto& n ) {
       const auto it = m_textures.find( n.c_str() );
-      if ( it != m_textures.end() ) {
-        CTexture* t = it->second;
-        TTAPI->addJob([&] { t->Load(); });
-        cnt++;
-      }
+      if ( it != m_textures.end() )
+        it->second->Load();
     }
-    max_workers = TTAPI->wait();
-  }
-  else {
-    for ( const auto& n : m_deferred_textures ) {
-      const auto it = m_textures.find( n.c_str() );
-      if ( it != m_textures.end() ) {
-        CTexture* t = it->second;
-        t->Load();
-        cnt++;
-      }
-    }
-  }
-  m_deferred_textures.clear();
+  );
 
-  if ( cnt )
-    Msg( "[%s] texture loading time (%zi) using %u/%u threads: [%.2f s.]", __FUNCTION__, cnt, max_workers, nWorkers, timer.GetElapsed_sec() );
+  Msg( "[%s] texture loading time (%zi): [%.2f s.]",
+       __FUNCTION__, m_deferred_textures.size(), timer.GetElapsed_sec() );
+  m_deferred_textures.clear();
 }
 
 void	CResourceManager::DeferredUnload	()
