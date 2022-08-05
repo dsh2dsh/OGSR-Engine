@@ -268,7 +268,6 @@ float ps_r2_visor_refl_radius = 0.4f;
 
 #if RENDER==R_R4
 float ps_ext_SSLR_L = 1.f;
-float ps_ext_SSLR_blur = 0.f;
 #endif
 
 int			ps_r__detail_radius = 49;
@@ -880,7 +879,6 @@ void		xrRender_initconsole	()
 #if RENDER==R_R4
 	CMD3(CCC_Mask, "r_sslr_enable", &ps_r2_ls_flags_ext, R2FLAGEXT_SSLR);
 	CMD4(CCC_Float, "r_sslr_l", &ps_ext_SSLR_L, .1f, 10.f);
-	CMD4(CCC_Float, "r_sslr_blur", &ps_ext_SSLR_blur, 0.0f, 5.f);
 #endif
 
 	CMD3(CCC_Mask,		"r2_sun",				&ps_r2_ls_flags,			R2FLAG_SUN		);
