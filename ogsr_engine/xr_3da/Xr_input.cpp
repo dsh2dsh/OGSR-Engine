@@ -167,7 +167,9 @@ void CInput::KeyUpdate	( )
 		KBState[key]		= od[i].dwData & 0x80;
 		if (KBState[key]) {
 			if (this->is_exclusive_mode && (key == DIK_LSHIFT || key == DIK_RSHIFT) && (this->iGetAsyncKeyState(DIK_LMENU) || this->iGetAsyncKeyState(DIK_RMENU)))
-				PostMessage(gGameWindow, WM_INPUTLANGCHANGEREQUEST, 2, 0); //Переключили язык. В эксклюзивном режиме это обязательно для правильной работы функции DikToChar
+				// Переключили язык. В эксклюзивном режиме это обязательно для
+				// правильной работы функции DikToChar.
+				ActivateKeyboardLayout( (HKL)HKL_NEXT, KLF_REORDER );
 
 			cbStack.back()->IR_OnKeyboardPress(key);
 		}
