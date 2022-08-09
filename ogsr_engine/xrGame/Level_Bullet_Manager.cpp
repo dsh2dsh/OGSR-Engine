@@ -113,6 +113,8 @@ void CBulletManager::Load		()
 
 	m_fHPMaxDist			= pSettings->r_float(BULLET_MANAGER_SECTION, "hit_probability_max_dist");
 	m_fHPMaxDist2 = READ_IF_EXISTS( pSettings, r_float, BULLET_MANAGER_SECTION, "hit_probability_max_dist2", 0.f );
+	m_fHPHealthFactor = READ_IF_EXISTS( pSettings, r_float, BULLET_MANAGER_SECTION, "hit_probability_health_factor", 0.f );
+	clamp( m_fHPHealthFactor, 0.f, 1.f );
 
 	LPCSTR whine_sounds		= pSettings->r_string(BULLET_MANAGER_SECTION, "whine_sounds");
 	int cnt					= _GetItemCount(whine_sounds);

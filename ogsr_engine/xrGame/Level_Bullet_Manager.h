@@ -135,6 +135,7 @@ protected:
 
 	float					m_fHPMaxDist;
 	float					m_fHPMaxDist2;
+	float m_fHPHealthFactor;
 
 	//константа G
 	float					m_fGravityConst;

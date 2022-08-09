@@ -89,6 +89,8 @@ BOOL CBulletManager::test_callback( const collide::ray_defs& rd, CObject* object
                   dist_factor = _min( 1.f, fly_dist / Level().BulletManager().m_fHPMaxDist );
               }
             }
+            if ( actor->GetfHealth() < 1.f )
+              game_difficulty_hit_probability *= 1.f - ( 1.f - actor->GetfHealth() ) * Level().BulletManager().m_fHPHealthFactor;
             ahp = dist_factor * game_difficulty_hit_probability + ( 1.f - dist_factor ) * 1.f;
             if ( Random.randF( 0.f, 1.f ) > ahp * hpf ) {
               bRes = FALSE;	// don't hit actor
