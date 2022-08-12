@@ -741,7 +741,7 @@ void CMissile::ExitContactCallback( bool& do_colide, bool bo1, dContact& c, SGam
 	else if ( gd1 && material && !material->Flags.is( SGameMtl::flPassable ) ) {
 	  CMissile* l_this = smart_cast<CMissile*>( gd1->ph_ref_object );
 	  if ( l_this && !l_this->Contacted() ) {
-	    l_this->Contact();
+	    l_this->Contact( gd2 ? smart_cast<CPhysicsShellHolder*>( gd2->ph_ref_object ) : nullptr );
 	  }
 	}
 }

@@ -3,6 +3,10 @@
 #include "ParticlesObject.h"
 #include "PhysicsShell.h"
 #include "xr_level_controller.h"
+#include "actor.h"
+#include "custommonster.h"
+#include "memory_manager.h"
+#include "enemy_manager.h"
 
 CBolt::CBolt(void) 
 {
@@ -104,4 +108,24 @@ void CBolt::GetBriefInfo(xr_string& str_name, xr_string& icon_sect_name, xr_stri
 	str_name = NameShort();
 	str_count = "";
 	icon_sect_name = *cNameSect();
+}
+
+void CBolt::Contact( CPhysicsShellHolder* obj ) {
+	inherited::Contact( obj );
+	if ( !obj ) return;
+
+	auto monster = smart_cast<CCustomMonster*>( obj );
+	if ( !monster || monster->getDestroy() || !monster->g_Alive() ) return;
+
+	u16 initiator_id = Initiator();
+	if ( initiator_id == u16(-1) ) return;
+
+	auto initiator = Level().Objects.net_Find( initiator_id );
+	if ( initiator && !initiator->getDestroy() ) {
+		const auto entity = smart_cast<const CEntityAlive*>( initiator );
+		if ( entity && entity->g_Alive() ) {
+			//monster->memory().enemy().add( entity );
+			monster->memory().make_object_visible_somewhen( entity );
+		}
+	}
 }

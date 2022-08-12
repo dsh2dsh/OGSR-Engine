@@ -31,4 +31,7 @@ public:
 	virtual IDamageSource*	cast_IDamageSource			()	{return this;}
 
 	virtual bool StopSprintOnFire() { return false; }
+
+protected:
+	virtual void Contact( CPhysicsShellHolder* );
 };
