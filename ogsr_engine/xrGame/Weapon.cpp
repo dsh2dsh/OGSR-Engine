@@ -53,6 +53,7 @@ CWeapon::CWeapon(LPCSTR name) : m_fLR_MovingFactor(0.f), m_strafe_offset{}
 	m_sub_state				= eSubstateReloadBegin;
 	m_idle_state				= eIdle;
 	m_bTriStateReload		= false;
+	m_bTriStateReloadPartly = false;
 	SetDefaults				();
 
 	m_Offset.identity		();

@@ -15,6 +15,7 @@ CWeaponShotgun::CWeaponShotgun(void) : CWeaponCustomPistol("TOZ34")
 	m_eSoundAddCartridge	= ESoundTypes(SOUND_TYPE_WEAPON_RECHARGING);
 	m_bLockType = true; // Запрещает заряжать в дробовики патроны разного типа
 	m_stop_triStateReload = false;
+	m_triStatePartlyReloading = false;
 }
 
 CWeaponShotgun::~CWeaponShotgun(void)
@@ -54,6 +55,7 @@ void CWeaponShotgun::Load	(LPCSTR section)
 		animGetEx( mhud_close, "anim_close_weapon" );
 	};
 
+	m_bTriStateReloadPartly = READ_IF_EXISTS( pSettings, r_bool, section, "tri_state_reload_partly", false );
 }
 
 void CWeaponShotgun::OnShot () 
@@ -315,6 +317,7 @@ void CWeaponShotgun::Reload()
 	OnZoomOut();
 	if(m_bTriStateReload){
 		m_stop_triStateReload = false;
+		m_triStatePartlyReloading = IsTriStateReloadPartly() && IsPartlyReloading();
 		TriStateReload();
 	}else
 		TryReload();
@@ -370,11 +373,16 @@ void CWeaponShotgun::switch2_AddCartgidge	()
 	m_bPending = true;
 }
 
-void CWeaponShotgun::switch2_EndReload	()
-{
-	PlaySound			(m_sndClose,get_LastFP());
-	PlayAnimCloseWeapon	();
+void CWeaponShotgun::switch2_EndReload() {
 	m_bPending = true;
+	if ( m_triStatePartlyReloading ) {
+		m_triStatePartlyReloading = false;
+		OnAnimationEnd( eReload );
+	}
+	else {
+		PlaySound( m_sndClose, get_LastFP() );
+		PlayAnimCloseWeapon();
+	}
 }
 
 void CWeaponShotgun::PlayAnimOpenWeapon()

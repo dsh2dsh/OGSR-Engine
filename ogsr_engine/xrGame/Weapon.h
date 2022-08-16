@@ -156,10 +156,12 @@ public:
 
 	BOOL					AutoSpawnAmmo		() const		{ return m_bAutoSpawnAmmo; };
 	bool					IsTriStateReload	() const		{ return m_bTriStateReload;}
+	bool IsTriStateReloadPartly() const { return m_bTriStateReloadPartly; }
 	EWeaponSubStates		GetReloadState		() const		{ return (EWeaponSubStates)m_sub_state;}
 	u8 idle_state();
 protected:
 	bool					m_bTriStateReload;
+	bool m_bTriStateReloadPartly;
 	u8						m_sub_state;
 	u8						m_idle_state;
 	// Weapon fires now

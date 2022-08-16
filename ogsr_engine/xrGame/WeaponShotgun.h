@@ -67,6 +67,7 @@ protected:
 	MotionSVec		mhud_close;
 
 	bool			m_stop_triStateReload;
+	bool m_triStatePartlyReloading;
 
 	DECLARE_SCRIPT_REGISTER_FUNCTION
 };
