@@ -72,13 +72,13 @@ static void	cammera_shell_collide_callback_common( bool& do_collide, bool bo1, d
 		dJointAttach			(contact_joint, 0, dGeomGetBody(c.geom.g2));
 	
 }
-static const float soft_cfm_for_geometry = 0.01f;
+
+static const float soft_cfm_for_geometry    = 0.f; //0.01f;
 static const float soft_cfm_for_controllers = 0.05f;
 
 static void	cammera_shell_collide_callback( bool& do_collide, bool bo1, dContact& c, SGameMtl* material_1, SGameMtl* material_2 )
 {
-	//c.surface.soft_cfm =soft_cfm_for_geometry;
-	c.surface.soft_cfm = 1.e-10f;
+	c.surface.soft_cfm = soft_cfm_for_geometry;
 	c.surface.soft_erp = 1.f;
 
 	dxGeomUserData	*oposite_data		=	retrieveGeomUserData( bo1 ? c.geom.g2 : c.geom.g1 ) ;
