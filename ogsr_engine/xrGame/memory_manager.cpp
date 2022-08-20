@@ -317,7 +317,7 @@ void CMemoryManager::on_restrictions_change	()
 
 void CMemoryManager::make_object_visible_somewhen	(const CEntityAlive *enemy)
 {
-	squad_mask_type				mask = stalker().agent_manager().member().mask(&stalker());
+	squad_mask_type mask = visual().mask(); //stalker().agent_manager().member().mask(&stalker());
 	MemorySpace::CVisibleObject	*obj = visual().visible_object(enemy);
 //	if (obj) {
 //		Msg						("------------------------------------------------------");
