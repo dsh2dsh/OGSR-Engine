@@ -76,6 +76,7 @@ struct CUITradeInternal{
 
 bool others_zero_trade;
 bool hide_untradeable;
+bool hide_untradeable_cond;
 
 CUITradeWnd::CUITradeWnd()
 	:	m_bDealControlsVisible	(false),
@@ -87,8 +88,10 @@ CUITradeWnd::CUITradeWnd()
 	Init();
 	Hide();
 	SetCurrentItem			(NULL);
-        others_zero_trade = !!READ_IF_EXISTS( pSettings, r_bool, "trade", "others_zero_trade", false );
-        hide_untradeable = READ_IF_EXISTS( pSettings, r_bool, "trade", "hide_untradeable", false );
+	others_zero_trade = !!READ_IF_EXISTS( pSettings, r_bool, "trade", "others_zero_trade", false );
+	hide_untradeable = READ_IF_EXISTS( pSettings, r_bool, "trade", "hide_untradeable", false );
+	hide_untradeable_cond = READ_IF_EXISTS(
+		pSettings, r_bool, "trade", "hide_untradeable_cond", hide_untradeable );
 }
 
 CUITradeWnd::~CUITradeWnd()
@@ -337,11 +340,11 @@ void CUITradeWnd::StopTrade()
 }
 
 #include "../trade_parameters.h"
-bool CUITradeWnd::CanMoveToOther( PIItem pItem, bool our )
+enum CUITradeWnd::EItemCanMove CUITradeWnd::CanMoveToOther( PIItem pItem, bool our )
 {
 	if (pItem->m_flags.test(CInventoryItem::FIAlwaysUntradable))
-		return false;
-	if ( !our ) return true;
+		return eItemCantMove;
+	if ( !our ) return eItemMoveOK;
 
 	float r1				= CalcItemsWeight(&m_uidata->UIOurTradeList);	// our
 	float r2				= CalcItemsWeight(&m_uidata->UIOthersTradeList);	// other
@@ -354,15 +357,15 @@ bool CUITradeWnd::CanMoveToOther( PIItem pItem, bool our )
 			CTradeParameters::action_buy(0),
 			pItem->object().cNameSect()
 		))
-		return				(false);
+		return eItemCantMove;
 
 	if ( pItem->GetCondition() < m_pOthersInvOwner->trade_parameters().factors( CTradeParameters::action_buy( 0 ), pItem->object().cNameSect() ).min_condition() )
-	  return false;
+	  return eItemNoMoveCond;
 
 	if(otherInvWeight-r2+r1+itmWeight > otherMaxWeight)
-		return				false;
+		return eItemCantMove;
 
-	return true;
+	return eItemMoveOK;
 }
 
 void move_item(CUICellItem* itm, CUIDragDropListEx* from, CUIDragDropListEx* to)
@@ -373,7 +376,7 @@ void move_item(CUICellItem* itm, CUIDragDropListEx* from, CUIDragDropListEx* to)
 
 bool CUITradeWnd::ToOurTrade(CUICellItem* itm)
 {
-	if ( !CanMoveToOther((PIItem)m_pCurrentCellItem->m_pData, true ) ) return false;
+	if ( CanMoveToOther((PIItem)m_pCurrentCellItem->m_pData, true ) != eItemMoveOK ) return false;
 
 	move_item				(itm, &m_uidata->UIOurBagList, &m_uidata->UIOurTradeList);
 	UpdatePrices			();
@@ -382,7 +385,7 @@ bool CUITradeWnd::ToOurTrade(CUICellItem* itm)
 
 bool CUITradeWnd::ToOthersTrade(CUICellItem* itm)
 {
-	if ( !CanMoveToOther((PIItem)m_pCurrentCellItem->m_pData, false ) ) return false;
+	if ( CanMoveToOther((PIItem)m_pCurrentCellItem->m_pData, false ) != eItemMoveOK ) return false;
 
 	move_item				(itm, &m_uidata->UIOthersBagList, &m_uidata->UIOthersTradeList);
 	UpdatePrices			();
@@ -636,13 +639,20 @@ void CUITradeWnd::FillList	(TIItemContainer& cont, CUIDragDropListEx& dragDropLi
 	for(; it != it_e; ++it)
 	{
 		CInventoryItem* item = *it;
-		bool canTrade = CanMoveToOther( item, our );
-		if ( hide_untradeable && our && !canTrade ) // dsh:
-		  continue;
+		EItemCanMove canTrade = CanMoveToOther( item, our );
+		if ( our ) {
+			if ( canTrade == eItemNoMoveCond ) {
+				if ( hide_untradeable_cond )
+					continue;
+			}
+			else if ( hide_untradeable && canTrade != eItemMoveOK ) {
+				continue;
+			}
+		}
 		CUICellItem* itm = create_cell_item( item );
 		if (item->m_highlight_equipped)
 			itm->m_select_equipped = true;
-		ColorizeItem( itm, canTrade, itm->m_select_equipped );
+		ColorizeItem( itm, canTrade == eItemMoveOK, itm->m_select_equipped );
 		dragDropList.SetItem( itm );
 	}
 }
@@ -712,7 +722,7 @@ void CUITradeWnd::MoveItems(CUICellItem* itm)
 
 	if (old_owner == &m_uidata->UIOurBagList)
 	{
-		if (!CanMoveToOther((PIItem)itm->m_pData, true)) return;
+		if ( CanMoveToOther((PIItem)itm->m_pData, true) != eItemMoveOK ) return;
 
 		to = &m_uidata->UIOurTradeList;
 	}
@@ -720,7 +730,7 @@ void CUITradeWnd::MoveItems(CUICellItem* itm)
 		to = &m_uidata->UIOurBagList;
 	else if (old_owner == &m_uidata->UIOthersBagList)
 	{
-		if (!CanMoveToOther((PIItem)itm->m_pData, false)) return;
+		if ( CanMoveToOther((PIItem)itm->m_pData, false) != eItemMoveOK ) return;
 
 		to = &m_uidata->UIOthersTradeList;
 	}

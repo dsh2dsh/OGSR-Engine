@@ -70,7 +70,8 @@ protected:
 
 	bool				m_bDealControlsVisible;
 
-	bool				CanMoveToOther				(PIItem, bool);
+	enum EItemCanMove { eItemCantMove, eItemMoveOK, eItemNoMoveCond };
+	EItemCanMove CanMoveToOther( PIItem, bool );
 
 	//указатели игрока и того с кем торгуем
 	CInventory*			m_pInv;
