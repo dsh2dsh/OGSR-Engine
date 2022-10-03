@@ -11,6 +11,9 @@ extern float		r_ssaLOD_B		;
 extern float		r_ssaHZBvsTEX	;
 extern float		r_ssaGLOD_start,	r_ssaGLOD_end;
 
+// https://github.com/OpenXRay/xray-16/commit/7b52e5cfc1004e8ff4e36ec8812431e4d4e04af5
+static auto constexpr DELTA_CAMERA_POS = .001f;
+
 void CRender::Calculate		()
 {
 	// Transfer to global space to avoid deep pointer access
@@ -27,7 +30,7 @@ void CRender::Calculate		()
 	r_dtex_range					=	ps_r2_df_parallax_range * g_fSCREEN / (1024.f * 768.f);
 	
 	// Detect camera-sector
-	if (!vLastCameraPos.similar(Device.vCameraPosition,EPS_S)) 
+	if ( !vLastCameraPos.similar( Device.vCameraPosition, DELTA_CAMERA_POS ) )
 	{
 		CSector* pSector		= (CSector*)detectSector(Device.vCameraPosition);
 		if (pSector && (pSector!=pLastSector))
