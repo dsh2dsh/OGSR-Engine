@@ -120,18 +120,15 @@ void CMovementManager::set_game_dest_vertex(const GameGraph::_GRAPH_ID& game_ver
     m_path_actuality = m_path_actuality && game_path().actual();
 }
 
-GameGraph::_GRAPH_ID CMovementManager::game_dest_vertex_id() const
-{
-    return (GameGraph::_GRAPH_ID(game_path().dest_vertex_id()));
-}
+GameGraph::_GRAPH_ID CMovementManager::game_dest_vertex_id() const { return (GameGraph::_GRAPH_ID(game_path().dest_vertex_id())); }
 
 void CMovementManager::set_level_dest_vertex(u32 const& level_vertex_id)
 {
     VERIFY2(restrictions().accessible(level_vertex_id), *object().cName());
     level_path().set_dest_vertex(level_vertex_id);
     m_path_actuality = m_path_actuality && level_path().actual();
-    if ( m_path_actuality && m_path_state == ePathStatePathCompleted )
-      m_path_actuality = ( m_object->ai_location().level_vertex_id() == level_dest_vertex_id() );
+    if (m_path_actuality && m_path_state == ePathStatePathCompleted)
+        m_path_actuality = (m_object->ai_location().level_vertex_id() == level_dest_vertex_id());
 }
 
 u32 CMovementManager::level_dest_vertex_id() const { return (level_path().dest_vertex_id()); }
@@ -164,19 +161,16 @@ void CMovementManager::update_path()
         patrol().make_inactual();
         switch (m_path_type)
         {
-        case ePathTypeGamePath:
-        {
+        case ePathTypeGamePath: {
             m_path_state = ePathStateSelectGameVertex;
             break;
         }
-        case ePathTypeLevelPath:
-        {
+        case ePathTypeLevelPath: {
             m_path_state = ePathStateBuildLevelPath;
             if (!restrictions().accessible(level_path().dest_vertex_id()))
             {
                 Fvector temp;
-                level_path().set_dest_vertex(restrictions().accessible_nearest(
-                    ai().level_graph().vertex_position(level_path().dest_vertex_id()), temp));
+                level_path().set_dest_vertex(restrictions().accessible_nearest(ai().level_graph().vertex_position(level_path().dest_vertex_id()), temp));
                 detail().set_dest_position(temp);
             }
             else
@@ -188,14 +182,12 @@ void CMovementManager::update_path()
             }
             break;
         }
-        case ePathTypePatrolPath:
-        {
+        case ePathTypePatrolPath: {
             //				Msg				("[%6d][%s] actuality is false",Device.dwFrame,*object().cName());
             m_path_state = ePathStateSelectPatrolPoint;
             break;
         }
-        case ePathTypeNoPath:
-        {
+        case ePathTypeNoPath: {
             m_path_state = ePathStateDummy;
             break;
         }
@@ -206,22 +198,20 @@ void CMovementManager::update_path()
 
     switch (m_path_type)
     {
-    case ePathTypeGamePath:
-    {
+    case ePathTypeGamePath: {
         process_game_path();
         break;
     }
-    case ePathTypeLevelPath:
-    {
+    case ePathTypeLevelPath: {
         process_level_path();
         break;
     }
-    case ePathTypePatrolPath:
-    {
+    case ePathTypePatrolPath: {
         process_patrol_path();
         break;
     }
-    case ePathTypeNoPath: { break;
+    case ePathTypeNoPath: {
+        break;
     }
     default: NODEFAULT;
     }
@@ -325,10 +315,7 @@ void CMovementManager::on_restrictions_change()
     level_path().on_restrictions_change();
 }
 
-bool CMovementManager::can_use_distributed_computations(u32 option) const
-{
-    return (!m_build_at_once && g_mt_config.test(option) && !object().getDestroy());
-}
+bool CMovementManager::can_use_distributed_computations(u32 option) const { return (!m_build_at_once && g_mt_config.test(option) && !object().getDestroy()); }
 
 void CMovementManager::on_frame(CPHMovementControl* movement_control, Fvector& dest_position)
 {
@@ -338,10 +325,7 @@ void CMovementManager::on_frame(CPHMovementControl* movement_control, Fvector& d
     move_along_path(movement_control, dest_position, object().client_update_fdelta());
 }
 
-void CMovementManager::on_travel_point_change(const u32& previous_travel_point_index)
-{
-    detail().on_travel_point_change(previous_travel_point_index);
-}
+void CMovementManager::on_travel_point_change(const u32& previous_travel_point_index) { detail().on_travel_point_change(previous_travel_point_index); }
 
 void CMovementManager::enable_movement(bool enabled)
 {
@@ -369,8 +353,7 @@ void CMovementManager::build_level_path()
     // build_level_path",Device.dwTimeGlobal,Device.dwFrame,++i,timer.GetElapsed_sec()*1000.f);
 }
 
-Fvector CMovementManager::predict_position(
-    const float& time_delta, const Fvector& start_position, u32& current_travel_point, const float& velocity) const
+Fvector CMovementManager::predict_position(const float& time_delta, const Fvector& start_position, u32& current_travel_point, const float& velocity) const
 {
     typedef xr_vector<DetailPathManager::STravelPathPoint> PATH;
     const PATH& path = detail().path();

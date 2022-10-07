@@ -27,10 +27,8 @@ void CMovementManager::process_level_path()
 
     switch (m_path_state)
     {
-    case ePathStateBuildLevelPath:
-    {
-        level_path_builder().setup(
-            object().ai_location().level_vertex_id(), level_dest_vertex_id(), extrapolate_path(), 0);
+    case ePathStateBuildLevelPath: {
+        level_path_builder().setup(object().ai_location().level_vertex_id(), level_dest_vertex_id(), extrapolate_path(), 0);
 
         if (can_use_distributed_computations(mtLevelPath))
         {
@@ -43,14 +41,12 @@ void CMovementManager::process_level_path()
         if (!m_build_at_once)
             break;
     }
-    case ePathStateContinueLevelPath:
-    {
+    case ePathStateContinueLevelPath: {
         level_path().select_intermediate_vertex();
 
         m_path_state = ePathStateBuildDetailPath;
     }
-    case ePathStateBuildDetailPath:
-    {
+    case ePathStateBuildDetailPath: {
         detail().set_state_patrol_path(extrapolate_path());
         detail().set_start_position(object().Position());
         detail().set_start_direction(Fvector().setHP(-m_body.current.yaw, 0));
@@ -67,8 +63,7 @@ void CMovementManager::process_level_path()
 
         break;
     }
-    case ePathStatePathVerification:
-    {
+    case ePathStatePathVerification: {
         if (!level_path().actual())
             m_path_state = ePathStateBuildLevelPath;
         else if (!detail().actual())
@@ -84,8 +79,7 @@ void CMovementManager::process_level_path()
         }
         break;
     }
-    case ePathStatePathCompleted:
-    {
+    case ePathStatePathCompleted: {
         if (!level_path().actual())
             m_path_state = ePathStateBuildLevelPath;
         else if (!detail().actual())

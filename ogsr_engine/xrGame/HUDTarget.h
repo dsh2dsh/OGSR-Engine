@@ -5,32 +5,33 @@
 
 class CHUDManager;
 
-class CHUDTarget {
+class CHUDTarget
+{
 private:
-	friend class CHUDManager;
+    friend class CHUDManager;
 
 private:
-	typedef collide::rq_result		rq_result;
-	typedef collide::rq_results		rq_results;
+    typedef collide::rq_result rq_result;
+    typedef collide::rq_results rq_results;
 
 private:
-	ui_shader		hShader;
-	float			fuzzyShowInfo;
-	rq_result		RQ;
-	rq_results		RQR;
+    ui_shader hShader;
+    float fuzzyShowInfo;
+    rq_result RQ;
+    rq_results RQR;
 
 private:
-	bool			m_bShowCrosshair;
-	CHUDCrosshair	HUDCrosshair;
+    bool m_bShowCrosshair;
+    CHUDCrosshair HUDCrosshair;
 
 private:
-			void	net_Relcase		(CObject* O);
+    void net_Relcase(CObject* O);
 
 public:
-					CHUDTarget		();
-			void	CursorOnFrame	();
-			void	Render			();
-			void	Load			();
-			float	GetDist			();
-			CObject	*GetObj			();
+    CHUDTarget();
+    void CursorOnFrame();
+    void Render();
+    void Load();
+    float GetDist();
+    CObject* GetObj();
 };

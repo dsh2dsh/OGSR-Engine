@@ -15,11 +15,9 @@
 
 typedef obstacles_query::AREA AREA;
 
-CRestrictedObjectObstacle::CRestrictedObjectObstacle(
-    CCustomMonster* object, const obstacles_query& static_query, const obstacles_query& dynamic_query)
+CRestrictedObjectObstacle::CRestrictedObjectObstacle(CCustomMonster* object, const obstacles_query& static_query, const obstacles_query& dynamic_query)
     : inherited(object), m_static_query(static_query), m_dynamic_query(dynamic_query)
-{
-}
+{}
 
 void CRestrictedObjectObstacle::apply(const obstacles_query& query, const u32& start_vertex_id) const
 {
@@ -43,8 +41,7 @@ void CRestrictedObjectObstacle::add_border(u32 start_vertex_id, float radius) co
     apply(m_dynamic_query, start_vertex_id);
 }
 
-void CRestrictedObjectObstacle::apply(
-    const obstacles_query& query, const Fvector& start_position, const Fvector& dest_position) const
+void CRestrictedObjectObstacle::apply(const obstacles_query& query, const Fvector& start_position, const Fvector& dest_position) const
 {
     CLevelGraph& graph = ai().level_graph();
     AREA::const_iterator I = query.area().begin();
@@ -69,8 +66,7 @@ void CRestrictedObjectObstacle::add_border(const Fvector& start_position, const 
     apply(m_dynamic_query, start_position, dest_position);
 }
 
-void CRestrictedObjectObstacle::apply(
-    const obstacles_query& query, const u32& start_vertex_id, const u32& dest_vertex_id) const
+void CRestrictedObjectObstacle::apply(const obstacles_query& query, const u32& start_vertex_id, const u32& dest_vertex_id) const
 {
     CLevelGraph& graph = ai().level_graph();
     AREA::const_iterator I = query.area().begin();

@@ -2,124 +2,117 @@
 #include "weaponmagazined.h"
 #include "rocketlauncher.h"
 
-
 class CWeaponFakeGrenade;
 
-
-class CWeaponMagazinedWGrenade : public CWeaponMagazined,
-								 public CRocketLauncher
+class CWeaponMagazinedWGrenade : public CWeaponMagazined, public CRocketLauncher
 {
-	typedef CWeaponMagazined inherited;
+    typedef CWeaponMagazined inherited;
 
 protected:
-	bool TryPlayAnimIdle( u8 );
+    bool TryPlayAnimIdle(u8);
 
 public:
-					CWeaponMagazinedWGrenade	(LPCSTR name="AK74",ESoundTypes eSoundType=SOUND_TYPE_WEAPON_SUBMACHINEGUN);
-	virtual			~CWeaponMagazinedWGrenade	();
+    CWeaponMagazinedWGrenade(LPCSTR name = "AK74", ESoundTypes eSoundType = SOUND_TYPE_WEAPON_SUBMACHINEGUN);
+    virtual ~CWeaponMagazinedWGrenade();
 
-	virtual void	Load				(LPCSTR section);
-	
-	virtual BOOL	net_Spawn			(CSE_Abstract* DC);
-	virtual void	net_Destroy			();
-	virtual void net_Export( CSE_Abstract* E );
+    virtual void Load(LPCSTR section);
 
-	virtual void	OnDrawUI();
-	virtual void	net_Relcase(CObject *object);
-	
-	virtual void	OnH_B_Independent	(bool just_before_destroy);
+    virtual BOOL net_Spawn(CSE_Abstract* DC);
+    virtual void net_Destroy();
+    virtual void net_Export(CSE_Abstract* E);
 
-	virtual void	save				(NET_Packet &output_packet);
-	virtual void	load				(IReader &input_packet);
+    virtual void OnDrawUI();
+    virtual void net_Relcase(CObject* object);
 
+    virtual void OnH_B_Independent(bool just_before_destroy);
 
-	virtual bool	Attach(PIItem pIItem, bool b_send_event);
-	virtual bool	Detach(const char* item_section_name, bool b_spawn_item);
-	virtual bool	CanAttach(PIItem pIItem);
-	virtual bool	CanDetach(const char* item_section_name);
-	virtual void	InitAddons();
-	virtual bool	UseScopeTexture();
-	virtual	float	CurrentZoomFactor	();
+    virtual void save(NET_Packet& output_packet);
+    virtual void load(IReader& input_packet);
 
-	
-	virtual void	OnStateSwitch	(u32 S);
-	
-	virtual void	switch2_Idle	();
-	virtual void	switch2_Reload	();
-	virtual void	state_Fire		(float dt);
-	virtual void	OnShot			();
-	virtual void	SwitchState		(u32 S);
-	virtual void	OnEvent			(NET_Packet& P, u16 type);
-	virtual void	ReloadMagazine	();
+    virtual bool Attach(PIItem pIItem, bool b_send_event);
+    virtual bool Detach(const char* item_section_name, bool b_spawn_item);
+    virtual bool CanAttach(PIItem pIItem);
+    virtual bool CanDetach(const char* item_section_name);
+    virtual void InitAddons();
+    virtual bool UseScopeTexture();
+    virtual float CurrentZoomFactor();
 
-	virtual bool	Action			(s32 cmd, u32 flags);
+    virtual void OnStateSwitch(u32 S);
 
-	virtual void	UpdateSounds	();
-	virtual void	StopHUDSounds	();
+    virtual void switch2_Idle();
+    virtual void switch2_Reload();
+    virtual void state_Fire(float dt);
+    virtual void OnShot();
+    virtual void SwitchState(u32 S);
+    virtual void OnEvent(NET_Packet& P, u16 type);
+    virtual void ReloadMagazine();
 
-	//переключение в режим подствольника
-	virtual bool	SwitchMode		();
-	void			PerformSwitchGL	();
-	void			OnAnimationEnd	(u32 state);
+    virtual bool Action(s32 cmd, u32 flags);
 
-	virtual bool	IsNecessaryItem	    (const shared_str& item_sect);
+    virtual void UpdateSounds();
+    virtual void StopHUDSounds();
 
-	//виртуальные функции для проигрывания анимации HUD
-	virtual void	PlayAnimShow();
-	virtual void	PlayAnimHide();
-	virtual void	PlayAnimReload();
-	virtual void	PlayAnimIdle( u8 );
-	virtual void	PlayAnimShoot();
-	virtual void	PlayAnimModeSwitch();
-	
-	HUD_SOUND			sndShotG;
-	HUD_SOUND			sndReloadG;
-	HUD_SOUND			sndSwitch;
+    //переключение в режим подствольника
+    virtual bool SwitchMode();
+    void PerformSwitchGL();
+    void OnAnimationEnd(u32 state);
 
+    virtual bool IsNecessaryItem(const shared_str& item_sect);
 
-	//анимации с подключенным подствольником
-	//(режим обычной стрельбы)
-	MotionSVec			mhud_idle_g;
-	MotionSVec			mhud_idle_g_aim;
-	MotionSVec			mhud_idle_moving_g;
-	MotionSVec			mhud_idle_sprint_g;
-	MotionSVec			mhud_reload_g;
-	MotionSVec			mhud_shots_g;
-	MotionSVec			mhud_switch_g, mhud_switch;
-	MotionSVec			mhud_show_g;
-	MotionSVec			mhud_hide_g;
-	//(режим стрельбы из подствольника)
-	MotionSVec			mhud_idle_moving_gl;
-	MotionSVec			mhud_idle_sprint_gl;
-	MotionSVec			mhud_idle_w_gl;
-	MotionSVec			mhud_idle_w_gl_aim;
-	MotionSVec			mhud_reload_w_gl;
-	MotionSVec			mhud_shots_w_gl;
-	MotionSVec			mhud_show_w_gl;
-	MotionSVec			mhud_hide_w_gl;
-	MotionSVec			mhud_reload_w_gl_partly;
+    //виртуальные функции для проигрывания анимации HUD
+    virtual void PlayAnimShow();
+    virtual void PlayAnimHide();
+    virtual void PlayAnimReload();
+    virtual void PlayAnimIdle(u8);
+    virtual void PlayAnimShoot();
+    virtual void PlayAnimModeSwitch();
 
+    HUD_SOUND sndShotG;
+    HUD_SOUND sndReloadG;
+    HUD_SOUND sndSwitch;
 
-	//дополнительные параметры патронов 
-	//для подствольника
-	CWeaponAmmo* m_pAmmo2{};
-	shared_str				m_ammoSect2;
-	xr_vector<shared_str>	m_ammoTypes2;
-	u32						m_ammoType2;
-	int						iMagazineSize2{};
-	xr_vector<CCartridge>	m_magazine2;
-	bool					m_bGrenadeMode;
-	bool m_gl_zoom_auto_dir;
+    //анимации с подключенным подствольником
+    //(режим обычной стрельбы)
+    MotionSVec mhud_idle_g;
+    MotionSVec mhud_idle_g_aim;
+    MotionSVec mhud_idle_moving_g;
+    MotionSVec mhud_idle_sprint_g;
+    MotionSVec mhud_reload_g;
+    MotionSVec mhud_shots_g;
+    MotionSVec mhud_switch_g, mhud_switch;
+    MotionSVec mhud_show_g;
+    MotionSVec mhud_hide_g;
+    //(режим стрельбы из подствольника)
+    MotionSVec mhud_idle_moving_gl;
+    MotionSVec mhud_idle_sprint_gl;
+    MotionSVec mhud_idle_w_gl;
+    MotionSVec mhud_idle_w_gl_aim;
+    MotionSVec mhud_reload_w_gl;
+    MotionSVec mhud_shots_w_gl;
+    MotionSVec mhud_show_w_gl;
+    MotionSVec mhud_hide_w_gl;
+    MotionSVec mhud_reload_w_gl_partly;
 
-	CCartridge				m_DefaultCartridge2;
+    //дополнительные параметры патронов
+    //для подствольника
+    CWeaponAmmo* m_pAmmo2{};
+    shared_str m_ammoSect2;
+    xr_vector<shared_str> m_ammoTypes2;
+    u32 m_ammoType2;
+    int iMagazineSize2{};
+    xr_vector<CCartridge> m_magazine2;
+    bool m_bGrenadeMode;
+    bool m_gl_zoom_auto_dir;
 
-	int						iAmmoElapsed2;
+    CCartridge m_DefaultCartridge2;
 
-	virtual void UpdateGrenadeVisibility(bool visibility);
+    int iAmmoElapsed2;
 
-	//название косточки для гранаты подствольника в HUD
-	shared_str grenade_bone_name;
+    virtual void UpdateGrenadeVisibility(bool visibility);
 
-	IC int GetAmmoElapsed2() const { return int(m_magazine2.size()); }
-	virtual float Weight () const;		
+    //название косточки для гранаты подствольника в HUD
+    shared_str grenade_bone_name;
+
+    IC int GetAmmoElapsed2() const { return int(m_magazine2.size()); }
+    virtual float Weight() const;
 };

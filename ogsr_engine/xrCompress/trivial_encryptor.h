@@ -7,147 +7,157 @@
 
 #define RUSSIAN_BUILD
 
-class trivial_encryptor {
+class trivial_encryptor
+{
 private:
-	typedef u8					type;
-	typedef void*				pvoid;
-	typedef const void*			pcvoid;
-
-private:
-	enum { alphabet_size = u32(1 << (8 * sizeof(type))) };
+    typedef u8 type;
+    typedef void* pvoid;
+    typedef const void* pcvoid;
 
 private:
-	class random32 {
-	private:
-		u32				m_seed;
+    enum
+    {
+        alphabet_size = u32(1 << (8 * sizeof(type)))
+    };
 
-	public:
-		IC	void		seed(const u32 &seed)
-		{
-			m_seed = seed;
-		}
+private:
+    class random32
+    {
+    private:
+        u32 m_seed;
 
-		IC	u32			random(const u32 &range)
-		{
-			m_seed = 0x08088405 * m_seed + 1;
-			return		(u32(u64(m_seed)*u64(range) >> 32));
-		}
-	};
+    public:
+        IC void seed(const u32& seed) { m_seed = seed; }
+
+        IC u32 random(const u32& range)
+        {
+            m_seed = 0x08088405 * m_seed + 1;
+            return (u32(u64(m_seed) * u64(range) >> 32));
+        }
+    };
 
 public:
-	static	u32					m_table_iterations;
-	static	u32					m_table_seed;
-	static	u32					m_encrypt_seed;
+    static u32 m_table_iterations;
+    static u32 m_table_seed;
+    static u32 m_encrypt_seed;
 
 #ifdef TRIVIAL_ENCRYPTOR_ENCODER
-#	ifdef TRIVIAL_ENCRYPTOR_DECODER
-private: static bool	m_initialized;
-#	endif
+#ifdef TRIVIAL_ENCRYPTOR_DECODER
+private:
+    static bool m_initialized;
+#endif
 #endif
 
 #ifdef TRIVIAL_ENCRYPTOR_ENCODER
-private: static type		m_alphabet[alphabet_size];
+private:
+    static type m_alphabet[alphabet_size];
 #endif
 
 #ifdef TRIVIAL_ENCRYPTOR_DECODER
-private: static type		m_alphabet_back[alphabet_size];
+private:
+    static type m_alphabet_back[alphabet_size];
 #endif
 
 private:
-	IC	static void	initialize()
-	{
+    IC static void initialize()
+    {
 #ifndef TRIVIAL_ENCRYPTOR_ENCODER
-		type					*m_alphabet = (type*)_alloca(sizeof(type)*alphabet_size);
+        type* m_alphabet = (type*)_alloca(sizeof(type) * alphabet_size);
 #endif
 
-		for (u32 i = 0; i < alphabet_size; ++i)
-			m_alphabet[i] = (type)i;
+        for (u32 i = 0; i < alphabet_size; ++i)
+            m_alphabet[i] = (type)i;
 
-		random32				temp;
-		temp.seed(m_table_seed);
-		for (u32 i = 0; i < m_table_iterations; ++i) {
-			u32					j = temp.random(alphabet_size);
-			u32					k = temp.random(alphabet_size);
-			while (j == k)
-				k = temp.random(alphabet_size);
+        random32 temp;
+        temp.seed(m_table_seed);
+        for (u32 i = 0; i < m_table_iterations; ++i)
+        {
+            u32 j = temp.random(alphabet_size);
+            u32 k = temp.random(alphabet_size);
+            while (j == k)
+                k = temp.random(alphabet_size);
 
-			std::swap(m_alphabet[j], m_alphabet[k]);
-		}
+            std::swap(m_alphabet[j], m_alphabet[k]);
+        }
 
 #ifdef TRIVIAL_ENCRYPTOR_DECODER
-		for (u32 i = 0; i < alphabet_size; ++i)
-			m_alphabet_back[m_alphabet[i]] = (type)i;
+        for (u32 i = 0; i < alphabet_size; ++i)
+            m_alphabet_back[m_alphabet[i]] = (type)i;
 #endif
-	}
+    }
 
 #ifdef TRIVIAL_ENCRYPTOR_ENCODER
-public:	IC	static void	encode(pcvoid source, const u32 &source_size, pvoid destination)
-{
-#	ifndef TRIVIAL_ENCRYPTOR_DECODER
-	static bool m_initialized = false;
-#	endif
-	if (!m_initialized) {
-		initialize();
-		m_initialized = true;
-	}
+public:
+    IC static void encode(pcvoid source, const u32& source_size, pvoid destination)
+    {
+#ifndef TRIVIAL_ENCRYPTOR_DECODER
+        static bool m_initialized = false;
+#endif
+        if (!m_initialized)
+        {
+            initialize();
+            m_initialized = true;
+        }
 
-	random32				temp;
-	temp.seed(m_encrypt_seed);
-	const u8				*I = (const u8*)source;
-	const u8				*E = (const u8*)source + source_size;
-	u8						*J = (u8*)destination;
-	for (; I != E; ++I, ++J)
-		*J = m_alphabet[*I] ^ type(temp.random(256) & 0xff);
-}
+        random32 temp;
+        temp.seed(m_encrypt_seed);
+        const u8* I = (const u8*)source;
+        const u8* E = (const u8*)source + source_size;
+        u8* J = (u8*)destination;
+        for (; I != E; ++I, ++J)
+            *J = m_alphabet[*I] ^ type(temp.random(256) & 0xff);
+    }
 #endif
 
 #ifdef TRIVIAL_ENCRYPTOR_DECODER
-public:	IC	static void	decode(pcvoid source, const u32 &source_size, pvoid destination)
-{
-#	ifndef TRIVIAL_ENCRYPTOR_ENCODER
-	static bool m_initialized = false;
-#	endif
-	if (!m_initialized) {
-		initialize();
-		m_initialized = true;
-	}
+public:
+    IC static void decode(pcvoid source, const u32& source_size, pvoid destination)
+    {
+#ifndef TRIVIAL_ENCRYPTOR_ENCODER
+        static bool m_initialized = false;
+#endif
+        if (!m_initialized)
+        {
+            initialize();
+            m_initialized = true;
+        }
 
-	random32				temp;
-	temp.seed(m_encrypt_seed);
-	const u8				*I = (const u8*)source;
-	const u8				*E = (const u8*)source + source_size;
-	u8						*J = (u8*)destination;
-	for (; I != E; ++I, ++J)
-		*J = m_alphabet_back[(*I) ^ type(temp.random(256) & 0xff)];
-}
+        random32 temp;
+        temp.seed(m_encrypt_seed);
+        const u8* I = (const u8*)source;
+        const u8* E = (const u8*)source + source_size;
+        u8* J = (u8*)destination;
+        for (; I != E; ++I, ++J)
+            *J = m_alphabet_back[(*I) ^ type(temp.random(256) & 0xff)];
+    }
 #endif
 };
 
 #ifdef TRIVIAL_ENCRYPTOR_ENCODER
-#	ifdef TRIVIAL_ENCRYPTOR_DECODER
+#ifdef TRIVIAL_ENCRYPTOR_DECODER
 bool trivial_encryptor::m_initialized = false;
-#	endif
+#endif
 #endif
 
 #if __has_include("..\build_config_overrides\trivial_encryptor_ovr.h")
 #include "..\build_config_overrides\trivial_encryptor_ovr.h"
-u32	trivial_encryptor::m_table_iterations = M_TABLE_ITERATIONS;
-u32	trivial_encryptor::m_table_seed = M_TABLE_SEED;
-u32	trivial_encryptor::m_encrypt_seed = M_ENCRYPT_SEED;
+u32 trivial_encryptor::m_table_iterations = M_TABLE_ITERATIONS;
+u32 trivial_encryptor::m_table_seed = M_TABLE_SEED;
+u32 trivial_encryptor::m_encrypt_seed = M_ENCRYPT_SEED;
 #elif defined(RUSSIAN_BUILD)
-u32	trivial_encryptor::m_table_iterations = 2048;
-u32	trivial_encryptor::m_table_seed = 20091958;
-u32	trivial_encryptor::m_encrypt_seed = 20031955;
+u32 trivial_encryptor::m_table_iterations = 2048;
+u32 trivial_encryptor::m_table_seed = 20091958;
+u32 trivial_encryptor::m_encrypt_seed = 20031955;
 #else
-u32	trivial_encryptor::m_table_iterations = 1024;
-u32	trivial_encryptor::m_table_seed = 6011979;
-u32	trivial_encryptor::m_encrypt_seed = 24031979;
+u32 trivial_encryptor::m_table_iterations = 1024;
+u32 trivial_encryptor::m_table_seed = 6011979;
+u32 trivial_encryptor::m_encrypt_seed = 24031979;
 #endif
 
 #ifdef TRIVIAL_ENCRYPTOR_ENCODER
-trivial_encryptor::type	trivial_encryptor::m_alphabet[trivial_encryptor::alphabet_size];
+trivial_encryptor::type trivial_encryptor::m_alphabet[trivial_encryptor::alphabet_size];
 #endif
 
 #ifdef TRIVIAL_ENCRYPTOR_DECODER
-trivial_encryptor::type	trivial_encryptor::m_alphabet_back[trivial_encryptor::alphabet_size];
+trivial_encryptor::type trivial_encryptor::m_alphabet_back[trivial_encryptor::alphabet_size];
 #endif

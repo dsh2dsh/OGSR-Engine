@@ -26,8 +26,7 @@
 #define MSG(...)
 #endif
 
-IC MagicBox3& moving_objects::continuous_box(
-    moving_object* object, const Fvector& position, MagicBox3& result, const bool& use_box_enlargement) const
+IC MagicBox3& moving_objects::continuous_box(moving_object* object, const Fvector& position, MagicBox3& result, const bool& use_box_enlargement) const
 {
     result = object->object().obstacle().min_box();
     object->object().Center(result.Center());
@@ -66,8 +65,7 @@ struct boxes
     MagicBox3 _1;
 };
 
-void moving_objects::resolve_collision_first(
-    boxes& current, moving_object* object0, moving_object* object1, possible_actions& action) const
+void moving_objects::resolve_collision_first(boxes& current, moving_object* object0, moving_object* object1, possible_actions& action) const
 {
     boxes start;
     continuous_box(object0, object0->position(), start._0, false);
@@ -122,8 +120,7 @@ void moving_objects::resolve_collision_first(
     action = possible_action_1_can_wait_2;
 }
 
-void moving_objects::resolve_collision_previous(
-    boxes& current, moving_object* object0, moving_object* object1, possible_actions& action) const
+void moving_objects::resolve_collision_previous(boxes& current, moving_object* object0, moving_object* object1, possible_actions& action) const
 {
     boxes start;
     continuous_box(object0, object0->position(), start._0, true);
@@ -177,8 +174,8 @@ void moving_objects::resolve_collision_previous(
     action = possible_action_1_can_wait_2;
 }
 
-void moving_objects::resolve_collision(boxes& current, moving_object* object0, const Fvector& position0,
-    moving_object* object1, const Fvector& position1, possible_actions& action) const
+void moving_objects::resolve_collision(boxes& current, moving_object* object0, const Fvector& position0, moving_object* object1, const Fvector& position1,
+                                       possible_actions& action) const
 {
 #if 0
 	if (object0->action_frame() == Device.dwFrame) {
@@ -210,16 +207,14 @@ void moving_objects::resolve_collision(boxes& current, moving_object* object0, c
 		Msg						("%6d Eng of \"Oooooooops\"",Device.dwFrame);
 	}
 #endif // 0
-    VERIFY2(
-        object0->action_frame() != Device.dwFrame, make_string("%d %s", Device.dwFrame, *object0->object().cName()));
+    VERIFY2(object0->action_frame() != Device.dwFrame, make_string("%d %s", Device.dwFrame, *object0->object().cName()));
     VERIFY2(object0->action_frame() < Device.dwFrame, make_string("%d %s", Device.dwFrame, *object0->object().cName()));
 
-    VERIFY2(
-        object1->action_frame() != Device.dwFrame, make_string("%d %s", Device.dwFrame, *object0->object().cName()));
+    VERIFY2(object1->action_frame() != Device.dwFrame, make_string("%d %s", Device.dwFrame, *object0->object().cName()));
     VERIFY2(object1->action_frame() < Device.dwFrame, make_string("%d %s", Device.dwFrame, *object0->object().cName()));
 
-    bool first_time = (std::find_if(m_previous_collisions.begin(), m_previous_collisions.end(),
-                           collision_predicate(std::make_pair(object0, object1))) == m_previous_collisions.end());
+    bool first_time =
+        (std::find_if(m_previous_collisions.begin(), m_previous_collisions.end(), collision_predicate(std::make_pair(object0, object1))) == m_previous_collisions.end());
 
     if (first_time)
     {
@@ -243,23 +238,20 @@ void moving_objects::resolve_collision(boxes& current, moving_object* object0, c
     VERIFY2(false, make_string("NODEFAULT: [%s][%s]", *object0->object().cName(), *object1->object().cName()));
 }
 
-bool moving_objects::collided_dynamic(moving_object* object0, const Fvector& position0, moving_object* object1,
-    const Fvector& position1, boxes& result) const
+bool moving_objects::collided_dynamic(moving_object* object0, const Fvector& position0, moving_object* object1, const Fvector& position1, boxes& result) const
 {
     continuous_box(object0, position0, result._0, true);
     continuous_box(object1, position1, result._1, true);
     return (result._0.intersects(result._1));
 }
 
-bool moving_objects::collided_dynamic(
-    moving_object* object0, const Fvector& position0, moving_object* object1, const Fvector& position1) const
+bool moving_objects::collided_dynamic(moving_object* object0, const Fvector& position0, moving_object* object1, const Fvector& position1) const
 {
     boxes temp;
     return (collided_dynamic(object0, position0, object1, position1, temp));
 }
 
-bool moving_objects::collided_dynamic(moving_object* object0, const Fvector& position0, moving_object* object1,
-    const Fvector& position1, possible_actions& action) const
+bool moving_objects::collided_dynamic(moving_object* object0, const Fvector& position0, moving_object* object1, const Fvector& position1, possible_actions& action) const
 {
 #ifdef DEBUG
     COLLISIONS::const_iterator I = m_collisions.begin();

@@ -33,15 +33,11 @@ private:
     };
 
 public:
-    IC CLevelPathBuilder(CMovementManager* object)
-        : inherited(object), m_last_fail_time(0), m_use_delay_after_fail(true)
-    {
-    }
+    IC CLevelPathBuilder(CMovementManager* object) : inherited(object), m_last_fail_time(0), m_use_delay_after_fail(true) {}
 
     IC const u32& dest_vertex_id() const { return (m_dest_vertex_id); }
     IC void use_delay_after_fail(bool const value) { m_use_delay_after_fail = value; }
-    IC void setup(
-        const u32& start_vertex_id, const u32& dest_vertex_id, bool extrapolate_path, const Fvector* precise_position)
+    IC void setup(const u32& start_vertex_id, const u32& dest_vertex_id, bool extrapolate_path, const Fvector* precise_position)
     {
         VERIFY(ai().level_graph().valid_vertex_id(start_vertex_id));
         m_start_vertex_id = start_vertex_id;

@@ -159,8 +159,7 @@ bool MagicBox3::intersects(const MagicBox3& rkBox1) const
 
 void MagicBox3::ComputeVertices(Fvector* akVertex) const
 {
-    Fvector akEAxis[3] = {Fvector().mul(m_akAxis[0], m_afExtent[0]), Fvector().mul(m_akAxis[1], m_afExtent[1]),
-        Fvector().mul(m_akAxis[2], m_afExtent[2])};
+    Fvector akEAxis[3] = {Fvector().mul(m_akAxis[0], m_afExtent[0]), Fvector().mul(m_akAxis[1], m_afExtent[1]), Fvector().mul(m_akAxis[2], m_afExtent[2])};
 
     akVertex[0] = Fvector().sub(m_kCenter, akEAxis[0]).sub(akEAxis[1]).sub(akEAxis[2]);
     akVertex[1] = Fvector().add(m_kCenter, akEAxis[0]).sub(akEAxis[1]).sub(akEAxis[2]);

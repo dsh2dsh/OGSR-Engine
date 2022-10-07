@@ -10,8 +10,7 @@ inline int& _MinimizeND::MaxBracket() { return m_kMinimizer.MaxBracket(); }
 TEMPLATE_SPECIALIZATION
 inline void*& _MinimizeND::UserData() { return m_pvUserData; }
 TEMPLATE_SPECIALIZATION
-_MinimizeND::MinimizeND(Function oF, int iMaxLevel, int iMaxBracket, int iMaxIterations, void* pvUserData)
-    : m_kMinimizer(LineFunction, iMaxLevel, iMaxBracket)
+_MinimizeND::MinimizeND(Function oF, int iMaxLevel, int iMaxBracket, int iMaxIterations, void* pvUserData) : m_kMinimizer(LineFunction, iMaxLevel, iMaxBracket)
 {
     VERIFY(m_iDimensions >= 1 && oF);
 
@@ -25,8 +24,7 @@ _MinimizeND::MinimizeND(Function oF, int iMaxLevel, int iMaxBracket, int iMaxIte
 }
 
 TEMPLATE_SPECIALIZATION
-void _MinimizeND::GetMinimum(
-    const float* afT0, const float* afT1, const float* afTInitial, float* afTMin, float& rfFMin)
+void _MinimizeND::GetMinimum(const float* afT0, const float* afT1, const float* afTInitial, float* afTMin, float& rfFMin)
 {
     // for 1D function callback
     m_kMinimizer.UserData() = this;

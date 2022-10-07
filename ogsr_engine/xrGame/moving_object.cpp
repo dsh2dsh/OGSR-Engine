@@ -26,43 +26,25 @@ moving_object::moving_object(const CEntityAlive* object)
     ai().moving_objects().register_object(this);
 }
 
-moving_object::~moving_object			()
+moving_object::~moving_object() { ai().moving_objects().unregister_object(this); }
+
+void moving_object::on_object_move() { ai().moving_objects().on_object_move(this); }
+
+void moving_object::update_position() { m_position = m_object->Position(); }
+
+Fvector moving_object::predict_position(const float& time_to_check) const { return (object().predict_position(time_to_check)); }
+
+Fvector moving_object::target_position() const { return (object().target_position()); }
+
+void moving_object::ignore(const CObject* object) { m_ignored_object = object; }
+
+bool moving_object::ignored(const CObject* object)
 {
-	ai().moving_objects().unregister_object	(this);
-}
+    if (object == m_object)
+        return (true);
 
-void moving_object::on_object_move		()
-{
-	ai().moving_objects().on_object_move	(this);
-}
+    if (object == m_ignored_object)
+        return (true);
 
-void moving_object::update_position		()
-{
-	m_position			= m_object->Position();
-}
-
-Fvector moving_object::predict_position	(const float &time_to_check) const
-{
-	return				(object().predict_position(time_to_check));
-}
-
-Fvector moving_object::target_position	() const
-{
-	return				(object().target_position());
-}
-
-void moving_object::ignore				(const CObject *object)
-{
-	m_ignored_object	= object;
-}
-
-bool moving_object::ignored				(const CObject *object)
-{
-	if (object == m_object)
-		return			(true);
-
-	if (object == m_ignored_object)
-		return			(true);
-
-	return				(false);
+    return (false);
 }

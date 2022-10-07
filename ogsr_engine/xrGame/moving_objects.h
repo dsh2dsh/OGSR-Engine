@@ -76,20 +76,13 @@ private:
     void fill_nearest_list(const Fvector& position, const float& radius, moving_object* object);
 
 private:
-    IC MagicBox3& continuous_box(
-        moving_object* object0, const Fvector& position0, MagicBox3& result, const bool& use_box_enlargement) const;
-    void resolve_collision_previous(
-        boxes& current, moving_object* object0, moving_object* object1, possible_actions& action) const;
-    void resolve_collision_first(
-        boxes& current, moving_object* object0, moving_object* object1, possible_actions& action) const;
-    void resolve_collision(boxes& current, moving_object* object0, const Fvector& position0, moving_object* object1,
-        const Fvector& position1, possible_actions& action) const;
-    bool collided_dynamic(moving_object* object0, const Fvector& position0, moving_object* object1,
-        const Fvector& position1, boxes& result) const;
-    bool collided_dynamic(
-        moving_object* object0, const Fvector& position0, moving_object* object1, const Fvector& position1) const;
-    bool collided_dynamic(moving_object* object0, const Fvector& position0, moving_object* object1,
-        const Fvector& position1, possible_actions& action) const;
+    IC MagicBox3& continuous_box(moving_object* object0, const Fvector& position0, MagicBox3& result, const bool& use_box_enlargement) const;
+    void resolve_collision_previous(boxes& current, moving_object* object0, moving_object* object1, possible_actions& action) const;
+    void resolve_collision_first(boxes& current, moving_object* object0, moving_object* object1, possible_actions& action) const;
+    void resolve_collision(boxes& current, moving_object* object0, const Fvector& position0, moving_object* object1, const Fvector& position1, possible_actions& action) const;
+    bool collided_dynamic(moving_object* object0, const Fvector& position0, moving_object* object1, const Fvector& position1, boxes& result) const;
+    bool collided_dynamic(moving_object* object0, const Fvector& position0, moving_object* object1, const Fvector& position1) const;
+    bool collided_dynamic(moving_object* object0, const Fvector& position0, moving_object* object1, const Fvector& position1, possible_actions& action) const;
     bool exchange_all(moving_object* previous, moving_object* next, const u32& collision_count);
     bool fill_collisions(moving_object* object, const Fvector& object_position, const float& time_to_check);
     void fill_nearest_moving(moving_object* object);

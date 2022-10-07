@@ -64,7 +64,7 @@ public:
     void unset_door_ignore_dynamics();
 
 public:
-			bool						get_door_vectors				( Fvector& closed, Fvector& open ) const;
+    bool get_door_vectors(Fvector& closed, Fvector& open) const;
 
 public:
     CPhysicObject(void);
@@ -83,9 +83,9 @@ public:
     virtual void set_collision_hit_callback(ICollisionHitCallback* cc);
 
     virtual bool is_ai_obstacle() const;
-    void set_ai_obstacle( bool flag ) { m_is_ai_obstacle = flag; }
+    void set_ai_obstacle(bool flag) { m_is_ai_obstacle = flag; }
 
-    virtual void net_Export( CSE_Abstract* E );
+    virtual void net_Export(CSE_Abstract* E);
 
 protected:
     virtual void SpawnInitPhysics(CSE_Abstract* D);
@@ -98,7 +98,7 @@ protected:
     bool m_just_after_spawn;
     bool m_activated;
 
-	DECLARE_SCRIPT_REGISTER_FUNCTION
+    DECLARE_SCRIPT_REGISTER_FUNCTION
 };
 add_to_type_list(CPhysicObject)
 #undef script_type_list

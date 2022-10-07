@@ -125,15 +125,12 @@ public:
 
 void moving_objects::fill_nearest_list(const Fvector& position, const float& radius, moving_object* object)
 {
-    Level().ObjectSpace.GetNearest(
-        m_spatial_objects, m_nearest_static, position, radius, const_cast<CEntityAlive*>(&object->object()));
+    Level().ObjectSpace.GetNearest(m_spatial_objects, m_nearest_static, position, radius, const_cast<CEntityAlive*>(&object->object()));
 
-    m_nearest_static.erase(std::remove_if(m_nearest_static.begin(), m_nearest_static.end(), ignore_predicate(object)),
-        m_nearest_static.end());
+    m_nearest_static.erase(std::remove_if(m_nearest_static.begin(), m_nearest_static.end(), ignore_predicate(object)), m_nearest_static.end());
 }
 
-void moving_objects::query_action_static(
-    moving_object* object, const Fvector& _start_position, const Fvector& dest_position)
+void moving_objects::query_action_static(moving_object* object, const Fvector& _start_position, const Fvector& dest_position)
 {
     Fvector start_position = _start_position;
     start_position.average(dest_position);
@@ -152,7 +149,4 @@ void moving_objects::query_action_static(
     //	fill_all_static			(object,dest_position);
 }
 
-void moving_objects::query_action_static(moving_object* object)
-{
-    query_action_static(object, object->position(), object->predict_position(time_to_check));
-}
+void moving_objects::query_action_static(moving_object* object) { query_action_static(object, object->position(), object->predict_position(time_to_check)); }

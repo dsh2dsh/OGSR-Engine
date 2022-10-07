@@ -12,32 +12,29 @@
 #include "ai_space.h"
 #include "script_engine.h"
 
-void CScriptPropertyEvaluatorWrapper::setup			(CScriptGameObject *object, CPropertyStorage *storage)
+void CScriptPropertyEvaluatorWrapper::setup(CScriptGameObject* object, CPropertyStorage* storage) { luabind::call_member<void>(this, "setup", object, storage); }
+
+void CScriptPropertyEvaluatorWrapper::setup_static(CScriptPropertyEvaluator* evaluator, CScriptGameObject* object, CPropertyStorage* storage)
 {
-	luabind::call_member<void>	(this,"setup",object,storage);
+    evaluator->CScriptPropertyEvaluator::setup(object, storage);
 }
 
-void CScriptPropertyEvaluatorWrapper::setup_static	(CScriptPropertyEvaluator *evaluator, CScriptGameObject *object, CPropertyStorage *storage)
+bool CScriptPropertyEvaluatorWrapper::evaluate()
 {
-	evaluator->CScriptPropertyEvaluator::setup(object,storage);
-}
-
-bool CScriptPropertyEvaluatorWrapper::evaluate		()
-{
-	__try {
-		return luabind::call_member<bool>(this,"evaluate");
-	}
+    __try
+    {
+        return luabind::call_member<bool>(this, "evaluate");
+    }
 #ifdef OGSR_MOD
-	__except ( EXCEPTION_EXECUTE_HANDLER ) {
+    __except (EXCEPTION_EXECUTE_HANDLER)
+    {
 #else
-	__except ( ExceptStackTrace( "[CScriptPropertyEvaluatorWrapper::evaluate] stack_trace:\n" ) ) {
+    __except (ExceptStackTrace("[CScriptPropertyEvaluatorWrapper::evaluate] stack_trace:\n"))
+    {
 #endif
-		Msg( "!![CScriptPropertyEvaluatorWrapper::evaluate] Fatal Error in object [%s], evaluator: [%s]", m_object->cName().c_str(), m_evaluator_name );
-	}
-	return false;
+        Msg("!![CScriptPropertyEvaluatorWrapper::evaluate] Fatal Error in object [%s], evaluator: [%s]", m_object->cName().c_str(), m_evaluator_name);
+    }
+    return false;
 }
 
-bool CScriptPropertyEvaluatorWrapper::evaluate_static	(CScriptPropertyEvaluator *evaluator)
-{
-	return		(evaluator->CScriptPropertyEvaluator::evaluate());
-}
+bool CScriptPropertyEvaluatorWrapper::evaluate_static(CScriptPropertyEvaluator* evaluator) { return (evaluator->CScriptPropertyEvaluator::evaluate()); }

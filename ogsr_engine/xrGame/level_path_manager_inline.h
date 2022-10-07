@@ -10,9 +10,7 @@
 
 #include "profiler.h"
 
-#define TEMPLATE_SPECIALIZATION \
-    template <typename _VertexEvaluator, typename _vertex_id_type, typename _index_type\
->
+#define TEMPLATE_SPECIALIZATION template <typename _VertexEvaluator, typename _vertex_id_type, typename _index_type>
 
 #define CLevelManagerTemplate CBasePathManager<CLevelGraph, _VertexEvaluator, _vertex_id_type, _index_type>
 
@@ -21,10 +19,7 @@ IC CLevelManagerTemplate::CBasePathManager(CRestrictedObject* object) : inherite
 TEMPLATE_SPECIALIZATION
 IC void CLevelManagerTemplate::reinit(const CLevelGraph* graph) { inherited::reinit(graph); }
 TEMPLATE_SPECIALIZATION
-IC bool CLevelManagerTemplate::actual() const
-{
-    return (inherited::actual(this->m_object->object().ai_location().level_vertex_id(), this->dest_vertex_id()));
-}
+IC bool CLevelManagerTemplate::actual() const { return (inherited::actual(this->m_object->object().ai_location().level_vertex_id(), this->dest_vertex_id())); }
 
 TEMPLATE_SPECIALIZATION
 IC void CLevelManagerTemplate::build_path(const _vertex_id_type start_vertex_id, const _vertex_id_type dest_vertex_id)
@@ -38,9 +33,8 @@ IC void CLevelManagerTemplate::build_path(const _vertex_id_type start_vertex_id,
 #ifdef DEBUG
     if (this->failed())
     {
-        Msg("! NPC %s couldn't build path from \n~ [%d][%f][%f][%f]\n~ to\n~ [%d][%f][%f][%f]",
-            this->m_object->object().cName().c_str(), start_vertex_id, VPUSH(ai().level_graph().vertex_position(start_vertex_id)),
-            dest_vertex_id, VPUSH(ai().level_graph().vertex_position(dest_vertex_id)));
+        Msg("! NPC %s couldn't build path from \n~ [%d][%f][%f][%f]\n~ to\n~ [%d][%f][%f][%f]", this->m_object->object().cName().c_str(), start_vertex_id,
+            VPUSH(ai().level_graph().vertex_position(start_vertex_id)), dest_vertex_id, VPUSH(ai().level_graph().vertex_position(dest_vertex_id)));
     }
 #endif
 
@@ -48,8 +42,7 @@ IC void CLevelManagerTemplate::build_path(const _vertex_id_type start_vertex_id,
 }
 
 TEMPLATE_SPECIALIZATION
-IC void CLevelManagerTemplate::before_search(
-    const _vertex_id_type start_vertex_id, const _vertex_id_type dest_vertex_id)
+IC void CLevelManagerTemplate::before_search(const _vertex_id_type start_vertex_id, const _vertex_id_type dest_vertex_id)
 {
     if (this->m_object)
     {

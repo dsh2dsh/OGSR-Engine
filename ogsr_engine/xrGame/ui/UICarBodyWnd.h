@@ -13,106 +13,106 @@ class CUICellItem;
 class IInventoryBox;
 class CInventoryOwner;
 
-class CUICarBodyWnd: public CUIDialogWnd
+class CUICarBodyWnd : public CUIDialogWnd
 {
 private:
-	typedef CUIDialogWnd	inherited;
-	bool					m_b_need_update;
-	std::string m_script_init_car_body;
+    typedef CUIDialogWnd inherited;
+    bool m_b_need_update;
+    std::string m_script_init_car_body;
 
 public:
-							CUICarBodyWnd				();
-	virtual					~CUICarBodyWnd				();
+    CUICarBodyWnd();
+    virtual ~CUICarBodyWnd();
 
-	virtual void			Init						();
-	virtual bool			StopAnyMove					(){return true;}
+    virtual void Init();
+    virtual bool StopAnyMove() { return true; }
 
-	virtual void			SendMessage					(CUIWindow *pWnd, s16 msg, void *pData);
+    virtual void SendMessage(CUIWindow* pWnd, s16 msg, void* pData);
 
-	void					InitCarBody					(CInventoryOwner* pOurInv, CInventoryOwner* pOthersInv);
-	void					InitCarBody					(CInventoryOwner* pOur, IInventoryBox* pInvBox);
-	virtual void			Draw						();
-	virtual void			Update						();
-		
-	virtual void			Show						();
-	virtual void			Hide						();
+    void InitCarBody(CInventoryOwner* pOurInv, CInventoryOwner* pOthersInv);
+    void InitCarBody(CInventoryOwner* pOur, IInventoryBox* pInvBox);
+    virtual void Draw();
+    virtual void Update();
 
-	void					DisableAll					();
-	void					EnableAll					();
-	virtual bool			OnKeyboard					(int dik, EUIMessages keyboard_action);
-	virtual bool			OnMouse						(float x, float y, EUIMessages mouse_action);
+    virtual void Show();
+    virtual void Hide();
 
-	void					UpdateLists_delayed			();
+    void DisableAll();
+    void EnableAll();
+    virtual bool OnKeyboard(int dik, EUIMessages keyboard_action);
+    virtual bool OnMouse(float x, float y, EUIMessages mouse_action);
+
+    void UpdateLists_delayed();
 
 protected:
-	CInventoryOwner*		m_pOurObject;
-	
-	CUIDragDropListEx*		m_pUIOurBagList;
-	CUIDragDropListEx*		m_pUIOthersBagList;
+    CInventoryOwner* m_pOurObject;
 
-	CUIStatic*				m_pUIStaticTop;
-	CUIStatic*				m_pUIStaticBottom;
+    CUIDragDropListEx* m_pUIOurBagList;
+    CUIDragDropListEx* m_pUIOthersBagList;
 
-	CUIFrameWindow*			m_pUIDescWnd;
-	CUIStatic*				m_pUIStaticDesc;
-	CUIItemInfo*			m_pUIItemInfo;
+    CUIStatic* m_pUIStaticTop;
+    CUIStatic* m_pUIStaticBottom;
 
-	CUIStatic*				m_pUIOurBagWnd;
-	CUIStatic*				m_pUIOthersBagWnd;
+    CUIFrameWindow* m_pUIDescWnd;
+    CUIStatic* m_pUIStaticDesc;
+    CUIItemInfo* m_pUIItemInfo;
 
-	//информация о персонажах 
-	CUIStatic*				m_pUIOurIcon;
-	CUIStatic*				m_pUIOthersIcon;
-	CUICharacterInfo*		m_pUICharacterInfoLeft;
-	CUICharacterInfo*		m_pUICharacterInfoRight;
-	CUIPropertiesBox*		m_pUIPropertiesBox;
-	CUI3tButton*			m_pUITakeAll;
+    CUIStatic* m_pUIOurBagWnd;
+    CUIStatic* m_pUIOthersBagWnd;
+
+    //информация о персонажах
+    CUIStatic* m_pUIOurIcon;
+    CUIStatic* m_pUIOthersIcon;
+    CUICharacterInfo* m_pUICharacterInfoLeft;
+    CUICharacterInfo* m_pUICharacterInfoRight;
+    CUIPropertiesBox* m_pUIPropertiesBox;
+    CUI3tButton* m_pUITakeAll;
 
 public:
-	CUICellItem*			m_pCurrentCellItem;
+    CUICellItem* m_pCurrentCellItem;
 
-	CInventoryOwner*		m_pOthersObject;
-	IInventoryBox*			m_pInventoryBox;
+    CInventoryOwner* m_pOthersObject;
+    IInventoryBox* m_pInventoryBox;
 
 protected:
-	void					UpdateLists					();
+    void UpdateLists();
 
-	void					ActivatePropertiesBox		();
-	void					EatItem						();
-	
-	void					SetCurrentItem				(CUICellItem* itm);
-	CUICellItem*			CurrentItem					();
-	PIItem					CurrentIItem				();
+    void ActivatePropertiesBox();
+    void EatItem();
 
-	// Взять все
-	void					TakeAll						();
-	void					MoveItem					(CUICellItem* itm);
-	void					MoveItems					(CUICellItem* itm);
-	void					DropItemsfromCell			(bool b_all);
+    void SetCurrentItem(CUICellItem* itm);
+    CUICellItem* CurrentItem();
+    PIItem CurrentIItem();
 
+    // Взять все
+    void TakeAll();
+    void MoveItem(CUICellItem* itm);
+    void MoveItems(CUICellItem* itm);
+    void DropItemsfromCell(bool b_all);
 
-	bool			OnItemDrop					(CUICellItem* itm);
-	bool			OnItemStartDrag				(CUICellItem* itm);
-	bool			OnItemDbClick				(CUICellItem* itm);
-	bool			OnItemSelected				(CUICellItem* itm);
-	bool			OnItemRButtonClick			(CUICellItem* itm);
+    bool OnItemDrop(CUICellItem* itm);
+    bool OnItemStartDrag(CUICellItem* itm);
+    bool OnItemDbClick(CUICellItem* itm);
+    bool OnItemSelected(CUICellItem* itm);
+    bool OnItemRButtonClick(CUICellItem* itm);
 
-	bool					TransferItem				(PIItem itm, CInventoryOwner* owner_from, CInventoryOwner* owner_to, bool b_check);
-	void					BindDragDropListEnents		(CUIDragDropListEx* lst);
+    bool TransferItem(PIItem itm, CInventoryOwner* owner_from, CInventoryOwner* owner_to, bool b_check);
+    void BindDragDropListEnents(CUIDragDropListEx* lst);
 
-	enum eInventorySndAction {
-		eInvSndOpen = 0,
-		eInvSndClose,
-		eInvProperties,
-		eInvDropItem,
-		eInvDetachAddon,
-		eInvItemUse,
-		eInvSndMax
-	};
+    enum eInventorySndAction
+    {
+        eInvSndOpen = 0,
+        eInvSndClose,
+        eInvProperties,
+        eInvDropItem,
+        eInvDetachAddon,
+        eInvItemUse,
+        eInvSndMax
+    };
 
-	ref_sound					sounds[eInvSndMax];
-	void						PlaySnd(eInventorySndAction a);
+    ref_sound sounds[eInvSndMax];
+    void PlaySnd(eInventorySndAction a);
 
-  void callScriptInitCarBody();
-  bool CanActivatePropertiesBox();
+    void callScriptInitCarBody();
+    bool CanActivatePropertiesBox();
 };

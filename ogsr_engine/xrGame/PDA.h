@@ -8,70 +8,63 @@
 
 #include "PdaMsg.h"
 
-
 class CInventoryOwner;
 class CPda;
 
-DEF_VECTOR (PDA_LIST, CPda*);
+DEF_VECTOR(PDA_LIST, CPda*);
 
-class CPda :
-	public CInventoryItemObject,
-	public Feel::Touch
+class CPda : public CInventoryItemObject, public Feel::Touch
 {
-	typedef	CInventoryItemObject inherited;
+    typedef CInventoryItemObject inherited;
+
 public:
-											CPda					();
-	virtual									~CPda					();
+    CPda();
+    virtual ~CPda();
 
-	virtual BOOL 							net_Spawn				(CSE_Abstract* DC);
-	virtual void 							Load					(LPCSTR section);
-	virtual void 							net_Destroy				();
-	virtual	void net_Relcase( CObject* O );
+    virtual BOOL net_Spawn(CSE_Abstract* DC);
+    virtual void Load(LPCSTR section);
+    virtual void net_Destroy();
+    virtual void net_Relcase(CObject* O);
 
-	virtual void 							OnH_A_Chield			();
-	virtual void 							OnH_B_Independent		(bool just_before_destroy);
+    virtual void OnH_A_Chield();
+    virtual void OnH_B_Independent(bool just_before_destroy);
 
-	virtual void 							shedule_Update			(u32 dt);
+    virtual void shedule_Update(u32 dt);
 
-	virtual void 							feel_touch_new			(CObject* O);
-	virtual void 							feel_touch_delete		(CObject* O);
-	virtual BOOL 							feel_touch_contact		(CObject* O);
+    virtual void feel_touch_new(CObject* O);
+    virtual void feel_touch_delete(CObject* O);
+    virtual BOOL feel_touch_contact(CObject* O);
 
+    virtual u16 GetOriginalOwnerID() { return m_idOriginalOwner; }
+    virtual CInventoryOwner* GetOriginalOwner();
+    virtual CObject* GetOwnerObject();
 
-	virtual u16								GetOriginalOwnerID		() {return m_idOriginalOwner;}
-	virtual CInventoryOwner*				GetOriginalOwner		();
-	virtual CObject*						GetOwnerObject			();
+    void TurnOn();
+    void TurnOff();
 
+    bool IsActive() { return IsOn(); }
+    bool IsOn() { return !m_bTurnedOff; }
+    bool IsOff() { return m_bTurnedOff; }
 
-			void							TurnOn					();
-			void							TurnOff					();
-	
-			bool 							IsActive				() {return IsOn();}
-			bool 							IsOn					() {return !m_bTurnedOff;}
-			bool 							IsOff					() {return m_bTurnedOff;}
+    xr_map<u16, CPda*> ActivePDAContacts();
+    CPda* GetPdaFromOwner(CObject* owner);
+    u32 ActiveContactsNum() { return m_active_contacts.size(); }
 
+    virtual void save(NET_Packet& output_packet);
+    virtual void load(IReader& input_packet);
 
-			xr_map<u16, CPda*>				ActivePDAContacts		();
-			CPda*							GetPdaFromOwner			(CObject* owner);
-			u32								ActiveContactsNum		()							{return m_active_contacts.size();}
-
-
-	virtual void							save					(NET_Packet &output_packet);
-	virtual void							load					(IReader &input_packet);
-
-	virtual LPCSTR							Name					();
+    virtual LPCSTR Name();
 
 protected:
-	void									UpdateActiveContacts	();
+    void UpdateActiveContacts();
 
+    xr_vector<CObject*> m_active_contacts;
+    float m_fRadius;
+    bool m_changed;
 
-	xr_vector<CObject*>						m_active_contacts;
-	float									m_fRadius;
-        bool m_changed;
+    u16 m_idOriginalOwner;
+    shared_str m_SpecificChracterOwner;
+    xr_string m_sFullName;
 
-	u16										m_idOriginalOwner;
-	shared_str					m_SpecificChracterOwner;
-	xr_string								m_sFullName;
-
-	bool									m_bTurnedOff;
+    bool m_bTurnedOff;
 };

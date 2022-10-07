@@ -1,123 +1,125 @@
 #pragma once
 
-namespace GameObject {
-	enum ECallbackType {
-		eTradeStart = u32(0),
-		eTradeStop,
-		eTradeSellBuyItem,
-		eTradePerformTradeOperation,
+namespace GameObject
+{
+enum ECallbackType
+{
+    eTradeStart = u32(0),
+    eTradeStop,
+    eTradeSellBuyItem,
+    eTradePerformTradeOperation,
 
-		eZoneEnter,
-		eZoneExit,
-		eExitLevelBorder,
-		eEnterLevelBorder,
-		eDeath,
+    eZoneEnter,
+    eZoneExit,
+    eExitLevelBorder,
+    eEnterLevelBorder,
+    eDeath,
 
-		ePatrolPathInPoint,
+    ePatrolPathInPoint,
 
-//		eInventoryPda,
-		eInventoryInfo,
-		eArticleInfo,
-		eTaskStateChange,
-		eMapLocationAdded,
+    //		eInventoryPda,
+    eInventoryInfo,
+    eArticleInfo,
+    eTaskStateChange,
+    eMapLocationAdded,
 
-		eUseObject,
+    eUseObject,
 
-		eHit,
+    eHit,
 
-		eSound,
+    eSound,
 
-		eActionTypeMovement,
-		eActionTypeWatch,
-		eActionTypeAnimation,
-		eActionTypeSound,
-		eActionTypeParticle,
-		eActionTypeObject,
+    eActionTypeMovement,
+    eActionTypeWatch,
+    eActionTypeAnimation,
+    eActionTypeSound,
+    eActionTypeParticle,
+    eActionTypeObject,
 
-//		eActorSleep,
+    //		eActorSleep,
 
-		eHelicopterOnPoint,
-		eHelicopterOnHit,
+    eHelicopterOnPoint,
+    eHelicopterOnHit,
 
-		eOnItemTake,
-		eOnItemDrop,
+    eOnItemTake,
+    eOnItemDrop,
 
-		eScriptAnimation,
-		
-		eTraderGlobalAnimationRequest,
-		eTraderHeadAnimationRequest,
-		eTraderSoundEnd,
+    eScriptAnimation,
 
-		eInvBoxItemTake,
-		eInvBoxItemPlace,
+    eTraderGlobalAnimationRequest,
+    eTraderHeadAnimationRequest,
+    eTraderSoundEnd,
 
-		eOnKeyPress,
-		eOnKeyRelease,
-		eOnKeyHold,
-		eOnMouseWheel,
-		eOnMouseMove,
-		eOnItemToBelt,
-		eOnItemToRuck,
-		eOnItemToSlot,
-		eOnBeforeUseItem,
-		entity_alive_before_hit,
+    eInvBoxItemTake,
+    eInvBoxItemPlace,
 
-//		eOnHudAnimationEnd,
+    eOnKeyPress,
+    eOnKeyRelease,
+    eOnKeyHold,
+    eOnMouseWheel,
+    eOnMouseMove,
+    eOnItemToBelt,
+    eOnItemToRuck,
+    eOnItemToSlot,
+    eOnBeforeUseItem,
+    entity_alive_before_hit,
 
-		eOnUpdateAddonsVisibiility,
-		eOnUpdateHUDAddonsVisibiility,
-		eOnAddonInit,
-		eOnSecondScopeSwitch,
+    //		eOnHudAnimationEnd,
 
-		// These specifically say actor as I intend to add callbacks for NPCs firing their weapons.
-		eOnActorWeaponStartFiring,
-		eOnActorWeaponFire,
-		eOnActorWeaponJammed,
-		eOnActorWeaponEmpty,
-		eOnActorWeaponReload,
-		eOnActorWeaponSwitchGL,
+    eOnUpdateAddonsVisibiility,
+    eOnUpdateHUDAddonsVisibiility,
+    eOnAddonInit,
+    eOnSecondScopeSwitch,
 
-		// NPC Weapon Callbacks.
-		eOnNPCWeaponStartFiring,
-		eOnNPCWeaponFire,
-		eOnNPCWeaponJammed,
-		eOnNPCWeaponEmpty,
-		eOnNPCWeaponReload,
-		eOnNPCWeaponSwitchGL,
+    // These specifically say actor as I intend to add callbacks for NPCs firing their weapons.
+    eOnActorWeaponStartFiring,
+    eOnActorWeaponFire,
+    eOnActorWeaponJammed,
+    eOnActorWeaponEmpty,
+    eOnActorWeaponReload,
+    eOnActorWeaponSwitchGL,
 
-		// Called when the player zooms their weapon in or out.
-		eOnActorWeaponZoomIn,
-		eOnActorWeaponZoomOut,
+    // NPC Weapon Callbacks.
+    eOnNPCWeaponStartFiring,
+    eOnNPCWeaponFire,
+    eOnNPCWeaponJammed,
+    eOnNPCWeaponEmpty,
+    eOnNPCWeaponReload,
+    eOnNPCWeaponSwitchGL,
 
-		eCellItemFocus,
-		eCellItemFocusLost,
-		eCellItemSelect,
-		eOnCellItemMouse,
+    // Called when the player zooms their weapon in or out.
+    eOnActorWeaponZoomIn,
+    eOnActorWeaponZoomOut,
 
-		eBeforeSave,
-		ePostSave,
+    eCellItemFocus,
+    eCellItemFocusLost,
+    eCellItemSelect,
+    eOnCellItemMouse,
 
-		eUIMapClick,
-		eUIMapSpotClick,
+    eBeforeSave,
+    ePostSave,
 
-		eUIPickUpItemShowing,
-		eUIGroupItems,
-		eOnWpnShellDrop,
-		eOnThrowGrenade,
-		eOnGoodwillChange,
-		eUpdateArtefactsOnBelt,
-		eLevelChangerAction,
+    eUIMapClick,
+    eUIMapSpotClick,
 
-		eAttachVehicle,
-		eDetachVehicle,
-		eUseVehicle,
+    eUIPickUpItemShowing,
+    eUIGroupItems,
+    eOnWpnShellDrop,
+    eOnThrowGrenade,
+    eOnGoodwillChange,
+    eUpdateArtefactsOnBelt,
+    eLevelChangerAction,
 
-		eOnInvBoxItemTake,
-		eOnInvBoxItemDrop,
-		eOnInvBoxOpen,
-		
-		eSelectPdaContact,
+    eAttachVehicle,
+    eDetachVehicle,
+    eUseVehicle,
 
-		eDummy = u32(-1),
-	};
+    eOnInvBoxItemTake,
+    eOnInvBoxItemDrop,
+    eOnInvBoxOpen,
+
+    eSelectPdaContact,
+
+    eDummy = u32(-1),
+};
 };

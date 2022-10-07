@@ -18,8 +18,8 @@
 #include "PHJoint.h"
 #include "PHShell.h"
 
-const float hinge2_spring=20000.f;
-const float hinge2_damping=1000.f;
+const float hinge2_spring = 20000.f;
+const float hinge2_damping = 1000.f;
 
 IC dBodyID body_for_joint(CPhysicsElement* ee)
 {
@@ -464,9 +464,7 @@ void CPHJoint::SetAxisDirDynamic(const Fvector& orientation, const int axis_num)
         break;
     case ball: break;
     case hinge: dJointSetHingeAxis(m_joint, orientation[0], orientation[1], orientation[2]); break;
-    case full_control:
-        dJointSetAMotorAxis(m_joint1, axis_num, 1, orientation[0], orientation[1], orientation[2]);
-        break;
+    case full_control: dJointSetAMotorAxis(m_joint1, axis_num, 1, orientation[0], orientation[1], orientation[2]); break;
     default: R_ASSERT2(false, "type not supported");
     }
 }
@@ -703,9 +701,7 @@ void CPHJoint::SetForceActive(const int axis_num)
     case hinge2:
         switch (axis_num)
         {
-        case -1:
-            dJointSetHinge2Param(m_joint, dParamFMax, axes[0].force);
-            dJointSetHinge2Param(m_joint, dParamFMax2, axes[1].force);
+        case -1: dJointSetHinge2Param(m_joint, dParamFMax, axes[0].force); dJointSetHinge2Param(m_joint, dParamFMax2, axes[1].force);
         case 0: dJointSetHinge2Param(m_joint, dParamFMax, axes[0].force); break;
         case 1: dJointSetHinge2Param(m_joint, dParamFMax2, axes[1].force); break;
         }
@@ -713,9 +709,7 @@ void CPHJoint::SetForceActive(const int axis_num)
     case slider:
         switch (axis_num)
         {
-        case -1:
-            dJointSetSliderParam(m_joint, dParamFMax, axes[0].force);
-            dJointSetAMotorParam(m_joint1, dParamFMax, axes[1].force);
+        case -1: dJointSetSliderParam(m_joint, dParamFMax, axes[0].force); dJointSetAMotorParam(m_joint1, dParamFMax, axes[1].force);
         case 0: dJointSetSliderParam(m_joint, dParamFMax, axes[0].force); break;
         case 1: dJointSetAMotorParam(m_joint1, dParamFMax, axes[1].force); break;
         }
@@ -779,9 +773,7 @@ void CPHJoint::SetVelocityActive(const int axis_num)
     case hinge2:
         switch (axis_num)
         {
-        case -1:
-            dJointSetHinge2Param(m_joint, dParamVel, axes[0].velocity);
-            dJointSetHinge2Param(m_joint, dParamVel2, axes[1].velocity);
+        case -1: dJointSetHinge2Param(m_joint, dParamVel, axes[0].velocity); dJointSetHinge2Param(m_joint, dParamVel2, axes[1].velocity);
         case 0: dJointSetHinge2Param(m_joint, dParamVel, axes[0].velocity); break;
         case 1: dJointSetHinge2Param(m_joint, dParamVel2, axes[1].velocity); break;
         }
@@ -789,9 +781,7 @@ void CPHJoint::SetVelocityActive(const int axis_num)
     case slider:
         switch (axis_num)
         {
-        case -1:
-            dJointSetSliderParam(m_joint, dParamVel, axes[0].velocity);
-            dJointSetAMotorParam(m_joint1, dParamVel, axes[1].velocity);
+        case -1: dJointSetSliderParam(m_joint, dParamVel, axes[0].velocity); dJointSetAMotorParam(m_joint1, dParamVel, axes[1].velocity);
         case 0: dJointSetSliderParam(m_joint, dParamVel, axes[0].velocity); break;
         case 1: dJointSetAMotorParam(m_joint1, dParamVel, axes[1].velocity); break;
         }
@@ -1237,12 +1227,8 @@ void CPHJoint::SetAxisSDfactorsActive(int axis_num)
     case slider:
         switch (axis_num)
         {
-        case 0:
-            dJointSetSliderParam(m_joint, dParamStopERP, axes[0].erp);
-            dJointSetSliderParam(m_joint, dParamStopCFM, axes[0].cfm);
-        case 1:
-            dJointSetAMotorParam(m_joint1, dParamStopERP, axes[1].erp);
-            dJointSetAMotorParam(m_joint1, dParamStopCFM, axes[1].cfm);
+        case 0: dJointSetSliderParam(m_joint, dParamStopERP, axes[0].erp); dJointSetSliderParam(m_joint, dParamStopCFM, axes[0].cfm);
+        case 1: dJointSetAMotorParam(m_joint1, dParamStopERP, axes[1].erp); dJointSetAMotorParam(m_joint1, dParamStopCFM, axes[1].cfm);
         }
         break;
     }
@@ -1300,12 +1286,8 @@ void CPHJoint::GetAxisSDfactors(float& spring_factor, float& damping_factor, int
     spring_factor = SPRING(axes[axis_num].cfm, axes[axis_num].erp) / world_spring;
     damping_factor = DAMPING(axes[axis_num].cfm, axes[axis_num].erp) / world_damping;
 }
-u16 CPHJoint::GetAxesNumber()
-{
-	return u16(axes.size());
-}
-void CPHJoint::CalcAxis(int ax_num, Fvector& axis, float& lo, float& hi, const Fmatrix& first_matrix,
-    const Fmatrix& second_matrix, const Fmatrix& rotate)
+u16 CPHJoint::GetAxesNumber() { return u16(axes.size()); }
+void CPHJoint::CalcAxis(int ax_num, Fvector& axis, float& lo, float& hi, const Fmatrix& first_matrix, const Fmatrix& second_matrix, const Fmatrix& rotate)
 {
     switch (axes[ax_num].vs)
     {
@@ -1338,8 +1320,7 @@ void CPHJoint::CalcAxis(int ax_num, Fvector& axis, float& lo, float& hi, const F
     }
 }
 
-void CPHJoint::CalcAxis(
-    int ax_num, Fvector& axis, float& lo, float& hi, const Fmatrix& first_matrix, const Fmatrix& second_matrix)
+void CPHJoint::CalcAxis(int ax_num, Fvector& axis, float& lo, float& hi, const Fmatrix& first_matrix, const Fmatrix& second_matrix)
 {
     switch (axes[ax_num].vs)
     {

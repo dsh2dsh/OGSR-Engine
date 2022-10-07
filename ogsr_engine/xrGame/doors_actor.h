@@ -11,7 +11,7 @@
 #include "doors.h"
 
 class CAI_Stalker;
-class CScriptGameObject; //Alundaio: Needed for return type
+class CScriptGameObject; // Alundaio: Needed for return type
 
 namespace doors
 {
@@ -25,7 +25,7 @@ public:
     bool update_doors(doors_type const& doors, float average_speed);
     void on_door_destroy(door& door);
     pcstr get_name() const;
-    CScriptGameObject* lua_game_object() const; //Alundaio
+    CScriptGameObject* lua_game_object() const; // Alundaio
 #ifdef DEBUG
     void render() const;
 #endif // #ifdef DEBUG
@@ -34,10 +34,8 @@ private:
     typedef buffer_vector<door*> temp_doors_type;
 
 private:
-    bool add_new_door(float average_speed, door* door, doors_type const& processed_doors, doors_type& locked_doors,
-        temp_doors_type& new_doors, door_state state);
-    void process_doors(float average_speed, doors_type& processed_doors, temp_doors_type const& new_doors,
-        door_state start_state, door_state stop_state);
+    bool add_new_door(float average_speed, door* door, doors_type const& processed_doors, doors_type& locked_doors, temp_doors_type& new_doors, door_state state);
+    void process_doors(float average_speed, doors_type& processed_doors, temp_doors_type const& new_doors, door_state start_state, door_state stop_state);
     void revert_states(doors_type& doors, door_state const state);
 
 private:

@@ -13,9 +13,7 @@
 
 #include "PhysicsShellAnimator.h"
 
-
-CPhysicObject::CPhysicObject(void)
-    : m_type(epotBox), m_mass(10.f), m_collision_hit_callback(nullptr), m_just_after_spawn(false), m_activated(false), m_is_ai_obstacle(true) {}
+CPhysicObject::CPhysicObject(void) : m_type(epotBox), m_mass(10.f), m_collision_hit_callback(nullptr), m_just_after_spawn(false), m_activated(false), m_is_ai_obstacle(true) {}
 
 CPhysicObject::~CPhysicObject(void) {}
 BOOL CPhysicObject::net_Spawn(CSE_Abstract* DC)
@@ -42,27 +40,28 @@ BOOL CPhysicObject::net_Spawn(CSE_Abstract* DC)
     //	processing_activate();
     //}
 
-    if ( Visual() ) {
-      IKinematics *K = Visual()->dcast_PKinematics();
-      VERIFY( K );
-      u16 door_bone = K->LL_BoneID( "door" );
-      if ( door_bone != BI_NONE )
-        m_is_ai_obstacle = false;
+    if (Visual())
+    {
+        IKinematics* K = Visual()->dcast_PKinematics();
+        VERIFY(K);
+        u16 door_bone = K->LL_BoneID("door");
+        if (door_bone != BI_NONE)
+            m_is_ai_obstacle = false;
     }
-    m_is_ai_obstacle = READ_IF_EXISTS( pSettings, r_bool, cNameSect(), "is_ai_obstacle", m_is_ai_obstacle );
+    m_is_ai_obstacle = READ_IF_EXISTS(pSettings, r_bool, cNameSect(), "is_ai_obstacle", m_is_ai_obstacle);
 
     m_just_after_spawn = true;
     m_activated = false;
 
     // приложить небольшую силу для того, чтобы объект начал падать
-    PPhysicsShell()->applyImpulse( Fvector().set( 0.f, -1.0f, 0.f ), 0.5f * PPhysicsShell()->getMass() );
+    PPhysicsShell()->applyImpulse(Fvector().set(0.f, -1.0f, 0.f), 0.5f * PPhysicsShell()->getMass());
 
     return TRUE;
 }
 void CPhysicObject::create_collision_model()
 {
-  xr_delete(collidable.model);
-  collidable.model = xr_new<CCF_Skeleton>(this);
+    xr_delete(collidable.model);
+    collidable.model = xr_new<CCF_Skeleton>(this);
 }
 
 static CPhysicsShellHolder* retrive_collide_object(bool bo1, dContact& c)
@@ -120,25 +119,24 @@ void CPhysicObject::SpawnInitPhysics(CSE_Abstract* D)
     RunStartupAnim(D);
 }
 
-void CPhysicObject::RunStartupAnim(CSE_Abstract *D)
+void CPhysicObject::RunStartupAnim(CSE_Abstract* D)
 {
-	if(Visual()&&smart_cast<IKinematics*>(Visual()))
-	{
-		//		CSE_PHSkeleton	*po	= smart_cast<CSE_PHSkeleton*>(D);
-		IKinematicsAnimated*	PKinematicsAnimated=NULL;
-		R_ASSERT			(Visual()&&smart_cast<IKinematics*>(Visual()));
-		PKinematicsAnimated	=smart_cast<IKinematicsAnimated*>(Visual());
-		if(PKinematicsAnimated)
-		{
-			CSE_Visual					*visual = smart_cast<CSE_Visual*>(D);
-			R_ASSERT					(visual);
-			R_ASSERT2					(*visual->startup_animation,"no startup animation");
-			PKinematicsAnimated->PlayCycle(*visual->startup_animation);
-		}
-		smart_cast<IKinematics*>(Visual())->CalculateBones_Invalidate();
-		smart_cast<IKinematics*>(Visual())->CalculateBones	();
-
-	}
+    if (Visual() && smart_cast<IKinematics*>(Visual()))
+    {
+        //		CSE_PHSkeleton	*po	= smart_cast<CSE_PHSkeleton*>(D);
+        IKinematicsAnimated* PKinematicsAnimated = NULL;
+        R_ASSERT(Visual() && smart_cast<IKinematics*>(Visual()));
+        PKinematicsAnimated = smart_cast<IKinematicsAnimated*>(Visual());
+        if (PKinematicsAnimated)
+        {
+            CSE_Visual* visual = smart_cast<CSE_Visual*>(D);
+            R_ASSERT(visual);
+            R_ASSERT2(*visual->startup_animation, "no startup animation");
+            PKinematicsAnimated->PlayCycle(*visual->startup_animation);
+        }
+        smart_cast<IKinematics*>(Visual())->CalculateBones_Invalidate();
+        smart_cast<IKinematics*>(Visual())->CalculateBones();
+    }
 }
 
 void CPhysicObject::net_Destroy()
@@ -172,8 +170,7 @@ void CPhysicObject::CreateSkeleton(CSE_ALifeObjectPhysic* po)
     LPCSTR fixed_bones = *po->fixed_bones;
     m_pPhysicsShell = P_build_Shell(this, !po->_flags.test(CSE_PHSkeleton::flActive), fixed_bones);
     ApplySpawnIniToPhysicShell(&po->spawn_ini(), m_pPhysicsShell, fixed_bones[0] != '\0');
-    ApplySpawnIniToPhysicShell(
-        smart_cast<IKinematics*>(Visual())->LL_UserData(), m_pPhysicsShell, fixed_bones[0] != '\0');
+    ApplySpawnIniToPhysicShell(smart_cast<IKinematics*>(Visual())->LL_UserData(), m_pPhysicsShell, fixed_bones[0] != '\0');
 }
 
 void CPhysicObject::Load(LPCSTR section)
@@ -265,14 +262,12 @@ void CPhysicObject::CreateBody(CSE_ALifeObjectPhysic* po)
     IKinematics* pKinematics = smart_cast<IKinematics*>(Visual());
     switch (m_type)
     {
-    case epotBox:
-    {
+    case epotBox: {
         m_pPhysicsShell = P_build_SimpleShell(this, m_mass, !po->_flags.test(CSE_ALifeObjectPhysic::flActive));
     }
     break;
     case epotFixedChain:
-    case epotFreeChain:
-    {
+    case epotFreeChain: {
         m_pPhysicsShell = P_create_Shell();
         m_pPhysicsShell->set_Kinematics(pKinematics);
         AddElement(0, pKinematics->LL_GetBoneRoot());
@@ -280,8 +275,7 @@ void CPhysicObject::CreateBody(CSE_ALifeObjectPhysic* po)
     }
     break;
 
-    case epotSkeleton:
-    {
+    case epotSkeleton: {
         // pKinematics->LL_SetBoneRoot(0);
         CreateSkeleton(po);
     }
@@ -326,79 +320,83 @@ void CPhysicObject::set_collision_hit_callback(ICollisionHitCallback* cc)
 
 bool CPhysicObject::is_ai_obstacle() const
 {
-  return m_is_ai_obstacle; //!!(READ_IF_EXISTS(pSettings, r_bool, cNameSect(), "is_ai_obstacle", true));
+    return m_is_ai_obstacle; //!!(READ_IF_EXISTS(pSettings, r_bool, cNameSect(), "is_ai_obstacle", true));
 }
 
 // network synchronization ----------------------------
 
-void CPhysicObject::net_Export( CSE_Abstract* E ) {
-  CSE_ALifeObjectPhysic* obj_ph = smart_cast<CSE_ALifeObjectPhysic*>( E );
-  obj_ph->m_u8NumItems = 0;
+void CPhysicObject::net_Export(CSE_Abstract* E)
+{
+    CSE_ALifeObjectPhysic* obj_ph = smart_cast<CSE_ALifeObjectPhysic*>(E);
+    obj_ph->m_u8NumItems = 0;
 };
 
-bool CPhysicObject::get_door_vectors( Fvector& closed, Fvector& open ) const {
-  VERIFY( Visual() );
-  IKinematics *K = Visual()->dcast_PKinematics();
-  VERIFY( K );
-  u16 door_bone = K->LL_BoneID( "door" );
-  if( door_bone == BI_NONE )
-    return false;
-  const CBoneData  &bd    = K->LL_GetData( door_bone );
-  const SBoneShape &shape = bd.shape;
-  if( shape.type != SBoneShape::stBox )
-    return false;
+bool CPhysicObject::get_door_vectors(Fvector& closed, Fvector& open) const
+{
+    VERIFY(Visual());
+    IKinematics* K = Visual()->dcast_PKinematics();
+    VERIFY(K);
+    u16 door_bone = K->LL_BoneID("door");
+    if (door_bone == BI_NONE)
+        return false;
+    const CBoneData& bd = K->LL_GetData(door_bone);
+    const SBoneShape& shape = bd.shape;
+    if (shape.type != SBoneShape::stBox)
+        return false;
 
-  if( shape.flags.test( SBoneShape::sfNoPhysics ) )
-    return false;
+    if (shape.flags.test(SBoneShape::sfNoPhysics))
+        return false;
 
-  Fmatrix start_bone_pos;
-  K->Bone_GetAnimPos( start_bone_pos, door_bone, u8(-1), true );
+    Fmatrix start_bone_pos;
+    K->Bone_GetAnimPos(start_bone_pos, door_bone, u8(-1), true);
 
-  Fmatrix start_pos = Fmatrix().mul_43( XFORM(), start_bone_pos );
+    Fmatrix start_pos = Fmatrix().mul_43(XFORM(), start_bone_pos);
 
-  const Fobb &box = shape.box;
+    const Fobb& box = shape.box;
 
-  Fvector center_pos;
-  start_pos.transform_tiny( center_pos, box.m_translate );
+    Fvector center_pos;
+    start_pos.transform_tiny(center_pos, box.m_translate);
 
-  Fvector door_dir;
-  start_pos.transform_dir( door_dir, box.m_rotate.i );
-  Fvector door_dir_local =  box.m_rotate.i ;
-  //Fvector door_dir_bone; start_bone_pos.transform_dir(door_dir_bone, box.m_rotate.i );
+    Fvector door_dir;
+    start_pos.transform_dir(door_dir, box.m_rotate.i);
+    Fvector door_dir_local = box.m_rotate.i;
+    // Fvector door_dir_bone; start_bone_pos.transform_dir(door_dir_bone, box.m_rotate.i );
 
-  const Fvector det_vector = Fvector().sub( center_pos, start_pos.c  );
+    const Fvector det_vector = Fvector().sub(center_pos, start_pos.c);
 
-  if ( door_dir.dotproduct( det_vector ) < 0.f ) {
-    door_dir.invert();
-    door_dir_local.invert();
-    //door_dir_bone.invert();
-  }
+    if (door_dir.dotproduct(det_vector) < 0.f)
+    {
+        door_dir.invert();
+        door_dir_local.invert();
+        // door_dir_bone.invert();
+    }
 
-  const SJointIKData &joint = bd.IK_data;
+    const SJointIKData& joint = bd.IK_data;
 
-  if( joint.type != jtJoint )
-    return false;
-  Fvector2 limits = joint.limits[ 1 ].limit;
+    if (joint.type != jtJoint)
+        return false;
+    Fvector2 limits = joint.limits[1].limit;
 
-  if ( fsimilar( limits.x, limits.y ) ) {
-    auto j = m_pPhysicsShell->get_Joint( door_bone );
-    j->GetLimits( limits.y, limits.x, 0 );
-  }
+    if (fsimilar(limits.x, limits.y))
+    {
+        auto j = m_pPhysicsShell->get_Joint(door_bone);
+        j->GetLimits(limits.y, limits.x, 0);
+    }
 
-  //if( limits.y < EPS ) //limits.y - limits.x < EPS
-  //      return false;
+    // if( limits.y < EPS ) //limits.y - limits.x < EPS
+    //       return false;
 
-  if ( M_PI - limits.y < EPS && M_PI + limits.x < EPS )
-    return false;
+    if (M_PI - limits.y < EPS && M_PI + limits.x < EPS)
+        return false;
 
-  Fmatrix to_hi = Fmatrix().rotateY( -limits.x );
-  to_hi.transform_dir( open, door_dir_local );
+    Fmatrix to_hi = Fmatrix().rotateY(-limits.x);
+    to_hi.transform_dir(open, door_dir_local);
 
-  Fmatrix to_lo = Fmatrix().rotateY( -limits.y );
-  to_lo.transform_dir( closed, door_dir_local );
+    Fmatrix to_lo = Fmatrix().rotateY(-limits.y);
+    to_lo.transform_dir(closed, door_dir_local);
 
-  start_pos.transform_dir( open );
-  start_pos.transform_dir( closed );
+    start_pos.transform_dir(open);
+    start_pos.transform_dir(closed);
 
-  return true;
+    return true;
 }

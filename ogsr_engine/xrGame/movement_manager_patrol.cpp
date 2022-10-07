@@ -30,8 +30,7 @@ void CMovementManager::process_patrol_path()
 
     switch (m_path_state)
     {
-    case ePathStateSelectPatrolPoint:
-    {
+    case ePathStateSelectPatrolPoint: {
         patrol().select_point(object().Position(), level_path().m_dest_vertex_id);
         if (patrol().failed())
             break;
@@ -44,10 +43,8 @@ void CMovementManager::process_patrol_path()
 
         m_path_state = ePathStateBuildLevelPath;
     }
-    case ePathStateBuildLevelPath:
-    {
-        level_path_builder().setup(object().ai_location().level_vertex_id(), level_dest_vertex_id(),
-            patrol().extrapolate_path(), &patrol().destination_position());
+    case ePathStateBuildLevelPath: {
+        level_path_builder().setup(object().ai_location().level_vertex_id(), level_dest_vertex_id(), patrol().extrapolate_path(), &patrol().destination_position());
 
         if (can_use_distributed_computations(mtLevelPath))
         {
@@ -59,14 +56,12 @@ void CMovementManager::process_patrol_path()
 
         break;
     }
-    case ePathStateContinueLevelPath:
-    {
+    case ePathStateContinueLevelPath: {
         level_path().select_intermediate_vertex();
 
         m_path_state = ePathStateBuildDetailPath;
     }
-    case ePathStateBuildDetailPath:
-    {
+    case ePathStateBuildDetailPath: {
         detail().set_state_patrol_path(patrol().extrapolate_path());
         detail().set_start_position(object().Position());
         detail().set_start_direction(Fvector().setHP(-m_body.current.yaw, 0));
@@ -84,8 +79,7 @@ void CMovementManager::process_patrol_path()
 
         break;
     }
-    case ePathStatePathVerification:
-    {
+    case ePathStatePathVerification: {
         if (!patrol().actual())
         {
             //				Msg				("[%6d][%s] actuality is false 3",Device.dwFrame,*object().cName());
@@ -119,8 +113,7 @@ void CMovementManager::process_patrol_path()
         }
         break;
     }
-    case ePathStatePathCompleted:
-    {
+    case ePathStatePathCompleted: {
         if (!patrol().actual())
         {
             //				Msg				("[%6d][%s] actuality is false 4",Device.dwFrame,*object().cName());
