@@ -161,15 +161,16 @@ public:
 	}
 };
 
-static void play_object(dxGeomUserData* data, SGameMtlPair* mtl_pair, const dContactGeom* c) noexcept
-{
-	if (data->ph_ref_object)
-	{
-		CPHSoundPlayer* sp = data->ph_ref_object->ObjectPhSoundPlayer();
+static CPHSoundPlayer* play_object( dxGeomUserData* data, SGameMtlPair* mtl_pair, const dContactGeom* c, bool check_vel = true, float* vol = nullptr ) noexcept {
+	if ( !data->ph_ref_object )
+		return nullptr;
 
-		if (sp)
-			sp->Play(mtl_pair, *(Fvector*)c->pos);
-	}
+	CPHSoundPlayer* sp = data->ph_ref_object->ObjectPhSoundPlayer();
+	if ( !sp )
+		return nullptr;
+
+	sp->Play( mtl_pair, *(Fvector*)c->pos, check_vel, vol );
+	return sp;
 }
 
 template<class Pars>
@@ -227,17 +228,18 @@ void TContactShotMark(CDB::TRI* T, dContactGeom* c)
 				wm_shader WallmarkShader = mtl_pair->m_pCollideMarks->GenerateWallmark();
 				Level().ph_commander().add_call(xr_new<CPHOnesCondition>(),xr_new<CPHWallMarksCall>( *((Fvector*)c->pos),T, WallmarkShader));
 			}
-			
+
 			if (square_cam_dist < SQUARE_SOUND_EFFECT_DIST)
 			{
 				SGameMtl* static_mtl = GMLib.GetMaterialByIdx(T->material);
 				VERIFY(static_mtl);
 				if (!static_mtl->Flags.test(SGameMtl::flPassable) && vel_cret > Pars::vel_cret_sound)
 				{
-					if (!mtl_pair->CollideSounds.empty())
-					{
-						float volume = collide_volume_min + vel_cret * (collide_volume_max - collide_volume_min) / (_sqrt(mass_limit)*default_l_limit - Pars::vel_cret_sound);
-						GET_RANDOM(mtl_pair->CollideSounds).play_no_feedback(nullptr, 0, 0, ((Fvector*)c->pos), &volume);
+					if ( !mtl_pair->CollideSounds.empty() ) {
+						float volume = collide_volume_min + vel_cret * ( collide_volume_max - collide_volume_min ) / ( _sqrt( mass_limit ) * default_l_limit - Pars::vel_cret_sound );
+						auto sp = play_object( data, mtl_pair, c, false, &volume );
+						if ( !sp )
+							GET_RANDOM( mtl_pair->CollideSounds).play_no_feedback( nullptr, 0, 0, ((Fvector*)c->pos ), &volume );
 					}
 				}
 				else if (data->ph_ref_object && !mtl_pair->CollideSounds.empty())

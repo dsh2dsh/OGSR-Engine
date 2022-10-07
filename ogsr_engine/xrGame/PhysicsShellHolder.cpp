@@ -26,6 +26,7 @@ CPhysicsShellHolder::	~CPhysicsShellHolder						()
 {
 	VERIFY ( !m_pPhysicsShell );
 	destroy_physics_shell( m_pPhysicsShell );
+	xr_delete( m_ph_sound_player );
 }
 const CPhysicsShellHolder*CPhysicsShellHolder::physics_collision	()
 {
@@ -117,7 +118,9 @@ void CPhysicsShellHolder::init			()
 	m_activation_speed_is_overriden = false;
 	m_ph_heavy = false;
 	m_ph_heavy_override = false;
+	m_ph_sound_player = xr_new<CPHSoundPlayer>( this );
 }
+
 bool	 CPhysicsShellHolder::has_shell_collision_place( const CPhysicsShellHolder* obj ) const
 {
 	if(character_physics_support())
