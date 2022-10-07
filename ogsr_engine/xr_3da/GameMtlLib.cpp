@@ -164,6 +164,23 @@ void CGameMtlLibrary::Load() {
 }
 
 
+#ifndef _EDITOR
+
+SGameMtlPair* CGameMtlLibrary::GetMaterialPair( u16 idx0, u16 idx1 ) {
+	// R_ASSERT( ( idx0 < material_count ) && ( idx1 < material_count ) );
+	if ( idx0 >= material_count || idx1 >= material_count ) {
+		MsgDbg( "! [%s]: wrong index(es): idx0[%u] idx1[%u] material_count[%u]",
+						__FUNCTION__, idx0, idx1, material_count );
+		if ( idx0 >= material_count ) idx0 = 0;
+		if ( idx1 >= material_count ) idx1 = 0;
+	}
+
+	return material_pairs_rt[ idx1 * material_count + idx0 ];
+}
+
+#endif
+
+
 #ifdef GM_NON_GAME
 SGameMtlPair::~SGameMtlPair		()
 {

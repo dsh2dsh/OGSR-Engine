@@ -332,8 +332,10 @@ public:
 	SGameMtlPair*		GetMaterialPair		(int mtl0, int mtl1);
 	SGameMtlPair*		GetMaterialPair		(LPCSTR name);
 #else
+
 	// game
-	IC SGameMtlPair*	GetMaterialPair		(u16 idx0, u16 idx1){R_ASSERT((idx0<material_count)&&(idx1<material_count)); return material_pairs_rt[idx1*material_count+idx0];}
+	SGameMtlPair* GetMaterialPair( u16 idx0, u16 idx1 );
+
 #endif
 	IC GameMtlPairIt	FirstMaterialPair	(){return material_pairs.begin();}
 	IC GameMtlPairIt	LastMaterialPair	(){return material_pairs.end();}
