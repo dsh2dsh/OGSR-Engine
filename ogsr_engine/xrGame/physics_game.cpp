@@ -22,12 +22,14 @@ static constexpr float SQUARE_PARTICLE_EFFECT_DIST = PARTICLE_EFFECT_DIST * PART
 static constexpr float SQUARE_SOUND_EFFECT_DIST = SOUND_EFFECT_DIST * SOUND_EFFECT_DIST;
 static constexpr float minimal_plane_distance_between_liquid_particles = 0.2f;
 /////////////////////////////////////////////////////////////
+
 class CPHParticlesPlayCall : public CPHAction
 {
     const char* ps_name;
 
 protected:
     dContactGeom c;
+    int psLifeTime;
 
 public:
     CPHParticlesPlayCall(const dContactGeom& contact, bool invert_n, const char* psn)
@@ -40,11 +42,13 @@ public:
             c.normal[1] = -c.normal[1];
             c.normal[2] = -c.normal[2];
         }
+        psLifeTime = 0;
     }
 
     virtual void run()
     {
         CParticlesObject* ps = CParticlesObject::Create(ps_name, TRUE);
+        psLifeTime = ps->LifeTime();
 
         Fmatrix pos;
         Fvector zero_vel = {0.f, 0.f, 0.f};
@@ -63,15 +67,19 @@ class CPHLiquidParticlesPlayCall : public CPHParticlesPlayCall, public CPHReqCom
 {
     u32 remove_time;
     bool b_called;
+    const CPhysicsShellHolder* m_object;
 
 public:
-    CPHLiquidParticlesPlayCall(const dContactGeom& contact, bool invert_n, const char* psn) : CPHParticlesPlayCall(contact, invert_n, psn), b_called(false)
+    CPHLiquidParticlesPlayCall(const dContactGeom& contact, bool invert_n, const char* psn, const CPhysicsShellHolder* object = nullptr)
+        : CPHParticlesPlayCall(contact, invert_n, psn), b_called(false)
     {
+        m_object = object;
         static constexpr u32 time_to_call_remove = 3000;
         remove_time = Device.dwTimeGlobal + time_to_call_remove;
     }
 
     const Fvector& position() const noexcept { return cast_fv(c.pos); }
+    const CPhysicsShellHolder* object() const noexcept { return m_object; }
 
 private:
     virtual bool compare(const CPHReqComparerV* v) const { return v->compare(this); }
@@ -83,6 +91,8 @@ private:
 
         b_called = true;
         CPHParticlesPlayCall::run();
+        if (m_object && psLifeTime > 0)
+            remove_time = Device.dwTimeGlobal + iFloor(psLifeTime / 2.f);
     }
 
     virtual bool obsolete() const noexcept { return Device.dwTimeGlobal > remove_time; }
@@ -101,9 +111,10 @@ private:
 class CPHFindLiquidParticlesComparer : public CPHReqComparerV
 {
     Fvector m_position;
+    const CPhysicsShellHolder* m_object;
 
 public:
-    CPHFindLiquidParticlesComparer(const Fvector& position) : m_position(position) {}
+    CPHFindLiquidParticlesComparer(const Fvector& position, const CPhysicsShellHolder* object = nullptr) : m_object(object), m_position(position) {}
 
 private:
     virtual bool compare(const CPHReqComparerV* v) const { return v->compare(this); }
@@ -111,6 +122,9 @@ private:
     virtual bool compare(const CPHLiquidParticlesPlayCall* v) const
     {
         VERIFY(v);
+
+        if (m_object)
+            return m_object == v->object();
 
         Fvector disp = Fvector().sub(m_position, v->position());
         return disp.x * disp.x + disp.z * disp.z < (minimal_plane_distance_between_liquid_particles * minimal_plane_distance_between_liquid_particles);
@@ -170,7 +184,9 @@ void play_particles(float vel_cret, dxGeomUserData* data, const dContactGeom* c,
 
     if (play_not_liquid)
     {
-        Level().ph_commander().add_call(xr_new<CPHOnesCondition>(), xr_new<CPHParticlesPlayCall>(*c, b_invert_normal, ps_name));
+        CPHFindLiquidParticlesComparer find(cast_fv(c->pos), data->ph_ref_object);
+        if (!Level().ph_commander().has_call(&find, &find))
+            Level().ph_commander().add_call(xr_new<CPHLiquidParticlesCondition>(), xr_new<CPHLiquidParticlesPlayCall>(*c, b_invert_normal, ps_name, data->ph_ref_object));
     }
     else if (play_liquid)
     {
