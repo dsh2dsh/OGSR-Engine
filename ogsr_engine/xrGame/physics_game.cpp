@@ -149,17 +149,13 @@ public:
     virtual bool obsolete() const noexcept { return false; }
 };
 
-static CPHSoundPlayer* play_object(dxGeomUserData* data, SGameMtlPair* mtl_pair, const dContactGeom* c, bool check_vel = true, float* vol = nullptr) noexcept
+static CPHSoundPlayer* object_snd_player(dxGeomUserData* data) noexcept { return data->ph_ref_object ? data->ph_ref_object->ObjectPhSoundPlayer() : nullptr; }
+
+static void play_object(dxGeomUserData* data, SGameMtlPair* mtl_pair, const dContactGeom* c, bool check_vel = true, float* vol = nullptr) noexcept
 {
-    if (!data->ph_ref_object)
-        return nullptr;
-
-    CPHSoundPlayer* sp = data->ph_ref_object->ObjectPhSoundPlayer();
-    if (!sp)
-        return nullptr;
-
-    sp->Play(mtl_pair, *(Fvector*)c->pos, check_vel, vol);
-    return sp;
+    auto sp = object_snd_player(data);
+    if (sp)
+        sp->Play(mtl_pair, *(Fvector*)c->pos, check_vel, vol);
 }
 
 template <class Pars>
@@ -229,8 +225,10 @@ void TContactShotMark(CDB::TRI* T, dContactGeom* c)
                     if (!mtl_pair->CollideSounds.empty())
                     {
                         float volume = collide_volume_min + vel_cret * (collide_volume_max - collide_volume_min) / (_sqrt(mass_limit) * default_l_limit - Pars::vel_cret_sound);
-                        auto sp = play_object(data, mtl_pair, c, false, &volume);
-                        if (!sp)
+                        auto sp = object_snd_player(data);
+                        if (sp)
+                            sp->PlayNext(mtl_pair, ((Fvector*)c->pos), &volume);
+                        else
                             GET_RANDOM(mtl_pair->CollideSounds).play_no_feedback(nullptr, 0, 0, ((Fvector*)c->pos), &volume);
                     }
                 }
