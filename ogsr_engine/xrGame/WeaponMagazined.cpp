@@ -866,7 +866,7 @@ bool CWeaponMagazined::Action(s32 cmd, u32 flags)
     case kWPN_FIREMODE_PREV: {
         if (flags & CMD_START)
         {
-            OnPrevFireMode();
+            OnPrevFireMode(flags & CMD_OPT);
             return true;
         };
     }
@@ -874,7 +874,7 @@ bool CWeaponMagazined::Action(s32 cmd, u32 flags)
     case kWPN_FIREMODE_NEXT: {
         if (flags & CMD_START)
         {
-            OnNextFireMode();
+            OnNextFireMode(flags & CMD_OPT);
             return true;
         };
     }
@@ -1335,18 +1335,22 @@ void CWeaponMagazined::onMovementChanged(ACTOR_DEFS::EMoveCommand cmd)
     }
 }
 
-void CWeaponMagazined::OnNextFireMode()
+void CWeaponMagazined::OnNextFireMode(bool opt)
 {
     if (!m_bHasDifferentFireModes)
+        return;
+    if (opt && m_iCurFireMode + 1 == m_aFireModes.size())
         return;
     m_iCurFireMode = (m_iCurFireMode + 1 + m_aFireModes.size()) % m_aFireModes.size();
     SetQueueSize(GetCurrentFireMode());
     PlaySound(sndFireModes, get_LastFP());
 };
 
-void CWeaponMagazined::OnPrevFireMode()
+void CWeaponMagazined::OnPrevFireMode(bool opt)
 {
     if (!m_bHasDifferentFireModes)
+        return;
+    if (opt && m_iCurFireMode == 0)
         return;
     m_iCurFireMode = (m_iCurFireMode - 1 + m_aFireModes.size()) % m_aFireModes.size();
     SetQueueSize(GetCurrentFireMode());
