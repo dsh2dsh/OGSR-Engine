@@ -139,6 +139,7 @@ void CAI_Stalker::g_fireParams(const CHudItem* pHudItem, Fvector& P, Fvector& D)
         return;
     }
 
+    /* dsh:
     switch (movement().body_state())
     {
     case eBodyStateStand: {
@@ -174,11 +175,20 @@ void CAI_Stalker::g_fireParams(const CHudItem* pHudItem, Fvector& P, Fvector& D)
     }
     default: NODEFAULT;
     }
+    */
 
 #ifdef DEBUG
     P = weapon->get_LastFP();
     D = weapon->get_LastFD();
     VERIFY(!fis_zero(D.square_magnitude()));
+#else
+
+    P = eye_matrix.c;
+    D = eye_matrix.k;
+    if (weapon_shot_effector().IsActive())
+        D = weapon_shot_effector_direction(D);
+    VERIFY(!fis_zero(D.square_magnitude()));
+
 #endif
 }
 
