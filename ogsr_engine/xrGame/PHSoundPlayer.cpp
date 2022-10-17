@@ -36,6 +36,16 @@ void CPHSoundPlayer::Play(SGameMtlPair* mtl_pair, const Fvector& pos, bool check
     m_sound.play_at_pos(smart_cast<CPhysicsShellHolder*>(m_object), pos);
     if (vol)
         m_sound._feedback()->set_volume(*vol);
+
+    Fvector2 dist = m_object->CollideSndDist();
+    if (dist.x >= 0.f || dist.y >= 0.f)
+    {
+        if (dist.x < 0.f)
+            dist.x = m_sound.get_params()->min_distance;
+        if (dist.y < 0.f)
+            dist.y = m_sound.get_params()->max_distance;
+        m_sound._feedback()->set_range(dist.x, dist.y);
+    }
 }
 
 void CPHSoundPlayer::PlayNext(SGameMtlPair* mtl_pair, Fvector* pos, float* vol)
@@ -46,6 +56,18 @@ void CPHSoundPlayer::PlayNext(SGameMtlPair* mtl_pair, Fvector* pos, float* vol)
     auto snd = GET_RANDOM(mtl_pair->CollideSounds);
     // Половина от времени звука, поэтому умножаем не на 1000, а на 500.
     m_next_snd_time = Device.dwTimeGlobal + iFloor(snd.get_length_sec() * 500.0f);
-    snd.play_no_feedback(nullptr, 0, 0, pos, vol);
+
+    Fvector2* range = nullptr;
+    Fvector2 dist = m_object->CollideSndDist();
+    if (dist.x >= 0.f || dist.y >= 0.f)
+    {
+        if (dist.x < 0.f)
+            dist.x = snd.get_params()->min_distance;
+        if (dist.y < 0.f)
+            dist.y = snd.get_params()->max_distance;
+        range = &dist;
+    }
+
+    snd.play_no_feedback(nullptr, 0, 0, pos, vol, nullptr, range);
     m_last_mtl_pair = mtl_pair;
 }

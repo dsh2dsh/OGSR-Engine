@@ -115,6 +115,7 @@ void CPhysicsShellHolder::init()
     m_ph_heavy = false;
     m_ph_heavy_override = false;
     m_ph_sound_player = xr_new<CPHSoundPlayer>(this);
+    m_collide_snd_dist = {-1.f, -1.f};
 }
 
 bool CPhysicsShellHolder::has_shell_collision_place(const CPhysicsShellHolder* obj) const
@@ -562,6 +563,7 @@ void CPhysicsShellHolder::Load(LPCSTR section)
 {
     inherited::Load(section);
     m_ph_heavy = READ_IF_EXISTS(pSettings, r_bool, section, "ph_heavy", false);
+    m_collide_snd_dist = READ_IF_EXISTS(pSettings, r_fvector2, section, "collide_snd_dist", Fvector2().set(-1.f, -1.f));
 }
 
 bool CPhysicsShellHolder::IsPhHeavy()
@@ -572,3 +574,5 @@ bool CPhysicsShellHolder::IsPhHeavy()
 }
 
 void CPhysicsShellHolder::SetPhHeavy(bool val) { m_ph_heavy_override = val; }
+
+Fvector2 CPhysicsShellHolder::CollideSndDist() { return m_collide_snd_dist; }

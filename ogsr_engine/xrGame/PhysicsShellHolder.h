@@ -111,6 +111,7 @@ public:
     bool hasFixedBones() const;
     bool IsPhHeavy();
     void SetPhHeavy(bool val);
+    Fvector2 CollideSndDist();
 
 public: // IPhysicsShellHolder
     virtual Fmatrix& ObjectXFORM();
@@ -139,6 +140,8 @@ private:
     Fvector m_overriden_activation_speed;
     bool m_activation_speed_is_overriden;
     bool m_ph_heavy, m_ph_heavy_override;
+
+    Fvector2 m_collide_snd_dist;
 
 public:
     virtual bool ActivationSpeedOverriden(Fvector& dest, bool clear_override);
