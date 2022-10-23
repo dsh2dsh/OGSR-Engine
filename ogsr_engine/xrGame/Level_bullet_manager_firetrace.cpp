@@ -134,17 +134,7 @@ BOOL CBulletManager::test_callback(const collide::ray_defs& rd, CObject* object,
                         Level().BulletManager().PlayWhineSound(bullet, initiator, pt);
                     }
                 }
-                // Если пуля актора не попала в сферу сталкера или мутанта, который
-                // сейчас проигрывает анимацию хита, то мы не будем его игнорировать, а
-                // продолжим проверку лучом, что бы точно определить, вдруг мы все-таки
-                // в него попали. Возможно это поможет с ситуацией, когда сталкеры с
-                // анимацией будто неуязвимы.
-                else if (actor // далеко от актора
-                         || !smart_cast<CActor*>(initiator) // стреляет сталкер
-                                                            // актор стреляет в сталкера без анимация хита
-                         || (stalker && !stalker->critically_wounded())
-                         // или в мутанта
-                         || (monster && !monster->critically_wounded()))
+                else
                 {
                     // don't test this object again (return FALSE)
                     bRes = FALSE;

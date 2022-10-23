@@ -218,7 +218,7 @@ bool CBulletManager::CalcBullet(collide::rq_results& rq_storage, xr_vector<ISpat
 
     bullet->flags.ricochet_was = 0;
 
-    collide::ray_defs RD(bullet->pos, bullet->dir, range, CDB::OPT_CULL, collide::rqtBoth);
+    collide::ray_defs RD(bullet->pos, bullet->dir, range, CDB::OPT_FULL_TEST, collide::rqtBoth);
     BOOL result = FALSE;
     VERIFY(!fis_zero(RD.dir.square_magnitude()));
     result = Level().ObjectSpace.RayQuery(rq_storage, RD, firetrace_callback, &bullet_data, test_callback, NULL);
