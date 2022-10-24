@@ -175,7 +175,7 @@ CHangingLamp* CScriptGameObject::get_hanging_lamp()
     CHangingLamp* lamp = smart_cast<CHangingLamp*>(&object());
     if (!lamp)
     {
-        ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError, "CGameObject : it is not a lamp!");
+        //ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError, "CGameObject : it is not a lamp!");
         return nullptr;
     }
     return lamp;
