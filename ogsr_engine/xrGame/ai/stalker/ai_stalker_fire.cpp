@@ -609,7 +609,7 @@ void CAI_Stalker::can_kill_entity(const Fvector& position, const Fvector& direct
 {
     VERIFY(!fis_zero(direction.square_magnitude()));
 
-    collide::ray_defs ray_defs(position, direction, distance, CDB::OPT_CULL, collide::rqtBoth);
+    collide::ray_defs ray_defs(position, direction, distance, CDB::OPT_FULL_TEST, collide::rqtBoth);
     VERIFY(!fis_zero(ray_defs.dir.square_magnitude()));
 
     ray_query_param params(this, memory().visual().transparency_threshold(), distance);
@@ -989,7 +989,7 @@ bool CAI_Stalker::throw_check_error(float low, float high, const Fvector& positi
         return (false);
 
     start_to_target.mul(1.f / distance);
-    collide::ray_defs ray_defs(start, start_to_target, distance, CDB::OPT_CULL, collide::rqtBoth);
+    collide::ray_defs ray_defs(start, start_to_target, distance, 0, collide::rqtBoth);
 
     float range = distance;
 

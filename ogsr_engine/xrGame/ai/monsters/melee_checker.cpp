@@ -21,7 +21,7 @@ float CMeleeChecker::distance_to_enemy(const CEntity* enemy)
     dir.sub(enemy_center, my_head_pos);
     dir.normalize_safe();
 
-    collide::ray_defs r_query(my_head_pos, dir, MAX_TRACE_ENEMY_RANGE, CDB::OPT_CULL | CDB::OPT_ONLYNEAREST, collide::rqtObject);
+    collide::ray_defs r_query(my_head_pos, dir, MAX_TRACE_ENEMY_RANGE, CDB::OPT_FULL_TEST | CDB::OPT_ONLYNEAREST, collide::rqtObject);
     r_res.r_clear();
 
     if (m_object->CFORM()->_RayQuery(r_query, r_res))

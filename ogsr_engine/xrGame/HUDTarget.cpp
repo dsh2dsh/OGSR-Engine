@@ -108,7 +108,7 @@ void CHUDTarget::CursorOnFrame()
         RQ.range = g_pGamePersistent->Environment().CurrentEnv->far_plane * 0.99f;
         RQ.element = -1;
 
-        collide::ray_defs RD(p1, dir, RQ.range, CDB::OPT_CULL, collide::rqtBoth);
+        collide::ray_defs RD(p1, dir, RQ.range, 0, collide::rqtBoth);
         RQR.r_clear();
         VERIFY(!fis_zero(RD.dir.square_magnitude()));
         if (Level().ObjectSpace.RayQuery(RQR, RD, pick_trace_callback, &RQ, NULL, Level().CurrentEntity()))
