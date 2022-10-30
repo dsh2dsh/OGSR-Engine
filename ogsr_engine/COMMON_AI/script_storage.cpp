@@ -215,7 +215,9 @@ void CScriptStorage::print_stack() { Log(get_lua_traceback(lua())); }
 
 void CScriptStorage::script_log(ScriptStorage::ELuaMessageType tLuaMessageType, const char* caFormat, ...) //Используется в очень многих местах //Очень много пишет в лог.
 {
-#ifdef DEBUG
+    if (!Core.ParamFlags.test(xrCore::ParamFlag::dbg))
+        return;
+
     va_list marker;
     va_start(marker, caFormat);
     //
@@ -242,7 +244,6 @@ void CScriptStorage::script_log(ScriptStorage::ELuaMessageType tLuaMessageType, 
     print_stack();
     Msg("-----------------------------------------");
     va_end(marker);
-#endif
 }
 
 bool CScriptStorage::load_buffer(lua_State* L, const char* caBuffer, size_t tSize, const char* caScriptName,
