@@ -5,6 +5,8 @@
 #include "SoundRender_Target.h"
 #include "SoundRender_Source.h"
 
+XRSOUND_API extern float psSoundCull;
+
 void CSoundRender_Core::i_start(CSoundRender_Emitter* E)
 {
     R_ASSERT(E);
@@ -20,12 +22,18 @@ void CSoundRender_Core::i_start(CSoundRender_Emitter* E)
         {
             T = Ttest;
             Ptarget = Ttest->priority;
+            if (Ptarget < 0)
+                break;
         }
     }
 
     // Stop currently playing
     if (T->get_emitter())
+    {
+        if (Ptarget >= psSoundCull)
+            MsgDbg("! [%s]: snd_targets[%u] limit reached: Ptest[%f] Ptarget[%f] psSoundCull[%f]", __FUNCTION__, s_targets.size(), Ptest, Ptarget, psSoundCull);
         T->get_emitter()->cancel();
+    }
 
     // Associate
     E->target = T;
