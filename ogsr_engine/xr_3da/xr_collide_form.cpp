@@ -242,9 +242,9 @@ BOOL CCF_Skeleton::_RayQuery(const collide::ray_defs& Q, collide::rq_results& R)
         float range = Q.range;
         switch (I->type)
         {
-        case SBoneShape::stBox: res = RAYvsOBB(I->b_IM, I->b_hsize, Q.start, Q.dir, range, 0); break;
-        case SBoneShape::stSphere: res = RAYvsSPHERE(I->s_sphere, Q.start, Q.dir, range, 0); break;
-        case SBoneShape::stCylinder: res = RAYvsCYLINDER(I->c_cylinder, Q.start, Q.dir, range, 0); break;
+        case SBoneShape::stBox: res = RAYvsOBB(I->b_IM, I->b_hsize, Q.start, Q.dir, range, Q.flags & CDB::OPT_CULL); break;
+        case SBoneShape::stSphere: res = RAYvsSPHERE(I->s_sphere, Q.start, Q.dir, range, Q.flags & CDB::OPT_CULL); break;
+        case SBoneShape::stCylinder: res = RAYvsCYLINDER(I->c_cylinder, Q.start, Q.dir, range, Q.flags & CDB::OPT_CULL); break;
         }
         if (res)
         {
