@@ -442,7 +442,13 @@ void disable_input()
     if (Actor())
         Actor()->PickupModeOff();
 }
-void enable_input() { g_bDisableAllInput = false; }
+void enable_input()
+{
+    g_bDisableAllInput = false;
+
+    Fvector2 pos = GetUICursor()->GetCursorPosition();
+    GetUICursor()->SetUICursorPosition(pos);
+}
 
 void spawn_phantom(const Fvector& position) { Level().spawn_item("m_phantom", position, u32(-1), u16(-1), false); }
 
