@@ -442,6 +442,27 @@ static class cl_addon_VControl : public R_constant_setup
     }
 } binder_addon_VControl;
 
+static class cl_sky_color final : public R_constant_setup
+{
+    Fvector4 result{};
+    void setup(R_constant* C) override
+    {
+        auto* desc = g_pGamePersistent->Environment().CurrentEnv;
+        result.set(desc->sky_color.x, desc->sky_color.y, desc->sky_color.z, desc->sky_rotation);
+        RCache.set_c(C, result);
+    }
+} binder_sky_color;
+
+static class cl_inv_v final : public R_constant_setup
+{
+    Fmatrix result;
+    void setup(R_constant* C) override
+    {
+        result.invert(Device.mView);
+        RCache.set_c(C, result);
+    }
+} binder_inv_v;
+
 // Standart constant-binding
 void CBlender_Compile::SetMapping()
 {
@@ -449,6 +470,7 @@ void CBlender_Compile::SetMapping()
     r_Constant("m_W", &binder_w);
     r_Constant("m_invW", &binder_invw);
     r_Constant("m_V", &binder_v);
+    r_Constant("m_inv_V", &binder_inv_v);
     r_Constant("m_P", &binder_p);
     r_Constant("m_WV", &binder_wv);
     r_Constant("m_VP", &binder_vp);
@@ -519,6 +541,8 @@ void CBlender_Compile::SetMapping()
     r_Constant("ogsr_game_time", &binder_ogsr_game_time);
 
     r_Constant("addon_VControl", &binder_addon_VControl);
+
+    r_Constant("sky_color", &binder_sky_color);
 
     // other common
     for (const auto& [name, s] : DEV->v_constant_setup)
