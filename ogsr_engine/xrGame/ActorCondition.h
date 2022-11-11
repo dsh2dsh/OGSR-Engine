@@ -124,6 +124,7 @@ protected:
     float m_fOverweightJumpK;
     float m_fAccelK;
     float m_fSprintK;
+    float m_fWalkWeightKPow;
 
     bool m_bJumpRequirePower;
 

@@ -36,6 +36,7 @@ CActorCondition::CActorCondition(CActor* object) : inherited(object)
     m_fAlcohol = 0.f;
     m_fSatiety = 1.0f;
     m_fThirst = 1.0f;
+    m_fWalkWeightKPow = 1.f;
 
     m_bJumpRequirePower = false;
 
@@ -125,6 +126,7 @@ void CActorCondition::LoadCondition(LPCSTR entity_section)
     }
 
     m_MaxWalkWeight = pSettings->r_float(section, "max_walk_weight");
+    m_fWalkWeightKPow = READ_IF_EXISTS(pSettings, r_float, section, "walk_weight_k_pow", m_fWalkWeightKPow);
 }
 
 //вычисление параметров с ходом времени
@@ -148,6 +150,8 @@ void CActorCondition::UpdateCondition()
         max_weight = object().MaxCarryWeight();
 
     float weight_coef = weight / max_weight;
+    if (weight_coef < 1.f) // dsh:
+        weight_coef = pow(weight_coef, m_fWalkWeightKPow);
 
     if ((object().mstate_real & mcAnyMove))
     {
