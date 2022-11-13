@@ -209,10 +209,6 @@ float ps_r2_rain_drops_speed = 1.25f;
 float ps_r2_visor_refl_intensity = 0.39f;
 float ps_r2_visor_refl_radius = 0.4f;
 
-#if RENDER == R_R4
-float ps_ext_SSLR_L = 1.f;
-#endif
-
 int ps_r__detail_radius = 49;
 u32 dm_size = 24;
 u32 dm_cache1_line = 12; // dm_size*2/dm_cache1_count
@@ -804,7 +800,6 @@ void xrRender_initconsole()
 
 #if RENDER == R_R4
     CMD3(CCC_Mask, "r_sslr_enable", &ps_r2_ls_flags_ext, R2FLAGEXT_SSLR);
-    CMD4(CCC_Float, "r_sslr_l", &ps_ext_SSLR_L, .1f, 10.f);
 #endif
 
     CMD3(CCC_Mask, "r2_sun", &ps_r2_ls_flags, R2FLAG_SUN);

@@ -606,6 +606,9 @@ extern int rsDIB_Size;
 
 extern int g_ErrorLineCount;
 
+extern float puddles_drying;
+extern float puddles_wetting;
+
 void CCC_Register()
 {
     // General
@@ -746,4 +749,7 @@ void CCC_Register()
 
     extern float psShedulerMax;
     CMD4(CCC_Float, "rs_sheduler_max", &psShedulerMax, 3.f, 66.f);
+
+    CMD4(CCC_Float, "rain_puddles_drying", &puddles_drying, 0.1f, 20.0f);
+    CMD4(CCC_Float, "rain_puddles_wetting", &puddles_wetting, 0.1f, 20.0f);
 };

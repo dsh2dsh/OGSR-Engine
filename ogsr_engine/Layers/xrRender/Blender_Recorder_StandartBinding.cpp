@@ -330,7 +330,7 @@ static class cl_screen_params : public R_constant_setup
 
 static class cl_rain_params : public R_constant_setup
 {
-    void setup(R_constant* C) override { RCache.set_c(C, g_pGamePersistent->Environment().CurrentEnv->rain_density, 0.0f, 0.0f, 0.0f); }
+    void setup(R_constant* C) override { RCache.set_c(C, g_pGamePersistent->Environment().CurrentEnv->rain_density, g_pGamePersistent->Environment().wetness_factor, 0.0f, 0.0f); }
 } binder_rain_params;
 
 static class cl_artifacts : public R_constant_setup
