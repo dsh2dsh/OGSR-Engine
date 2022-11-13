@@ -17,7 +17,7 @@ class ENGINE_API CInput : public pureFrame, public pureAppActivate, public pureA
 public:
     enum
     {
-        COUNT_MOUSE_BUTTONS = 3,
+        COUNT_MOUSE_BUTTONS = 8,
         COUNT_MOUSE_AXIS = 3,
         COUNT_KB_BUTTONS = 256
     };

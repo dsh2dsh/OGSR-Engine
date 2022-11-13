@@ -216,6 +216,9 @@ bool CInput::get_dik_name(int dik, LPSTR dest_str, int dest_sz)
     return WideCharToMultiByte(CP_ACP, 0, keyname.wsz, -1, dest_str, dest_sz, 0, 0) != -1;
 }
 
+#define MOUSE_1		(0xED + 100)
+#define MOUSE_8		(0xED + 107)
+
 BOOL CInput::iGetAsyncKeyState(int dik)
 {
     // KRodin: да-да, я знаю, что этот код ужасен.
@@ -227,7 +230,15 @@ BOOL CInput::iGetAsyncKeyState(int dik)
     case DIK_LCONTROL: return GetAsyncKeyState(VK_LCONTROL) & 0x8000;
     case DIK_RCONTROL: return GetAsyncKeyState(VK_RCONTROL) & 0x8000;
     case DIK_DELETE: return GetAsyncKeyState(VK_DELETE) & 0x8000;
-    default: return KBState[dik];
+    default:
+        if (dik < COUNT_KB_BUTTONS) {
+            return KBState[dik];
+        }
+        else if (dik >= MOUSE_1 && dik <= MOUSE_8) {
+            int mk = dik - MOUSE_1;
+            return iGetAsyncBtnState(mk);
+        }
+        return FALSE; //unknown key ???
     }
 }
 
@@ -257,9 +268,8 @@ void CInput::MouseUpdate()
     };
     BOOL mouse_prev[COUNT_MOUSE_BUTTONS];
 
-    mouse_prev[0] = mouseState[0];
-    mouse_prev[1] = mouseState[1];
-    mouse_prev[2] = mouseState[2];
+    for (int i = 0; i < COUNT_MOUSE_BUTTONS; i++)
+        mouse_prev[i] = mouseState[i];
 
     offs[0] = offs[1] = offs[2] = 0;
     for (u32 i = 0; i < dwElements; i++)
@@ -317,60 +327,60 @@ void CInput::MouseUpdate()
         case DIMOFS_BUTTON3:
             if (od[i].dwData & 0x80)
             {
-                mouseState[2] = TRUE;
+                mouseState[3] = TRUE;
                 cbStack.back()->IR_OnKeyboardPress(0xED + 103);
             }
             if (!(od[i].dwData & 0x80))
             {
-                mouseState[2] = FALSE;
+                mouseState[3] = FALSE;
                 cbStack.back()->IR_OnKeyboardRelease(0xED + 103);
             }
             break;
         case DIMOFS_BUTTON4:
             if (od[i].dwData & 0x80)
             {
-                mouseState[2] = TRUE;
+                mouseState[3] = TRUE;
                 cbStack.back()->IR_OnKeyboardPress(0xED + 104);
             }
             if (!(od[i].dwData & 0x80))
             {
-                mouseState[2] = FALSE;
+                mouseState[3] = FALSE;
                 cbStack.back()->IR_OnKeyboardRelease(0xED + 104);
             }
             break;
         case DIMOFS_BUTTON5:
             if (od[i].dwData & 0x80)
             {
-                mouseState[2] = TRUE;
+                mouseState[5] = TRUE;
                 cbStack.back()->IR_OnKeyboardPress(0xED + 105);
             }
             if (!(od[i].dwData & 0x80))
             {
-                mouseState[2] = FALSE;
+                mouseState[5] = FALSE;
                 cbStack.back()->IR_OnKeyboardRelease(0xED + 105);
             }
             break;
         case DIMOFS_BUTTON6:
             if (od[i].dwData & 0x80)
             {
-                mouseState[2] = TRUE;
+                mouseState[6] = TRUE;
                 cbStack.back()->IR_OnKeyboardPress(0xED + 106);
             }
             if (!(od[i].dwData & 0x80))
             {
-                mouseState[2] = FALSE;
+                mouseState[6] = FALSE;
                 cbStack.back()->IR_OnKeyboardRelease(0xED + 106);
             }
             break;
         case DIMOFS_BUTTON7:
             if (od[i].dwData & 0x80)
             {
-                mouseState[2] = TRUE;
+                mouseState[7] = TRUE;
                 cbStack.back()->IR_OnKeyboardPress(0xED + 107);
             }
             if (!(od[i].dwData & 0x80))
             {
-                mouseState[2] = FALSE;
+                mouseState[7] = FALSE;
                 cbStack.back()->IR_OnKeyboardRelease(0xED + 107);
             }
             break;
@@ -396,9 +406,8 @@ void CInput::MouseUpdate()
 
     if (hr == S_OK)
     {
-        RecheckMouseButtonFunc(0);
-        RecheckMouseButtonFunc(1);
-        RecheckMouseButtonFunc(2);
+	for (int i = 0; i < COUNT_MOUSE_BUTTONS; i++)
+            RecheckMouseButtonFunc(i);
     }
     //-Giperion
 
@@ -407,9 +416,8 @@ void CInput::MouseUpdate()
             cbStack.back()->IR_OnMouseHold(i);
     };
 
-    isButtonOnHold(0);
-    isButtonOnHold(1);
-    isButtonOnHold(2);
+    for (int i = 0; i < COUNT_MOUSE_BUTTONS; i++)
+        isButtonOnHold(i);
 
     if (dwElements)
     {
