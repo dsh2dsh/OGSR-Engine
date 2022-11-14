@@ -339,12 +339,12 @@ void CInput::MouseUpdate()
         case DIMOFS_BUTTON4:
             if (od[i].dwData & 0x80)
             {
-                mouseState[3] = TRUE;
+                mouseState[4] = TRUE;
                 cbStack.back()->IR_OnKeyboardPress(0xED + 104);
             }
             if (!(od[i].dwData & 0x80))
             {
-                mouseState[3] = FALSE;
+                mouseState[4] = FALSE;
                 cbStack.back()->IR_OnKeyboardRelease(0xED + 104);
             }
             break;
