@@ -105,6 +105,14 @@ void CRenderTarget::phase_combine()
     // draw skybox
     if (1)
     {
+        Fmatrix Pold = Device.mProject;
+        Fmatrix FTold = Device.mFullTransform;
+        Fmatrix Vold = Device.mView;
+        Device.mProject.build_projection(deg2rad(75.f), Device.fASPECT, HUD_VIEWPORT_NEAR, g_pGamePersistent->Environment().CurrentEnv->far_plane);
+        Device.mFullTransform.mul(Device.mProject, Device.mView);
+        RCache.set_xform_view(Device.mView);
+        RCache.set_xform_project(Device.mProject);
+
         //	Moved to shader!
         // RCache.set_ColorWriteEnable					();
         //	Moved to shader!
@@ -117,6 +125,12 @@ void CRenderTarget::phase_combine()
 
         //	Moved to shader!
         // RCache.set_Z(TRUE);
+
+        Device.mProject = Pold;
+        Device.mFullTransform = FTold;
+        Device.mView = Vold;
+        RCache.set_xform_view(Device.mView);
+        RCache.set_xform_project(Device.mProject);
     }
 
     //
@@ -498,8 +512,25 @@ void CRenderTarget::phase_combine()
     }
     RCache.set_Stencil(FALSE);
 
-    //	if FP16-BLEND !not! supported - draw flares here, overwise they are already in the bloom target
-    /* if (!RImplementation.o.fp16_blend)*/ g_pGamePersistent->Environment().RenderFlares(); // lens-flares
+    if (1)
+    {
+        Fmatrix Pold = Device.mProject;
+        Fmatrix FTold = Device.mFullTransform;
+        Fmatrix Vold = Device.mView;
+        Device.mProject.build_projection(deg2rad(75.f), Device.fASPECT, HUD_VIEWPORT_NEAR, g_pGamePersistent->Environment().CurrentEnv->far_plane);
+        Device.mFullTransform.mul(Device.mProject, Device.mView);
+        RCache.set_xform_view(Device.mView);
+        RCache.set_xform_project(Device.mProject);
+
+        //	if FP16-BLEND !not! supported - draw flares here, overwise they are already in the bloom target
+        /* if (!RImplementation.o.fp16_blend)*/ g_pGamePersistent->Environment().RenderFlares(); // lens-flares
+
+        Device.mProject = Pold;
+        Device.mFullTransform = FTold;
+        Device.mView = Vold;
+        RCache.set_xform_view(Device.mView);
+        RCache.set_xform_project(Device.mProject);
+    }
 
     //	PP-if required
     if (PP_Complex)
