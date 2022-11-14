@@ -307,8 +307,10 @@ void CCameraManager::Update(const Fvector& P, const Fvector& D, const Fvector& N
     m_cam_info.n.crossproduct(m_cam_info.d, m_cam_info.r);
 
     float aspect = Device.fHeight_2 / Device.fWidth_2;
-    float src = 10 * Device.fTimeDelta;
+    float src = 10.f * Device.fTimeDelta;
     clamp(src, 0.f, 1.f);
+    if (flags & CCameraBase::flApplyFovNow)
+        src = 0.7f;
     float dst = 1 - src;
     m_cam_info.fFov = m_cam_info.fFov * dst + fFOV_Dest * src;
     m_cam_info.fNear = VIEWPORT_NEAR;

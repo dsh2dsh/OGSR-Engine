@@ -326,6 +326,17 @@ void CActor::cam_Update(float dt, float fFOV)
     C->Update(point, dangle);
     C->f_fov = fFOV;
 
+    static bool apply_fov_now = true;
+    const auto pWeapon = smart_cast<CWeapon*>(inventory().ActiveItem());
+    if (cam_active == eacFirstEye && pWeapon && pWeapon->IsZoomed() && pWeapon->ZoomTexture() && !pWeapon->IsRotatingToZoom()) {
+        C->m_Flags.set(CCameraBase::flApplyFovNow, apply_fov_now ? TRUE : FALSE);
+        apply_fov_now = false;
+    }
+    else {
+        C->m_Flags.set(CCameraBase::flApplyFovNow, FALSE);
+        apply_fov_now = true;
+    }
+
     if (m_holder)
         return;
 
