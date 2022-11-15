@@ -10,7 +10,7 @@
 
 //////////////////////////////////////////////////////////////////////////
 // half box def
-#ifdef DSH_MOD
+#ifdef DSH_MODX
 static Fvector3 hbox_verts[24] = {
     // clang-format off
     {-1.f, -1.f, -1.f}, {-1.f, -1.01f, -1.f}, // down
