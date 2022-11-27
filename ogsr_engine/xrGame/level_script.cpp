@@ -331,6 +331,7 @@ script_rq_result PerformRayQuery(Fvector start, Fvector dir, float range, collid
 }*/
 
 float GetTargetDist() { return ((CHUDManager*)g_hud)->GetTarget()->GetDist(); }
+float GetTargetRealDist() { return ((CHUDManager*)g_hud)->GetTarget()->GetRealDist(); }
 
 script_rq_result GetCurrentRayQuery()
 {
@@ -933,6 +934,7 @@ void CLevel::script_register(lua_State* L)
             def("advance_game_time", &AdvanceGameTime),
 
             def("get_target_dist", &GetTargetDist), def("get_target_obj", &GetTargetObj), def("get_current_ray_query", &GetCurrentRayQuery),
+            def("get_target_real_dist", &GetTargetRealDist),
             //
             def("send_event_key_press", &send_event_key_press), def("send_event_key_release", &send_event_key_release), def("send_event_key_hold", &send_event_key_hold),
             def("send_event_mouse_wheel", &send_event_mouse_wheel),
