@@ -31,6 +31,7 @@ protected:
     bool m_bind_to_camera;
     Fvector m_camera_torch_offset;
     Fvector m_camera_omni_offset;
+    float m_min_target_dist;
 
 private:
     inline bool can_use_dynamic_lights();

@@ -17,6 +17,7 @@
 #include "UIGameCustom.h"
 #include "actorEffector.h"
 #include "CustomOutfit.h"
+#include "HUDTarget.h"
 
 static const float TIME_2_HIDE = 5.f;
 static const float TORCH_INERTION_CLAMP = PI_DIV_6;
@@ -64,6 +65,7 @@ CTorch::CTorch(void)
     m_bind_to_camera = false;
     m_camera_torch_offset = TORCH_OFFSET;
     m_camera_omni_offset = OMNI_OFFSET;
+    m_min_target_dist = 0.5f;
 }
 
 CTorch::~CTorch(void)
@@ -106,6 +108,7 @@ void CTorch::Load(LPCSTR section)
     m_bind_to_camera = READ_IF_EXISTS(pSettings, r_bool, section, "bind_to_camera", false);
     m_camera_torch_offset = READ_IF_EXISTS(pSettings, r_fvector3, section, "camera_torch_offset", TORCH_OFFSET);
     m_camera_omni_offset = READ_IF_EXISTS(pSettings, r_fvector3, section, "camera_omni_offset", OMNI_OFFSET);
+    m_min_target_dist = READ_IF_EXISTS(pSettings, r_float, section, "camera_min_target_dist", m_min_target_dist);
 }
 
 void CTorch::SwitchNightVision()
@@ -392,18 +395,24 @@ void CTorch::UpdateCL()
             Fvector dir, pos, right, up;
             if (m_bind_to_camera && actor->active_cam() == eacFirstEye)
             {
+                float target_dist = HUD().GetTarget()->GetRealDist();
+                if (m_min_target_dist > 0.f && target_dist >= 0.f && target_dist < m_min_target_dist)
+                    target_dist = m_min_target_dist - target_dist;
+                else
+                    target_dist = 0.f;
+
                 dir = actor->Cameras().Direction();
                 Fvector::generate_orthonormal_basis_normalized(dir, up, right);
                 pos = actor->Cameras().Position();
                 Fvector offset = pos;
                 offset.mad(right, m_camera_torch_offset.x);
                 offset.mad(up, m_camera_torch_offset.y);
-                offset.mad(dir, m_camera_torch_offset.z);
+                offset.mad(dir, m_camera_torch_offset.z - target_dist);
                 light_render->set_position(offset);
                 offset = pos;
                 offset.mad(right, m_camera_omni_offset.x);
                 offset.mad(up, m_camera_omni_offset.y);
-                offset.mad(dir, m_camera_omni_offset.z);
+                offset.mad(dir, m_camera_omni_offset.z - target_dist);
                 light_omni->set_position(offset);
             }
             else
