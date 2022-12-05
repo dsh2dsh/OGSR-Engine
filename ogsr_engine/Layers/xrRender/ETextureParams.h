@@ -159,7 +159,7 @@ struct ECORE_API STextureParams
         default: return FALSE;
         }
     }
-    void Load(IReader& F);
+    void Load(IReader& F, const char* dbg_name);
     void Save(IWriter& F);
 };
 #pragma pack(pop)
