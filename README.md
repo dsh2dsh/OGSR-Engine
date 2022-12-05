@@ -27,7 +27,6 @@
 ### [>>Latest release<<](https://github.com/OGSR/OGSR-Engine/releases/latest) ###
 ### [Write here](https://github.com/OGSR/OGSR-Engine/issues) to report bugs ###
 ### [Write here](https://github.com/OGSR/OGSR-Engine/discussions) your suggestions, questions and everything else ###
-#### For the engine to work with the worldwide version of SoC, use the ` -steam` launch parameter ####
 
 ### Compilation guide: ###
 * Visual Studio 15.5 or later required.
@@ -62,7 +61,6 @@ And everyone else whose work has been used. If you are not mentioned, send a mes
 ### [>>Свежий релиз<<](https://github.com/OGSR/OGSR-Engine/releases/latest) ###
 ### Баги можно присылать [сюда](https://github.com/OGSR/OGSR-Engine/issues) ###
 ### Предложения, вопросы и тп можно писать [сюда](https://github.com/OGSR/OGSR-Engine/discussions) ###
-#### Для того, чтобы движок работал с WW-версией SHOC - используйте специальный ключ запуска ` -steam` ####
 
 ### Инструкции по сборке: ###
 * Для сборки требуется Visual Studio 15.5 или выше.
