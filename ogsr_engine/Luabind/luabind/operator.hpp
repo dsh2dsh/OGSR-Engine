@@ -292,7 +292,7 @@ namespace luabind {
     }
 
     template<class T>
-    string tostring_operator(T const& x)
+    std::string tostring_operator(T const& x)
     {
 #ifdef LUABIND_NO_STRINGSTREAM
         std::strstream s;

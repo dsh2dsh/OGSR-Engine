@@ -652,6 +652,15 @@ unsigned _writeLZ(int hf, void* d, unsigned size)
     return size_out;
 }
 
+void _compressLZ(u8** dest, unsigned* dest_sz, void* src, unsigned src_sz)
+{
+    u8* start = (u8*)src;
+    fs.Init_Input(start, start + src_sz);
+    Encode();
+    *dest = fs.OutPointer();
+    *dest_sz = fs.OutSize();
+}
+
 bool _decompressLZ(u8** dest, unsigned* dest_sz, void* src, unsigned src_sz, int total_size)
 {
     u8* start = (u8*)src;
@@ -665,7 +674,7 @@ bool _decompressLZ(u8** dest, unsigned* dest_sz, void* src, unsigned src_sz, int
     return true;
 }
 
-void _decompressLZ(u8** dest, unsigned* dest_sz, void* src, unsigned src_sz)
+unsigned _readLZ(int hf, void*& d, unsigned size)
 {
     // Read file in memory
     u8* data = (u8*)xr_malloc(size);
