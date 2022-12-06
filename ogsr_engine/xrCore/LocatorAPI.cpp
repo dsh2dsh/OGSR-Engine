@@ -898,9 +898,10 @@ void CLocatorAPI::file_from_archive(IReader*& R, LPCSTR fname, const file& desc)
         SetFilePointer(A.hSrcFile, desc.ptr, 0, FILE_BEGIN);
         ReadFile(A.hSrcFile, dest, desc.size_compressed, &bytes_read, 0);
     }
-    if (desc.size_real == desc.size_compressed)
+    if (desc.size_real == desc.size_compressed) {
         R = xr_new<CTempReader>(dest, desc.size_compressed, 0);
-    return;
+        return;
+    }
 
     // Compressed
     u8* dest2 = xr_alloc<u8>(desc.size_real);
