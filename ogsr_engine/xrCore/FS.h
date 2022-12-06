@@ -295,97 +295,91 @@ public:
         return 0;
     }
 
-                VERIFY((u32)impl().tell() + dwSize <= (u32)impl().length());
-				if (bCompressed) *bCompressed = dwType & CFS_CompressMark;
-				return dwSize;
-			}
-			else	impl().advance(dwSize);
-		}
-		return 0;
-	}
+    u32 find_chunk_thm(const u32 ID, const char* dbg_name)
+    {
+        u32 dwSize{}, dwType{};
+        bool success{};
 
-	u32 find_chunk_thm(const u32 ID, const char* dbg_name)
-	{
-		u32 dwSize{}, dwType{};
-		bool success{};
+        if (m_last_pos != 0)
+        {
+            impl().seek(m_last_pos);
+            dwType = r_u32();
+            dwSize = r_u32();
+            if ((dwType & (~CFS_CompressMark)) == ID)
+            {
+                success = true;
+            }
+        }
+        if (!success)
+        {
+            rewind();
+            while (impl().elapsed() >= sizeof(u32) * 2)
+            {
+                dwType = r_u32();
+                dwSize = r_u32();
+                if ((dwType & (~CFS_CompressMark)) == ID)
+                {
+                    success = true;
+                    break;
+                }
+                else
+                {
+                    if ((ID & 0x7ffffff0) == 0x810) // is it a thm chunk ID?
+                    {
+                        const u32 pos = (u32)impl().tell();
+                        const u32 size = (u32)impl().length();
+                        u32 length = dwSize;
 
-		if (m_last_pos != 0)
-		{
-			impl().seek(m_last_pos);
-			dwType = r_u32();
-			dwSize = r_u32();
-			if ((dwType & (~CFS_CompressMark)) == ID)
-			{
-				success = true;
-			}
-		}
-		if (!success)
-		{
-			rewind();
-			while (!eof())
-			{
-				dwType = r_u32();
-				dwSize = r_u32();
-				if ((dwType & (~CFS_CompressMark)) == ID)
-				{
-					success = true;
-					break;
-				}
-				else
-				{
-					if ((ID & 0x7ffffff0) == 0x810) // is it a thm chunk ID?
-					{
-						const u32 pos = (u32)impl().tell();
-						const u32 size = (u32)impl().length();
-						u32 length = dwSize;
+                        if (pos + length != size) // not the last chunk in the file?
+                        {
+                            bool ok = true;
+                            if (pos + length > size - 8)
+                                ok = false; // size too large?
+                            if (ok)
+                            {
+                                impl().seek(pos + length);
+                                if ((r_u32() & 0x7ffffff0) != 0x810)
+                                    ok = false; // size too small?
+                            }
+                            if (!ok) // size incorrect?
+                            {
+                                length = 0;
+                                while (pos + length < size) // find correct size, up to eof
+                                {
+                                    impl().seek(pos + length);
+                                    if (pos + length <= size - 8 && (r_u32() & 0x7ffffff0) == 0x810)
+                                        break; // found start of next section
+                                    length++;
+                                }
+                                Msg("!![%s] THM [%s] chunk [%u] fixed, wrong size = [%u], correct size = [%u]", __FUNCTION__, dbg_name, ID, dwSize, length);
+                            }
+                        }
 
-						if (pos + length != size) // not the last chunk in the file?
-						{
-							bool ok = true;
-							if (pos + length > size - 8) ok = false; // size too large?
-							if (ok)
-							{
-								impl().seek(pos + length);
-								if ((r_u32() & 0x7ffffff0) != 0x810) ok = false; // size too small?
-							}
-							if (!ok) // size incorrect?
-							{
-								length = 0;
-								while (pos + length < size) // find correct size, up to eof
-								{
-									impl().seek(pos + length);
-									if (pos + length <= size - 8 && (r_u32() & 0x7ffffff0) == 0x810) break; // found start of next section
-									length++;
-								}
-								Msg("!![%s] THM [%s] chunk [%u] fixed, wrong size = [%u], correct size = [%u]", __FUNCTION__, dbg_name, ID, dwSize, length);
-							}
-						}
+                        impl().seek(pos); // go back to beginning of chunk
+                        dwSize = length; // use correct(ed) size
+                    }
+                    impl().advance(dwSize);
+                }
+            }
+            if (!success)
+            {
+                m_last_pos = 0;
+                return 0;
+            }
+        }
+        VERIFY((u32)impl().tell() + dwSize <= (u32)impl().length());
 
-						impl().seek(pos); // go back to beginning of chunk
-						dwSize = length; // use correct(ed) size
-					}
-					impl().advance(dwSize);
-				}
-			}
-			if (!success)
-			{
-				m_last_pos = 0;
-				return 0;
-			}
-		}
-		VERIFY((u32)impl().tell() + dwSize <= (u32)impl().length());
-
-		const u32 dwPos = (u32)impl().tell();
-		if (dwPos + dwSize < (u32)impl().length())
-		{
-			m_last_pos = dwPos + dwSize;
-		}
-		else
-		{
-			m_last_pos = 0;
-		}
-		return dwSize;
-	}
+        const u32 dwPos = (u32)impl().tell();
+        if (dwPos + dwSize < (u32)impl().length())
+        {
+            m_last_pos = dwPos + dwSize;
+        }
+        else
+        {
+            m_last_pos = 0;
+        }
+        return dwSize;
+    }
 	
 	IC	BOOL		r_chunk		(u32 ID, void *dest)	// чтение XR Chunk'ов (4b-ID,4b-size,??b-data)
 	{
