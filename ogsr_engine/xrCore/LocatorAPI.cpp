@@ -242,19 +242,19 @@ static IReader* open_chunk(void* ptr, const u32 ID, const char* archiveName, con
     BOOL res;
     u32 dwType, dwSize;
     DWORD read_byte;
-    u32 pt = SetFilePointer(ptr, 0, 0, FILE_BEGIN);
-    VERIFY(pt != INVALID_SET_FILE_POINTER);
+    DWORD dwPtr = SetFilePointer(ptr, 0, 0, FILE_BEGIN);
+    R_ASSERT3(dwPtr != INVALID_SET_FILE_POINTER, archiveName, Debug.error2string(GetLastError()));
     while (true)
     {
         res = ReadFile(ptr, &dwType, 4, &read_byte, 0);
-        VERIFY(res && (read_byte == 4));
+        R_ASSERT3(res && read_byte == 4, archiveName, Debug.error2string(GetLastError()));
         res = ReadFile(ptr, &dwSize, 4, &read_byte, 0);
-        VERIFY(res && (read_byte == 4));
+        R_ASSERT3(res && read_byte == 4, archiveName, Debug.error2string(GetLastError()));
         if ((dwType & (~CFS_CompressMark)) == ID)
         {
             u8* src_data = xr_alloc<u8>(dwSize);
             res = ReadFile(ptr, src_data, dwSize, &read_byte, 0);
-            VERIFY(res && (read_byte == dwSize));
+            R_ASSERT3(res && read_byte == dwSize, archiveName, Debug.error2string(GetLastError()));
             if (dwType & CFS_CompressMark)
             {
                 BYTE* dest{};
@@ -267,6 +267,7 @@ static IReader* open_chunk(void* ptr, const u32 ID, const char* archiveName, con
 
                 if (!result && shouldDecrypt) // Let's try to decode with Rus key
                 {
+                    MsgDbg("[%s]: decoding of %s with WW key failed, trying RU key...", __FUNCTION__, archiveName);
                     g_trivial_encryptor.encode(src_data, dwSize, src_data); // rollback
                     g_trivial_encryptor.decode(src_data, dwSize, src_data, trivial_encryptor::key_flag::russian);
                     result = _decompressLZ(&dest, &dest_sz, src_data, dwSize, archiveSize);
@@ -284,9 +285,8 @@ static IReader* open_chunk(void* ptr, const u32 ID, const char* archiveName, con
         }
         else
         {
-            pt = SetFilePointer(ptr, dwSize, 0, FILE_CURRENT);
-            if (pt == INVALID_SET_FILE_POINTER)
-                return 0;
+            dwPtr = SetFilePointer(ptr, dwSize, 0, FILE_CURRENT);
+            R_ASSERT3(dwPtr != INVALID_SET_FILE_POINTER, archiveName, Debug.error2string(GetLastError()));
         }
     }
     return 0;
@@ -895,10 +895,13 @@ void CLocatorAPI::file_from_archive(IReader*& R, LPCSTR fname, const file& desc)
     {
         std::mutex& m = archive_mutexes[desc.vfs];
         std::scoped_lock<std::mutex> lock(m);
-        SetFilePointer(A.hSrcFile, desc.ptr, 0, FILE_BEGIN);
-        ReadFile(A.hSrcFile, dest, desc.size_compressed, &bytes_read, 0);
+        DWORD dwPtr = SetFilePointer(A.hSrcFile, desc.ptr, 0, FILE_BEGIN);
+        R_ASSERT3(dwPtr != INVALID_SET_FILE_POINTER, fname, Debug.error2string(GetLastError()));
+        bool res = ReadFile(A.hSrcFile, dest, desc.size_compressed, &bytes_read, 0);
+        R_ASSERT3(res && bytes_read == desc.size_compressed, fname, Debug.error2string(GetLastError()));
     }
-    if (desc.size_real == desc.size_compressed) {
+    if (desc.size_real == desc.size_compressed)
+    {
         R = xr_new<CTempReader>(dest, desc.size_compressed, 0);
         return;
     }

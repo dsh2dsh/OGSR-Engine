@@ -78,7 +78,7 @@ void* FileDownload(LPCSTR fn, u32* pdwSize)
     void* buf = Memory.mem_alloc(size);
     DWORD read_byte;
     bool res = ReadFile(hFile, buf, size, &read_byte, NULL);
-    R_ASSERT3(res && read_byte == size, "Can't read file data:", fn);
+    R_ASSERT3(res && read_byte == size, fn, Debug.error2string(GetLastError()));
     CloseHandle(hFile);
 
     return buf;
