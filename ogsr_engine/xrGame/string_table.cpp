@@ -55,14 +55,15 @@ void CStringTable::Load(LPCSTR xml_file)
     if (!xml_result)
         Debug.fatal(DEBUG_INFO, "string table xml file not found %s, for language %s", xml_file_full, *(pData->m_sLanguage));
 
-    //общий список всех записей таблицы в файле
+    // общий список всех записей таблицы в файле
     int string_num = uiXml.GetNodesNum(uiXml.GetRoot(), "string");
 
     for (int i = 0; i < string_num; ++i)
     {
         LPCSTR string_name = uiXml.ReadAttrib(uiXml.GetRoot(), "string", i, "id", NULL);
 
-        VERIFY3(pData->m_StringTable.find(string_name) == pData->m_StringTable.end(), "duplicate string table id", string_name);
+        // VERIFY3(pData->m_StringTable.find(string_name) == pData->m_StringTable.end(), "duplicate string table id", string_name);
+        ASSERT_FMT(pData->m_StringTable.find(string_name) == pData->m_StringTable.end(), "[%s]: duplicate string table id '%s' in %s", __FUNCTION__, string_name, xml_file_full);
 
         LPCSTR string_text = uiXml.Read(uiXml.GetRoot(), "string:text", i, NULL);
 
