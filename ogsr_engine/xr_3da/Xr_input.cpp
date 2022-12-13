@@ -30,7 +30,7 @@ CInput::CInput(bool bExclusive, int deviceForInit)
     ZeroMemory(mouseState, sizeof(mouseState));
     ZeroMemory(KBState, sizeof(KBState));
     ZeroMemory(timeStamp, sizeof(timeStamp));
-    ZeroMemory(timeSave, sizeof(timeStamp));
+    ZeroMemory(timeSave, sizeof(timeSave));
     ZeroMemory(offs, sizeof(offs));
 
     //===================== Dummy pack
@@ -454,7 +454,7 @@ void CInput::iCapture(IInputReceiver* p)
 
     // prepare for _new_ controller
     ZeroMemory(timeStamp, sizeof(timeStamp));
-    ZeroMemory(timeSave, sizeof(timeStamp));
+    ZeroMemory(timeSave, sizeof(timeSave));
     ZeroMemory(offs, sizeof(offs));
 }
 
@@ -490,7 +490,7 @@ void CInput::OnAppActivate(void)
     ZeroMemory(mouseState, sizeof(mouseState));
     ZeroMemory(KBState, sizeof(KBState));
     ZeroMemory(timeStamp, sizeof(timeStamp));
-    ZeroMemory(timeSave, sizeof(timeStamp));
+    ZeroMemory(timeSave, sizeof(timeSave));
     ZeroMemory(offs, sizeof(offs));
 }
 
@@ -503,7 +503,7 @@ void CInput::OnAppDeactivate(void)
     ZeroMemory(mouseState, sizeof(mouseState));
     ZeroMemory(KBState, sizeof(KBState));
     ZeroMemory(timeStamp, sizeof(timeStamp));
-    ZeroMemory(timeSave, sizeof(timeStamp));
+    ZeroMemory(timeSave, sizeof(timeSave));
     ZeroMemory(offs, sizeof(offs));
 }
 
