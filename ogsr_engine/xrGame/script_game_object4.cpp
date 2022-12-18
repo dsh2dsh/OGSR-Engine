@@ -949,12 +949,12 @@ bool CScriptGameObject::can_fire_to_enemy(const CScriptGameObject* obj, u32 fire
     }
     if (stalker->can_fire_to_enemy(enemy))
     {
-        if (stalker->can_kill_enemy(enemy))
+        float enemy_dist = stalker->Position().distance_to(enemy->Position());
+        if (enemy_dist < 5.0f && stalker->can_kill_enemy(enemy))
             return true; // на линии огня
         if (vis)
         {
             float pick_dist = stalker->pick_distance();
-            float enemy_dist = stalker->Position().distance_to(enemy->Position());
             if (pick_dist >= 2.5f && pick_dist >= enemy_dist - pick_dist)
                 return true;
         }
