@@ -72,11 +72,9 @@ void dxFontRender::OnRender(CGameFont& owner)
 
             if (len)
             {
-                float X = float((PS.x));
-                float Y = float((PS.y));
-
+                float X = float(iFloor(PS.x));
+                float Y = float(iFloor(PS.y));
                 float S = PS.height * g_current_font_scale.y;
-
                 float Y2 = Y + S;
                 float fSize = 0;
 
