@@ -347,11 +347,18 @@ bool CUIInventoryWnd::ToBelt(CUICellItem* itm, bool b_use_cursor_pos)
         }
         else
             new_owner = m_pUIBeltList;
-#ifdef DEBUG
-        bool result =
-#endif
-            GetInventory()->Belt(iitem);
+
+        bool result;
+        if (b_use_cursor_pos)
+        {
+            // В какую ячейку пояса перемещаем?
+            const Ivector2 pos = new_owner->PickCell(old_owner->GetDragItemPosition());
+            result = GetInventory()->Belt(iitem, pos.x);
+        }
+        else
+            result = GetInventory()->Belt(iitem);
         VERIFY(result);
+
         CUICellItem* i = old_owner->RemoveItem(itm, (old_owner == new_owner));
 
         //.	UIBeltList.RearrangeItems();
@@ -361,6 +368,11 @@ bool CUIInventoryWnd::ToBelt(CUICellItem* itm, bool b_use_cursor_pos)
             new_owner->SetItem(i);
 
         SendEvent_Item2Belt(iitem);
+        // Если предмет перемещается из одной ячейки пояса в другую, нам не
+        // нужно обновлять вес, т.к. ничего по сути не меняется. Поэтому тут мы
+        // можем сразу выйти.
+        if (GetType(old_owner) == iwBelt)
+            return true;
 
         /************************************************** added by Ray Twitty (aka Shadows) START **************************************************/
         // обновляем статик веса в инвентаре
@@ -396,13 +408,20 @@ bool CUIInventoryWnd::OnItemDrop(CUICellItem* itm)
 {
     auto old_owner = itm->OwnerList();
     auto new_owner = CUIDragDropListEx::m_drag_item->BackList();
-    if (old_owner == new_owner || !old_owner || !new_owner)
+    // В пределах одного и тоже владельца перемещать можно. Например между
+    // ячейками пояса. Далее мы это подробнее проверим.
+    if (/*old_owner == new_owner ||*/ !old_owner || !new_owner)
         return false;
 
     auto t_new = GetType(new_owner);
     auto t_old = GetType(old_owner);
 
-    if (t_new == t_old && t_new != iwSlot)
+    // Можно перемещать не только между слотами, но и между ячейками
+    // пояса. Т.е. мы выходим здесь только в том случае, если предмет из рюкзака
+    // бросили на рюкзак же. В этом случае делать ничего не нужно,
+    // т.к. перемещать предметы между ячейками рюкзака бессмысленно. Оно там все
+    // равно автоматически сортируется.
+    if (t_new == t_old && t_new == iwBag)
         return true;
 
     switch (t_new)

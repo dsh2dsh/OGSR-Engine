@@ -48,7 +48,7 @@ public:
     void Clear();
 
     bool Slot(PIItem pIItem, bool bNotActivate = false);
-    bool Belt(PIItem pIItem);
+    bool Belt(PIItem pIItem, int pos = -1);
     bool Ruck(PIItem pIItem);
 
     bool InSlot(PIItem pIItem) const;

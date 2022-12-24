@@ -340,21 +340,41 @@ bool CInventory::Slot(PIItem pIItem, bool bNotActivate)
     return true;
 }
 
-bool CInventory::Belt(PIItem pIItem)
+bool CInventory::Belt(PIItem pIItem, int pos)
 {
     if (!CanPutInBelt(pIItem))
         return false;
 
     //вещь была в слоте
     bool in_slot = InSlot(pIItem);
+    bool in_belt = false;
     if (in_slot)
     {
         if (m_iActiveSlot == pIItem->GetSlot())
             Activate(NO_ACTIVE_SLOT);
         m_slots[pIItem->GetSlot()].m_pIItem = NULL;
     }
+    else if (InBelt(pIItem)) {
+      in_belt = true;
+      auto it = std::find(m_belt.begin(), m_belt.end(), pIItem);
+      if (it != m_belt.end())
+          m_belt.erase(it);
+    }
 
-    m_belt.insert(m_belt.end(), pIItem);
+    if (pos < 0 || pos >= m_belt.size())
+        m_belt.push_back(pIItem);
+    else
+        m_belt.insert(m_belt.begin() + pos, pIItem);
+
+    if (in_belt || pos >= 0) {
+        if (smart_cast<CActor*>(GetOwner()) && HUD().GetUI() && HUD().GetUI()->UIGame())
+            HUD().GetUI()->UIGame()->ReInitShownUI();
+    }
+
+    if (in_belt) {
+        InvalidateState();
+        return true;
+    }
 
     if (!in_slot)
     {
@@ -385,7 +405,7 @@ bool CInventory::Ruck(PIItem pIItem)
         return false;
 
     bool in_slot = InSlot(pIItem);
-    //вещь была в слоте
+    // вещь была в слоте
     if (in_slot)
     {
         if (m_iActiveSlot == pIItem->GetSlot())
@@ -394,10 +414,19 @@ bool CInventory::Ruck(PIItem pIItem)
     }
     else
     {
-        //вещь была на поясе или вообще только поднята с земли
+        // вещь была на поясе или вообще только поднята с земли
         TIItemContainer::iterator it = std::find(m_belt.begin(), m_belt.end(), pIItem);
         if (m_belt.end() != it)
+        {
+            // Здесь мы проверям, является-ли убираемый предмет самым последним
+            // на поясе. Если это не так, то нужно перерисовать инвентарь, что
+            // бы на поясе не образовалась пустая ячейка. А если убирается
+            // последний предмет, то ничего делать не нужно.
+            auto dist_to_end = std::distance(it, m_belt.end());
             m_belt.erase(it);
+            if (dist_to_end > 1 && smart_cast<CActor*>(GetOwner()) && HUD().GetUI() && HUD().GetUI()->UIGame())
+                HUD().GetUI()->UIGame()->ReInitShownUI();
+        }
     }
 
     m_ruck.insert(m_ruck.end(), pIItem);
@@ -408,7 +437,7 @@ bool CInventory::Ruck(PIItem pIItem)
     m_pOwner->OnItemRuck(pIItem, pIItem->m_eItemPlace);
     pIItem->m_eItemPlace = eItemPlaceRuck;
 
-    if (pIItem->GetSlot() != OUTFIT_SLOT || (smart_cast<CActor*>(GetOwner()) && in_slot)) //фикс сброса визуала актора при взятии в инвентарь любого костюма
+    if (pIItem->GetSlot() != OUTFIT_SLOT || (smart_cast<CActor*>(GetOwner()) && in_slot)) // фикс сброса визуала актора при взятии в инвентарь любого костюма
         pIItem->OnMoveToRuck();
     else
         pIItem->CInventoryItem::OnMoveToRuck();
@@ -975,8 +1004,11 @@ bool CInventory::CanPutInSlot(PIItem pIItem, u8 slot) const
 //при этом реально ничего не меняется
 bool CInventory::CanPutInBelt(PIItem pIItem)
 {
+    // Если предмет уже находится на поясе, значит ему там можно находится. Ведь
+    // как-то он туда попал. Скорее всего, в этом случае у нас предмет просто
+    // перемещается из одной ячейки, в другую.
     if (InBelt(pIItem))
-        return false;
+        return true; // false;
     if (!m_bBeltUseful)
         return false;
     if (!pIItem || !pIItem->Belt())
@@ -986,8 +1018,8 @@ bool CInventory::CanPutInBelt(PIItem pIItem)
 
     return FreeRoom_inBelt(m_belt, pIItem, BeltSlotsCount(), 1);
 }
-//проверяет можем ли поместить вещь в рюкзак,
-//при этом реально ничего не меняется
+// проверяет можем ли поместить вещь в рюкзак,
+// при этом реально ничего не меняется
 bool CInventory::CanPutInRuck(PIItem pIItem) const
 {
     if (InRuck(pIItem))

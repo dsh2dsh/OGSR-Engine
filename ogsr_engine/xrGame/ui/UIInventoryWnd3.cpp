@@ -77,7 +77,10 @@ void CUIInventoryWnd::ActivatePropertiesBox()
         }
     }
 
-    if (CurrentIItem()->Belt() && m_pInv->CanPutInBelt(CurrentIItem()))
+    // Если предмет уже на поясе, то не нужно показывать пункт "Перенести на
+    // пояс", хотя это и разрешено. А разрешено это для того, что бы можно было
+    // вручную перемещать предметы на поясе между ячейками.
+    if (CurrentIItem()->Belt() && !m_pInv->InBelt(CurrentIItem()) && m_pInv->CanPutInBelt(CurrentIItem()))
     {
         UIPropertiesBox.AddItem("st_move_on_belt", NULL, INVENTORY_TO_BELT_ACTION);
         b_show = true;
@@ -99,7 +102,7 @@ void CUIInventoryWnd::ActivatePropertiesBox()
         b_show = true;
     }
 
-    //отсоединение аддонов от вещи
+    // отсоединение аддонов от вещи
     if (pWeapon)
     {
         if (pWeapon->GrenadeLauncherAttachable() && pWeapon->IsGrenadeLauncherAttached())
@@ -145,7 +148,7 @@ void CUIInventoryWnd::ActivatePropertiesBox()
         }
     }
 
-    //присоединение аддонов к оружиям в слотах
+    // присоединение аддонов к оружиям в слотах
     static std::regex addon_re(R"(\{ADDON\})");
     static std::regex wpn_re(R"(\{WPN\})");
     for (u8 i = 0; i < SLOTS_TOTAL; ++i)
