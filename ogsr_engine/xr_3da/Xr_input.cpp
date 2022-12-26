@@ -256,13 +256,15 @@ void CInput::MouseUpdate()
 
     VERIFY(pMouse);
 
-    hr = pMouse->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), &od[0], &dwElements, 0);
+    hr = pMouse->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), &od[0], &dwElements,
+                               0);
     if ((hr == DIERR_INPUTLOST) || (hr == DIERR_NOTACQUIRED))
     {
         hr = pMouse->Acquire();
         if (hr != S_OK)
             return;
-        hr = pMouse->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), &od[0], &dwElements, 0);
+        hr = pMouse->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), &od[0],
+                                   &dwElements, 0);
         if (hr != S_OK)
             return;
     };
@@ -428,9 +430,11 @@ void CInput::MouseUpdate()
     }
     else
     {
-        if (timeStamp[1] && ((dwCurTime - timeStamp[1]) >= mouse_property.mouse_dt))
+        if (timeStamp[1] &&
+            ((dwCurTime - timeStamp[1]) >= mouse_property.mouse_dt))
             cbStack.back()->IR_OnMouseStop(DIMOFS_Y, timeStamp[1] = 0);
-        if (timeStamp[0] && ((dwCurTime - timeStamp[0]) >= mouse_property.mouse_dt))
+        if (timeStamp[0] &&
+            ((dwCurTime - timeStamp[0]) >= mouse_property.mouse_dt))
             cbStack.back()->IR_OnMouseStop(DIMOFS_X, timeStamp[0] = 0);
     }
 

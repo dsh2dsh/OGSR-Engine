@@ -451,14 +451,18 @@ bool CUIInventoryWnd::OnItemDrop(CUICellItem* itm)
                     }
                     else
                     {
-                        if (!DropItem(CurrentIItem(), new_owner) && item->GetSlotsCount() > 0)
-                            Msg("! cannot put item %s into slot %d, allowed slots {%s}", name, i, item->GetSlotsSect());
+                        if (!DropItem(CurrentIItem(), new_owner) &&
+                            item->GetSlotsCount() > 0)
+                            Msg("! cannot put item %s into slot %d, allowed "
+                                "slots {%s}",
+                                name, i, item->GetSlotsSect());
                     }
                     break;
                 } // for-if
         }
         else
-            Msg("!#ERROR: item %s to large for slot: (%d x %d) vs (%d x %d) ", name, item_w, item_h, max_size.x, max_size.y);
+            Msg("!#ERROR: item %s to large for slot: (%d x %d) vs (%d x %d) ",
+                name, item_w, item_h, max_size.x, max_size.y);
 
         // при невозможности поместить в выбранный слот
         if (!can_put)
