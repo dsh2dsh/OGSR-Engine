@@ -41,7 +41,7 @@ BraceWrapping:
 BreakBeforeBinaryOperators: None
 BreakBeforeBraces: Custom
 BreakBeforeTernaryOperators: false
-ColumnLimit: 180
+ColumnLimit: 80
 CommentPragmas: '^ (IWYU pragma:|NOLINT)'
 ConstructorInitializerAllOnOneLineOrOnePerLine: false
 ConstructorInitializerIndentWidth : 4
