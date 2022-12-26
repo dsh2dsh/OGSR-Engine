@@ -44,6 +44,7 @@ private:
     u32 timeSave[COUNT_MOUSE_AXIS];
     int offs[COUNT_MOUSE_AXIS];
     BOOL mouseState[COUNT_MOUSE_BUTTONS];
+    u32 mouseTime[COUNT_MOUSE_BUTTONS];
 
     //----------------------
     BOOL KBState[COUNT_KB_BUTTONS];
@@ -69,7 +70,7 @@ public:
     void iCapture(IInputReceiver* pc);
     void iRelease(IInputReceiver* pc);
     BOOL iGetAsyncKeyState(int dik);
-    BOOL iGetAsyncBtnState(int btn);
+    BOOL iGetAsyncBtnState(int btn, bool hold = false);
     void iGetLastMouseDelta(Ivector2& p) { p.set(offs[0], offs[1]); }
 
     CInput(bool bExclusive = true, int deviceForInit = default_key);
