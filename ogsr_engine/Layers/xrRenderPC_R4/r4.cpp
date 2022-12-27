@@ -1634,7 +1634,14 @@ HRESULT CRender::shader_compile(LPCSTR name, DWORD const* pSrcData,
         {
             if (HW.FeatureLevel == D3D_FEATURE_LEVEL_10_0)
                 pTarget = "vs_4_0";
-            else if (HW.FeatureLevel == D3D_FEATURE_LEVEL_10_1)
+            else if (HW.FeatureLevel == D3D_FEATURE_LEVEL_10_1 ||
+                     // xrSimpodin: Для воды снизил версию до 4.1 потому что с
+                     // ней фиксится баг с неподвижной водой. Не понятно почему
+                     // так происходит и проблема решается таким странным
+                     // способом. Можно было бы сменить c_entry на main_vs_4_1
+                     // но там куча шейдеров для воды сделано через инклуды и
+                     // они не позволяют так сделать.
+                     !strncmp(name, "water", strlen("water")))
                 pTarget = "vs_4_1";
             else if (HW.FeatureLevel >= D3D_FEATURE_LEVEL_11_0)
                 pTarget = "vs_5_0";
@@ -1643,7 +1650,9 @@ HRESULT CRender::shader_compile(LPCSTR name, DWORD const* pSrcData,
         {
             if (HW.FeatureLevel == D3D_FEATURE_LEVEL_10_0)
                 pTarget = "ps_4_0";
-            else if (HW.FeatureLevel == D3D_FEATURE_LEVEL_10_1)
+            else if (HW.FeatureLevel == D3D_FEATURE_LEVEL_10_1 ||
+                     // См. комментарий выше
+                     !strncmp(name, "water", strlen("water")))
                 pTarget = "ps_4_1";
             else if (HW.FeatureLevel >= D3D_FEATURE_LEVEL_11_0)
                 pTarget = "ps_5_0";
