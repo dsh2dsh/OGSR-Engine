@@ -87,7 +87,8 @@ bool CUIDialogWnd::IR_OnKeyboardPress(int dik)
         CObject* O = Level().CurrentEntity();
         if (O)
         {
-            IInputReceiver* IR = smart_cast<IInputReceiver*>(smart_cast<CGameObject*>(O));
+            IInputReceiver* IR =
+                smart_cast<IInputReceiver*>(smart_cast<CGameObject*>(O));
             if (!IR)
                 return (false);
             IR->IR_OnKeyboardPress(get_binded_action(dik));
