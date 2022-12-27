@@ -366,11 +366,6 @@ void CRender::create()
             if (ps_r3_msaa_atest)
                 o.dx10_msaa_alphatest = MSAA_ATEST_DX10_0_ATOC;
         }
-        if (ps_r2_ls_flags_ext.test(R2FLAGEXT_SSLR))
-        {
-            Msg("* SSLR disabled because MSAA");
-            ps_r2_ls_flags_ext.set(R2FLAGEXT_SSLR, FALSE);
-        }
     }
 
     o.dx10_gbuffer_opt = ps_r2_ls_flags.test(R3FLAG_GBUFFER_OPT);
