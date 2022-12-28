@@ -244,30 +244,52 @@ BOOL CSoundRender_Emitter::update_culling(float dt)
     }
     else
     {
-        // Check range
-        float dist = SoundRender->listener_position().distance_to(p_source.position);
-        if (dist > p_source.max_distance)
+        // Если звук уже звучит и мы от него отошли дальше его максимальной
+        // дистанции, не будем обрывать его резко. Пусть громкость плавно
+        // снизится до минимального и потом уже выключается. А вот если звук еще
+        // даже и не начинал звучать, то можно сразу отсекать его по расстоянию.
+        // Ничего внезапно не замолчит, т.к. еще ничего и не было слышно. Звучит
+        // звук или не звучит - будем определять по наличию target, т.е. тому,
+        // что обеспечивает физическое звучание.
+        if (!target)
         {
-            smooth_volume = 0;
-            return FALSE;
+            // Check range
+            float dist =
+                SoundRender->listener_position().distance_to(p_source.position);
+            if (dist > p_source.max_distance)
+            {
+                smooth_volume = 0;
+                return FALSE;
+            }
         }
 
         // Calc attenuated volume
-        float fade_scale =
-            bStopping || (att() * p_source.base_volume * p_source.volume * (owner_data->s_type == st_Effect ? psSoundVEffects * psSoundVFactor : psSoundVMusic) < psSoundCull) ?
+        float fade_scale = bStopping ||
+                (att() * p_source.base_volume * p_source.volume *
+                     (owner_data->s_type == st_Effect ?
+                          psSoundVEffects * psSoundVFactor :
+                          psSoundVMusic) <
+                 psSoundCull) ?
             -1.f :
             1.f;
         fade_volume += dt * 10.f * fade_scale;
 
         // Update occlusion
-        float occ = (owner_data->g_type == SOUND_TYPE_WORLD_AMBIENT) ? 1.0f : SoundRender->get_occlusion(p_source.position, .2f, occluder);
+        float occ = (owner_data->g_type == SOUND_TYPE_WORLD_AMBIENT) ?
+            1.0f :
+            SoundRender->get_occlusion(p_source.position, .2f, occluder);
         volume_lerp(occluder_volume, occ, 1.f, dt);
         clamp(occluder_volume, 0.f, 1.f);
     }
     clamp(fade_volume, 0.f, 1.f);
     // Update smoothing
     smooth_volume = .9f * smooth_volume +
-        .1f * (p_source.base_volume * p_source.volume * (owner_data->s_type == st_Effect ? psSoundVEffects * psSoundVFactor : psSoundVMusic) * occluder_volume * fade_volume);
+        .1f *
+            (p_source.base_volume * p_source.volume *
+             (owner_data->s_type == st_Effect ?
+                  psSoundVEffects * psSoundVFactor :
+                  psSoundVMusic) *
+             occluder_volume * fade_volume);
     if (smooth_volume < psSoundCull)
         return FALSE; // allow volume to go up
     // Here we has enought "PRIORITY" to be soundable
