@@ -31,7 +31,10 @@ void CSoundRender_Core::i_start(CSoundRender_Emitter* E)
     if (T->get_emitter())
     {
         if (Ptarget >= psSoundCull)
-            MsgDbg("! [%s]: snd_targets[%u] limit reached: Ptest[%f] Ptarget[%f] psSoundCull[%f]", __FUNCTION__, s_targets.size(), Ptest, Ptarget, psSoundCull);
+            MsgDbg(
+                "! [%s]: snd_targets[%u] limit reached: Ptest[%f] Ptarget[%f] "
+                "psSoundCull[%f]",
+                __FUNCTION__, s_targets.size(), Ptest, Ptarget, psSoundCull);
         T->get_emitter()->cancel();
     }
 
