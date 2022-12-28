@@ -14,16 +14,27 @@ void CSoundRender_Core::i_start(CSoundRender_Emitter* E)
     // Search lowest-priority target
     float Ptest = E->priority();
     float Ptarget = flt_max;
+    float dist = flt_max;
     CSoundRender_Target* T = 0;
     for (u32 it = 0; it < s_targets.size(); it++)
     {
         CSoundRender_Target* Ttest = s_targets[it];
-        if (Ttest->priority < Ptarget)
+
+        float e_dist = flt_max;
+        auto E = Ttest->get_emitter();
+        if (E)
+            e_dist = SoundRender->listener_position().distance_to(
+                E->get_params()->position);
+
+        if (Ttest->priority < Ptarget ||
+            (Ttest->priority == Ptarget && Ptarget < psSoundCull && E &&
+             e_dist > dist))
         {
             T = Ttest;
             Ptarget = Ttest->priority;
             if (Ptarget < 0)
                 break;
+            dist = e_dist;
         }
     }
 
