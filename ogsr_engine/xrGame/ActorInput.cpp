@@ -183,10 +183,25 @@ void CActor::IR_OnMouseWheel(int direction)
     }
     else
     {
+        u32 ActiveSlot = inventory().GetActiveSlot();
+        static u32 restore_slot = NO_ACTIVE_SLOT;
         if (direction > 0)
-            inventory().Action(kWPN_FIREMODE_NEXT, CMD_START | CMD_OPT);
+        {
+            if (ActiveSlot == NO_ACTIVE_SLOT && restore_slot != NO_ACTIVE_SLOT)
+                inventory().Activate(restore_slot);
+            else
+                inventory().Action(kWPN_FIREMODE_NEXT, CMD_START | CMD_OPT);
+        }
         else
-            inventory().Action(kWPN_FIREMODE_PREV, CMD_START | CMD_OPT);
+        {
+            if (ActiveSlot == BOLT_SLOT || ActiveSlot == KNIFE_SLOT)
+            {
+                inventory().Activate(NO_ACTIVE_SLOT);
+                restore_slot = ActiveSlot;
+            }
+            else
+                inventory().Action(kWPN_FIREMODE_PREV, CMD_START | CMD_OPT);
+        }
     }
 }
 void CActor::IR_OnKeyboardRelease(int cmd)
