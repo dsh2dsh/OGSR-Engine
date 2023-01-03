@@ -170,7 +170,8 @@ void CActor::IR_OnMouseWheel(int direction)
     //	if (psCallbackFlags.test(CF_MOUSE_WHEEL_ROT))
     //		this->callback(GameObject::eOnMouseWheel)(direction);
 
-    if (inventory().Action((direction > 0) ? kWPN_ZOOM_DEC : kWPN_ZOOM_INC, CMD_START))
+    if (inventory().Action((direction > 0) ? kWPN_ZOOM_DEC : kWPN_ZOOM_INC,
+                           CMD_START))
         return;
 
     if (psActorFlags.test(AF_MOUSE_WHEEL_SWITCH_SLOTS))
