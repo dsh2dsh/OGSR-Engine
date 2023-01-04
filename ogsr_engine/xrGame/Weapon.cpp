@@ -46,7 +46,9 @@ extern ENGINE_API Fvector3 w_timers;
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CWeapon::CWeapon(LPCSTR name) : m_fLR_MovingFactor(0.f), m_strafe_offset{}
+CWeapon::CWeapon(LPCSTR name)
+    : m_fLR_MovingFactor_off(0.f),
+      m_fLR_MovingFactor_rot(0.f), m_strafe_offset{}
 {
     SetState(eHidden);
     SetNextState(eHidden);
@@ -1819,7 +1821,8 @@ void CWeapon::UpdateHudAdditonal(Fmatrix& trans)
 
     u8 idx = GetCurrentHudOffsetIdx();
 
-    if ((pActor->IsZoomAimingMode() && m_fZoomRotationFactor <= 1.f) || (!pActor->IsZoomAimingMode() && m_fZoomRotationFactor > 0.f))
+    if ((pActor->IsZoomAimingMode() && m_fZoomRotationFactor <= 1.f) ||
+        (!pActor->IsZoomAimingMode() && m_fZoomRotationFactor > 0.f))
     {
         Fmatrix hud_rotation;
         hud_rotation.identity();
@@ -1850,38 +1853,78 @@ void CWeapon::UpdateHudAdditonal(Fmatrix& trans)
     clamp(idx, 0ui8, 1ui8);
 
     // Рассчитываем фактор боковой ходьбы
-    float fStrafeMaxTime = /*hi->m_measures.*/ m_strafe_offset[2][idx].y; // Макс. время в секундах, за которое мы наклонимся из центрального положения
+    // Макс. время в секундах, за которое мы наклонимся из центрального
+    // положения.
+    float fStrafeMaxTime = /*hi->m_measures.*/ m_strafe_offset[2][idx].y;
     if (fStrafeMaxTime <= EPS)
         fStrafeMaxTime = 0.01f;
 
-    float fStepPerUpd = Device.fTimeDelta / fStrafeMaxTime; // Величина изменение фактора поворота
+    // Величина изменение фактора поворота
+    float fStepPerUpd = Device.fTimeDelta / fStrafeMaxTime;
 
     u32 iMovingState = pActor->MovingState();
     if ((iMovingState & mcLStrafe) != 0)
     { // Движемся влево
-        float fVal = (m_fLR_MovingFactor > 0.f ? fStepPerUpd * 3 : fStepPerUpd);
-        m_fLR_MovingFactor -= fVal;
+        float fVal =
+            (m_fLR_MovingFactor_off > 0.f ? fStepPerUpd * 3 : fStepPerUpd);
+        m_fLR_MovingFactor_off -= fVal;
     }
     else if ((iMovingState & mcRStrafe) != 0)
     { // Движемся вправо
-        float fVal = (m_fLR_MovingFactor < 0.f ? fStepPerUpd * 3 : fStepPerUpd);
-        m_fLR_MovingFactor += fVal;
+        float fVal =
+            (m_fLR_MovingFactor_off < 0.f ? fStepPerUpd * 3 : fStepPerUpd);
+        m_fLR_MovingFactor_off += fVal;
     }
-    else
-    { // Двигаемся в любом другом направлении
-        if (m_fLR_MovingFactor < 0.0f)
+
+    if (iMovingState & mcLLookout)
+        // Выглядываем влево
+        m_fLR_MovingFactor_rot -=
+            m_fLR_MovingFactor_rot > 0.f ? fStepPerUpd * 3 : fStepPerUpd;
+    else if (iMovingState & mcRLookout)
+        // Выглядываем вправо
+        m_fLR_MovingFactor_rot +=
+            m_fLR_MovingFactor_rot < 0.f ? fStepPerUpd * 3 : fStepPerUpd;
+    else if (iMovingState & mcLStrafe)
+        // Движемся влево
+        m_fLR_MovingFactor_rot -=
+            m_fLR_MovingFactor_rot > 0.f ? fStepPerUpd * 3 : fStepPerUpd;
+    else if (iMovingState & mcRStrafe)
+        // Движемся вправо
+        m_fLR_MovingFactor_rot +=
+            m_fLR_MovingFactor_rot < 0.f ? fStepPerUpd * 3 : fStepPerUpd;
+
+    if ((iMovingState & (mcLStrafe | mcRStrafe)) == 0)
+    { // Не движемся влево-вправо вообще
+        if (m_fLR_MovingFactor_off < 0.0f)
         {
-            m_fLR_MovingFactor += fStepPerUpd;
-            clamp(m_fLR_MovingFactor, -1.0f, 0.0f);
+            m_fLR_MovingFactor_off += fStepPerUpd;
+            clamp(m_fLR_MovingFactor_off, -1.0f, 0.0f);
         }
         else
         {
-            m_fLR_MovingFactor -= fStepPerUpd;
-            clamp(m_fLR_MovingFactor, 0.0f, 1.0f);
+            m_fLR_MovingFactor_off -= fStepPerUpd;
+            clamp(m_fLR_MovingFactor_off, 0.0f, 1.0f);
+        }
+
+        // и не выглядываем
+        if ((iMovingState & (mcLLookout | mcRLookout)) == 0)
+        {
+            if (m_fLR_MovingFactor_rot < 0.0f)
+            {
+                m_fLR_MovingFactor_rot += fStepPerUpd;
+                clamp(m_fLR_MovingFactor_rot, -1.0f, 0.0f);
+            }
+            else
+            {
+                m_fLR_MovingFactor_rot -= fStepPerUpd;
+                clamp(m_fLR_MovingFactor_rot, 0.0f, 1.0f);
+            }
         }
     }
 
-    clamp(m_fLR_MovingFactor, -1.0f, 1.0f); // Фактор боковой ходьбы не должен превышать эти лимиты
+    // Фактор боковой ходьбы не должен превышать эти лимиты
+    clamp(m_fLR_MovingFactor_off, -1.0f, 1.0f);
+    clamp(m_fLR_MovingFactor_rot, -1.0f, 1.0f);
 
     // Производим наклон ствола для нормального режима и аима
     for (int _idx = 0; _idx <= 1; _idx++)
@@ -1894,12 +1937,14 @@ void CWeapon::UpdateHudAdditonal(Fmatrix& trans)
 
         // Смещение позиции худа в стрейфе
         curr_offs = /*hi->m_measures.*/ m_strafe_offset[0][_idx]; // pos
-        curr_offs.mul(m_fLR_MovingFactor); // Умножаем на фактор стрейфа
+        // Умножаем на фактор стрейфа
+        curr_offs.mul(m_fLR_MovingFactor_off);
 
         // Поворот худа в стрейфе
         curr_rot = /*hi->m_measures.*/ m_strafe_offset[1][_idx]; // rot
         curr_rot.mul(-PI / 180.f); // Преобразуем углы в радианы
-        curr_rot.mul(m_fLR_MovingFactor); // Умножаем на фактор стрейфа
+        // Умножаем на фактор стрейфа
+        curr_rot.mul(m_fLR_MovingFactor_rot);
 
         if (_idx == 0)
         { // От бедра
