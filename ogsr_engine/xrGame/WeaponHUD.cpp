@@ -276,7 +276,8 @@ void CWeaponBobbing::Load()
 {
     fTime = 0;
     fReminderFactor = 0;
-    is_limping = false;
+    m_cur_state = 0;
+    m_cur_amp = 0.f;
 
     m_fAmplitudeRun = pSettings->r_float(BOBBING_SECT, "run_amplitude");
     m_fAmplitudeWalk = pSettings->r_float(BOBBING_SECT, "walk_amplitude");
@@ -286,22 +287,17 @@ void CWeaponBobbing::Load()
     m_fSpeedWalk = pSettings->r_float(BOBBING_SECT, "walk_speed");
     m_fSpeedLimp = pSettings->r_float(BOBBING_SECT, "limp_speed");
 
-    m_fCrouchFactor = READ_IF_EXISTS(pSettings, r_float, BOBBING_SECT, "crouch_k", CROUCH_FACTOR);
-    m_fZoomFactor = READ_IF_EXISTS(pSettings, r_float, BOBBING_SECT, "zoom_k", 1.f);
-    m_fScopeZoomFactor = READ_IF_EXISTS(pSettings, r_float, BOBBING_SECT, "scope_zoom_k", m_fZoomFactor);
-}
-
-void CWeaponBobbing::CheckState()
-{
-    dwMState = Actor()->get_state();
-    is_limping = Actor()->conditions().IsLimping();
-    m_bZoomMode = Actor()->IsZoomAimingMode();
-    fTime += Device.fTimeDelta;
+    m_fCrouchFactor = READ_IF_EXISTS(pSettings, r_float, BOBBING_SECT,
+                                     "crouch_k", CROUCH_FACTOR);
+    m_fZoomFactor =
+        READ_IF_EXISTS(pSettings, r_float, BOBBING_SECT, "zoom_k", 1.f);
+    m_fScopeZoomFactor = READ_IF_EXISTS(pSettings, r_float, BOBBING_SECT,
+                                        "scope_zoom_k", m_fZoomFactor);
 }
 
 void CWeaponBobbing::Update(Fmatrix& m)
 {
-    CheckState();
+    dwMState = Actor()->get_state();
     if (dwMState & ACTOR_DEFS::mcAnyMove)
     {
         if (fReminderFactor < 1.f)
@@ -316,13 +312,16 @@ void CWeaponBobbing::Update(Fmatrix& m)
         else
             fReminderFactor = 0.f;
     }
-    if (!fsimilar(fReminderFactor, 0))
+    clamp(fReminderFactor, 0.f, 1.f);
+
+    if (fReminderFactor > 0.f)
     {
         Fvector dangle;
         Fmatrix R, mR;
         float k = (dwMState & ACTOR_DEFS::mcCrouch) ? m_fCrouchFactor : 1.f;
         float k2 = k;
 
+        bool m_bZoomMode = Actor()->IsZoomAimingMode();
         if (m_bZoomMode)
         {
             auto wpn = smart_cast<CWeapon*>(m_pParentWeapon);
@@ -331,26 +330,28 @@ void CWeaponBobbing::Update(Fmatrix& m)
             k2 *= zoom_factor;
         }
 
-        float A, ST;
-
+        float A, speed;
         if (isActorAccelerated(dwMState, m_bZoomMode))
         {
             A = m_fAmplitudeRun * k2;
-            ST = m_fSpeedRun * fTime * k;
+            speed = m_fSpeedRun;
         }
-        else if (is_limping)
+        else if (Actor()->conditions().IsLimping())
         {
             A = m_fAmplitudeLimp * k2;
-            ST = m_fSpeedLimp * fTime * k;
+            speed = m_fSpeedLimp;
         }
         else
         {
             A = m_fAmplitudeWalk * k2;
-            ST = m_fSpeedWalk * fTime * k;
+            speed = m_fSpeedWalk;
         }
+        float dt = Device.fTimeDelta * speed * k;
+        fTime += dt;
+        m_cur_amp = m_cur_amp * (1.f - dt) + A * dt;
 
-        float _sinA = _abs(_sin(ST) * A) * fReminderFactor;
-        float _cosA = _cos(ST) * A * fReminderFactor;
+        float _sinA = _abs(_sin(fTime) * m_cur_amp) * fReminderFactor;
+        float _cosA = _cos(fTime) * m_cur_amp * fReminderFactor;
 
         m.c.y += _sinA;
         dangle.x = _cosA;
@@ -363,5 +364,10 @@ void CWeaponBobbing::Update(Fmatrix& m)
 
         m.k.set(mR.k);
         m.j.set(mR.j);
+    }
+    else
+    {
+        fTime = 0.f;
+        m_cur_amp = 0.f;
     }
 }

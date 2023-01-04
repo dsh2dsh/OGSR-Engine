@@ -17,7 +17,8 @@ CEffectorBobbing::CEffectorBobbing() : CEffectorCam(eCEBobbing, 10000.f)
 {
     fTime = 0;
     fReminderFactor = 0;
-    is_limping = false;
+    m_cur_state = 0;
+    m_cur_amp = 0.f;
 
     m_fAmplitudeRun = pSettings->r_float(BOBBING_SECT, "run_amplitude");
     m_fAmplitudeWalk = pSettings->r_float(BOBBING_SECT, "walk_amplitude");
@@ -33,13 +34,17 @@ CEffectorBobbing::~CEffectorBobbing() {}
 void CEffectorBobbing::SetState(u32 mstate, bool limping, bool ZoomMode)
 {
     dwMState = mstate;
-    is_limping = limping;
-    m_bZoomMode = ZoomMode;
+
+    if (isActorAccelerated(mstate, ZoomMode))
+        m_cur_state = 1;
+    else if (limping)
+        m_cur_state = 2;
+    else
+        m_cur_state = 3;
 }
 
 BOOL CEffectorBobbing::ProcessCam(SCamEffectorInfo& info)
 {
-    fTime += Device.fTimeDelta;
     if (dwMState & ACTOR_DEFS::mcAnyMove)
     {
         if (fReminderFactor < 1.f)
@@ -54,7 +59,9 @@ BOOL CEffectorBobbing::ProcessCam(SCamEffectorInfo& info)
         else
             fReminderFactor = 0.f;
     }
-    if (!fsimilar(fReminderFactor, 0))
+    clamp(fReminderFactor, 0.f, 1.f);
+
+    if (fReminderFactor > 0.f)
     {
         Fmatrix M;
         M.identity();
@@ -67,26 +74,28 @@ BOOL CEffectorBobbing::ProcessCam(SCamEffectorInfo& info)
         Fvector dangle;
         float k = ((dwMState & ACTOR_DEFS::mcCrouch) ? CROUCH_FACTOR : 1.f);
 
-        float A, ST;
-
-        if (isActorAccelerated(dwMState, m_bZoomMode))
+        float A, speed;
+        switch (m_cur_state)
         {
+        case 1:
             A = m_fAmplitudeRun * k;
-            ST = m_fSpeedRun * fTime * k;
-        }
-        else if (is_limping)
-        {
+            speed = m_fSpeedRun;
+            break;
+        case 2:
             A = m_fAmplitudeLimp * k;
-            ST = m_fSpeedLimp * fTime * k;
-        }
-        else
-        {
+            speed = m_fSpeedLimp;
+            break;
+        default:
             A = m_fAmplitudeWalk * k;
-            ST = m_fSpeedWalk * fTime * k;
+            speed = m_fSpeedWalk;
+            break;
         }
+        float dt = Device.fTimeDelta * speed * k;
+        fTime += dt;
+        m_cur_amp = m_cur_amp * (1.f - dt) + A * dt;
 
-        float _sinA = _abs(_sin(ST) * A) * fReminderFactor;
-        float _cosA = _cos(ST) * A * fReminderFactor;
+        float _sinA = _abs(_sin(fTime) * m_cur_amp) * fReminderFactor;
+        float _cosA = _cos(fTime) * m_cur_amp * fReminderFactor;
 
         info.p.y += _sinA;
         dangle.x = _cosA;
@@ -102,8 +111,11 @@ BOOL CEffectorBobbing::ProcessCam(SCamEffectorInfo& info)
         info.d.set(mR.k);
         info.n.set(mR.j);
     }
-    //	else{
-    //		fTime		= 0;
-    //	}
+    else
+    {
+        fTime = 0.f;
+        m_cur_amp = 0.f;
+    }
+
     return TRUE;
 }

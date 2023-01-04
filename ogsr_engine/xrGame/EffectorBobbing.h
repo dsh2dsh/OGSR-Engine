@@ -12,8 +12,8 @@ class CEffectorBobbing : public CEffectorCam
 
     u32 dwMState{};
     float fReminderFactor;
-    bool is_limping;
-    bool m_bZoomMode{};
+    int m_cur_state{};
+    float m_cur_amp{};
 
 public:
     float m_fAmplitudeRun;

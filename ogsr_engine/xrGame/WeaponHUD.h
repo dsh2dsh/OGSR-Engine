@@ -10,7 +10,7 @@ class CHudItem;
 
 class CWeaponBobbing
 {
-    //родительский объект HUD
+    // родительский объект HUD
     CHudItem* m_pParentWeapon;
 
 public:
@@ -18,7 +18,6 @@ public:
     virtual ~CWeaponBobbing();
     void Load();
     void Update(Fmatrix& m);
-    void CheckState();
 
 private:
     float fTime;
@@ -28,8 +27,8 @@ private:
 
     u32 dwMState;
     float fReminderFactor;
-    bool is_limping;
-    bool m_bZoomMode;
+    int m_cur_state{};
+    float m_cur_amp{};
 
     float m_fAmplitudeRun;
     float m_fAmplitudeWalk;
