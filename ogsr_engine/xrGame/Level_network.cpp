@@ -48,7 +48,8 @@ void CLevel::remove_objects()
         Sleep(100);
     }
 
-    Device.remove_from_seq_parallel(fastdelegate::MakeDelegate(this, &CLevel::ProcessGameSpawns));
+    Device.remove_from_seq_parallel(
+        fastdelegate::MakeDelegate(this, &CLevel::ProcessGameSpawns));
     delete_data(game_spawn_queue);
 
     if (OnClient())
