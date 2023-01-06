@@ -16,6 +16,7 @@
 #include "xrServer_Object_Base.h"
 #include "object_destroyer.h"
 #include "ui/UIGameTutorial.h"
+#include "script_vars_storage.h"
 
 constexpr int max_objects_size = 2 * 1024;
 constexpr int max_objects_size_in_save = 6 * 1024;
@@ -92,9 +93,8 @@ void CLevel::remove_objects()
 
     g_pGamePersistent->destroy_particles(false);
     ::Sound->stop_emitters();
+    g_ScriptVars.clear();
 
-    //.	xr_delete									(m_seniority_hierarchy_holder);
-    //.	m_seniority_hierarchy_holder				= xr_new<CSeniorityHierarchyHolder>();
     m_is_removing_objects = false;
 }
 
