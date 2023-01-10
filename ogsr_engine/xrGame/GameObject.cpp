@@ -805,13 +805,20 @@ void VisualCallback(IKinematics* tpKinematics)
 
 CScriptGameObject* CGameObject::lua_game_object() const
 {
-    // ASSERT_FMT( m_spawned, "[%s] you are trying to use a destroyed object [%s] ID[%u]", __FUNCTION__, cName().c_str(), ID() );
+    // ASSERT_FMT( m_spawned, "[%s] you are trying to use a destroyed object
+    // [%s] ID[%u]", __FUNCTION__, cName().c_str(), ID() );
     if (!m_spawned)
-        MsgIfDbg("!! [%s] you are trying to use a destroyed object [%s] ID[%u]", __FUNCTION__, cName().c_str(), ID());
+    {
+        MsgIfDbg("!! [%s] you are trying to use a destroyed object [%s] ID[%u]",
+                 __FUNCTION__, cName().c_str(), ID());
+        if (Core.ParamFlags.test(xrCore::ParamFlag::dbg))
+            LogStackTrace("!!stack trace:\n", false);
+    }
 
     THROW(m_spawned);
     if (!m_lua_game_object)
-        m_lua_game_object = xr_new<CScriptGameObject>(const_cast<CGameObject*>(this));
+        m_lua_game_object =
+            xr_new<CScriptGameObject>(const_cast<CGameObject*>(this));
     return (m_lua_game_object);
 }
 
