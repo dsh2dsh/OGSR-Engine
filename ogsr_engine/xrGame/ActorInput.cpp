@@ -564,3 +564,19 @@ void CActor::set_input_external_handler(CActorInputHandler* handler)
     // set handler
     m_input_external_handler = handler;
 }
+
+void CActor::IR_OnMouseHWheel(int direction)
+{
+    int delta = direction / WHEEL_DELTA;
+    if (delta == 0 )
+        return;
+
+    u32 ActiveSlot = inventory().GetActiveSlot();
+    if (delta > 0)
+    {
+        if (ActiveSlot == NO_ACTIVE_SLOT || ActiveSlot != BOLT_SLOT)
+            inventory().Activate(BOLT_SLOT);
+    }
+    else if (ActiveSlot == NO_ACTIVE_SLOT || ActiveSlot != KNIFE_SLOT)
+        inventory().Activate(KNIFE_SLOT);
+}

@@ -1,6 +1,8 @@
 #include "stdafx.h"
+#include "xr_input.h"
 
-bool CRenderDevice::on_message(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& result)
+bool CRenderDevice::on_message(HWND hWnd, UINT uMsg, WPARAM wParam,
+                               LPARAM lParam, LRESULT& result)
 {
     switch (uMsg)
     {
@@ -51,6 +53,15 @@ bool CRenderDevice::on_message(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 
         result = 0;
         return (true);
+    }
+    case WM_MOUSEHWHEEL: {
+#ifdef INGAME_EDITOR
+        if (editor())
+            break;
+#endif // #ifdef INGAME_EDITOR
+        pInput->MouseHWheel(GET_WHEEL_DELTA_WPARAM(wParam));
+        result = 1;
+        return true;
     }
     }
 

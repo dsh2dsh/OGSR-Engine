@@ -473,3 +473,22 @@ void CLevel::IR_OnActivate()
         };
     }
 }
+
+void CLevel::IR_OnMouseHWheel(int direction)
+{
+    if (g_bDisableAllInput)
+        return;
+
+    if (Device.Paused())
+        return;
+
+    if (HUD().GetUI()->MainInputReceiver())
+        return;
+
+    if (CURRENT_ENTITY())
+    {
+        IInputReceiver* IR = smart_cast<IInputReceiver*>(smart_cast<CGameObject*>(CURRENT_ENTITY()));
+        if (IR)
+            IR->IR_OnMouseHWheel(direction);
+    }
+}

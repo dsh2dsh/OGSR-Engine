@@ -653,3 +653,7 @@ void CInput::clip_cursor(bool clip)
         ClipCursor(nullptr);
     }
 }
+
+void CInput::MouseHWheel(int zDelta) {
+    cbStack.back()->IR_OnMouseHWheel(zDelta);
+}

@@ -72,6 +72,7 @@ public:
     BOOL iGetAsyncKeyState(int dik);
     BOOL iGetAsyncBtnState(int btn, bool hold = false);
     void iGetLastMouseDelta(Ivector2& p) { p.set(offs[0], offs[1]); }
+    void MouseHWheel(int zDelta);
 
     CInput(bool bExclusive = true, int deviceForInit = default_key);
     ~CInput();
