@@ -253,16 +253,27 @@ void CStats::Show()
 #define PPP(a) (100.f * float(a) / float(EngineTOTAL.result))
         F.OutNext("*** ENGINE:  %2.2fms", EngineTOTAL.result);
         F.OutNext("Memory:      %2.2fa", fMem_calls);
-        F.OutNext("uClients:    %2.2fms, %2.1f%%, crow(%d)/active(%d)/total(%d)", UpdateClient.result, PPP(UpdateClient.result), UpdateClient_crows, UpdateClient_active,
-                  UpdateClient_total);
-        F.OutNext("uSheduler:   %2.2fms, %2.1f%%", Sheduler.result, PPP(Sheduler.result));
+        F.OutNext("uClients:    %2.2fms, %2.1f%%", UpdateClient.result,
+                  PPP(UpdateClient.result));
+        F.OutNext("  crow(%d)/active(%d)/total(%d)", UpdateClient_crows,
+                  UpdateClient_active, UpdateClient_total);
+        F.OutNext("uSheduler:   %2.2fms, %2.1f%%", Sheduler.result,
+                  PPP(Sheduler.result));
         F.OutNext("uSheduler_L: %2.2fms", fShedulerLoad);
-        F.OutNext("uParticles:  Qstart[%d] Qactive[%d] Qdestroy[%d]", Particles_starting, Particles_active, Particles_destroy);
-        F.OutNext("spInsert:    o[%.2fms, %2.1f%%], p[%.2fms, %2.1f%%]", g_SpatialSpace->stat_insert.result, PPP(g_SpatialSpace->stat_insert.result),
-                  g_SpatialSpacePhysic->stat_insert.result, PPP(g_SpatialSpacePhysic->stat_insert.result));
-        F.OutNext("spRemove:    o[%.2fms, %2.1f%%], p[%.2fms, %2.1f%%]", g_SpatialSpace->stat_remove.result, PPP(g_SpatialSpace->stat_remove.result),
-                  g_SpatialSpacePhysic->stat_remove.result, PPP(g_SpatialSpacePhysic->stat_remove.result));
-        F.OutNext("Physics:     %2.2fms, %2.1f%%", Physics.result, PPP(Physics.result));
+        F.OutNext("uParticles:  Qstart[%d] Qactive[%d] Qdestroy[%d]",
+                  Particles_starting, Particles_active, Particles_destroy);
+        F.OutNext("spInsert:    o[%.2fms, %2.1f%%], p[%.2fms, %2.1f%%]",
+                  g_SpatialSpace->stat_insert.result,
+                  PPP(g_SpatialSpace->stat_insert.result),
+                  g_SpatialSpacePhysic->stat_insert.result,
+                  PPP(g_SpatialSpacePhysic->stat_insert.result));
+        F.OutNext("spRemove:    o[%.2fms, %2.1f%%], p[%.2fms, %2.1f%%]",
+                  g_SpatialSpace->stat_remove.result,
+                  PPP(g_SpatialSpace->stat_remove.result),
+                  g_SpatialSpacePhysic->stat_remove.result,
+                  PPP(g_SpatialSpacePhysic->stat_remove.result));
+        F.OutNext("Physics:     %2.2fms, %2.1f%%", Physics.result,
+                  PPP(Physics.result));
         F.OutNext("  collider:  %2.2fms", ph_collision.result);
         F.OutNext("  solver:    %2.2fms, %d", ph_core.result, ph_core.count);
         F.OutNext("aiThink:     %2.2fms, %d", AI_Think.result, AI_Think.count);
