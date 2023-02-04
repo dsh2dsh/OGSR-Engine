@@ -176,8 +176,10 @@ void CStats::Show()
         if (RenderTOTAL.result > EPS_S)
         {
             u32 rendered_polies = Device.m_pRender->GetCacheStatPolys();
-            fTPS = fInv * fTPS + fOne * float(rendered_polies) / (RenderTOTAL.result * 1000.f);
-            // fTPS = fInv*fTPS + fOne*float(RCache.stat.polys)/(RenderTOTAL.result*1000.f);
+            fTPS = fInv * fTPS +
+                fOne * float(rendered_polies) / (RenderTOTAL.result * 1000.f);
+            // fTPS = fInv*fTPS +
+            // fOne*float(RCache.stat.polys)/(RenderTOTAL.result*1000.f);
             fRFPS = fInv * fRFPS + fOne * 1000.f / RenderTOTAL.result;
         }
     }
@@ -203,7 +205,9 @@ void CStats::Show()
         float sz = pFont->GetHeight();
         pFont->SetHeightI(0.02f);
         pFont->SetColor(0xFFFF0000);
-        pFont->OutSet(Device.dwWidth / 2.0f + (pFont->SizeOf_("--= tune =--") / 2.0f), Device.dwHeight / 2.0f);
+        pFont->OutSet(Device.dwWidth / 2.0f +
+                          (pFont->SizeOf_("--= tune =--") / 2.0f),
+                      Device.dwHeight / 2.0f);
         pFont->OutNext("--= tune =--");
         pFont->OnRender();
         pFont->SetHeight(sz);
@@ -225,17 +229,22 @@ void CStats::Show()
         F.OutNext("FPS/RFPS:    %3.1f/%3.1f", fFPS, fRFPS);
         F.OutNext("TPS:         %2.2f M", fTPS);
         m_pRender->OutData1(F);
-        // F.OutNext	("VERT:        %d/%d",		RCache.stat.verts,RCache.stat.calls?RCache.stat.verts/RCache.stat.calls:0);
-        // F.OutNext	("POLY:        %d/%d",		RCache.stat.polys,RCache.stat.calls?RCache.stat.polys/RCache.stat.calls:0);
+        // F.OutNext	("VERT:        %d/%d",
+        // RCache.stat.verts,RCache.stat.calls?RCache.stat.verts/RCache.stat.calls:0);
+        // F.OutNext	("POLY:        %d/%d",
+        // RCache.stat.polys,RCache.stat.calls?RCache.stat.polys/RCache.stat.calls:0);
         // F.OutNext	("DIP/DP:      %d",			RCache.stat.calls);
 #ifdef DEBUG
         F.OutSkip();
         F.OutNext("mapped:      %d", g_file_mapped_memory);
         F.OutSkip();
         m_pRender->OutData2(F);
-        // F.OutNext	("SH/T/M/C:    %d/%d/%d/%d",RCache.stat.states,RCache.stat.textures,RCache.stat.matrices,RCache.stat.constants);
-        // F.OutNext	("RT/PS/VS:    %d/%d/%d",	RCache.stat.target_rt,RCache.stat.ps,RCache.stat.vs);
-        // F.OutNext	("DCL/VB/IB:   %d/%d/%d",   RCache.stat.decl,RCache.stat.vb,RCache.stat.ib);
+        // F.OutNext	("SH/T/M/C:
+        // %d/%d/%d/%d",RCache.stat.states,RCache.stat.textures,RCache.stat.matrices,RCache.stat.constants);
+        // F.OutNext	("RT/PS/VS:    %d/%d/%d",
+        // RCache.stat.target_rt,RCache.stat.ps,RCache.stat.vs); F.OutNext
+        // ("DCL/VB/IB:   %d/%d/%d",
+        // RCache.stat.decl,RCache.stat.vb,RCache.stat.ib);
 #endif
         m_pRender->OutData3(F);
         // F.OutNext	("xforms:      %d",			RCache.stat.xforms);
@@ -268,37 +277,55 @@ void CStats::Show()
 #undef PPP
 #define PPP(a) (100.f * float(a) / float(RenderTOTAL.result))
         F.OutNext("*** RENDER:  %2.2fms", RenderTOTAL.result);
-        F.OutNext("R_CALC:      %2.2fms, %2.1f%%", RenderCALC.result, PPP(RenderCALC.result));
-        F.OutNext("  HOM:       %2.2fms, %d", RenderCALC_HOM.result, RenderCALC_HOM.count);
-        F.OutNext("  Skeletons: %2.2fms, %d", Animation.result, Animation.count);
-        F.OutNext("R_DUMP:      %2.2fms, %2.1f%%", RenderDUMP.result, PPP(RenderDUMP.result));
+        F.OutNext("R_CALC:      %2.2fms, %2.1f%%", RenderCALC.result,
+                  PPP(RenderCALC.result));
+        F.OutNext("  HOM:       %2.2fms, %d", RenderCALC_HOM.result,
+                  RenderCALC_HOM.count);
+        F.OutNext("  Skeletons: %2.2fms, %d", Animation.result,
+                  Animation.count);
+        F.OutNext("R_DUMP:      %2.2fms, %2.1f%%", RenderDUMP.result,
+                  PPP(RenderDUMP.result));
         F.OutNext("  Wait-L:    %2.2fms", RenderDUMP_Wait.result);
         // F.OutNext	("  Wait-S:    %2.2fms",RenderDUMP_Wait_S.result);
         F.OutNext("  Skinning:  %2.2fms", RenderDUMP_SKIN.result);
-        F.OutNext("  DT_Vis/Cnt:%2.2fms/%d", RenderDUMP_DT_VIS.result, RenderDUMP_DT_Count);
+        F.OutNext("  DT_Vis/Cnt:%2.2fms/%d", RenderDUMP_DT_VIS.result,
+                  RenderDUMP_DT_Count);
         F.OutNext("  DT_Render: %2.2fms", RenderDUMP_DT_Render.result);
         F.OutNext("  DT_Cache:  %2.2fms", RenderDUMP_DT_Cache.result);
-        F.OutNext("  Wallmarks: %2.2fms, %d/%d - %d", RenderDUMP_WM.result, RenderDUMP_WMS_Count, RenderDUMP_WMD_Count, RenderDUMP_WMT_Count);
+        F.OutNext("  Wallmarks: %2.2fms, %d/%d - %d", RenderDUMP_WM.result,
+                  RenderDUMP_WMS_Count, RenderDUMP_WMD_Count,
+                  RenderDUMP_WMT_Count);
         F.OutNext("  Glows:     %2.2fms", RenderDUMP_Glows.result);
-        F.OutNext("  Lights:    %2.2fms, %d", RenderDUMP_Lights.result, RenderDUMP_Lights.count);
-        F.OutNext("  RT:        %2.2fms, %d", RenderDUMP_RT.result, RenderDUMP_RT.count);
+        F.OutNext("  Lights:    %2.2fms, %d", RenderDUMP_Lights.result,
+                  RenderDUMP_Lights.count);
+        F.OutNext("  RT:        %2.2fms, %d", RenderDUMP_RT.result,
+                  RenderDUMP_RT.count);
         F.OutNext("  HUD:       %2.2fms", RenderDUMP_HUD.result);
         F.OutNext("  P_calc:    %2.2fms", RenderDUMP_Pcalc.result);
         F.OutNext("  S_calc:    %2.2fms", RenderDUMP_Scalc.result);
-        F.OutNext("  S_render:  %2.2fms, %d", RenderDUMP_Srender.result, RenderDUMP_Srender.count);
+        F.OutNext("  S_render:  %2.2fms, %d", RenderDUMP_Srender.result,
+                  RenderDUMP_Srender.count);
         F.OutSkip();
         F.OutNext("*** SOUND:   %2.2fms", Sound.result);
-        F.OutNext("  TGT/SIM/E: %d/%d/%d", snd_stat._rendered, snd_stat._simulated, snd_stat._events);
-        F.OutNext("  HIT/MISS:  %d/%d", snd_stat._cache_hits, snd_stat._cache_misses);
+        F.OutNext("  TGT/SIM/E: %d/%d/%d", snd_stat._rendered,
+                  snd_stat._simulated, snd_stat._events);
+        F.OutNext("  HIT/MISS:  %d/%d", snd_stat._cache_hits,
+                  snd_stat._cache_misses);
         F.OutSkip();
         F.OutNext("Input:       %2.2fms", Input.result);
-        F.OutNext("clRAY:       %2.2fms, %d, %2.0fK", clRAY.result, clRAY.count, r_ps);
-        F.OutNext("clBOX:       %2.2fms, %d, %2.0fK", clBOX.result, clBOX.count, b_ps);
-        F.OutNext("clFRUSTUM:   %2.2fms, %d", clFRUSTUM.result, clFRUSTUM.count);
+        F.OutNext("clRAY:       %2.2fms, %d, %2.0fK", clRAY.result, clRAY.count,
+                  r_ps);
+        F.OutNext("clBOX:       %2.2fms, %d, %2.0fK", clBOX.result, clBOX.count,
+                  b_ps);
+        F.OutNext("clFRUSTUM:   %2.2fms, %d", clFRUSTUM.result,
+                  clFRUSTUM.count);
         F.OutSkip();
-        F.OutNext("netClientRecv:   %2.2fms, %d", netClient1.result, netClient1.count);
-        F.OutNext("netClientSend:   %2.2fms, %d", netClient2.result, netClient2.count);
-        F.OutNext("netServer:   %2.2fms, %d", netServer.result, netServer.count);
+        F.OutNext("netClientRecv:   %2.2fms, %d", netClient1.result,
+                  netClient1.count);
+        F.OutNext("netClientSend:   %2.2fms, %d", netClient2.result,
+                  netClient2.count);
+        F.OutNext("netServer:   %2.2fms, %d", netServer.result,
+                  netServer.count);
         F.OutNext("netClientCompressor:   %2.2fms", netClientCompressor.result);
         F.OutNext("netServerCompressor:   %2.2fms", netServerCompressor.result);
 
@@ -311,7 +338,8 @@ void CStats::Show()
         F.OutNext("TEST 3:      %2.2fms, %d", TEST3.result, TEST3.count);
 #ifdef DEBUG_MEMORY_MANAGER
         F.OutSkip();
-        F.OutNext("str: cmp[%3d], dock[%3d], qpc[%3d]", Memory.stat_strcmp, Memory.stat_strdock, CPU::qpc_counter);
+        F.OutNext("str: cmp[%3d], dock[%3d], qpc[%3d]", Memory.stat_strcmp,
+                  Memory.stat_strdock, CPU::qpc_counter);
         Memory.stat_strcmp = 0;
         Memory.stat_strdock = 0;
         CPU::qpc_counter = 0;
@@ -320,19 +348,32 @@ void CStats::Show()
         F.OutNext("qpc[%3d]", CPU::qpc_counter);
         CPU::qpc_counter = 0;
 #endif // DEBUG_MEMORY_MANAGER
-        //		F.OutSet	(640,0);
+       //		F.OutSet	(640,0);
         F.OutSkip();
         m_pRender->OutData4(F);
         /*
-        F.OutNext	("static:        %3.1f/%d",	RCache.stat.r.s_static.verts/1024.f,		RCache.stat.r.s_static.dips );
-        F.OutNext	("flora:         %3.1f/%d",	RCache.stat.r.s_flora.verts/1024.f,			RCache.stat.r.s_flora.dips );
-        F.OutNext	("  flora_lods:  %3.1f/%d",	RCache.stat.r.s_flora_lods.verts/1024.f,	RCache.stat.r.s_flora_lods.dips );
-        F.OutNext	("dynamic:       %3.1f/%d",	RCache.stat.r.s_dynamic.verts/1024.f,		RCache.stat.r.s_dynamic.dips );
-        F.OutNext	("  dynamic_sw:  %3.1f/%d",	RCache.stat.r.s_dynamic_sw.verts/1024.f,	RCache.stat.r.s_dynamic_sw.dips );
-        F.OutNext	("  dynamic_inst:%3.1f/%d",	RCache.stat.r.s_dynamic_inst.verts/1024.f,	RCache.stat.r.s_dynamic_inst.dips );
-        F.OutNext	("  dynamic_1B:  %3.1f/%d",	RCache.stat.r.s_dynamic_1B.verts/1024.f,	RCache.stat.r.s_dynamic_1B.dips );
-        F.OutNext	("  dynamic_2B:  %3.1f/%d",	RCache.stat.r.s_dynamic_2B.verts/1024.f,	RCache.stat.r.s_dynamic_2B.dips );
-        F.OutNext	("details:       %3.1f/%d",	RCache.stat.r.s_details.verts/1024.f,		RCache.stat.r.s_details.dips );
+        F.OutNext	("static:        %3.1f/%d",
+        RCache.stat.r.s_static.verts/1024.f,		RCache.stat.r.s_static.dips
+        ); F.OutNext	("flora:         %3.1f/%d",
+        RCache.stat.r.s_flora.verts/1024.f, RCache.stat.r.s_flora.dips );
+        F.OutNext	("  flora_lods:  %3.1f/%d",
+        RCache.stat.r.s_flora_lods.verts/1024.f,
+        RCache.stat.r.s_flora_lods.dips );
+        F.OutNext	("dynamic:       %3.1f/%d",
+        RCache.stat.r.s_dynamic.verts/1024.f, RCache.stat.r.s_dynamic.dips );
+        F.OutNext	("  dynamic_sw:  %3.1f/%d",
+        RCache.stat.r.s_dynamic_sw.verts/1024.f,
+        RCache.stat.r.s_dynamic_sw.dips );
+        F.OutNext	("  dynamic_inst:%3.1f/%d",
+        RCache.stat.r.s_dynamic_inst.verts/1024.f,
+        RCache.stat.r.s_dynamic_inst.dips ); F.OutNext	("  dynamic_1B:
+        %3.1f/%d",	RCache.stat.r.s_dynamic_1B.verts/1024.f,
+        RCache.stat.r.s_dynamic_1B.dips );
+        F.OutNext	("  dynamic_2B:  %3.1f/%d",
+        RCache.stat.r.s_dynamic_2B.verts/1024.f,
+        RCache.stat.r.s_dynamic_2B.dips );
+        F.OutNext	("details:       %3.1f/%d",
+        RCache.stat.r.s_details.verts/1024.f, RCache.stat.r.s_details.dips );
 */
         //////////////////////////////////////////////////////////////////////////
         // Renderer specific
@@ -369,18 +410,23 @@ void CStats::Show()
         F.SetHeightI(f_base_size * 2);
         if (fFPS < 30)
             F.OutNext("FPS       < 30:   %3.1f", fFPS);
-        // if (RCache.stat.verts>500000)	F.OutNext	("Verts     > 500k: %d",	RCache.stat.verts);
+        // if (RCache.stat.verts>500000)	F.OutNext	("Verts     > 500k: %d",
+        // RCache.stat.verts);
         m_pRender->GuardVerts(F);
-        ////if (RCache.stat.polys>500000)	F.OutNext	("Polys     > 500k: %d",	RCache.stat.polys);
+        ////if (RCache.stat.polys>500000)	F.OutNext	("Polys     > 500k: %d",
+        /// RCache.stat.polys);
         if (psDeviceFlags.test(rsStatistic))
         {
             m_pRender->GuardDrawCalls(F);
-            // if (RCache.stat.calls>1000)		F.OutNext	("DIP/DP    > 1k:   %d",	RCache.stat.calls);
-            ////if (RCache.stat.textures>1000)F.OutNext	("T_change  > 500:  %d",	RCache.stat.textures);
+            // if (RCache.stat.calls>1000)		F.OutNext	("DIP/DP    > 1k:
+            // %d", RCache.stat.calls);
+            ////if (RCache.stat.textures>1000)F.OutNext	("T_change  > 500:  %d",
+            /// RCache.stat.textures);
             if (RenderDUMP_DT_Count > 1000)
                 F.OutNext("DT_count  > 1000: %u", RenderDUMP_DT_Count);
             F.OutSkip();
-            // if (fMem_calls>1500)			F.OutNext	("MMGR calls > 1500:%3.1f",	fMem_calls);
+            // if (fMem_calls>1500)			F.OutNext	("MMGR calls >
+            // 1500:%3.1f", fMem_calls);
             if (Sheduler.result > 3.f)
                 F.OutNext("Update     > 3ms:	%3.1f", Sheduler.result);
             if (UpdateClient.result > 3.f)
@@ -402,7 +448,8 @@ void CStats::Show()
 		for (u32 it=0; it<errors.size(); it++)
 			F.OutNext("%s",errors[it].c_str());
 #else
-        for (u32 it = (u32)_max(int(0), (int)errors.size() - g_ErrorLineCount); it < errors.size(); it++)
+        for (u32 it = (u32)_max(int(0), (int)errors.size() - g_ErrorLineCount);
+             it < errors.size(); it++)
             F.OutNext("%s", errors[it].c_str());
 #endif
         F.OnRender();
