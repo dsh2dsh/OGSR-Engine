@@ -139,6 +139,8 @@ R_occlusion::occq_result R_occlusion::occq_get(u32& ID)
 
 void R_occlusion::occq_free(u32 ID)
 {
+    if (!enabled || ID == iInvalidHandle || !used[ID].Q)
+        return;
     if (used[ID].Q)
     {
         pool.push_back(used[ID]);
