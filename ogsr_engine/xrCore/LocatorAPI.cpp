@@ -1336,7 +1336,7 @@ void CLocatorAPI::rescan_physical_path(LPCSTR full_path, BOOL bRecurse)
         }
     }
 
-    Msg("[rescan_physical_path] files count before2: [%u]", files.size());
+    //Msg("[rescan_physical_path] files count before2: [%u]", files.size());
 
     bNoRecurse = !bRecurse;
     RecurseScanPhysicalPath(full_path);
