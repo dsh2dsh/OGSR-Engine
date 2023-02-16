@@ -34,14 +34,23 @@ dxRender_Visual::~dxRender_Visual() {}
 
 void dxRender_Visual::Release() {}
 
-bool replaceShadersLine(const char* N, char* fnS, u32 fnS_size, LPCSTR item)
+bool replaceShadersLine(const char* N, char* fnS, u32 fnS_size, LPCSTR item,
+                        char* fnT)
 {
     if (!pSettings->line_exist("vis_shaders_replace", item))
         return false;
 
     LPCSTR overrides = pSettings->r_string("vis_shaders_replace", item);
+    if (xr_strcmp(overrides, "log") == 0)
+    {
+        MsgIfDbg("[%s]: N[%s], fnS[%s], fnT[%s]", __FUNCTION__, N, fnS, fnT);
+        return true;
+    }
+
     u32 cnt = _GetItemCount(overrides);
-    ASSERT_FMT(cnt % 2 == 0, "[%s]: vis_shaders_replace: wrong format cnt = %u: %s = %s", __FUNCTION__, cnt, item, overrides);
+    ASSERT_FMT(cnt % 2 == 0,
+               "[%s]: vis_shaders_replace: wrong format cnt = %u: %s = %s",
+               __FUNCTION__, cnt, item, overrides);
 
     for (u32 i = 0; i < cnt; i += 2)
     {
@@ -50,6 +59,7 @@ bool replaceShadersLine(const char* N, char* fnS, u32 fnS_size, LPCSTR item)
         _GetItem(overrides, i + 1, s2);
         if (xr_strcmp(s1, fnS) == 0)
         {
+            // MsgIfDbg( "[%s]: %s[%s]: %s -> %s", __FUNCTION__, N, fnT, fnS, s2 );
             xr_strcpy(fnS, fnS_size, s2);
             break;
         }
@@ -58,19 +68,19 @@ bool replaceShadersLine(const char* N, char* fnS, u32 fnS_size, LPCSTR item)
     return true;
 }
 
-void replaceShaders(const char* N, char* fnS, u32 fnS_size)
+void replaceShaders(const char* N, char* fnS, u32 fnS_size, char* fnT)
 {
     if (!pSettings->section_exist("vis_shaders_replace"))
         return;
 
-    if (replaceShadersLine(N, fnS, fnS_size, N))
+    if (replaceShadersLine(N, fnS, fnS_size, N, fnT))
         return;
 
     if (strchr(N, ':'))
     {
         std::string s(N);
         s.erase(s.find(":"));
-        if (replaceShadersLine(N, fnS, fnS_size, s.c_str()))
+        if (replaceShadersLine(N, fnS, fnS_size, s.c_str(), fnT))
             return;
     }
 
@@ -78,7 +88,7 @@ void replaceShaders(const char* N, char* fnS, u32 fnS_size)
     while (p.has_parent_path())
     {
         p = p.parent_path();
-        if (replaceShadersLine(N, fnS, fnS_size, p.string().c_str()))
+        if (replaceShadersLine(N, fnS, fnS_size, p.string().c_str(), fnT))
             return;
     }
 }
@@ -94,7 +104,8 @@ void dxRender_Visual::Load(const char* N, IReader* data, u32)
     ogf_header hdr;
     if (data->r_chunk_safe(OGF_HEADER, &hdr, sizeof(hdr)))
     {
-        R_ASSERT2(hdr.format_version == xrOGF_FormatVersion, "Invalid visual version");
+        R_ASSERT2(hdr.format_version == xrOGF_FormatVersion,
+                  "Invalid visual version");
         Type = hdr.type;
         // if (hdr.shader_id)	shader	= ::Render->getShader	(hdr.shader_id);
         if (hdr.shader_id)
@@ -113,7 +124,7 @@ void dxRender_Visual::Load(const char* N, IReader* data, u32)
         string256 fnT, fnS;
         data->r_stringZ(fnT, sizeof(fnT));
         data->r_stringZ(fnS, sizeof(fnS));
-        replaceShaders(N, fnS, sizeof fnS);
+        replaceShaders(N, fnS, sizeof fnS, fnT);
         shader.create(fnS, fnT);
     }
 
