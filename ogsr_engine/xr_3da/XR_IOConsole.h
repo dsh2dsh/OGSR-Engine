@@ -13,7 +13,9 @@
 class ENGINE_API CGameFont;
 class ENGINE_API IConsole_Command;
 
-class ENGINE_API CConsole : public IInputReceiver, public pureRender, public pureFrame
+class ENGINE_API CConsole : public IInputReceiver,
+                            public pureRender,
+                            public pureFrame
 {
 private:
     FactoryPtr<IConsoleRender>* m_pRender = nullptr;
@@ -22,7 +24,10 @@ public:
     // t-defs
     struct str_pred
     {
-        IC bool operator()(const char* x, const char* y) const { return xr_strcmp(x, y) < 0; }
+        IC bool operator()(const char* x, const char* y) const
+        {
+            return xr_strcmp(x, y) < 0;
+        }
     };
     typedef xr_map<LPCSTR, IConsole_Command*, str_pred> vecCMD;
     typedef vecCMD::iterator vecCMD_IT;
@@ -75,6 +80,7 @@ public:
 
     void Save();
     void Execute(LPCSTR cmd);
+    void Execute(LPCSTR, bool);
     void ExecuteScript(LPCSTR name);
     void ExecuteCommand(bool = false);
 

@@ -505,14 +505,15 @@ void CConsole::SelectCommand()
     }
 }
 
-void CConsole::Execute(LPCSTR cmd)
+void CConsole::Execute(LPCSTR cmd, bool is_user_input)
 {
     strncpy(editor, cmd, MAX_LEN - 1);
     editor[MAX_LEN - 1] = 0;
     RecordCommands = false;
-    ExecuteCommand();
+    ExecuteCommand(is_user_input);
     RecordCommands = true;
 }
+
 void CConsole::ExecuteScript(LPCSTR N)
 {
     string128 cmd;
@@ -696,6 +697,11 @@ char * CConsole::GetPrevValue(LPCSTR cmd)
 }
 
 */
+
+void CConsole::Execute(LPCSTR cmd)
+{
+    Execute(cmd, false);
+}
 
 void CConsole::Execute(LPCSTR cmd, LPCSTR arg)
 {

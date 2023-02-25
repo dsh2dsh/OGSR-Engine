@@ -613,7 +613,7 @@ bool ConsoleBindCmds::execute(int dik)
     if (it == m_bindConsoleCmds.end())
         return false;
 
-    Console->Execute(it->second.cmd.c_str());
+    Console->Execute(it->second.cmd.c_str(), true);
     return true;
 }
 
@@ -638,7 +638,10 @@ void CCC_RegisterInput()
     CMD1(CCC_UnBindAll, "unbindall");
     CMD1(CCC_ListActions, "list_actions");
 
-    CMD1(CCC_BindList, "bind_list");
-    CMD1(CCC_BindConsoleCmd, "bind_console");
-    CMD1(CCC_UnBindConsoleCmd, "unbind_console");
+    if (Core.ParamFlags.test(xrCore::ParamFlag::dbg))
+    {
+        CMD1(CCC_BindList, "bind_list");
+        CMD1(CCC_BindConsoleCmd, "bind_console");
+        CMD1(CCC_UnBindConsoleCmd, "unbind_console");
+    }
 };

@@ -53,6 +53,11 @@ void enable_cmd(CConsole* c, LPCSTR cmd)
         icmd->SetEnabled(true);
 }
 
+void execute_cmd(CConsole* c, LPCSTR cmd)
+{
+    c->Execute(cmd);
+}
+
 #pragma optimize("s", on)
 void console_registrator::script_register(lua_State* L)
 {
@@ -60,7 +65,7 @@ void console_registrator::script_register(lua_State* L)
               class_<CConsole>("CConsole")
                   .def("disable_command", &disable_cmd)
                   .def("enable_command", &enable_cmd)
-                  .def("execute", ((void(CConsole::*)(LPCSTR)) & CConsole::Execute))
+                  .def("execute", ((void(CConsole::*)(LPCSTR)) &CConsole::Execute))
                   .def("execute", ((void(CConsole::*)(LPCSTR, LPCSTR)) & CConsole::Execute))
                   .def("execute_script", &CConsole::ExecuteScript)
                   .def("show", &CConsole::Show)
