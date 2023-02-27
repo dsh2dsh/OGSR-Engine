@@ -160,3 +160,11 @@ COLLIDER::~COLLIDER() { r_free(); }
 RESULT& COLLIDER::r_add() { return rd.emplace_back(); }
 
 void COLLIDER::r_free() { rd.clear_and_free(); }
+
+void COLLIDER::sort()
+{
+    std::sort(rd.begin(), rd.end(),
+              [](const auto& a, const auto& b) {
+                  return a.range < b.range;
+              });
+}
