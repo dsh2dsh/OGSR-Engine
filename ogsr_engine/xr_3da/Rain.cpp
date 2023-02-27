@@ -152,7 +152,7 @@ void CEffect_Rain::OnFrame()
             snd_Ambient.stop();
             return;
         }
-        snd_Ambient.play(0, sm_Looped);
+        snd_Ambient.play(0, sm_Looped | sm_2D);
         snd_Ambient.set_position(Fvector().set(0, 0, 0));
         snd_Ambient.set_range(source_offset, source_offset * 2.f);
         state = stWorking;
