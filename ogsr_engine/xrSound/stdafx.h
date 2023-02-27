@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "../xr_3da/stdafx.h"
 #include "../xrCore/xrCore.h"
 
 // mmsystem.h

@@ -18,6 +18,7 @@
 #include "LightAnimLibrary.h"
 #include "../xrcdb/ispatial.h"
 #include "ILoadingScreen.h"
+#include "gamemtllib.h"
 
 #define CORE_FEATURE_SET(feature, section) Core.Features.set(xrCore::Feature::feature, READ_IF_EXISTS(pSettings, r_bool, section, #feature, false))
 
@@ -122,8 +123,13 @@ void InitInput() { pInput = xr_new<CInput>(); }
 void destroyInput() { xr_delete(pInput); }
 
 void InitSound1() { CSound_manager_interface::_create(0); }
-
-void InitSound2() { CSound_manager_interface::_create(1); }
+void InitSound2()
+{
+    CSound_manager_interface::_create(1);
+    using std::placeholders::_1;
+    Sound->set_mtl_lib(
+        std::bind(&CGameMtlLibrary::GetMaterialByIdx, &GMLib, _1));
+}
 void destroySound() { CSound_manager_interface::_destroy(); }
 
 void destroySettings()

@@ -51,9 +51,13 @@ void CSoundRender_Emitter::update(float dt)
         fTimeToStop = fTime + get_length_sec();
         fTimeToPropagade = fTime;
         fade_volume = 1.f;
-        occluder_volume = SoundRender->get_occlusion(p_source.position, .2f, occluder);
-        smooth_volume =
-            p_source.base_volume * p_source.volume * (owner_data->s_type == st_Effect ? psSoundVEffects * psSoundVFactor : psSoundVMusic) * (b2D ? 1.f : occluder_volume);
+        occluder_volume =
+            SoundRender->get_occlusion(p_source.position, .2f, &occluder);
+        smooth_volume = p_source.base_volume * p_source.volume *
+            (owner_data->s_type == st_Effect ?
+                 psSoundVEffects * psSoundVFactor :
+                 psSoundVMusic) *
+            (b2D ? 1.f : occluder_volume);
         e_current = e_target = *SoundRender->get_environment(p_source.position);
         if (update_culling(dt))
         {
@@ -78,9 +82,13 @@ void CSoundRender_Emitter::update(float dt)
         fTimeToStop = 0xffffffff;
         fTimeToPropagade = fTime;
         fade_volume = 1.f;
-        occluder_volume = SoundRender->get_occlusion(p_source.position, .2f, occluder);
-        smooth_volume =
-            p_source.base_volume * p_source.volume * (owner_data->s_type == st_Effect ? psSoundVEffects * psSoundVFactor : psSoundVMusic) * (b2D ? 1.f : occluder_volume);
+        occluder_volume =
+            SoundRender->get_occlusion(p_source.position, .2f, &occluder);
+        smooth_volume = p_source.base_volume * p_source.volume *
+            (owner_data->s_type == st_Effect ?
+                 psSoundVEffects * psSoundVFactor :
+                 psSoundVMusic) *
+            (b2D ? 1.f : occluder_volume);
         e_current = e_target = *SoundRender->get_environment(p_source.position);
         if (update_culling(dt))
         {
@@ -277,7 +285,7 @@ BOOL CSoundRender_Emitter::update_culling(float dt)
         // Update occlusion
         float occ = (owner_data->g_type == SOUND_TYPE_WORLD_AMBIENT) ?
             1.0f :
-            SoundRender->get_occlusion(p_source.position, .2f, occluder);
+            SoundRender->get_occlusion(p_source.position, .2f, &occluder);
         volume_lerp(occluder_volume, occ, 1.f, dt);
         clamp(occluder_volume, 0.f, 1.f);
     }

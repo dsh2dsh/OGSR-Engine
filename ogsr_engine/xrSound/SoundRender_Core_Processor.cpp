@@ -1,12 +1,14 @@
 #include "stdafx.h"
 
 #include "../xr_3da/cl_intersect.h"
+#include "../xr_3da/gamemtllib.h"
 #include "SoundRender_Core.h"
 #include "SoundRender_Emitter.h"
 #include "SoundRender_Target.h"
 #include "SoundRender_Source.h"
 
-CSoundRender_Emitter* CSoundRender_Core::i_play(ref_sound* S, BOOL _loop, float delay)
+CSoundRender_Emitter* CSoundRender_Core::i_play(ref_sound* S, BOOL _loop,
+                                                float delay)
 {
     VERIFY(S->_p->feedback == 0);
     CSoundRender_Emitter* E = xr_new<CSoundRender_Emitter>();
@@ -202,42 +204,20 @@ void CSoundRender_Core::statistic(CSound_stats* dest, CSound_stats_ext* ext)
 
 float CSoundRender_Core::get_occlusion_to(const Fvector& hear_pt, const Fvector& snd_pt, float dispersion)
 {
-    float occ_value = 1.f;
-
-    if (0 != geom_SOM)
-    {
-        // Calculate RAY params
-        Fvector pos, dir;
-        pos.random_dir();
-        pos.mul(dispersion);
-        pos.add(snd_pt);
-        dir.sub(pos, hear_pt);
-        float range = dir.magnitude();
-        dir.div(range);
-
-        geom_DB.ray_options(0);
-        geom_DB.ray_query(geom_SOM, hear_pt, dir, range);
-        u32 r_cnt = u32(geom_DB.r_count());
-        CDB::RESULT* _B = geom_DB.r_begin();
-
-        if (0 != r_cnt)
-        {
-            for (u32 k = 0; k < r_cnt; k++)
-            {
-                CDB::RESULT* R = _B + k;
-                occ_value *= *(float*)&R->dummy;
-            }
-        }
-    }
-    return occ_value;
+    Occ occ;
+    return calc_occlusion(hear_pt, snd_pt, dispersion, &occ);
 }
 
-float CSoundRender_Core::get_occlusion(Fvector& P, float R, Fvector* occ)
+float CSoundRender_Core::get_occlusion(const Fvector& P, float R, Occ* occ)
+{
+    return calc_occlusion(listener_position(), P, R, occ);
+}
+
+float CSoundRender_Core::calc_occlusion(const Fvector& base, const Fvector& P, float R, Occ* occ)
 {
     float occ_value = 1.f;
 
     // Calculate RAY params
-    Fvector base = listener_position();
     Fvector pos, dir;
     float range;
     pos.random_dir();
@@ -252,30 +232,48 @@ float CSoundRender_Core::get_occlusion(Fvector& P, float R, Fvector* occ)
         bool bNeedFullTest = true;
         // 1. Check cached polygon
         float _u, _v, _range;
-        if (CDB::TestRayTri(base, dir, occ, _u, _v, _range, true))
+        if (occ->valid &&
+            CDB::TestRayTri(base, dir, occ->occ, _u, _v, _range, false))
+        {
             if (_range > 0 && _range < range)
             {
-                occ_value = psSoundOcclusionScale;
+                occ_value = occ->occ_value;
                 bNeedFullTest = false;
             }
+        }
+
         // 2. Polygon doesn't picked up - real database query
         if (bNeedFullTest)
         {
-            geom_DB.ray_options(CDB::OPT_ONLYNEAREST);
+            occ->valid = false;
+            geom_DB.ray_options(0);
             geom_DB.ray_query(geom_MODEL, base, dir, range);
             if (0 != geom_DB.r_count())
             {
-                // cache polygon
-                const CDB::RESULT* R = geom_DB.r_begin();
-                const CDB::TRI& T = geom_MODEL->get_tris()[R->id];
-                const Fvector* V = geom_MODEL->get_verts();
-                occ[0].set(V[T.verts[0]]);
-                occ[1].set(V[T.verts[1]]);
-                occ[2].set(V[T.verts[2]]);
-                occ_value = psSoundOcclusionScale;
+                for (size_t i = 0; i < geom_DB.r_count(); i++)
+                {
+                    CDB::RESULT* R = geom_DB.r_begin() + i;
+                    const CDB::TRI& T = geom_MODEL->get_tris()[R->id];
+                    u16 material_idx = T.material;
+                    SGameMtl* mtl = get_material(material_idx);
+                    if (mtl->Flags.test(SGameMtl::flPassable |
+                                        SGameMtl::flPickable))
+                        continue;
+                    occ_value *= psSoundOcclusionScale;
+                    if (!occ->valid)
+                    {
+                        const Fvector* V = geom_MODEL->get_verts();
+                        occ->occ[0].set(V[T.verts[0]]);
+                        occ->occ[1].set(V[T.verts[1]]);
+                        occ->occ[2].set(V[T.verts[2]]);
+                        occ->valid = true;
+                    }
+                }
+                occ->occ_value = occ_value;
             }
         }
     }
+
     if (0 != geom_SOM)
     {
         geom_DB.ray_options(0);
@@ -292,5 +290,6 @@ float CSoundRender_Core::get_occlusion(Fvector& P, float R, Fvector* occ)
             }
         }
     }
+
     return occ_value;
 }

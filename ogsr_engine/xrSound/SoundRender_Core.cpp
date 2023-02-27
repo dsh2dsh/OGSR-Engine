@@ -329,11 +329,13 @@ void CSoundRender_Core::play(ref_sound& S, CObject* O, u32 flags, float delay)
     else
         i_play(&S, flags & sm_Looped, delay);
 
-    if (flags & sm_2D || S._handle()->channels_num() == 2)
+    if (flags & sm_2D)
         S._feedback()->switch_to_2D();
 }
 
-void CSoundRender_Core::play_no_feedback(ref_sound& S, CObject* O, u32 flags, float delay, Fvector* pos, float* vol, float* freq, Fvector2* range)
+void CSoundRender_Core::play_no_feedback(ref_sound& S, CObject* O, u32 flags,
+                                         float delay, Fvector* pos, float* vol,
+                                         float* freq, Fvector2* range)
 {
     if (!bPresent || 0 == S._handle())
         return;
@@ -349,7 +351,7 @@ void CSoundRender_Core::play_no_feedback(ref_sound& S, CObject* O, u32 flags, fl
 
     i_play(&S, flags & sm_Looped, delay);
 
-    if (flags & sm_2D || S._handle()->channels_num() == 2)
+    if (flags & sm_2D)
         S._feedback()->switch_to_2D();
 
     if (pos)
@@ -363,7 +365,8 @@ void CSoundRender_Core::play_no_feedback(ref_sound& S, CObject* O, u32 flags, fl
     S._p = orig;
 }
 
-void CSoundRender_Core::play_at_pos(ref_sound& S, CObject* O, const Fvector& pos, u32 flags, float delay)
+void CSoundRender_Core::play_at_pos(ref_sound& S, CObject* O,
+                                    const Fvector& pos, u32 flags, float delay)
 {
     if (!bPresent || 0 == S._handle())
         return;
@@ -375,7 +378,7 @@ void CSoundRender_Core::play_at_pos(ref_sound& S, CObject* O, const Fvector& pos
 
     S._feedback()->set_position(pos);
 
-    if (flags & sm_2D || S._handle()->channels_num() == 2)
+    if (flags & sm_2D)
         S._feedback()->switch_to_2D();
 }
 void CSoundRender_Core::destroy(ref_sound& S)
@@ -650,4 +653,13 @@ void CSoundRender_Core::object_relcase(CObject* obj)
     }
 }
 
-XRSOUND_API float SoundRenderGetOcculution(Fvector& P, float R, Fvector* occ) { return SoundRender->get_occlusion(P, R, occ); }
+void CSoundRender_Core::set_mtl_lib(
+    std::function<SGameMtl*(u16)> materialGetter)
+{
+    m_materialGetter = materialGetter;
+}
+
+SGameMtl* CSoundRender_Core::get_material(u16 material_idx)
+{
+    return m_materialGetter(material_idx);
+}

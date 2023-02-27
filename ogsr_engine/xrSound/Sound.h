@@ -12,6 +12,7 @@
 #define OGG_COMMENT_VERSION 0x0003
 
 // refs
+struct SGameMtl;
 class CObject;
 class XRSOUND_API CSound_params;
 class XRSOUND_API CSound_source;
@@ -276,27 +277,38 @@ public:
     virtual void _restart() = 0;
     virtual BOOL i_locked() = 0;
 
-    virtual void create(ref_sound& S, LPCSTR fName, esound_type sound_type, int game_type) = 0;
+    virtual void create(ref_sound& S, LPCSTR fName, esound_type sound_type,
+                        int game_type) = 0;
     virtual void attach_tail(ref_sound& S, LPCSTR fName) = 0;
-    virtual void clone(ref_sound& S, const ref_sound& from, esound_type sound_type, int game_type) = 0;
+    virtual void clone(ref_sound& S, const ref_sound& from,
+                       esound_type sound_type, int game_type) = 0;
     virtual void destroy(ref_sound& S) = 0;
     virtual void stop_emitters() = 0;
     virtual int pause_emitters(bool val) = 0;
 
-    virtual void play(ref_sound& S, CObject* O, u32 flags = 0, float delay = 0.f) = 0;
-    virtual void play_at_pos(ref_sound& S, CObject* O, const Fvector& pos, u32 flags = 0, float delay = 0.f) = 0;
-    virtual void play_no_feedback(ref_sound& S, CObject* O, u32 flags = 0, float delay = 0.f, Fvector* pos = 0, float* vol = 0, float* freq = 0, Fvector2* range = 0) = 0;
+    virtual void play(ref_sound& S, CObject* O, u32 flags = 0,
+                      float delay = 0.f) = 0;
+    virtual void play_at_pos(ref_sound& S, CObject* O, const Fvector& pos,
+                             u32 flags = 0, float delay = 0.f) = 0;
+    virtual void play_no_feedback(ref_sound& S, CObject* O, u32 flags = 0,
+                                  float delay = 0.f, Fvector* pos = 0,
+                                  float* vol = 0, float* freq = 0,
+                                  Fvector2* range = 0) = 0;
 
     virtual void set_master_volume(float f = 1.f) = 0;
     virtual void set_geometry_env(IReader* I) = 0;
     virtual void set_geometry_som(IReader* I) = 0;
     virtual void set_geometry_occ(CDB::MODEL* M) = 0;
+    virtual void set_mtl_lib(std::function<SGameMtl*(u16)> materialGetter) = 0;
     virtual void set_handler(sound_event* E) = 0;
 
-    virtual void update(const Fvector& P, const Fvector& D, const Fvector& N) = 0;
+    virtual void update(const Fvector& P, const Fvector& D,
+                        const Fvector& N) = 0;
     virtual void statistic(CSound_stats* s0, CSound_stats_ext* s1) = 0;
 
-    virtual float get_occlusion_to(const Fvector& hear_pt, const Fvector& snd_pt, float dispersion = 0.2f) = 0;
+    virtual float get_occlusion_to(const Fvector& hear_pt,
+                                   const Fvector& snd_pt,
+                                   float dispersion = 0.2f) = 0;
 
     virtual void object_relcase(CObject* obj) = 0;
     virtual const Fvector& listener_position() = 0;

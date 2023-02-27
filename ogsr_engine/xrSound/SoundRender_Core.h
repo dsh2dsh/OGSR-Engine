@@ -39,12 +39,25 @@ public:
     float fTimer_Delta;
     sound_event* Handler;
 
+    struct Occ
+    {
+        Fvector occ[3];
+        float occ_value;
+        bool valid;
+
+        Occ()
+        {
+            valid = false;
+        }
+    };
+
 protected:
     // Collider
     CDB::COLLIDER geom_DB;
     CDB::MODEL* geom_SOM;
     CDB::MODEL* geom_MODEL;
     CDB::MODEL* geom_ENV;
+    std::function<SGameMtl*(u16)> m_materialGetter;
 
     // Containers
     std::unordered_map<std::string, CSoundRender_Source*> s_sources;
@@ -94,6 +107,7 @@ public:
     virtual void set_geometry_env(IReader* I);
     virtual void set_geometry_som(IReader* I);
     virtual void set_geometry_occ(CDB::MODEL* M);
+    virtual void set_mtl_lib(std::function<SGameMtl*(u16)> materialGetter);
     virtual void set_handler(sound_event* E);
 
     virtual void update(const Fvector& P, const Fvector& D, const Fvector& N);
@@ -124,7 +138,9 @@ public:
     virtual void object_relcase(CObject* obj);
 
     virtual float get_occlusion_to(const Fvector& hear_pt, const Fvector& snd_pt, float dispersion = 0.2f);
-    float get_occlusion(Fvector& P, float R, Fvector* occ);
+    float get_occlusion(const Fvector& P, float R, Occ* occ);
+    float calc_occlusion(const Fvector& base, const Fvector& P, float R, Occ* occ);
+    SGameMtl* get_material(u16 material_idx);
     CSoundRender_Environment* get_environment(const Fvector& P);
 
     void env_load();

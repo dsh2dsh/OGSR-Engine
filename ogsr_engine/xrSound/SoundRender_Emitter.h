@@ -1,6 +1,7 @@
 #pragma once
 
 #include "soundrender.h"
+#include "soundrender_core.h"
 #include "soundrender_environment.h"
 
 class CSoundRender_Emitter : public CSound_emitter
@@ -43,7 +44,7 @@ public:
     float smooth_volume;
     float occluder_volume; // USER
     float fade_volume;
-    Fvector occluder[3];
+    CSoundRender_Core::Occ occluder;
 
     State m_current_state;
     u32 m_stream_cursor;

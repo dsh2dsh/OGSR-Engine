@@ -10,7 +10,7 @@ extern float psSoundVEffects;
 
 void CSoundRender_Emitter::set_position(const Fvector& pos)
 {
-    if (source()->channels_num() == 1 && _valid(pos))
+    if (!is_2D() && _valid(pos))
         p_source.position = pos;
     else
         p_source.position.set(0, 0, 0);
@@ -30,9 +30,6 @@ CSoundRender_Emitter::CSoundRender_Emitter(void)
     smooth_volume = 1.f;
     occluder_volume = 1.f;
     fade_volume = 1.f;
-    occluder[0].set(0, 0, 0);
-    occluder[1].set(0, 0, 0);
-    occluder[2].set(0, 0, 0);
     m_current_state = stStopped;
     set_cursor(0);
     bMoved = TRUE;
