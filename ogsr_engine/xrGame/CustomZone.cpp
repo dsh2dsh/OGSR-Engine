@@ -732,7 +732,9 @@ void CCustomZone::PlayIdleParticles()
     StopBlowoutParticles();
     StopAccumParticles();
 
-    m_idle_sound.play_at_pos(0, Position(), true);
+    Fvector C;
+    XFORM().transform_tiny(C, CFORM()->getSphere().P);
+    m_idle_sound.play_at_pos(0, C, true);
 
     if (*m_sIdleParticles)
     {
@@ -826,7 +828,8 @@ void CCustomZone::StopBlowoutParticles()
 
 void CCustomZone::PlayHitParticles(CGameObject* pObject)
 {
-    m_hit_sound.play_at_pos(0, pObject->Position());
+    Fvector C; pObject->Center(C);
+    m_hit_sound.play_at_pos(0, C);
 
     shared_str particle_str = NULL;
 
@@ -863,7 +866,8 @@ void CCustomZone::PlayEntranceParticles(CGameObject* pObject)
     if (!IsEnabled())
         return;
 
-    m_entrance_sound.play_at_pos(0, pObject->Position());
+    Fvector C; pObject->Center(C);
+    m_entrance_sound.play_at_pos(0, C);
 
     shared_str particle_str = NULL;
 
@@ -1079,7 +1083,11 @@ void CCustomZone::UpdateBlowout()
         StartBlowoutLight();
 
     if (m_dwBlowoutSoundTime >= (u32)m_iPreviousStateTime && m_dwBlowoutSoundTime < (u32)m_iStateTime)
-        m_blowout_sound.play_at_pos(0, Position());
+    {
+        Fvector C;
+        XFORM().transform_tiny(C, CFORM()->getSphere().P);
+        m_blowout_sound.play_at_pos(0, C);
+    }
 
     if (m_zone_flags.test(eBlowoutWind) && m_dwBlowoutWindTimeStart >= (u32)m_iPreviousStateTime && m_dwBlowoutWindTimeStart < (u32)m_iStateTime)
         StartWind();
@@ -1501,7 +1509,11 @@ void CCustomZone::PlayAccumParticles()
     }
 
     if (m_accum_sound._handle())
-        m_accum_sound.play_at_pos(0, Position());
+    {
+        Fvector C;
+        XFORM().transform_tiny(C, CFORM()->getSphere().P);
+        m_accum_sound.play_at_pos(0, C);
+    }
 }
 
 void CCustomZone::StopAccumParticles()
@@ -1530,7 +1542,11 @@ void CCustomZone::PlayAwakingParticles()
     }
 
     if (m_awaking_sound._handle())
-        m_awaking_sound.play_at_pos(0, Position());
+    {
+        Fvector C;
+        XFORM().transform_tiny(C, CFORM()->getSphere().P);
+        m_awaking_sound.play_at_pos(0, C);
+    }
 }
 
 void CCustomZone::StopAwakingParticles()
