@@ -730,7 +730,7 @@ void CCC_Register()
 #endif
     // psSoundRolloff	= pSettings->r_float	("sound","rolloff");		clamp(psSoundRolloff,			EPS_S,	2.f);
     psSoundOcclusionScale = pSettings->r_float("sound", "occlusion_scale");
-    clamp(psSoundOcclusionScale, 0.1f, .5f);
+    clamp(psSoundOcclusionScale, 0.1f, 1.f);
 
 #ifdef DEBUG
     CMD1(CCC_DumpOpenFiles, "dump_open_files");
