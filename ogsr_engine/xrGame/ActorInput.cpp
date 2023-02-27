@@ -50,17 +50,10 @@ void CActor::IR_OnKeyboardPress(int cmd)
     switch (cmd)
     {
     case kWPN_FIRE: {
-        if (inventory().ActiveItem() && inventory().ActiveItem()->StopSprintOnFire())
+        if (inventory().ActiveItem() &&
+            inventory().ActiveItem()->StopSprintOnFire())
         {
             mstate_wishful &= ~mcSprint;
-        }
-        //-----------------------------
-        if (OnServer())
-        {
-            NET_Packet P;
-            P.w_begin(M_PLAYER_FIRE);
-            P.w_u16(ID());
-            u_EventSend(P);
         }
     }
     break;
@@ -110,7 +103,8 @@ void CActor::IR_OnKeyboardPress(int cmd)
     case kCAM_2: cam_Set(eacLookAt); break;
     case kCAM_3: cam_Set(eacFreeLook); break;
     case kNIGHT_VISION: {
-        const xr_vector<CAttachableItem*>& all = CAttachmentOwner::attached_objects();
+        const xr_vector<CAttachableItem*>& all =
+            CAttachmentOwner::attached_objects();
         xr_vector<CAttachableItem*>::const_iterator it = all.begin();
         xr_vector<CAttachableItem*>::const_iterator it_e = all.end();
         for (; it != it_e; ++it)
@@ -125,7 +119,8 @@ void CActor::IR_OnKeyboardPress(int cmd)
     }
     break;
     case kTORCH: {
-        CTorch* pTorch = smart_cast<CTorch*>(inventory().ItemFromSlot(TORCH_SLOT));
+        CTorch* pTorch =
+            smart_cast<CTorch*>(inventory().ItemFromSlot(TORCH_SLOT));
         if (pTorch)
         {
             pTorch->Switch();
@@ -150,14 +145,19 @@ void CActor::IR_OnKeyboardPress(int cmd)
     case kUSE_MEDKIT: {
         if (!(GetTrade()->IsInTradeState()))
         {
-            PIItem itm = inventory().item((cmd == kUSE_BANDAGE) ? CLSID_IITEM_BANDAGE : CLSID_IITEM_MEDKIT);
+            PIItem itm =
+                inventory().item((cmd == kUSE_BANDAGE) ? CLSID_IITEM_BANDAGE :
+                                                         CLSID_IITEM_MEDKIT);
             if (itm)
             {
                 inventory().Eat(itm);
-                SDrawStaticStruct* _s = HUD().GetUI()->UIGame()->AddCustomStatic("item_used", true);
+                SDrawStaticStruct* _s =
+                    HUD().GetUI()->UIGame()->AddCustomStatic("item_used", true);
                 _s->m_endTime = Device.fTimeGlobal + 3.0f; // 3sec
                 string1024 str;
-                strconcat(sizeof(str), str, *CStringTable().translate("st_item_used"), ": ", itm->Name());
+                strconcat(sizeof(str), str,
+                          *CStringTable().translate("st_item_used"), ": ",
+                          itm->Name());
                 _s->wnd()->SetText(str);
             }
         }

@@ -45,8 +45,7 @@ enum
     M_STATISTIC_UPDATE,
     M_STATISTIC_UPDATE_RESPOND,
     //-----------------------------------------------------
-    M_PLAYER_FIRE,
-    //-----------------------------------------------------
+    
     M_CHANGE_SELF_NAME,
     M_REMOTE_CONTROL_CMD,
 };
