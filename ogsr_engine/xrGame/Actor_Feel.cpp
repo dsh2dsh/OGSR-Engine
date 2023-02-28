@@ -94,8 +94,12 @@ ICF static BOOL info_trace_callback(collide::rq_result& result, LPVOID params)
     return FALSE;
 }
 
-BOOL CActor::CanPickItem(const CFrustum& frustum, const Fvector& from, CObject* item)
+BOOL CActor::CanPickItem(const CFrustum& frustum, const Fvector& from,
+                         CObject* item)
 {
+    if (smart_cast<CObject*>(ObjectWeLookingAt()) == item)
+        return TRUE;
+
     BOOL bOverlaped = FALSE;
     Fvector dir, to;
     item->Center(to);
@@ -108,7 +112,8 @@ BOOL CActor::CanPickItem(const CFrustum& frustum, const Fvector& from, CObject* 
             collide::ray_defs RD(from, dir, range, 0, collide::rqtBoth);
             VERIFY(!fis_zero(RD.dir.square_magnitude()));
             RQR.r_clear();
-            Level().ObjectSpace.RayQuery(RQR, RD, info_trace_callback, &bOverlaped, NULL, item);
+            Level().ObjectSpace.RayQuery(RQR, RD, info_trace_callback,
+                                         &bOverlaped, NULL, item);
         }
     }
     return !bOverlaped;
