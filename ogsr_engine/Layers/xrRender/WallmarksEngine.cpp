@@ -488,6 +488,8 @@ void CWallmarksEngine::Render()
     lock.Leave(); // Physics may add wallmarks in parallel with rendering
 
     // Level-wmarks
+    Device.mProject._43 = _43 - ps_r__WallmarkSHIFT_s;
+    RCache.set_xform_project(Device.mProject);
     RImplementation.r_dsgraph_render_wmarks();
     Device.Statistic->RenderDUMP_WM.End();
 
