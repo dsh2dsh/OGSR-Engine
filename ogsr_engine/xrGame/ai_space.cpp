@@ -121,7 +121,7 @@ void CAI_Space::load(LPCSTR level_name)
     m_doors_manager = xr_new<::doors::manager>(ai().level_graph().header().box());
 
 #ifdef DEBUG
-    Msg("* Loading ai space is successfully completed (%.3fs, %7.3f Mb)", timer.GetElapsed_sec(), float(Memory.mem_usage() - mem_usage) / 1048576.0);
+    MsgIfDbg("* [%s]: Loading ai space is successfully completed (%.3fs, %7.3f Mb)", __FUNCTION__, timer.GetElapsed_sec(), float(Memory.mem_usage() - mem_usage) / 1048576.0);
 #endif
 }
 
