@@ -21,7 +21,11 @@ class CSE_Abstract;
 //	CObject
 //-----------------------------------------------------------------------------------------------------------
 #pragma pack(push, 4)
-class ENGINE_API CObject : public DLL_Pure, public ISpatial, public ISheduled, public IRenderable, public ICollidable
+class ENGINE_API CObject : public DLL_Pure,
+                           public ISpatial,
+                           public ISheduled,
+                           public IRenderable,
+                           public ICollidable
 {
 public:
     struct SavedPosition
@@ -171,8 +175,12 @@ public:
     virtual BOOL net_Spawn(CSE_Abstract* data);
     virtual void net_Destroy();
     virtual void net_Export(CSE_Abstract* E){}; // export to server
-    virtual BOOL net_Relevant() { return FALSE; }; // relevant for export to server
-    virtual void net_Relcase(CObject* O){}; // destroy all links to another objects
+    virtual BOOL net_Relevant()
+    {
+        return FALSE;
+    }; // relevant for export to server
+    virtual void
+    net_Relcase(CObject* O){}; // destroy all links to another objects
 
     // Position stack
     IC u32 ps_Size() const { return PositionStack.size(); }
@@ -192,6 +200,11 @@ public:
 
 public:
     virtual bool register_schedule() const { return true; }
+
+public:
+    virtual Fvector get_new_local_point_on_mesh(u16& bone_id) const;
+    virtual Fvector get_last_local_point_on_mesh(Fvector const& last_point,
+                                                 u16 bone_id) const;
 };
 
 #pragma pack(pop)

@@ -107,6 +107,7 @@ class_<CScriptGameObject> script_register_game_object1(class_<CScriptGameObject>
         .def("see", &CScriptGameObject::CheckObjectVisibility)
         .def("see_right_now", &CScriptGameObject::CheckObjectVisibilityNow)
         .def("see", &CScriptGameObject::CheckTypeVisibility)
+        .def("see_vispoint", &CScriptGameObject::VisibilityVisPoint)
 
         .def("who_hit_name", &CScriptGameObject::WhoHitName)
         .def("who_hit_section_name", &CScriptGameObject::WhoHitSectionName)

@@ -239,6 +239,7 @@ public:
     bool CheckObjectVisibility(const CScriptGameObject* tpLuaGameObject);
     bool CheckObjectVisibilityNow(const CScriptGameObject* tpLuaGameObject);
     bool CheckTypeVisibility(const char* section_name);
+    Fvector VisibilityVisPoint(CScriptGameObject* tpLuaGameObject);
     LPCSTR WhoHitName();
     LPCSTR WhoHitSectionName();
     CScriptGameObject* WhoHitWpn();

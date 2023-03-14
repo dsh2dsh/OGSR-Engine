@@ -115,6 +115,7 @@ public:
     // specified object is visible now or
     // some time ago <= current_params.m_still_visible_time
     bool visible_now(const CGameObject* game_object) const;
+    Fvector visible_vispoint(CGameObject* game_object) const;
 
 public:
     void enable(const CObject* object, bool enable);

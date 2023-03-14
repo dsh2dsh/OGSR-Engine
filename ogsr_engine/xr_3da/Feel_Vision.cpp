@@ -48,7 +48,8 @@ void Vision::o_new(CObject* O)
     I.Cache.verts[1].set(0, 0, 0);
     I.Cache.verts[2].set(0, 0, 0);
     I.fuzzy = -EPS_S;
-    I.cp_LP.set(0, 0, 0);
+    I.cp_LP = O->get_new_local_point_on_mesh(I.bone_id);
+    I.cp_LAST = O->get_last_local_point_on_mesh(I.cp_LP, I.bone_id);
     I.trans = 1.f;
 }
 
@@ -141,7 +142,8 @@ void Vision::feel_vision_update(CObject* parent, Fvector& P, float dt, float vis
 void Vision::o_trace(Fvector& P, float dt, float vis_threshold)
 {
     RQR.r_clear();
-    xr_vector<feel_visible_Item>::iterator I = feel_visible.begin(), E = feel_visible.end();
+    xr_vector<feel_visible_Item>::iterator I = feel_visible.begin(),
+                                           E = feel_visible.end();
     for (; I != E; I++)
     {
         if (!I->O || 0 == I->O->CFORM())
@@ -152,11 +154,14 @@ void Vision::o_trace(Fvector& P, float dt, float vis_threshold)
         }
 
         // verify relation
-        if (positive(I->fuzzy) && I->O->Position().similar(I->cp_LR_dst, lr_granularity) && P.similar(I->cp_LR_src, lr_granularity))
+        if (positive(I->fuzzy) &&
+            I->O->Position().similar(I->cp_LR_dst, lr_granularity) &&
+            P.similar(I->cp_LR_src, lr_granularity))
             continue;
 
         I->cp_LR_dst = I->O->Position();
         I->cp_LR_src = P;
+        I->cp_LAST = I->O->get_last_local_point_on_mesh(I->cp_LP, I->bone_id);
 
         // Fetch data
         Fvector OP;
@@ -184,7 +189,10 @@ void Vision::o_trace(Fvector& P, float dt, float vis_threshold)
         {
             D.div(f);
             // setup ray defs & feel params
-            collide::ray_defs RD(P, D, f, 0, collide::rq_target(collide::rqtStatic | /**/ collide::rqtObject | /**/ collide::rqtObstacle));
+            collide::ray_defs RD(P, D, f, 0,
+                                 collide::rq_target(collide::rqtStatic |
+                                                    /**/ collide::rqtObject |
+                                                    /**/ collide::rqtObstacle));
             SFeelParam feel_params(this, &*I, vis_threshold);
             // check cache
             if (I->Cache.result && I->Cache.similar(P, D, f))
@@ -196,7 +204,9 @@ void Vision::o_trace(Fvector& P, float dt, float vis_threshold)
             else
             {
                 float _u, _v, _range;
-                if (CDB::TestRayTri(P, D, I->Cache.verts, _u, _v, _range, false) && (_range > 0 && _range < f))
+                if (CDB::TestRayTri(P, D, I->Cache.verts, _u, _v, _range,
+                                    false) &&
+                    (_range > 0 && _range < f))
                 {
                     feel_params.vis = 0.f;
                     //						Log("cache 1");
@@ -205,7 +215,9 @@ void Vision::o_trace(Fvector& P, float dt, float vis_threshold)
                 {
                     // cache outdated. real query.
                     VERIFY(!fis_zero(RD.dir.square_magnitude()));
-                    if (g_pGameLevel->ObjectSpace.RayQuery(RQR, RD, feel_vision_callback, &feel_params, NULL, NULL))
+                    if (g_pGameLevel->ObjectSpace.RayQuery(
+                            RQR, RD, feel_vision_callback, &feel_params, NULL,
+                            NULL))
                     {
                         I->Cache_vis = feel_params.vis;
                         I->Cache.set(P, D, f, TRUE);
@@ -224,8 +236,7 @@ void Vision::o_trace(Fvector& P, float dt, float vis_threshold)
                 // INVISIBLE, choose next point
                 I->fuzzy -= fuzzy_update_novis * dt;
                 clamp(I->fuzzy, -.5f, 1.f);
-                I->cp_LP.random_dir();
-                I->cp_LP.mul(.7f);
+                I->cp_LP = I->O->get_new_local_point_on_mesh(I->bone_id);
             }
             else
             {
