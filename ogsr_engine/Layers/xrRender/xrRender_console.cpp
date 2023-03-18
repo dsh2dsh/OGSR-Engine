@@ -95,7 +95,6 @@ float ps_r__Tree_SBC = 1.5f; // scale bias correct
 
 float ps_r__WallmarkTTL = 50.f;
 float ps_r__WallmarkSHIFT = 0.0001f;
-float ps_r__WallmarkSHIFT_s = 0.05f;
 float ps_r__WallmarkSHIFT_V = 0.0001f;
 
 float ps_r__GLOD_ssa_start = 256.f;
@@ -696,15 +695,11 @@ void xrRender_initconsole()
     CMD4(CCC_Integer, "r__lsleep_frames", &ps_r__LightSleepFrames, 4, 30);
     CMD4(CCC_Float, "r__ssa_glod_start", &ps_r__GLOD_ssa_start, 128, 512);
     CMD4(CCC_Float, "r__ssa_glod_end", &ps_r__GLOD_ssa_end, 16, 96);
+    CMD4(CCC_Float, "r__wallmark_shift_pp", &ps_r__WallmarkSHIFT, 0.0f, 1.f);
     CMD4(CCC_Float, "r__wallmark_shift_v", &ps_r__WallmarkSHIFT_V, 0.0f, 1.f);
     CMD1(CCC_ModelPoolStat, "stat_models");
 #endif // DEBUG
     CMD4(CCC_Float, "r__wallmark_ttl", &ps_r__WallmarkTTL, 1.0f, 10.f * 60.f);
-    if (Core.ParamFlags.test(xrCore::ParamFlag::dbg))
-    {
-        CMD4(CCC_Float, "r__wallmark_shift_pp", &ps_r__WallmarkSHIFT_s, 0.0f,
-             1.f);
-    }
 
 #if RENDER == R_R1
     CMD4(CCC_Integer, "r__supersample", &ps_r__Supersample, 1, 8);
