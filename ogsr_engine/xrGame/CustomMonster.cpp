@@ -81,6 +81,9 @@ void CCustomMonster::SAnimState::Create(IKinematicsAnimated* K, LPCSTR base)
 //////////////////////////////////////////////////////////////////////
 
 CCustomMonster::CCustomMonster()
+    : // this is non-polymorphic call of the virtual function cast_entity_alive
+      // just to remove warning C4355 if we use this instead
+      Feel::Vision(cast_game_object())
 {
     m_sound_user_data_visitor = 0;
     m_memory_manager = 0;

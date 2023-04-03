@@ -23,13 +23,14 @@ private:
     xr_vector<CObject*> diff;
     collide::rq_results RQR;
     xr_vector<ISpatial*> r_spatial;
+    CObject const* m_owner;
 
     void o_new(CObject* E);
     void o_delete(CObject* E);
     void o_trace(Fvector& P, float dt, float vis_threshold);
 
 public:
-    Vision();
+    Vision(CObject const* owner);
     virtual ~Vision();
     struct feel_visible_Item
     {
