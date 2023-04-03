@@ -573,6 +573,9 @@ public:
     IC const u32& throw_time_interval() const;
     IC void throw_time_interval(const u32& value);
 
+private:
+    virtual BOOL AlwaysTheCrow();
+
 public:
     DECLARE_SCRIPT_REGISTER_FUNCTION
 };

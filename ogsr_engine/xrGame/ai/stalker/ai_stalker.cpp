@@ -1016,4 +1016,17 @@ bool CAI_Stalker::unlimited_ammo() { return infinite_ammo() && CObjectHandler::p
 
 CAgentManager& CAI_Stalker::agent_manager() const { return Level().seniority_holder().team(g_Team()).squad(g_Squad()).group(g_Group()).agent_manager(); }
 
-CAgentManager* CAI_Stalker::get_agent_manager() const { return Level().seniority_holder().team(g_Team()).squad(g_Squad()).group(g_Group()).get_agent_manager(); }
+CAgentManager* CAI_Stalker::get_agent_manager() const
+{
+    return Level()
+        .seniority_holder()
+        .team(g_Team())
+        .squad(g_Squad())
+        .group(g_Group())
+        .get_agent_manager();
+}
+
+BOOL CAI_Stalker::AlwaysTheCrow()
+{
+    return shedule.fastest_scale;
+}
