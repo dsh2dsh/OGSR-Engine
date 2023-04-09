@@ -174,7 +174,7 @@ void CGraviArtefact::process_gravity()
     Fvector P = Position();
     P.y += Radius();
     Fbox level_box = Level().ObjectSpace.GetBoundingVolume();
-    collide::ray_defs RD(P, dir, _abs(P.y - level_box.y1) - 1.f, 0, collide::rqtBoth);
+    collide::ray_defs RD(P, dir, _abs(P.y - level_box.y1) - 1.f, CDB::OPT_CULL, collide::rqtBoth);
     collide::rq_results RQR;
     ray_query_param params(this);
     Level().ObjectSpace.RayQuery(RQR, RD, trace_callback, &params, NULL, this);

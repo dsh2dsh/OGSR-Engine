@@ -276,7 +276,7 @@ float CSoundRender_Core::calc_occlusion(const Fvector& base, const Fvector& P, f
 
     if (0 != geom_SOM)
     {
-        geom_DB.ray_options(0);
+        geom_DB.ray_options(CDB::OPT_CULL);
         geom_DB.ray_query(geom_SOM, base, dir, range);
         u32 r_cnt = u32(geom_DB.r_count());
         CDB::RESULT* _B = geom_DB.r_begin();

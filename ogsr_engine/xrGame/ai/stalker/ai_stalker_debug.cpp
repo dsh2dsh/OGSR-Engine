@@ -961,7 +961,7 @@ void fill_points(CCustomMonster* self, const Fvector& position, const Fvector& d
 {
     VERIFY(!fis_zero(direction.square_magnitude()));
 
-    collide::ray_defs ray_defs(position, direction, distance, 0, collide::rqtBoth);
+    collide::ray_defs ray_defs(position, direction, distance, CDB::OPT_CULL, collide::rqtBoth);
     VERIFY(!fis_zero(ray_defs.dir.square_magnitude()));
 
     ray_query_param params(self, self->memory().visual().transparency_threshold(), distance, position, direction, points);

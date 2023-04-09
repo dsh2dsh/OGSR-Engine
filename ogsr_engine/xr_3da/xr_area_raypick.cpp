@@ -121,7 +121,7 @@ BOOL CObjectSpace::_RayPick(const Fvector& start, const Fvector& dir, float rang
     if (tgt & rqtStatic)
     {
         xrXRC xrc;
-        xrc.ray_options(CDB::OPT_ONLYNEAREST);
+        xrc.ray_options(CDB::OPT_ONLYNEAREST | CDB::OPT_CULL);
         xrc.ray_query(&Static, start, dir, range);
         if (xrc.r_count())
             R.set_if_less(xrc.r_begin());
@@ -129,7 +129,7 @@ BOOL CObjectSpace::_RayPick(const Fvector& start, const Fvector& dir, float rang
     // dynamic test
     if (tgt & rqtDyn)
     {
-        collide::ray_defs Q(start, dir, R.range, CDB::OPT_ONLYNEAREST, tgt);
+        collide::ray_defs Q(start, dir, R.range, CDB::OPT_ONLYNEAREST | CDB::OPT_CULL, tgt);
         // traverse object database
         u32 d_flags = STYPE_COLLIDEABLE | ((tgt & rqtObstacle) ? STYPE_OBSTACLE : 0) | ((tgt & rqtShape) ? STYPE_SHAPE : 0);
         g_SpatialSpace->q_ray(r_spatial, 0, d_flags, start, dir, range);

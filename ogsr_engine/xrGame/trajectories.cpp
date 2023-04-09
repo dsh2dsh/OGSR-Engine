@@ -75,7 +75,7 @@ static bool trajectory_check_collision(float low, float high, Fvector const& pos
         return (false);
 
     start_to_target.mul(1.f / distance);
-    collide::ray_defs ray_defs(start, start_to_target, distance, 0, collide::rqtBoth);
+    collide::ray_defs ray_defs(start, start_to_target, distance, CDB::OPT_CULL, collide::rqtBoth);
 
     float range = distance;
 
