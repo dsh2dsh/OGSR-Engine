@@ -216,15 +216,23 @@ void CBlender_Tree::Compile(CBlender_Compile& C)
             tvs_s = "shadow_direct_tree";
     }
 
-    bool bUseATOC = (oBlend.value && (RImplementation.o.dx10_msaa_alphatest == CRender::MSAA_ATEST_DX10_0_ATOC));
+    bool bUseATOC = (oBlend.value &&
+                     (RImplementation.o.dx10_msaa_alphatest ==
+                      CRender::MSAA_ATEST_DX10_0_ATOC));
 
     switch (C.iElement)
     {
     case SE_R2_NORMAL_HQ: // deffer
+
+        // Is a branch/bush. Use a different VS
+        if (oBlend.value)
+            tvs = "tree_branch";
+
         if (bUseATOC)
         {
             uber_deffer(C, true, tvs, "base_atoc", oBlend.value, 0, true);
-            C.r_Stencil(TRUE, D3DCMP_ALWAYS, 0xff, 0x7f, D3DSTENCILOP_KEEP, D3DSTENCILOP_REPLACE, D3DSTENCILOP_KEEP);
+            C.r_Stencil(TRUE, D3DCMP_ALWAYS, 0xff, 0x7f, D3DSTENCILOP_KEEP,
+                        D3DSTENCILOP_REPLACE, D3DSTENCILOP_KEEP);
             C.r_ColorWriteEnable(false, false, false, false);
             C.r_StencilRef(0x01);
             //	Alpha to coverage.
