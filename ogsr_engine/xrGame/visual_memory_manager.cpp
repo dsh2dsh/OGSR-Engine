@@ -278,7 +278,8 @@ float CVisualMemoryManager::object_visible_distance(const CGameObject* game_obje
     return (distance);
 }
 
-float CVisualMemoryManager::object_luminocity(const CGameObject* game_object) const
+float CVisualMemoryManager::object_luminocity(
+    const CGameObject* game_object) const
 {
     const auto* pActor = smart_cast<const CActor*>(game_object);
     if (!pActor)
@@ -292,8 +293,10 @@ float CVisualMemoryManager::object_luminocity(const CGameObject* game_object) co
             return 1.f;
     }
 
-    float luminocity = const_cast<CGameObject*>(game_object)->ROS()->get_luminocity();
-    float power = log(luminocity > .001f ? luminocity : .001f) * current_state().m_luminocity_factor;
+    float luminocity =
+        const_cast<CGameObject*>(game_object)->ROS()->get_luminocity();
+    float power = log(luminocity > .001f ? luminocity : .001f) *
+        current_state().m_luminocity_factor;
     return (exp(power));
 }
 
@@ -308,7 +311,9 @@ float CVisualMemoryManager::get_object_velocity(const CGameObject* game_object, 
     return (pos1.vPosition.distance_to(pos0.vPosition) / (float(pos1.dwTime) / 1000.f - float(pos0.dwTime) / 1000.f));
 }
 
-float CVisualMemoryManager::get_visible_value(float distance, float object_distance, float time_delta, float object_velocity, float luminocity, float trans) const
+float CVisualMemoryManager::get_visible_value(
+    float distance, float object_distance, float time_delta,
+    float object_velocity, float luminocity, float trans) const
 {
     float always_visible_distance = current_state().m_always_visible_distance;
     if (object_distance <= always_visible_distance)
@@ -320,11 +325,15 @@ float CVisualMemoryManager::get_visible_value(float distance, float object_dista
     float fog_far = GamePersistent().Environment().CurrentEnv->fog_far;
     float fog_w = 1 / (fog_far - fog_near);
     float fog_x = -fog_near * fog_w;
-    float fog = (object_distance * fog_w + fog_x) * current_state().m_fog_factor;
+    float fog =
+        (object_distance * fog_w + fog_x) * current_state().m_fog_factor;
     clamp(fog, 0.f, 1.f);
     float fog_factor = 1.f - pow(fog, current_state().m_fog_pow);
 
-    return (time_delta / current_state().m_time_quant * luminocity * (1.f + current_state().m_velocity_factor * object_velocity) * (distance - object_distance) /
+    float cur_vel = 1.f + current_state().m_velocity_factor * object_velocity;
+
+    return (time_delta / current_state().m_time_quant * luminocity * cur_vel *
+            (distance - object_distance) /
             (distance - always_visible_distance) * fog_factor * trans);
 }
 
@@ -349,7 +358,8 @@ u32 CVisualMemoryManager::get_prev_time(const CGameObject* game_object) const
     return (game_object->ps_Element(game_object->ps_Size() - 2).dwTime);
 }
 
-bool CVisualMemoryManager::visible(const CGameObject* game_object, float time_delta)
+bool CVisualMemoryManager::visible(const CGameObject* game_object,
+                                   float time_delta)
 {
     VERIFY(game_object);
 
@@ -361,7 +371,8 @@ bool CVisualMemoryManager::visible(const CGameObject* game_object, float time_de
         return (true);
 #endif
 
-    float object_distance, distance = object_visible_distance(game_object, object_distance);
+    float object_distance,
+        distance = object_visible_distance(game_object, object_distance);
 
     CNotYetVisibleObject* object = not_yet_visible_object(game_object);
 
@@ -381,10 +392,12 @@ bool CVisualMemoryManager::visible(const CGameObject* game_object, float time_de
 
     float luminocity = object_luminocity(game_object);
     float trans;
-    if (current_state().m_transparency_factor > 0 && smart_cast<const CActor*>(game_object))
+    if (current_state().m_transparency_factor > 0 &&
+        smart_cast<const CActor*>(game_object))
     {
         trans = visible_transparency_threshold(game_object);
-        trans = trans < 0.f ? 1.f : (trans * current_state().m_transparency_factor);
+        trans =
+            trans < 0.f ? 1.f : (trans * current_state().m_transparency_factor);
         clamp(trans, 0.f, 1.f);
     }
     else
@@ -395,8 +408,11 @@ bool CVisualMemoryManager::visible(const CGameObject* game_object, float time_de
         CNotYetVisibleObject new_object;
         new_object.m_object = game_object;
         new_object.m_prev_time = 0;
-        new_object.m_value = get_visible_value(distance, object_distance, time_delta, get_object_velocity(game_object, new_object), luminocity, trans);
-        clamp(new_object.m_value, 0.f, current_state().m_visibility_threshold + EPS_L);
+        new_object.m_value = get_visible_value(
+            distance, object_distance, time_delta,
+            get_object_velocity(game_object, new_object), luminocity, trans);
+        clamp(new_object.m_value, 0.f,
+              current_state().m_visibility_threshold + EPS_L);
         new_object.m_update_time = Device.dwTimeGlobal;
         new_object.m_prev_time = get_prev_time(game_object);
         add_not_yet_visible_object(new_object);
@@ -404,7 +420,9 @@ bool CVisualMemoryManager::visible(const CGameObject* game_object, float time_de
     }
 
     object->m_update_time = Device.dwTimeGlobal;
-    object->m_value += get_visible_value(distance, object_distance, time_delta, get_object_velocity(game_object, *object), luminocity, trans);
+    object->m_value += get_visible_value(
+        distance, object_distance, time_delta,
+        get_object_velocity(game_object, *object), luminocity, trans);
     clamp(object->m_value, 0.f, current_state().m_visibility_threshold + EPS_L);
     object->m_prev_time = get_prev_time(game_object);
 
