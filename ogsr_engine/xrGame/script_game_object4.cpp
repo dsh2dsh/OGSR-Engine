@@ -933,29 +933,36 @@ bool CScriptGameObject::can_kill_enemy(const CScriptGameObject* obj)
     return stalker->can_kill_enemy(enemy);
 }
 
-bool CScriptGameObject::can_fire_to_enemy(const CScriptGameObject* obj, u32 fire_make_sense_interval)
+bool CScriptGameObject::can_fire_to_enemy(const CScriptGameObject* obj,
+                                          u32 fire_make_sense_interval)
 {
     CAI_Stalker* stalker = smart_cast<CAI_Stalker*>(&object());
-    ASSERT_FMT(stalker, "[%s]: %s not a CAI_Stalker", __FUNCTION__, object().cName().c_str());
+    ASSERT_FMT(stalker, "[%s]: %s not a CAI_Stalker", __FUNCTION__,
+               object().cName().c_str());
     auto enemy = smart_cast<CEntityAlive*>(&(obj->object()));
-    ASSERT_FMT(enemy, "[%s]: %s not a CEntityAlive", __FUNCTION__, obj->cName().c_str());
+    ASSERT_FMT(enemy, "[%s]: %s not a CEntityAlive", __FUNCTION__,
+               obj->cName().c_str());
 
     bool vis = stalker->memory().visual().visible_now(enemy);
     if (!vis && fire_make_sense_interval)
     {
-        u32 last_time_seen = stalker->memory().visual().visible_object_time_last_seen(enemy);
-        if (last_time_seen != u32(-1) && last_time_seen + fire_make_sense_interval >= Device.dwTimeGlobal)
+        u32 last_time_seen =
+            stalker->memory().visual().visible_object_time_last_seen(enemy);
+        if (last_time_seen != u32(-1) &&
+            last_time_seen + fire_make_sense_interval >= Device.dwTimeGlobal)
             vis = true;
     }
     if (stalker->can_fire_to_enemy(enemy))
     {
+        bool can_kill = stalker->can_kill_enemy(enemy);
         float enemy_dist = stalker->Position().distance_to(enemy->Position());
-        if (enemy_dist < 5.0f && stalker->can_kill_enemy(enemy))
+        if (enemy_dist < 5.0f && can_kill)
             return true; // на линии огня
         if (vis)
         {
             float pick_dist = stalker->pick_distance();
-            if (pick_dist >= 2.5f && pick_dist >= enemy_dist - pick_dist)
+            if (can_kill ||
+                (pick_dist >= 2.5f && pick_dist >= enemy_dist - pick_dist))
                 return true;
         }
     }
