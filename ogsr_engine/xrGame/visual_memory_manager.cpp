@@ -32,6 +32,7 @@
 #include "holder_custom.h"
 #include "inventory.h"
 #include "torch.h"
+#include "weapon.h"
 
 #ifndef MASTER_GOLD
 #include "clsid_game.h"
@@ -293,6 +294,9 @@ float CVisualMemoryManager::object_luminocity(
             return 1.f;
     }
 
+    if (actorShooting())
+        return 1.f;
+
     float luminocity =
         const_cast<CGameObject*>(game_object)->ROS()->get_luminocity();
     float power = log(luminocity > .001f ? luminocity : .001f) *
@@ -397,7 +401,7 @@ bool CVisualMemoryManager::visible(const CGameObject* game_object,
     {
         trans = visible_transparency_threshold(game_object);
         if (trans < 1.f)
-            trans = trans < 0.f ?
+            trans = (trans < 0.f || (trans > 0.f && actorShooting())) ?
                 1.f :
                 (trans * current_state().m_transparency_factor);
         clamp(trans, 0.f, 1.f);
@@ -891,7 +895,8 @@ void CVisualMemoryManager::on_requested_spawn(CObject* object)
     }
 }
 
-float CVisualMemoryManager::visible_transparency_threshold(const CGameObject* game_object) const
+float CVisualMemoryManager::visible_transparency_threshold(
+    const CGameObject* game_object) const
 {
     if (m_object)
         return m_object->feel_vision_get_transparency(game_object);
@@ -911,4 +916,16 @@ Fvector CVisualMemoryManager::visible_vispoint(CGameObject* game_object) const
         VERIFY(m_client);
         return m_client->feel_vision_get_vispoint(game_object);
     }
+}
+
+bool CVisualMemoryManager::actorShooting() const
+{
+    CWeapon* weapon = smart_cast<CWeapon*>(Actor()->inventory().ActiveItem());
+    if (weapon)
+    {
+        return (weapon->GetState() == CWeapon::eFire &&
+                !weapon->IsSilencerAttached()) ||
+            weapon->GetState() == CWeapon::eFire2;
+    }
+    return false;
 }

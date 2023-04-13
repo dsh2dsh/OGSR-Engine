@@ -147,6 +147,7 @@ public:
 
 private:
     void clear_delayed_objects();
+    bool actorShooting() const;
 };
 
 #include "visual_memory_manager_inline.h"
