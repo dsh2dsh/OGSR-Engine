@@ -5,11 +5,13 @@
 #include "xr_collide_form.h"
 #include "igame_level.h"
 #include "cl_intersect.h"
+#include "CameraManager.h"
+#include "../Include/xrRender/Kinematics.h"
 
 namespace Feel
 {
 
-Vision::Vision(CObject const* owner)
+Vision::Vision(CObject* owner)
     : pure_relcase(&Vision::feel_vision_relcase), m_owner(owner)
 {}
 
@@ -26,6 +28,8 @@ struct SFeelParam
 IC BOOL feel_vision_callback(collide::rq_result& result, LPVOID params)
 {
     SFeelParam* fp = (SFeelParam*)params;
+    if (result.O == fp->item->O)
+        return FALSE;
     float vis = fp->parent->feel_vision_mtl_transp(result.O, result.element);
     fp->vis *= vis;
     if (NULL == result.O && fis_zero(vis))
@@ -168,6 +172,14 @@ void Vision::o_trace(Fvector& P, float dt, float vis_threshold)
 
         //
         Fvector D, OP = I->cp_LAST;
+        bool use_camera_pos = false;
+        if (actorHeadBone(I->O, I->bone_id) &&
+            !g_pGameLevel->Cameras().GetCamEffector(cefDemo))
+        {
+            OP = Device.vCameraPosition;
+            use_camera_pos = true;
+        }
+
         D.sub(OP, P);
         if (fis_zero(D.magnitude()))
         {
@@ -175,14 +187,15 @@ void Vision::o_trace(Fvector& P, float dt, float vis_threshold)
             continue;
         }
 
-        float f = D.magnitude() + .2f;
+        float f = use_camera_pos ? D.magnitude() : D.magnitude() + .2f;
         if (f > fuzzy_guaranteed)
         {
             D.div(f);
             // setup ray defs & feel params
-            collide::ray_defs RD(
-                P, D, f, CDB::OPT_CULL,
-                collide::rq_target(collide::rqtStatic | collide::rqtObstacle));
+            collide::ray_defs RD(P, D, f, 0,
+                                 collide::rq_target(collide::rqtStatic |
+                                                    collide::rqtObject |
+                                                    collide::rqtObstacle));
             SFeelParam feel_params(this, &*I, vis_threshold);
             // check cache
             if (I->Cache.result && I->Cache.similar(P, D, f))
@@ -207,7 +220,7 @@ void Vision::o_trace(Fvector& P, float dt, float vis_threshold)
                     VERIFY(!fis_zero(RD.dir.square_magnitude()));
                     if (g_pGameLevel->ObjectSpace.RayQuery(
                             RQR, RD, feel_vision_callback, &feel_params, NULL,
-                            NULL))
+                            m_owner))
                     {
                         I->Cache_vis = feel_params.vis;
                         I->Cache.set(P, D, f, TRUE);
@@ -221,7 +234,8 @@ void Vision::o_trace(Fvector& P, float dt, float vis_threshold)
             }
             //				Log("Vis",feel_params.vis);
             r_spatial.clear_not_free();
-            g_SpatialSpace->q_ray(r_spatial, 0, STYPE_VISIBLEFORAI, P, D, f);
+            g_SpatialSpace->q_ray(r_spatial, 0,
+                                  STYPE_COLLIDEABLE | STYPE_OBSTACLE, P, D, f);
 
             RD.flags = CDB::OPT_ONLYFIRST;
 
@@ -230,15 +244,13 @@ void Vision::o_trace(Fvector& P, float dt, float vis_threshold)
             xr_vector<ISpatial*>::const_iterator e = r_spatial.end();
             for (; i != e; ++i)
             {
-                if (*i == m_owner)
-                    continue;
-
-                if (*i == I->O)
+                if (*i == m_owner || *i == I->O)
                     continue;
 
                 CObject const* object = (*i)->dcast_CObject();
                 RQR.r_clear();
                 if (object && object->collidable.model &&
+                    object->collidable.model->Type() == cftObject &&
                     !object->collidable.model->_RayQuery(RD, RQR))
                     continue;
 
@@ -280,4 +292,15 @@ float Vision::feel_vision_get_transparency(const CObject* _O) const
             return it.trans;
     return -1.f;
 }
+
+bool Vision::actorHeadBone(CObject* O, int bone_id)
+{
+    if (O == g_pGameLevel->CurrentEntity())
+    {
+        IKinematics* K = PKinematics(O->Visual());
+        return bone_id == K->LL_BoneID("bip01_head");
+    }
+    return false;
+}
+
 }; // namespace Feel
