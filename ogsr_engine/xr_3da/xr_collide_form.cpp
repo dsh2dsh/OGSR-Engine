@@ -104,7 +104,8 @@ void CCF_Skeleton::BuildState()
     dwFrame = Device.dwFrame;
     IRenderVisual* pVisual = owner->Visual();
     IKinematics* K = PKinematics(pVisual);
-    K->CalculateBones();
+    K->CalculateBones_Invalidate();
+    K->CalculateBones(TRUE);
     const Fmatrix& L2W = owner->XFORM();
 
     if (vis_mask != K->LL_GetBonesVisible())
