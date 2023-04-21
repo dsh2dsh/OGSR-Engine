@@ -132,6 +132,7 @@ void CScriptGameObject::script_register(lua_State* L)
                   value("on_key_press", int(GameObject::eOnKeyPress)),
                   value("on_key_release", int(GameObject::eOnKeyRelease)),
                   value("on_key_hold", int(GameObject::eOnKeyHold)),
+                  value("on_key_holding", int(GameObject::eOnKeyHolding)),
                   value("on_mouse_wheel", int(GameObject::eOnMouseWheel)),
                   value("on_mouse_move", int(GameObject::eOnMouseMove)),
                   value("on_belt", int(GameObject::eOnItemToBelt)),

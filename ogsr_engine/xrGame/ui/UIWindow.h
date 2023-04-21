@@ -76,6 +76,7 @@ public:
     //реакция на клавиатуру
     virtual bool OnKeyboard(int dik, EUIMessages keyboard_action);
     virtual bool OnKeyboardHold(int dik);
+    virtual bool OnKeyboardHolding(int dik, u32 pressTime);
     virtual void SetKeyboardCapture(CUIWindow* pChildWindow, bool capture_status);
 
     //обработка сообщений не предусмотреных стандартными обработчиками

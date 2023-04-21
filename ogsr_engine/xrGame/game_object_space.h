@@ -56,6 +56,7 @@ enum ECallbackType
     eOnKeyPress,
     eOnKeyRelease,
     eOnKeyHold,
+    eOnKeyHolding,
     eOnMouseWheel,
     eOnMouseMove,
     eOnItemToBelt,

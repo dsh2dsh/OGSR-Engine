@@ -213,6 +213,7 @@ public:
     virtual void IR_OnKeyboardPress(int btn);
     virtual void IR_OnKeyboardRelease(int btn);
     virtual void IR_OnKeyboardHold(int btn);
+    virtual void IR_OnKeyboardHolding(int dik, u32 pressTime);
     virtual void IR_OnMousePress(int btn);
     virtual void IR_OnMouseRelease(int btn);
     virtual void IR_OnMouseHold(int btn);

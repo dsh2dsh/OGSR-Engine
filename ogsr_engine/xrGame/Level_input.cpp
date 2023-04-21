@@ -436,9 +436,37 @@ void CLevel::IR_OnKeyboardHold(int key)
 
     if (CURRENT_ENTITY())
     {
-        IInputReceiver* IR = smart_cast<IInputReceiver*>(smart_cast<CGameObject*>(CURRENT_ENTITY()));
+        IInputReceiver* IR = smart_cast<IInputReceiver*>(
+            smart_cast<CGameObject*>(CURRENT_ENTITY()));
         if (IR)
             IR->IR_OnKeyboardHold(get_binded_action(key));
+    }
+}
+
+void CLevel::IR_OnKeyboardHolding(int key, u32 pressTime)
+{
+    if (g_bDisableAllInput)
+        return;
+
+    bool b_ui_exist = (pHUD && pHUD->GetUI());
+
+    if (b_ui_exist && pHUD->GetUI()->IR_OnKeyboardHolding(key, pressTime))
+        return;
+    if (b_ui_exist && HUD().GetUI()->MainInputReceiver())
+        return;
+    if (Device.Paused())
+        return;
+
+    if ((key != DIK_LALT) && (key != DIK_RALT) && (key != DIK_F4) && Actor())
+        Actor()->callback(GameObject::eOnKeyHolding)(
+            key, get_binded_action(key), pressTime);
+
+    if (CURRENT_ENTITY())
+    {
+        IInputReceiver* IR = smart_cast<IInputReceiver*>(
+            smart_cast<CGameObject*>(CURRENT_ENTITY()));
+        if (IR)
+            IR->IR_OnKeyboardHolding(get_binded_action(key), pressTime);
     }
 }
 

@@ -57,6 +57,27 @@ bool CUIDialogWnd::IR_OnKeyboardHold(int dik)
     return false;
 }
 
+bool CUIDialogWnd::IR_OnKeyboardHolding(int dik, u32 pressTime)
+{
+    if (!IR_process())
+        return false;
+    if (OnKeyboardHolding(dik, pressTime))
+        return true;
+
+    if (!StopAnyMove() && g_pGameLevel)
+    {
+        CObject* O = Level().CurrentEntity();
+        if (O)
+        {
+            IInputReceiver* IR = smart_cast<IInputReceiver*>(smart_cast<CGameObject*>(O));
+            if (!IR)
+                return (false);
+            IR->IR_OnKeyboardHolding(get_binded_action(dik), pressTime);
+        }
+    }
+    return false;
+}
+
 #define DOUBLE_CLICK_TIME 300 // 250
 
 bool CUIDialogWnd::IR_OnKeyboardPress(int dik)
@@ -182,6 +203,13 @@ bool CUIDialogWnd::OnKeyboardHold(int dik)
     if (!IR_process())
         return false;
     return inherited::OnKeyboardHold(dik);
+}
+
+bool CUIDialogWnd::OnKeyboardHolding(int dik, u32 pressTime)
+{
+    if (!IR_process())
+        return false;
+    return inherited::OnKeyboardHolding(dik, pressTime);
 }
 
 bool CUIDialogWnd::OnKeyboard(int dik, EUIMessages keyboard_action)

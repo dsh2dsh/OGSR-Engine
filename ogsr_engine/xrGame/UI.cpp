@@ -154,6 +154,20 @@ bool CUI::IR_OnKeyboardHold(int dik)
     return false;
 }
 
+bool CUI::IR_OnKeyboardHolding(int dik, u32 pressTime)
+{
+    if (MainInputReceiver())
+    {
+        if (MainInputReceiver()->IR_OnKeyboardHolding(dik, pressTime))
+            return true;
+    }
+
+    if (MainInputReceiver())
+        return true;
+
+    return false;
+}
+
 bool CUI::IR_OnKeyboardPress(int dik)
 {
     if (MainInputReceiver())

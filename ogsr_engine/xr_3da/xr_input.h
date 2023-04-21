@@ -45,11 +45,15 @@ private:
     int offs[COUNT_MOUSE_AXIS];
     BOOL mouseState[COUNT_MOUSE_BUTTONS];
     u32 mouseTime[COUNT_MOUSE_BUTTONS];
+    BOOL mouseHold[COUNT_MOUSE_BUTTONS];
 
     //----------------------
-    BOOL KBState[COUNT_KB_BUTTONS];
+    u32 KBState[COUNT_KB_BUTTONS];
+    BOOL KBHold[COUNT_KB_BUTTONS];
 
-    HRESULT CreateInputDevice(LPDIRECTINPUTDEVICE8* device, GUID guidDevice, const DIDATAFORMAT* pdidDataFormat, u32 dwFlags, u32 buf_size);
+    HRESULT CreateInputDevice(LPDIRECTINPUTDEVICE8* device, GUID guidDevice,
+                              const DIDATAFORMAT* pdidDataFormat, u32 dwFlags,
+                              u32 buf_size);
 
     //	xr_stack<IInputReceiver*>	cbStack;
     xr_vector<IInputReceiver*> cbStack;

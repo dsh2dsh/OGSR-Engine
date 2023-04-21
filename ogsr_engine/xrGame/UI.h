@@ -33,6 +33,7 @@ public:
     void UnLoad();
 
     bool IR_OnKeyboardHold(int dik);
+    bool IR_OnKeyboardHolding(int dik, u32 pressTime);
     bool IR_OnKeyboardPress(int dik);
     bool IR_OnKeyboardRelease(int dik);
     bool IR_OnMouseMove(int, int);
