@@ -140,6 +140,7 @@ CActor::CActor() : CEntityAlive(), current_ik_cam_shift(0)
     m_fCrouchFactor = 0.2f;
     m_fClimbFactor = 1.f;
     m_fCamHeightFactor = 0.87f;
+    m_fCamHeightFactorZoomed = m_fCamHeightFactor;
 
     m_fFallTime = s_fFallTime;
     m_bAnimTorsoPlayed = false;
@@ -327,28 +328,36 @@ void CActor::Load(LPCSTR section)
     m_fClimbFactor = pSettings->r_float(section, "climb_coef");
     m_fSprintFactor = pSettings->r_float(section, "sprint_koef");
 
-    m_fWalk_StrafeFactor = READ_IF_EXISTS(pSettings, r_float, section, "walk_strafe_coef", 1.0f);
-    m_fRun_StrafeFactor = READ_IF_EXISTS(pSettings, r_float, section, "run_strafe_coef", 1.0f);
+    m_fWalk_StrafeFactor =
+        READ_IF_EXISTS(pSettings, r_float, section, "walk_strafe_coef", 1.0f);
+    m_fRun_StrafeFactor =
+        READ_IF_EXISTS(pSettings, r_float, section, "run_strafe_coef", 1.0f);
 
-    m_hit_slowmo_jump = READ_IF_EXISTS(pSettings, r_bool, section, "hit_slowmo_jump", false);
+    m_hit_slowmo_jump =
+        READ_IF_EXISTS(pSettings, r_bool, section, "hit_slowmo_jump", false);
 
     m_fExoFactor = 1.0f;
 
     m_fCamHeightFactor = pSettings->r_float(section, "camera_height_factor");
+    m_fCamHeightFactorZoomed =
+        READ_IF_EXISTS(pSettings, r_float, section,
+                       "camera_height_factor_zoomed", m_fCamHeightFactor);
+
     character_physics_support()->movement()->SetJumpUpVelocity(m_fJumpSpeed);
     float AirControlParam = pSettings->r_float(section, "air_control_param");
-    character_physics_support()->movement()->SetAirControlParam(AirControlParam);
+    character_physics_support()->movement()->SetAirControlParam(
+        AirControlParam);
 
     m_fPickupInfoRadius = pSettings->r_float(section, "pickup_info_radius");
     m_fSleepTimeFactor = pSettings->r_float(section, "sleep_time_factor");
 
     character_physics_support()->in_Load(section);
 
-    //загрузить параметры эффектора
+    // загрузить параметры эффектора
     //	LoadShootingEffector	("shooting_effector");
     LoadSleepEffector("sleep_effector");
 
-    //загрузить параметры смещения firepoint
+    // загрузить параметры смещения firepoint
     m_vMissileOffset = pSettings->r_fvector3(section, "missile_throw_offset");
 
     // Weapons				= xr_new<CWeaponList> (this);

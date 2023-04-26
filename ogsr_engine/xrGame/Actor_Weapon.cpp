@@ -59,9 +59,10 @@ float CActor::GetWeaponAccuracy() const
     return dispersion;
 }
 
-void CActor::g_fireParams(const CHudItem* pHudItem, Fvector& fire_pos, Fvector& fire_dir)
+void CActor::g_fireParams(const CHudItem* pHudItem, Fvector& fire_pos,
+                          Fvector& fire_dir)
 {
-    //	VERIFY			(inventory().ActiveItem());
+    // VERIFY(inventory().ActiveItem());
 
     fire_pos = Cameras().Position();
     fire_dir = Cameras().Direction();
@@ -72,6 +73,13 @@ void CActor::g_fireParams(const CHudItem* pHudItem, Fvector& fire_pos, Fvector& 
         Fvector offset;
         XFORM().transform_dir(offset, m_vMissileOffset);
         fire_pos.add(offset);
+    }
+    else if (auto weapon = smart_cast<const CWeaponMagazined*>(pHudItem);
+             weapon && !weapon->IsZoomed())
+    {
+        // Если есть оружие и мы не целимся и даже не начали целиться, тогда
+        // пули будет вылетать из ствола, а не из камеры.
+        fire_pos = const_cast<CWeaponMagazined*>(weapon)->get_LastFP();
     }
 }
 

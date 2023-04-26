@@ -9,6 +9,7 @@
 #include "Car.h"
 
 #include "Weapon.h"
+#include "WeaponMagazined.h"
 #include "Inventory.h"
 
 #include "SleepEffector.h"
@@ -99,9 +100,15 @@ void CActor::cam_UnsetLadder()
 float cammera_into_collision_shift = 0.05f;
 float CActor::CameraHeight()
 {
+    float f = m_fCamHeightFactor;
+    if (auto weapon = smart_cast<CWeaponMagazined*>(inventory().ActiveItem());
+        weapon) // && weapon->IsZoomed())
+        f = m_fCamHeightFactorZoomed;
+
     Fvector R;
     character_physics_support()->movement()->Box().getsize(R);
-    return m_fCamHeightFactor * (R.y - cammera_into_collision_shift);
+
+    return (R.y - cammera_into_collision_shift) * f;
 }
 
 IC float viewport_near(float& w, float& h)

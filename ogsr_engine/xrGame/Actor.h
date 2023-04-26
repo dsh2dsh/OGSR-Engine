@@ -257,7 +257,9 @@ protected:
     float m_fLandingTime;
     float m_fJumpTime;
     float m_fFallTime;
+
     float m_fCamHeightFactor;
+    float m_fCamHeightFactorZoomed;
 
     // Dropping
     BOOL b_DropActivated;
