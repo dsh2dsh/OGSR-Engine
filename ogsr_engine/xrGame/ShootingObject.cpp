@@ -422,20 +422,22 @@ bool CShootingObject::SendHitAllowed(CObject* pUser)
     }
 };
 
-extern void random_dir(Fvector& tgt_dir, const Fvector& src_dir, float dispersion);
-
-void CShootingObject::FireBullet(const Fvector& pos, const Fvector& shot_dir, float fire_disp, const CCartridge& cartridge, u16 parent_id, u16 weapon_id, bool send_hit)
+void CShootingObject::FireBullet(const Fvector& pos, const Fvector& shot_dir,
+                                 float fire_disp, const CCartridge& cartridge,
+                                 u16 parent_id, u16 weapon_id, bool send_hit)
 {
     if (fis_zero(m_fStartBulletSpeed) || fis_zero(fireDistance))
         return;
 
     Fvector dir;
-    random_dir(dir, shot_dir, fire_disp);
+    dir.random_dir(shot_dir, fire_disp);
 
-    if (!Core.Features.test(xrCore::Feature::npc_simplified_shooting) || ParentIsActor())
+    if (!Core.Features.test(xrCore::Feature::npc_simplified_shooting) ||
+        ParentIsActor())
         if (!fis_zero(constDeviation.pitch) || !fis_zero(constDeviation.yaw))
         {
-            // WARN: при больших значениях девиации стрелок может отсрелить себе голову!
+            // WARN: при больших значениях девиации стрелок может отсрелить себе
+            // голову!
             float dir_yaw, dir_pitch;
             dir.getHP(dir_yaw, dir_pitch);
             dir_pitch += constDeviation.pitch;

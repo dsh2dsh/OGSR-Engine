@@ -378,14 +378,16 @@ void CBulletManager::DynamicObjectHit(CBulletManager::_event& E)
 FvectorVec g_hit[3];
 #endif
 
-extern void random_dir(Fvector& tgt_dir, const Fvector& src_dir, float dispersion);
-
-std::pair<float, float> CBulletManager::ObjectHit(SBullet* bullet, const Fvector& end_point, collide::rq_result& R, u16 target_material, Fvector& hit_normal)
+std::pair<float, float> CBulletManager::ObjectHit(SBullet* bullet,
+                                                  const Fvector& end_point,
+                                                  collide::rq_result& R,
+                                                  u16 target_material,
+                                                  Fvector& hit_normal)
 {
     //----------- normal - start
     if (R.O)
     {
-        //вернуть нормаль по которой играть партиклы
+        // вернуть нормаль по которой играть партиклы
         CCF_Skeleton* skeleton = smart_cast<CCF_Skeleton*>(R.O->CFORM());
         if (skeleton)
         {
@@ -439,36 +441,40 @@ std::pair<float, float> CBulletManager::ObjectHit(SBullet* bullet, const Fvector
         return std::make_pair(power, impulse);
     }
 
-    //рикошет
+    // рикошет
     Fvector new_dir;
     new_dir.reflect(bullet->dir, hit_normal);
     Fvector tgt_dir;
-    random_dir(tgt_dir, new_dir, deg2rad(10.f));
+    tgt_dir.random_dir(new_dir, deg2rad(10.f));
 
     float ricoshet_factor = bullet->dir.dotproduct(tgt_dir);
 
     float f = Random.randF(0.5f, 1.f);
     // float f				= Random.randF	(0.0f,0.3);
     //	if(shoot_factor<RICOCHET_THRESHOLD &&  )
-    if (((f + shoot_factor) < ricoshet_factor) && !mtl->Flags.test(SGameMtl::flNoRicoshet) && bullet->flags.allow_ricochet)
+    if (((f + shoot_factor) < ricoshet_factor) &&
+        !mtl->Flags.test(SGameMtl::flNoRicoshet) &&
+        bullet->flags.allow_ricochet)
     {
-        //уменьшение скорости полета в зависимости
-        //от угла падения пули (чем прямее угол, тем больше потеря)
-        float scale = 1.f - _abs(bullet->dir.dotproduct(hit_normal)) * m_fCollisionEnergyMin;
+        // уменьшение скорости полета в зависимости
+        // от угла падения пули (чем прямее угол, тем больше потеря)
+        float scale = 1.f -
+            _abs(bullet->dir.dotproduct(hit_normal)) * m_fCollisionEnergyMin;
         clamp(scale, 0.f, m_fCollisionEnergyMax);
 
-        //вычисление рикошета, делается немного фейком,
-        //т.к. пуля остается в точке столкновения
-        //и сразу выходит из RayQuery()
+        // вычисление рикошета, делается немного фейком,
+        // т.к. пуля остается в точке столкновения
+        // и сразу выходит из RayQuery()
         bullet->dir.set(tgt_dir);
         bullet->pos = end_point;
         bullet->flags.ricochet_was = 1;
 
-        //уменьшить скорость в зависимости от простреливаемости
+        // уменьшить скорость в зависимости от простреливаемости
         bullet->speed *= (1 - mtl->fShootFactor) * scale;
-        //сколько энергии в процентах потеряла пуля при столкновении
+        // сколько энергии в процентах потеряла пуля при столкновении
         float energy_lost = 1.f - bullet->speed / old_speed;
-        //импульс переданный объекту равен прямопропорционален потерянной энергии
+        // импульс переданный объекту равен прямопропорционален потерянной
+        // энергии
         impulse = bullet->hit_impulse * speed_factor * energy_lost;
 
 #ifdef DEBUG
