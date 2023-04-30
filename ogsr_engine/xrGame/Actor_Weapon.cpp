@@ -75,11 +75,19 @@ void CActor::g_fireParams(const CHudItem* pHudItem, Fvector& fire_pos,
         fire_pos.add(offset);
     }
     else if (auto weapon = smart_cast<const CWeaponMagazined*>(pHudItem);
-             weapon && !weapon->IsZoomed())
+             weapon && !(weapon->IsZoomed() && !weapon->IsRotatingToZoom()))
     {
-        // Если есть оружие и мы не целимся и даже не начали целиться, тогда
-        // пули будет вылетать из ствола, а не из камеры.
-        fire_pos = const_cast<CWeaponMagazined*>(weapon)->get_LastFP();
+        // Если есть оружие и мы не целимся, тогда пули будет вылетать из
+        // ствола, а не из камеры.
+        //
+        // Из ствола не получится пули выпускать, т.к. он у нас не вещественный
+        // и проникает сквозь текстуры. Если пули выпускать из позиции ствола,
+        // то можно будет в не прицельном режиме стрелять из-за текстур. Поэтому
+        // пули будем выпускать из центра актора, но на высоте ствола, что бы
+        // они попадали в препятствие, если актор находится вплотную к нему, а
+        // не вылетали из точки за этим препятствием.
+        Center(fire_pos);
+        fire_pos.y = const_cast<CWeaponMagazined*>(weapon)->get_LastFP().y;
     }
 }
 
