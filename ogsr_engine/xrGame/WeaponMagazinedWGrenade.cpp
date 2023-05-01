@@ -390,8 +390,11 @@ void CWeaponMagazinedWGrenade::SwitchState(u32 S)
             E->g_fireParams(this, p1, d);
         }
 
-        if (!IsZoomed())
-            p1.set(get_LastFP2());
+        if (ParentIsActor() && !(IsZoomed() && !IsRotatingToZoom()))
+        {
+            H_Parent()->Center(p1);
+            p1.y = get_LastFP2().y;
+        }
 
         Fmatrix launch_matrix;
         launch_matrix.identity();
