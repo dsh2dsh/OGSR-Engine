@@ -170,27 +170,38 @@ void CPHAICharacter::ValidateWalkOn()
     //	 b_clamb_jump=true;
     inherited::ValidateWalkOn();
 }
-void CPHAICharacter::InitContact(dContact* c, bool& do_collide, u16 material_idx_1, u16 material_idx_2)
+
+void CPHAICharacter::InitContact(dContact* c, bool& do_collide,
+                                 u16 material_idx_1, u16 material_idx_2)
 {
     SGameMtl* material_1 = GMLib.GetMaterialByIdx(material_idx_1);
     SGameMtl* material_2 = GMLib.GetMaterialByIdx(material_idx_2);
-    if ((material_1 && material_1->Flags.test(SGameMtl::flActorObstacle)) || (material_2 && material_2->Flags.test(SGameMtl::flActorObstacle)))
+
+    if ((material_1 && material_1->Flags.test(SGameMtl::flActorObstacle)) ||
+        (material_2 && material_2->Flags.test(SGameMtl::flActorObstacle)))
         do_collide = true;
+
     inherited::InitContact(c, do_collide, material_idx_1, material_idx_2);
+
     if (is_control || b_lose_control || b_jumping)
         c->surface.mu = 0.00f;
+
     dxGeomUserData* D1 = retrieveGeomUserData(c->geom.g1);
     dxGeomUserData* D2 = retrieveGeomUserData(c->geom.g2);
-    if (D1 && D2 && D1->ph_object && D2->ph_object && D1->ph_object->CastType() == tpCharacter && D2->ph_object->CastType() == tpCharacter)
+    if (D1 && D2 && D1->ph_object && D2->ph_object &&
+        D1->ph_object->CastType() == tpCharacter &&
+        D2->ph_object->CastType() == tpCharacter)
     {
         b_on_object = true;
         b_valide_wall_contact = false;
     }
+
 #ifdef DEBUG
     if (ph_dbg_draw_mask.test(phDbgNeverUseAiPhMove))
         do_collide = false;
 #endif
 }
+
 /*
 EEnvironment CPHAICharacter::CheckInvironment()
 {
