@@ -8,12 +8,13 @@
 
 #include "phaicharacter.h"
 #include "../xr_3da/device.h"
+#include "ai/stalker/ai_stalker.h"
 
 #ifdef DEBUG
-//#	include "../xr_3da/StatGraph.h"
+// #	include "../xr_3da/StatGraph.h"
 #include "PHDebug.h"
-//#	include "level.h"
-//#	include "debug_renderer.h"
+// #	include "level.h"
+// #	include "debug_renderer.h"
 #endif
 
 CPHAICharacter::CPHAICharacter() { m_forced_physics_control = false; }
@@ -194,6 +195,15 @@ void CPHAICharacter::InitContact(dContact* c, bool& do_collide,
     {
         b_on_object = true;
         b_valide_wall_contact = false;
+        // Пусть сталкеры сквозь друг друга свободно проходят. Это лучше, чем
+        // когда они упрутся, как бараны, друг в друга и стоят, ногами дрыгают.
+        auto ch1 = static_cast<CPHCharacter*>(D1->ph_object);
+        auto ch2 = static_cast<CPHCharacter*>(D2->ph_object);
+        if ((ch1->RestrictionType() == CPHCharacter::rtStalker ||
+             ch1->RestrictionType() == CPHCharacter::rtStalkerSmall) &&
+            (ch2->RestrictionType() == CPHCharacter::rtStalker ||
+             ch2->RestrictionType() == CPHCharacter::rtStalkerSmall))
+            do_collide = false;
     }
 
 #ifdef DEBUG
