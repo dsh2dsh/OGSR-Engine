@@ -102,7 +102,7 @@ float CActor::CameraHeight()
 {
     float f = m_fCamHeightFactor;
     if (auto weapon = smart_cast<CWeaponMagazined*>(inventory().ActiveItem());
-        weapon) // && weapon->IsZoomed())
+        weapon && weapon->IsZoomed())
         f = m_fCamHeightFactorZoomed;
 
     Fvector R;
