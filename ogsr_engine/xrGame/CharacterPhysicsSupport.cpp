@@ -33,8 +33,8 @@
 
 #include "../xr_3da/device.h"
 
-//#define USE_SMART_HITS
-#define USE_IK
+// #define USE_SMART_HITS
+// #define USE_IK
 
 IC bool is_imotion(interactive_motion* im) { return im && im->is_enabled(); }
 
