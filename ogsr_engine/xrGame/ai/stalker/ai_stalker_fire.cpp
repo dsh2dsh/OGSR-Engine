@@ -139,7 +139,7 @@ void CAI_Stalker::g_fireParams(const CHudItem* pHudItem, Fvector& P, Fvector& D)
         return;
     }
 
-    /* dsh:
+    /*
     switch (movement().body_state())
     {
     case eBodyStateStand: {

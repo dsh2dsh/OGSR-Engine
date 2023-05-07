@@ -150,7 +150,7 @@ void CActorCondition::UpdateCondition()
         max_weight = object().MaxCarryWeight();
 
     float weight_coef = weight / max_weight;
-    if (weight_coef < 1.f) // dsh:
+    if (weight_coef < 1.f)
         weight_coef = pow(weight_coef, m_fWalkWeightKPow);
 
     if ((object().mstate_real & mcAnyMove))
