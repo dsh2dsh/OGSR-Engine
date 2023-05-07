@@ -32,7 +32,7 @@
 #include "holder_custom.h"
 #include "inventory.h"
 #include "torch.h"
-#include "weapon.h"
+#include "weaponmagazined.h"
 
 #ifndef MASTER_GOLD
 #include "clsid_game.h"
@@ -920,7 +920,8 @@ Fvector CVisualMemoryManager::visible_vispoint(CGameObject* game_object) const
 
 bool CVisualMemoryManager::actorShooting() const
 {
-    CWeapon* weapon = smart_cast<CWeapon*>(Actor()->inventory().ActiveItem());
+    auto weapon =
+        smart_cast<CWeaponMagazined*>(Actor()->inventory().ActiveItem());
     if (weapon)
     {
         return (weapon->GetState() == CWeapon::eFire &&
