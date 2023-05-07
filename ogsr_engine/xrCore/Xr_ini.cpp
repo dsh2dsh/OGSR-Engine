@@ -305,6 +305,13 @@ bool CInifile::save_as(LPCSTR new_fname)
         fName = xr_strdup(new_fname);
     }
     R_ASSERT(fName && fName[0]);
+
+    if (FS.exist(fName))
+    {
+        BOOL ok = SetFileAttributes(fName, FILE_ATTRIBUTE_NORMAL);
+        R_ASSERT3(ok, fName, Debug.error2string(GetLastError()));
+    }
+
     IWriter* F = FS.w_open_ex(fName);
     if (F)
     {
