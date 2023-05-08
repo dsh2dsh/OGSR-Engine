@@ -197,10 +197,15 @@ void CPatrolPathScript::script_register(lua_State* L)
     module(L)[class_<CPatrolPath>("CPatrolPath")
                   .def(constructor<>())
                   .def("add_point", &CPatrolPath::add_point)
-                  .def("point", (CPatrolPoint(CPatrolPath::*)(u32))(&CPatrolPath::point))
+                  .def("point",
+                       (CPatrolPoint(CPatrolPath::*)(u32))(&CPatrolPath::point))
+                  .def("point_raw", &CPatrolPath::point_raw)
                   .def("add_vertex", &CPatrolPath::add_vertex)
                   .def("remove_vertex", &CPatrolPath::remove_vertex)
-                  .def("add_edge", (void(CPatrolPath::*)(const u32&, const u32&, const float&))(&CPatrolPath::add_edge))
+                  .def("add_edge",
+                       (void(CPatrolPath::*)(const u32&, const u32&,
+                                             const float&))(
+                           &CPatrolPath::add_edge))
                   .def("remove_edge", &CPatrolPath::remove_edge)
                   .def("edge_count", &CPatrolPath::edge_count)
                   .def("clear_edges", &CPatrolPath::clear_edges)];
