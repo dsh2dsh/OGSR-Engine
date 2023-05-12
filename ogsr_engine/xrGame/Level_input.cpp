@@ -142,8 +142,7 @@ void CLevel::IR_OnKeyboardPress(int key)
         break;
 
     case kCONSOLE:
-        if (Device.Paused())
-            Console->Show();
+        Console->Show(get_action_dik(kPAUSE));
         return;
         break;
 

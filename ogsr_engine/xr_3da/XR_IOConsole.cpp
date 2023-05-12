@@ -42,6 +42,7 @@ void CConsole::Reset()
 void CConsole::Initialize()
 {
     scroll_delta = cmd_delta = old_cmd_delta = 0;
+    m_pauseDik = -1;
     editor[0] = 0;
     bShift = false;
     RecordCommands = false;
@@ -215,6 +216,12 @@ void CConsole::OnRender()
 
 void CConsole::OnPressKey(int dik, BOOL bHold)
 {
+    if (m_pauseDik >= 0 && dik == m_pauseDik)
+    {
+        Device.Pause(!Device.Paused(), TRUE, TRUE, "CConsole::OnPressKey");
+        return;
+    }
+
     if (!bHold)
         fAccel = 1.0f;
 
@@ -441,11 +448,12 @@ outloop:
     editor[0] = 0;
 }
 
-void CConsole::Show()
+void CConsole::Show(int pauseDik)
 {
     if (bVisible)
         return;
     bVisible = true;
+    m_pauseDik = pauseDik;
 
     editor[0] = 0;
     rep_time = 0;
@@ -456,6 +464,9 @@ void CConsole::Show()
     IR_Capture();
     Device.seqRender.Add(this, 1);
     Device.seqFrame.Add(this);
+
+    if (!Device.Paused())
+        Device.Pause(TRUE, TRUE, TRUE, "CConsole::Show");
 }
 
 void CConsole::Hide()
@@ -467,6 +478,9 @@ void CConsole::Hide()
     Device.seqFrame.Remove(this);
     Device.seqRender.Remove(this);
     IR_Release();
+
+    if (Device.Paused())
+        Device.Pause(FALSE, TRUE, TRUE, "CConsole::Show");
 }
 
 void CConsole::SelectCommand()

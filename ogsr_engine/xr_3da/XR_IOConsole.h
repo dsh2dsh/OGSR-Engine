@@ -44,6 +44,7 @@ private:
 
     int cmd_delta;
     int old_cmd_delta;
+    int m_pauseDik;
 
     char* editor_last;
     BOOL bShift;
@@ -75,7 +76,7 @@ public:
     void RemoveCommand(IConsole_Command*);
     void Reset();
 
-    void Show();
+    void Show(int pauseDik = -1);
     void Hide();
 
     void Save();
