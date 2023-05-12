@@ -175,11 +175,9 @@ void CPhysicsShellHolder::activate_physic_shell()
 {
     VERIFY(!m_pPhysicsShell);
     create_physic_shell();
-    Fvector l_fw, l_up;
+    Fvector l_fw;
     l_fw.set(XFORM().k);
-    l_up.set(XFORM().j);
     l_fw.mul(2.f);
-    l_up.mul(2.f);
 
     Fmatrix l_p1, l_p2;
     l_p1.set(XFORM());
