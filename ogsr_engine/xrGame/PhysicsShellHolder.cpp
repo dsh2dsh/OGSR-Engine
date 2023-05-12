@@ -190,7 +190,8 @@ void CPhysicsShellHolder::activate_physic_shell()
     m_pPhysicsShell->Activate(l_p1, 0, l_p2);
     if (H_Parent() && H_Parent()->Visual())
     {
-        smart_cast<IKinematics*>(H_Parent()->Visual())->CalculateBones_Invalidate();
+        smart_cast<IKinematics*>(H_Parent()->Visual())
+            ->CalculateBones_Invalidate();
         smart_cast<IKinematics*>(H_Parent()->Visual())->CalculateBones(TRUE);
         Fvector dir = H_Parent()->Direction();
         dir.y = 0;
@@ -199,7 +200,7 @@ void CPhysicsShellHolder::activate_physic_shell()
     smart_cast<IKinematics*>(Visual())->CalculateBones_Invalidate();
     smart_cast<IKinematics*>(Visual())->CalculateBones(TRUE);
 
-    //	XFORM().set					(l_p1);
+    // XFORM().set(l_p1);
     correct_spawn_pos();
 
     Fvector overriden_vel;
@@ -215,7 +216,8 @@ void CPhysicsShellHolder::activate_physic_shell()
 
     if (H_Parent() && H_Parent()->Visual())
     {
-        smart_cast<IKinematics*>(H_Parent()->Visual())->CalculateBones_Invalidate();
+        smart_cast<IKinematics*>(H_Parent()->Visual())
+            ->CalculateBones_Invalidate();
         smart_cast<IKinematics*>(H_Parent()->Visual())->CalculateBones(TRUE);
     }
     CPhysicsShellHolder* P = smart_cast<CPhysicsShellHolder*>(H_Parent());
