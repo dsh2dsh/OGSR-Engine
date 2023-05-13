@@ -171,29 +171,62 @@ void CPhysicsShellHolder::correct_spawn_pos()
     PPhysicsShell()->GetGlobalTransformDynamic(&XFORM());
 }
 
+static BOOL ray_query_callback(collide::rq_result& result, LPVOID params)
+{
+    bool& hasCollision = *(bool*)params;
+    if (!result.O)
+    {
+        CDB::TRI* T = Level().ObjectSpace.GetStaticTris() + result.element;
+        const auto mtl = GMLib.GetMaterialByIdx(T->material);
+        if (mtl->Flags.test(SGameMtl::flPassable))
+            return TRUE;
+    }
+    hasCollision = true;
+    return FALSE;
+}
+
 void CPhysicsShellHolder::activate_physic_shell()
 {
     VERIFY(!m_pPhysicsShell);
     create_physic_shell();
+
     Fvector l_fw;
     l_fw.set(XFORM().k);
-    l_fw.mul(2.f);
+    l_fw.mul(4.f);
 
     Fmatrix l_p1, l_p2;
     l_p1.set(XFORM());
     l_p2.set(XFORM());
-    l_fw.mul(2.f);
-    l_p2.c.add(l_fw);
 
+    bool parentHasVisual = H_Parent() && H_Parent()->Visual();
+    if (parentHasVisual)
+    {
+        Fvector pos;
+        H_Parent()->Center(pos);
+        Fvector dir = H_Parent()->XFORM().k;
+        float dist = H_Parent()->Radius() / 2 + Radius() * 2;
+
+        bool hasCollision = false;
+        collide::rq_results RQR;
+        collide::ray_defs RD(pos, dir, dist, 0, collide::rqtBoth);
+        Level().ObjectSpace.RayQuery(RQR, RD, ray_query_callback, &hasCollision,
+                                     NULL, H_Parent());
+        if (hasCollision)
+            pos.set(H_Parent()->Position());
+        else
+            pos.add(dir * (dist - Radius()));
+        l_p1.c.set(pos);
+        l_p2.c.set(pos);
+        l_fw.set(0.f, 0.f, 0.f);
+    }
+
+    l_p2.c.add(l_fw);
     m_pPhysicsShell->Activate(l_p1, 0, l_p2);
-    if (H_Parent() && H_Parent()->Visual())
+    if (parentHasVisual)
     {
         smart_cast<IKinematics*>(H_Parent()->Visual())
             ->CalculateBones_Invalidate();
         smart_cast<IKinematics*>(H_Parent()->Visual())->CalculateBones(TRUE);
-        Fvector dir = H_Parent()->Direction();
-        dir.y = 0;
-        l_fw.set(normalize(dir) * 2.f);
     }
     smart_cast<IKinematics*>(Visual())->CalculateBones_Invalidate();
     smart_cast<IKinematics*>(Visual())->CalculateBones(TRUE);
@@ -203,21 +236,18 @@ void CPhysicsShellHolder::activate_physic_shell()
 
     Fvector overriden_vel;
     if (ActivationSpeedOverriden(overriden_vel, true))
-    {
         m_pPhysicsShell->set_LinearVel(overriden_vel);
-    }
     else
-    {
         m_pPhysicsShell->set_LinearVel(l_fw);
-    }
     m_pPhysicsShell->GetGlobalTransformDynamic(&XFORM());
 
-    if (H_Parent() && H_Parent()->Visual())
+    if (parentHasVisual)
     {
         smart_cast<IKinematics*>(H_Parent()->Visual())
             ->CalculateBones_Invalidate();
         smart_cast<IKinematics*>(H_Parent()->Visual())->CalculateBones(TRUE);
     }
+
     CPhysicsShellHolder* P = smart_cast<CPhysicsShellHolder*>(H_Parent());
     if (P)
         P->on_child_shell_activate(this);
