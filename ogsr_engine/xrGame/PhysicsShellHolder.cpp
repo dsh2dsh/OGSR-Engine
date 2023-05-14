@@ -178,7 +178,7 @@ static BOOL ray_query_callback(collide::rq_result& result, LPVOID params)
     {
         CDB::TRI* T = Level().ObjectSpace.GetStaticTris() + result.element;
         const auto mtl = GMLib.GetMaterialByIdx(T->material);
-        if (mtl->Flags.test(SGameMtl::flPassable))
+        if (mtl->Flags.test(SGameMtl::flPassable | SGameMtl::flPickable))
             return TRUE;
     }
     hasCollision = true;
