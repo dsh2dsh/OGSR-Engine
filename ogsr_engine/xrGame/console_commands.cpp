@@ -1298,11 +1298,13 @@ void CCC_RegisterCommands()
     CMD3(CCC_Mask, "g_3d_scopes", &psActorFlags, AF_3D_SCOPES);
     CMD4(CCC_Integer, "g_3d_scopes_fps_factor", &g_3dscopes_fps_factor, 2, 5);
     CMD3(CCC_Mask, "g_crosshair_dbg", &psActorFlags, AF_CROSSHAIR_DBG);
-    CMD3(CCC_Mask, "g_mouse_wheel_switch_slot", &psActorFlags, AF_MOUSE_WHEEL_SWITCH_SLOTS);
+    CMD3(CCC_Mask, "g_crosshair_nearest", &psActorFlags, AF_CROSSHAIR_NEAREST);
+    CMD3(CCC_Mask, "g_mouse_wheel_switch_slot", &psActorFlags,
+         AF_MOUSE_WHEEL_SWITCH_SLOTS);
 
     CMD1(CCC_TimeFactor, "time_factor")
     CMD1(CCC_SetWeather, "set_weather");
-    //#endif // MASTER_GOLD
+    // #endif // MASTER_GOLD
 
     CMD3(CCC_Mask, "g_music_tracks", &psActorFlags, AF_MUSIC_TRACKS);
 

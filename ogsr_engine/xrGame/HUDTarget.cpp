@@ -83,9 +83,9 @@ ICF static BOOL pick_trace_callback(collide::rq_result& result, LPVOID params)
         *RQ = result;
         return FALSE;
     }
-    else
+    else if (!psActorFlags.test(AF_CROSSHAIR_NEAREST))
     {
-        //получить треугольник и узнать его материал
+        // получить треугольник и узнать его материал
         CDB::TRI* T = Level().ObjectSpace.GetStaticTris() + result.element;
         const auto* mtl = GMLib.GetMaterialByIdx(T->material);
         if (mtl->Flags.test(SGameMtl::flPassable | SGameMtl::flPickable))
