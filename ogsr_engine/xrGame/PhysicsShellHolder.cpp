@@ -193,6 +193,7 @@ void CPhysicsShellHolder::activate_physic_shell()
     Fvector l_fw;
     l_fw.set(XFORM().k);
     l_fw.mul(4.f);
+    Fvector overriden_vel;
 
     Fmatrix l_p1, l_p2;
     l_p1.set(XFORM());
@@ -204,7 +205,10 @@ void CPhysicsShellHolder::activate_physic_shell()
         Fvector pos;
         H_Parent()->Center(pos);
         Fvector dir = H_Parent()->XFORM().k;
-        float dist = H_Parent()->Radius() / 2 + Radius() * 2;
+        float dist = Radius() * 2;
+
+        if (ActivationSpeedOverriden(overriden_vel, false))
+            dir.set(normalize(overriden_vel));
 
         bool hasCollision = false;
         collide::rq_results RQR;
@@ -214,7 +218,7 @@ void CPhysicsShellHolder::activate_physic_shell()
         if (hasCollision)
             pos.set(H_Parent()->Position());
         else
-            pos.add(dir * (dist - Radius()));
+            pos.add(dir * Radius());
         l_p1.c.set(pos);
         l_p2.c.set(pos);
         l_fw.set(0.f, 0.f, 0.f);
@@ -234,7 +238,6 @@ void CPhysicsShellHolder::activate_physic_shell()
     // XFORM().set(l_p1);
     correct_spawn_pos();
 
-    Fvector overriden_vel;
     if (ActivationSpeedOverriden(overriden_vel, true))
         m_pPhysicsShell->set_LinearVel(overriden_vel);
     else
