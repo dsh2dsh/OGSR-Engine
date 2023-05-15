@@ -37,5 +37,5 @@ protected:
 
 public:
     bool m_jump_ignore_passable;
-    std::vector<std::string> m_jump_ignore_materials;
+    std::vector<u16> m_jump_ignore_materials;
 };

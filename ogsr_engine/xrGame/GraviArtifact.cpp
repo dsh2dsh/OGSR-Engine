@@ -71,7 +71,12 @@ void CGraviArtefact::Load(LPCSTR section)
             {
                 string128 item;
                 _GetItem(item_section, i, item);
-                m_jump_ignore_materials.emplace_back(item);
+                u32 id = GMLib.GetMaterialID(item);
+                ASSERT_FMT(id != GAMEMTL_NONE_ID,
+                           "%s [%s]: jump_ignore_materials contains "
+                           "unknown material: %s",
+                           cName().c_str(), section, item);
+                m_jump_ignore_materials.emplace_back(GMLib.GetMaterialIdx(id));
             }
         }
     }
@@ -152,12 +157,14 @@ static BOOL trace_callback(collide::rq_result& result, LPVOID params)
         {
             CGraviArtefact* holder = param->m_holder;
             auto mtl = GMLib.GetMaterialByIdx(T->material);
-            if (mtl->Flags.is(SGameMtl::flPassable) && !holder->m_jump_ignore_passable)
+            if (mtl->Flags.is(SGameMtl::flPassable) &&
+                holder->m_jump_ignore_passable)
                 return TRUE;
             if (!holder->m_jump_ignore_materials.empty())
             {
-                std::string mtl_name(mtl->m_Name.c_str());
-                const auto it = std::find(holder->m_jump_ignore_materials.begin(), holder->m_jump_ignore_materials.end(), mtl_name);
+                const auto it = std::find(
+                    holder->m_jump_ignore_materials.begin(),
+                    holder->m_jump_ignore_materials.end(), T->material);
                 if (it != holder->m_jump_ignore_materials.end())
                     return TRUE;
             }
@@ -171,10 +178,11 @@ static BOOL trace_callback(collide::rq_result& result, LPVOID params)
 void CGraviArtefact::process_gravity()
 {
     Fvector dir = {0, -1, 0};
-    Fvector P = Position();
-    P.y += Radius();
+    Fvector P;
+    Center(P);
     Fbox level_box = Level().ObjectSpace.GetBoundingVolume();
-    collide::ray_defs RD(P, dir, _abs(P.y - level_box.y1) - 1.f, CDB::OPT_CULL, collide::rqtBoth);
+    collide::ray_defs RD(P, dir, _abs(P.y - level_box.y1) - 1.f, 0,
+                         collide::rqtBoth);
     collide::rq_results RQR;
     ray_query_param params(this);
     Level().ObjectSpace.RayQuery(RQR, RD, trace_callback, &params, NULL, this);
