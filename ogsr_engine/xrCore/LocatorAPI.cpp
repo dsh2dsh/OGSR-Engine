@@ -306,11 +306,12 @@ void CLocatorAPI::ProcessArchive(LPCSTR _path, LPCSTR base_path)
     const bool shouldDecrypt = !strstr(_path, ".xdb");
 
     // open archive
-    archive_mutexes.emplace_back();
     auto& A = archives.emplace_back();
     A.path = path;
     // Open the file
-    A.hSrcFile = CreateFile(*path, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, 0, OPEN_EXISTING, FILE_FLAG_RANDOM_ACCESS, 0);
+    A.hSrcFile =
+        CreateFile(*path, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, 0,
+                   OPEN_EXISTING, FILE_FLAG_RANDOM_ACCESS, 0);
     R_ASSERT(A.hSrcFile != INVALID_HANDLE_VALUE);
     A.size = GetFileSize(A.hSrcFile, 0);
     R_ASSERT(A.size > 0);
@@ -894,14 +895,14 @@ void CLocatorAPI::file_from_archive(IReader*& R, LPCSTR fname, const file& desc)
 
     u8* dest = xr_alloc<u8>(desc.size_compressed);
     DWORD bytes_read;
-    {
-        std::mutex& m = archive_mutexes[desc.vfs];
-        std::scoped_lock<std::mutex> lock(m);
-        DWORD dwPtr = SetFilePointer(A.hSrcFile, desc.ptr, 0, FILE_BEGIN);
-        R_ASSERT3(dwPtr != INVALID_SET_FILE_POINTER, fname, Debug.error2string(GetLastError()));
-        bool res = ReadFile(A.hSrcFile, dest, desc.size_compressed, &bytes_read, 0);
-        R_ASSERT3(res && bytes_read == desc.size_compressed, fname, Debug.error2string(GetLastError()));
-    }
+    // https://stackoverflow.com/questions/11883933/c-win32-overlapping-file-read-write-access-should-i-use-mutex-or-what
+    OVERLAPPED ov = {0};
+    ov.Offset = desc.ptr;
+    ov.OffsetHigh = 0;
+    bool res =
+        ReadFile(A.hSrcFile, dest, desc.size_compressed, &bytes_read, &ov);
+    R_ASSERT3(res && bytes_read == desc.size_compressed, fname,
+              Debug.error2string(GetLastError()));
     if (desc.size_real == desc.size_compressed)
     {
         R = xr_new<CTempReader>(dest, desc.size_compressed, 0);

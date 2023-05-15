@@ -54,16 +54,17 @@ private:
 
     files_set files;
     archives_vec archives;
-    std::deque<std::mutex> archive_mutexes;
     BOOL bNoRecurse{};
 
     xrCriticalSection m_auth_lock;
     u64 m_auth_code{};
 
-    void Register(LPCSTR name, u32 vfs, u32 crc, u32 ptr, u32 size_real, u32 size_compressed, u32 modif);
+    void Register(LPCSTR name, u32 vfs, u32 crc, u32 ptr, u32 size_real,
+                  u32 size_compressed, u32 modif);
     void ProcessArchive(LPCSTR path, LPCSTR base_path = NULL);
     void ProcessOne(LPCSTR path, const _finddata_t& F);
-    bool RecurseScanPhysicalPath(const char* path, const bool log_if_found = false);
+    bool RecurseScanPhysicalPath(const char* path,
+                                 const bool log_if_found = false);
 
     files_it file_find_it(LPCSTR n);
 
