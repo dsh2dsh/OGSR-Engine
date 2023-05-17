@@ -122,7 +122,7 @@ protected:
     u8 m_idle_state;
     u8 idle_state();
     void PlayAnimIdle(u8);
-    virtual void Contact(CPhysicsShellHolder* obj) { m_contacted = true; };
+    virtual void Contact(CPhysicsShellHolder* obj, Fvector vUp) { m_contacted = true; };
 
 protected:
     void setup_throw_params();

@@ -21,6 +21,8 @@ CGrenade::CGrenade(void)
 {
     m_destroy_callback.clear();
     m_eSoundCheckout = ESoundTypes(SOUND_TYPE_WEAPON_RECHARGING);
+    contactBounce = true;
+    contactBounceAngle = 0.f;
 }
 
 CGrenade::~CGrenade(void) { HUD_SOUND::DestroySound(sndCheckout); }
@@ -30,15 +32,25 @@ void CGrenade::Load(LPCSTR section)
     inherited::Load(section);
     CExplosive::Load(section);
 
-    HUD_SOUND::LoadSound(section, "snd_checkout", sndCheckout, m_eSoundCheckout);
+    HUD_SOUND::LoadSound(section, "snd_checkout", sndCheckout,
+                         m_eSoundCheckout);
 
     //////////////////////////////////////
-    //время убирания оружия с уровня
+    // время убирания оружия с уровня
     if (pSettings->line_exist(section, "grenade_remove_time"))
-        m_dwGrenadeRemoveTime = pSettings->r_u32(section, "grenade_remove_time");
+        m_dwGrenadeRemoveTime =
+            pSettings->r_u32(section, "grenade_remove_time");
     else
         m_dwGrenadeRemoveTime = GRENADE_REMOVE_TIME;
-    m_grenade_detonation_threshold_hit = READ_IF_EXISTS(pSettings, r_float, section, "detonation_threshold_hit", default_grenade_detonation_threshold_hit);
+    m_grenade_detonation_threshold_hit =
+        READ_IF_EXISTS(pSettings, r_float, section, "detonation_threshold_hit",
+                       default_grenade_detonation_threshold_hit);
+
+    contactBounce =
+        READ_IF_EXISTS(pSettings, r_bool, section, "contact_bounce", true);
+    contactBounceAngle = READ_IF_EXISTS(pSettings, r_float, section,
+                                        "contact_bounce_angle", 10.f);
+    contactBounceAngle = deg2rad(contactBounceAngle);
 }
 
 void CGrenade::Hit(SHit* pHDS)
@@ -356,12 +368,41 @@ void CGrenade::Deactivate(bool now)
     inherited::Deactivate(now || (GetState() == MS_THREATEN || GetState() == MS_READY || GetState() == MS_THROW));
 }
 
-void CGrenade::GetBriefInfo(xr_string& str_name, xr_string& icon_sect_name, xr_string& str_count)
+void CGrenade::GetBriefInfo(xr_string& str_name, xr_string& icon_sect_name,
+                            xr_string& str_count)
 {
     str_name = NameShort();
-    u32 ThisGrenadeCount = m_pCurrentInventory->dwfGetSameItemCount(*cNameSect(), true);
+    u32 ThisGrenadeCount =
+        m_pCurrentInventory->dwfGetSameItemCount(*cNameSect(), true);
     string16 stmp;
     sprintf_s(stmp, "%d", ThisGrenadeCount);
     str_count = stmp;
     icon_sect_name = *cNameSect();
+}
+
+void CGrenade::Contact(CPhysicsShellHolder* obj, Fvector vUp)
+{
+    inherited::Contact(obj, vUp);
+
+    if (contactBounce || !actorWasParent())
+        return;
+
+    Fvector up = {0.f, 1.f, 0.f};
+    if (angle_between_vectors(vUp, up) > contactBounceAngle)
+        return;
+
+    Fvector vel;
+    PPhysicsShell()->get_LinearVel(vel);
+    vel.x = 0.f;
+    vel.z = 0.f;
+    PPhysicsShell()->set_LinearVel(vel);
+}
+
+bool CGrenade::actorWasParent()
+{
+    if (PPhysicsShell() &&
+        smart_cast<CActor*>(
+            (CPhysicsShellHolder*)PPhysicsShell()->get_CallbackData()))
+        return true;
+    return false;
 }

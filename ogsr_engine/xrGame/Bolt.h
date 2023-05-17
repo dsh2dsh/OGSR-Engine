@@ -32,5 +32,5 @@ public:
     virtual bool StopSprintOnFire() { return false; }
 
 protected:
-    virtual void Contact(CPhysicsShellHolder*);
+    virtual void Contact(CPhysicsShellHolder*, Fvector vUp);
 };

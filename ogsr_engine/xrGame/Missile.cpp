@@ -725,23 +725,28 @@ void CMissile::OnDrawUI()
     }
 }
 
-void CMissile::ExitContactCallback(bool& do_colide, bool bo1, dContact& c, SGameMtl* material_1, SGameMtl* material_2)
+void CMissile::ExitContactCallback(bool& do_colide, bool bo1, dContact& c,
+                                   SGameMtl* material_1, SGameMtl* material_2)
 {
     dxGeomUserData *gd1 = NULL, *gd2 = NULL;
     SGameMtl* material = nullptr;
+    Fvector vUp;
     if (bo1)
     {
         gd1 = retrieveGeomUserData(c.geom.g1);
         gd2 = retrieveGeomUserData(c.geom.g2);
         material = material_2;
+        vUp.set(*(Fvector*)&c.geom.normal);
     }
     else
     {
         gd2 = retrieveGeomUserData(c.geom.g1);
         gd1 = retrieveGeomUserData(c.geom.g2);
         material = material_1;
+        vUp.invert(*(Fvector*)&c.geom.normal);
     }
-    if (gd1 && gd2 && (CPhysicsShellHolder*)gd1->callback_data == gd2->ph_ref_object)
+    if (gd1 && gd2 &&
+        (CPhysicsShellHolder*)gd1->callback_data == gd2->ph_ref_object)
     {
         do_colide = false;
     }
@@ -750,7 +755,10 @@ void CMissile::ExitContactCallback(bool& do_colide, bool bo1, dContact& c, SGame
         CMissile* l_this = smart_cast<CMissile*>(gd1->ph_ref_object);
         if (l_this && !l_this->Contacted())
         {
-            l_this->Contact(gd2 ? smart_cast<CPhysicsShellHolder*>(gd2->ph_ref_object) : nullptr);
+            l_this->Contact(
+                gd2 ? smart_cast<CPhysicsShellHolder*>(gd2->ph_ref_object) :
+                      nullptr,
+                vUp);
         }
     }
 }

@@ -92,9 +92,9 @@ void CBolt::GetBriefInfo(xr_string& str_name, xr_string& icon_sect_name, xr_stri
     icon_sect_name = *cNameSect();
 }
 
-void CBolt::Contact(CPhysicsShellHolder* obj)
+void CBolt::Contact(CPhysicsShellHolder* obj, Fvector vUp)
 {
-    inherited::Contact(obj);
+    inherited::Contact(obj, vUp);
     if (!obj)
         return;
 

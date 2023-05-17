@@ -55,6 +55,8 @@ protected:
 protected:
     HUD_SOUND sndCheckout;
     ESoundTypes m_eSoundCheckout;
+    bool contactBounce;
+    float contactBounceAngle;
 
 private:
     float m_grenade_detonation_threshold_hit;
@@ -77,4 +79,8 @@ public:
 
 private:
     destroy_callback m_destroy_callback;
+
+protected:
+    virtual void Contact(CPhysicsShellHolder*, Fvector vUp);
+    bool actorWasParent();
 };
