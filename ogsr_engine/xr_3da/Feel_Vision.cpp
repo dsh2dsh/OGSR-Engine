@@ -153,7 +153,7 @@ void Vision::o_trace(Fvector& P, float dt, float vis_threshold)
                                            E = feel_visible.end();
     for (; I != E; I++)
     {
-        if (!I->O || I->O->getDestroy() || 0 == I->O->CFORM())
+        if (!I->O || 0 == I->O->CFORM())
         {
             I->fuzzy = -1;
             I->trans = 0.f;
