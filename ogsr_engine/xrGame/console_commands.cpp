@@ -72,7 +72,9 @@ extern BOOL g_bCopDeathAnim;
 
 BOOL g_bCheckTime = FALSE;
 int net_cl_inputupdaterate = 50;
-Flags32 g_mt_config = {mtLevelPath | mtDetailPath | mtObjectHandler | mtSoundPlayer | mtAiVision | mtBullets | mtLUA_GC | mtLevelSounds | mtALife | mtMap};
+Flags32 g_mt_config = {mtLevelPath | mtDetailPath | mtObjectHandler |
+                       mtSoundPlayer | mtAiVision | mtBullets | mtLUA_GC |
+                       mtLevelSounds | mtALife | mtMap};
 #ifdef DEBUG
 Flags32 dbg_net_Draw_Flags = {0};
 #endif
