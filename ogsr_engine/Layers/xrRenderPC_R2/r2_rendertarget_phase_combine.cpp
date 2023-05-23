@@ -257,6 +257,9 @@ void CRenderTarget::phase_combine()
     if (_menu_pp)
         PP_Complex = FALSE;
 
+    if (ps_pnv_mode > 1.f)
+        PhaseNightVision();
+
     // Postprocess anti-aliasing
     if (ps_r_pp_aa_mode)
         PhaseAA();

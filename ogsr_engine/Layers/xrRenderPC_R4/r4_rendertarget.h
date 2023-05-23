@@ -203,6 +203,7 @@ private:
     ref_shader s_combine_volumetric;
 
     ref_shader s_rain_drops;
+    ref_shader s_night_vision;
 
 public:
     ref_shader s_postprocess;
@@ -314,6 +315,7 @@ public:
     void phase_combine_volumetric();
     void phase_pp();
     void PhaseRainDrops();
+    void PhaseNightVision();
 
     virtual void set_blur(float f) { param_blur = f; }
     virtual void set_gray(float f) { param_gray = f; }

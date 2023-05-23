@@ -432,20 +432,27 @@ CRenderTarget::CRenderTarget()
         s_combine_dbg_Accumulator.create("effects\\screen_set", r2_RT_accum);
         g_combine_VP.create(dwDecl, RCache.Vertex.Buffer(), RCache.QuadIB);
         g_combine.create(FVF::F_TL, RCache.Vertex.Buffer(), RCache.QuadIB);
-        g_combine_2UV.create(FVF::F_TL2uv, RCache.Vertex.Buffer(), RCache.QuadIB);
-        g_combine_cuboid.create(FVF::F_L, RCache.Vertex.Buffer(), RCache.Index.Buffer());
+        g_combine_2UV.create(FVF::F_TL2uv, RCache.Vertex.Buffer(),
+                             RCache.QuadIB);
+        g_combine_cuboid.create(FVF::F_L, RCache.Vertex.Buffer(),
+                                RCache.Index.Buffer());
 
-        u32 fvf_aa_blur = D3DFVF_XYZRHW | D3DFVF_TEX4 | D3DFVF_TEXCOORDSIZE2(0) | D3DFVF_TEXCOORDSIZE2(1) | D3DFVF_TEXCOORDSIZE2(2) | D3DFVF_TEXCOORDSIZE2(3);
+        u32 fvf_aa_blur = D3DFVF_XYZRHW | D3DFVF_TEX4 |
+            D3DFVF_TEXCOORDSIZE2(0) | D3DFVF_TEXCOORDSIZE2(1) |
+            D3DFVF_TEXCOORDSIZE2(2) | D3DFVF_TEXCOORDSIZE2(3);
         g_aa_blur.create(fvf_aa_blur, RCache.Vertex.Buffer(), RCache.QuadIB);
 
-        u32 fvf_aa_AA = D3DFVF_XYZRHW | D3DFVF_TEX7 | D3DFVF_TEXCOORDSIZE2(0) | D3DFVF_TEXCOORDSIZE2(1) | D3DFVF_TEXCOORDSIZE2(2) | D3DFVF_TEXCOORDSIZE2(3) |
-            D3DFVF_TEXCOORDSIZE2(4) | D3DFVF_TEXCOORDSIZE4(5) | D3DFVF_TEXCOORDSIZE4(6);
+        u32 fvf_aa_AA = D3DFVF_XYZRHW | D3DFVF_TEX7 | D3DFVF_TEXCOORDSIZE2(0) |
+            D3DFVF_TEXCOORDSIZE2(1) | D3DFVF_TEXCOORDSIZE2(2) |
+            D3DFVF_TEXCOORDSIZE2(3) | D3DFVF_TEXCOORDSIZE2(4) |
+            D3DFVF_TEXCOORDSIZE4(5) | D3DFVF_TEXCOORDSIZE4(6);
         g_aa_AA.create(fvf_aa_AA, RCache.Vertex.Buffer(), RCache.QuadIB);
 
         t_envmap_0.create(r2_T_envs0);
         t_envmap_1.create(r2_T_envs1);
 
         s_rain_drops.create("ogsr_rain_drops");
+        s_night_vision.create("ogsr_night_vision");
     }
 
     u32 w = Device.dwWidth;
