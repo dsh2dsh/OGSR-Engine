@@ -257,16 +257,25 @@ bool CWeaponShotgun::Action(s32 cmd, u32 flags)
     if (inherited::Action(cmd, flags))
         return true;
 
-    if (m_bTriStateReload && GetState() == eReload && (cmd == kWPN_FIRE || cmd == kWPN_NEXT) && flags & CMD_START &&
-        (m_sub_state == eSubstateReloadInProcess || m_sub_state == eSubstateReloadBegin)) //остановить перезагрузку
+    if (m_bTriStateReload && GetState() == eReload && flags & CMD_START &&
+        (m_sub_state == eSubstateReloadInProcess ||
+         m_sub_state == eSubstateReloadBegin))
     {
-        m_stop_triStateReload = true;
-        return true;
+        switch (cmd)
+        {
+        case kWPN_FIRE:
+        case kWPN_NEXT:
+        case kWPN_RELOAD:
+        case kWPN_ZOOM:
+            // остановить перезарядку
+            m_stop_triStateReload = true;
+            return true;
+        }
     }
 
 #ifndef DUPLET_STATE_SWITCH
 
-    //если оружие чем-то занято, то ничего не делать
+    // если оружие чем-то занято, то ничего не делать
     if (IsPending())
         return false;
 
