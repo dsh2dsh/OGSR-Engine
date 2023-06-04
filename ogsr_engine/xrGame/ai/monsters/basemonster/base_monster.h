@@ -421,7 +421,7 @@ protected:
     //////////////////////////////////////////////////////////////////////////
 
 public:
-    virtual void on_attack_on_run_hit() {}
+    virtual void on_attack_on_run_hit(const CEntityAlive* enemy) {}
 
 //////////////////////////////////////////////////////////////////////////
 // DEBUG stuff
@@ -496,7 +496,7 @@ public:
         float prediction_factor;
     };
 
-    bool can_attack_on_move();
+    virtual bool can_attack_on_move();
     float get_attack_on_move_max_go_close_time();
     float get_attack_on_move_far_radius();
     float get_attack_on_move_attack_radius();

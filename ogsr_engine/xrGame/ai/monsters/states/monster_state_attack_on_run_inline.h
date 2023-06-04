@@ -514,7 +514,7 @@ void ATTACK_ON_RUN_STATE::update_attack()
 
         if (can_attack)
         {
-            object->on_attack_on_run_hit();
+            object->on_attack_on_run_hit(m_enemy_to_attack);
             m_attacking = true;
             m_reach_old_target = true;
             m_reach_old_target_start_time = current_time();
@@ -523,14 +523,20 @@ void ATTACK_ON_RUN_STATE::update_attack()
 
             float attack_animation_length = 0;
             MotionID motion;
-            EMotionAnim const anim = m_attack_side == left ? eAnimAttackOnRunLeft : eAnimAttackOnRunRight;
-            bool const got_animation_info = object->anim().get_animation_info(anim, m_animation_index[m_attack_side], motion, attack_animation_length);
+            EMotionAnim const anim = m_attack_side == left ?
+                eAnimAttackOnRunLeft :
+                eAnimAttackOnRunRight;
+            bool const got_animation_info = object->anim().get_animation_info(
+                anim, m_animation_index[m_attack_side], motion,
+                attack_animation_length);
 
             got_animation_info;
             VERIFY(got_animation_info);
 
-            m_attack_end_time = current_time() + TTime(1000 * attack_animation_length);
-            object->anim().set_override_animation(anim, m_animation_index[m_attack_side]);
+            m_attack_end_time =
+                current_time() + TTime(1000 * attack_animation_length);
+            object->anim().set_override_animation(
+                anim, m_animation_index[m_attack_side]);
         }
     }
 

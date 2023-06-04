@@ -686,10 +686,11 @@ void CAI_Bloodsucker::renderable_Render()
 
 bool CAI_Bloodsucker::done_enough_hits_before_vampire() { return (int)m_hits_before_vampire >= (int)m_sufficient_hits_before_vampire + m_sufficient_hits_before_vampire_random; }
 
-void CAI_Bloodsucker::on_attack_on_run_hit()
+void CAI_Bloodsucker::on_attack_on_run_hit(const CEntityAlive* enemy)
 {
     // Msg("on_attack_on_run_hit");
-    ++m_hits_before_vampire;
+    if (smart_cast<const CActor*>(enemy))
+        ++m_hits_before_vampire;
 }
 
 #ifdef DEBUG
@@ -725,3 +726,15 @@ void CAI_Bloodsucker::debug_on_key(int key)
 #endif //_DEBUG
 
 #endif // DEBUG
+
+bool CAI_Bloodsucker::can_attack_on_move()
+{ // dsh:
+    if (!inherited::can_attack_on_move())
+        return false;
+
+    if (m_vampire_enable)
+        return CAI_Bloodsucker::m_time_last_vampire + m_vampire_min_delay <=
+            Device.dwTimeGlobal;
+
+    return true;
+}
