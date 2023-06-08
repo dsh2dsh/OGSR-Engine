@@ -557,8 +557,13 @@ void CUITradeWnd::EnableAll()
 
 void CUITradeWnd::UpdatePrices()
 {
-    m_iOurTradePrice = CalcItemsPrice(&m_uidata->UIOurTradeList, m_pOthersTrade, true);
-    m_iOthersTradePrice = CalcItemsPrice(&m_uidata->UIOthersTradeList, m_pOthersTrade, false);
+    if (!m_pInvOwner->IsTalking())
+        return;
+
+    m_iOurTradePrice =
+        CalcItemsPrice(&m_uidata->UIOurTradeList, m_pOthersTrade, true);
+    m_iOthersTradePrice =
+        CalcItemsPrice(&m_uidata->UIOthersTradeList, m_pOthersTrade, false);
 
     if (!m_pOthersInvOwner->InfinitiveMoney())
     {
