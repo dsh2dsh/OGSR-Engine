@@ -14,6 +14,7 @@
 #include "ai_space.h"
 #include "game_graph.h"
 #include "PHDestroyable.h"
+#include "PHElement.h"
 #define F_MAX 3.402823466e+38F
 
 u32 CPHSkeleton::existence_time = 5000;
@@ -267,16 +268,54 @@ void CPHSkeleton::RestoreNetState(CSE_PHSkeleton* /*po*/)
 
     if (saved_bones.size() == obj->PHGetSyncItemsNumber())
     {
-        u16 bone = 0;
-        for (const auto& state : saved_bones)
+        // если у нас только одна рутовая кость и она fixed - попробуем не
+        // грузить состояние костей вообще. пусть будет как после спауна
+
+        const u16 bones_number = obj->PHGetSyncItemsNumber();
+
+        bool canSkip = obj->PPhysicsShell() != nullptr;
+
+        if (canSkip)
         {
-            obj->PHGetSyncItem(bone)->set_State(state);
-            bone++;
-        };
+            for (u16 i = 0; i < bones_number; i++)
+            {
+                CPHElement* element = smart_cast<CPHElement*>(
+                    obj->PPhysicsShell()->get_ElementByStoreOrder(i));
+
+                // если рутовая кость и не fixed - может двигаться весь предмет
+                // и надо восстановить позицию
+                if (!element->get_ParentElement() && !element->isFixed())
+                {
+                    canSkip = false;
+                    break;
+                }
+            }
+        }
+
+        if (!canSkip)
+        {
+            u16 bone = 0;
+            for (const auto& state : saved_bones)
+            {
+                obj->PHGetSyncItem(bone)->set_State(state);
+                bone++;
+            }
+        }
+        else
+        {
+            MsgIfDbg(
+                "! [%s]: [%s] skip load of bone state due to single root bone "
+                "with fixed position. Visual[%s]",
+                __FUNCTION__, obj->Name_script(), obj->cNameVisual().c_str());
+        }
     }
     else
-        MsgIfDbg("* [%s]: [%s] has different state in saved_bones[%u] PHGetSyncItemsNumber[%u] Visual[%s] alive[%s]", __FUNCTION__, obj->Name_script(), saved_bones.size(),
-                 obj->PHGetSyncItemsNumber(), obj->cNameVisual().c_str(), obj->GetHealth() > 0 ? "yes" : "no");
+        MsgIfDbg(
+            "* [%s]: [%s] has different state in saved_bones[%u] "
+            "PHGetSyncItemsNumber[%u] Visual[%s] alive[%s]",
+            __FUNCTION__, obj->Name_script(), saved_bones.size(),
+            obj->PHGetSyncItemsNumber(), obj->cNameVisual().c_str(),
+            obj->GetHealth() > 0 ? "yes" : "no");
     saved_bones.clear();
     po->_flags.set(CSE_PHSkeleton::flSavedData, FALSE);
     m_flags.set(CSE_PHSkeleton::flSavedData, FALSE);
@@ -313,7 +352,9 @@ void CPHSkeleton::SpawnCopy()
         F_entity_Destroy(D);
     }
 }
+
 PHSHELL_PAIR_VECTOR new_shells;
+
 void CPHSkeleton::PHSplit()
 {
     u16 spawned = u16(m_unsplited_shels.size());
@@ -399,7 +440,8 @@ void CPHSkeleton::RecursiveBonesCheck(u16 id)
 {
     if (!removable)
         return;
-    CPhysicsShellHolder* obj = PPhysicsShellHolder();
+
+    const CPhysicsShellHolder* obj = PPhysicsShellHolder();
     IKinematics* K = smart_cast<IKinematics*>(obj->Visual());
     CBoneData& BD = K->LL_GetData(u16(id));
     //////////////////////////////////////////
@@ -424,6 +466,7 @@ bool CPHSkeleton::ReadyForRemove()
     RecursiveBonesCheck(smart_cast<IKinematics*>(obj->Visual())->LL_GetBoneRoot());
     return removable;
 }
+
 void CPHSkeleton::InitServerObject(CSE_Abstract* D)
 {
     CPhysicsShellHolder* obj = PPhysicsShellHolder();
@@ -475,8 +518,8 @@ void CPHSkeleton::SyncNetState()
     po->_flags.assign(m_flags.get());
 
     auto& saved_bones = po->saved_bones;
-    u16 bones_number = obj->PHGetSyncItemsNumber();
-    auto K = smart_cast<IKinematics*>(obj->Visual());
+    const u16 bones_number = obj->PHGetSyncItemsNumber();
+    const auto K = smart_cast<IKinematics*>(obj->Visual());
     if (K)
     {
         saved_bones.bones_mask = K->LL_GetBonesVisible();
