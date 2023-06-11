@@ -18,12 +18,11 @@ public:
 
     virtual BOOL net_Spawn(CSE_Abstract* DC);
     virtual void Load(LPCSTR section);
-    virtual void PhDataUpdate(dReal step);
     virtual void OnH_B_Independent(bool just_before_destroy);
 
 protected:
     virtual void UpdateCLChild();
-    //параметры артефакта
+    // параметры артефакта
     float m_fJumpHeight;
     float m_fEnergy;
 

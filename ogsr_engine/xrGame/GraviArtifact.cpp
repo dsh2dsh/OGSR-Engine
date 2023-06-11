@@ -89,11 +89,7 @@ void CGraviArtefact::UpdateCLChild()
     {
         if (m_fJumpHeight)
         {
-            if (m_jump_min_height && !CPHUpdateObject::IsActive())
-            {
-                CPHUpdateObject::Activate();
-                process_gravity();
-            }
+            process_gravity();
             process_jump();
         }
     }
@@ -115,14 +111,6 @@ BOOL CGraviArtefact::net_Spawn(CSE_Abstract* DC)
     }
 
     return result;
-}
-
-void CGraviArtefact::PhDataUpdate(dReal step)
-{
-    inherited::PhDataUpdate(step);
-    if (m_activationObj || !(getVisible() && m_pPhysicsShell))
-        return;
-    process_gravity();
 }
 
 void CGraviArtefact::OnH_B_Independent(bool just_before_destroy)
