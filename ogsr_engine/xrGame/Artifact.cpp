@@ -136,7 +136,8 @@ BOOL CArtefact::net_Spawn(CSE_Abstract* DC)
     {
         Fvector dir;
         dir.set(0, 1, 0);
-        CParticlesPlayer::StartParticles(m_sParticlesName, dir, ID(), -1, false);
+        CParticlesPlayer::StartParticles(m_sParticlesName, dir, ID(), -1,
+                                         false);
     }
 
     VERIFY(m_pTrailLight == NULL);
@@ -151,9 +152,8 @@ BOOL CArtefact::net_Spawn(CSE_Abstract* DC)
     if (K)
         K->PlayCycle("idle");
 
-    o_fastmode = TRUE; // FALSE	;		// start initially with fast-mode enabled
-    o_render_frame = 0;
     SetState(eHidden);
+    workLoadLastFrame = 0;
 
     return result;
 }
@@ -193,9 +193,9 @@ void CArtefact::OnH_B_Independent(bool just_before_destroy)
     {
         Fvector dir;
         dir.set(0, 1, 0);
-        CParticlesPlayer::StartParticles(m_sParticlesName, dir, ID(), -1, false);
+        CParticlesPlayer::StartParticles(m_sParticlesName, dir, ID(), -1,
+                                         false);
     }
-    o_switch_2_fast();
 }
 
 // called only in "fast-mode"
@@ -203,8 +203,7 @@ void CArtefact::UpdateCL()
 {
     inherited::UpdateCL();
 
-    if (o_fastmode || m_activationObj)
-        UpdateWorkload(Device.dwTimeDelta);
+    UpdateWorkload(Device.dwTimeDelta);
 
     if (GetState() == eIdle)
     {
@@ -238,11 +237,17 @@ u8 CArtefact::idle_state()
 void CArtefact::UpdateWorkload(u32 dt)
 {
     VERIFY(!ph_world->Processing());
+
+    if (workLoadLastFrame == Device.dwFrame)
+        return;
+    workLoadLastFrame = Device.dwFrame;
+
     // particles - velocity
     Fvector vel = {0, 0, 0};
     if (H_Parent())
     {
-        CPhysicsShellHolder* pPhysicsShellHolder = smart_cast<CPhysicsShellHolder*>(H_Parent());
+        CPhysicsShellHolder* pPhysicsShellHolder =
+            smart_cast<CPhysicsShellHolder*>(H_Parent());
         if (pPhysicsShellHolder)
             pPhysicsShellHolder->PHGetLinearVell(vel);
     }
@@ -264,24 +269,7 @@ void CArtefact::UpdateWorkload(u32 dt)
 void CArtefact::shedule_Update(u32 dt)
 {
     inherited::shedule_Update(dt);
-
-    //////////////////////////////////////////////////////////////////////////
-    // check "fast-mode" border
-    if (H_Parent())
-        o_switch_2_slow();
-    else
-    {
-        Fvector center;
-        Center(center);
-        BOOL rendering = (Device.dwFrame == o_render_frame);
-        float cam_distance = Device.vCameraPosition.distance_to(center) - Radius();
-        if (rendering || (cam_distance < FASTMODE_DISTANCE))
-            o_switch_2_fast();
-        else
-            o_switch_2_slow();
-    }
-    if (!o_fastmode)
-        UpdateWorkload(dt);
+    UpdateWorkload(dt);
 }
 
 void CArtefact::create_physic_shell()
