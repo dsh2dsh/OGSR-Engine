@@ -48,14 +48,24 @@ void CPHSoundPlayer::Play(SGameMtlPair* mtl_pair, const Fvector& pos, bool check
     }
 }
 
-void CPHSoundPlayer::PlayNext(SGameMtlPair* mtl_pair, Fvector* pos, float* vol)
+void CPHSoundPlayer::PlayNext(SGameMtlPair* mtl_pair, Fvector* pos,
+                              bool check_vel, float* vol)
 {
+    if (check_vel)
+    {
+        Fvector vel;
+        m_object->PHGetLinearVell(vel);
+        if (vel.square_magnitude() <= 0.01f)
+            return;
+    }
+
     if (m_next_snd_time > Device.dwTimeGlobal && m_last_mtl_pair == mtl_pair)
         return;
 
     auto snd = GET_RANDOM(mtl_pair->CollideSounds);
     // Половина от времени звука, поэтому умножаем не на 1000, а на 500.
-    m_next_snd_time = Device.dwTimeGlobal + iFloor(snd.get_length_sec() * 500.0f);
+    m_next_snd_time =
+        Device.dwTimeGlobal + iFloor(snd.get_length_sec() * 500.0f);
 
     Fvector2* range = nullptr;
     Fvector2 dist = m_object->CollideSndDist();

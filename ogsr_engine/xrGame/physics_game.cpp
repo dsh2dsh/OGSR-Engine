@@ -151,10 +151,11 @@ public:
 
 static CPHSoundPlayer* object_snd_player(dxGeomUserData* data) noexcept { return data->ph_ref_object ? data->ph_ref_object->ObjectPhSoundPlayer() : nullptr; }
 
-static void play_object(dxGeomUserData* data, SGameMtlPair* mtl_pair, const dContactGeom* c, bool check_vel = true, float* vol = nullptr) noexcept
+static void play_object(dxGeomUserData* data, SGameMtlPair* mtl_pair,
+                        const dContactGeom* c, bool check_vel = true,
+                        float* vol = nullptr) noexcept
 {
-    auto sp = object_snd_player(data);
-    if (sp)
+    if (auto sp = object_snd_player(data); sp)
         sp->Play(mtl_pair, *(Fvector*)c->pos, check_vel, vol);
 }
 
@@ -207,44 +208,58 @@ void TContactShotMark(CDB::TRI* T, dContactGeom* c)
     float square_cam_dist = to_camera.square_magnitude();
     if (data)
     {
-        SGameMtlPair* mtl_pair = GMLib.GetMaterialPair(T->material, data->material);
+        SGameMtlPair* mtl_pair =
+            GMLib.GetMaterialPair(T->material, data->material);
         if (mtl_pair)
         {
-            if (vel_cret > Pars::vel_cret_wallmark && !mtl_pair->m_pCollideMarks->empty())
+            if (vel_cret > Pars::vel_cret_wallmark &&
+                !mtl_pair->m_pCollideMarks->empty())
             {
-                wm_shader WallmarkShader = mtl_pair->m_pCollideMarks->GenerateWallmark();
-                Level().ph_commander().add_call(xr_new<CPHOnesCondition>(), xr_new<CPHWallMarksCall>(*((Fvector*)c->pos), T, WallmarkShader));
+                wm_shader WallmarkShader =
+                    mtl_pair->m_pCollideMarks->GenerateWallmark();
+                Level().ph_commander().add_call(
+                    xr_new<CPHOnesCondition>(),
+                    xr_new<CPHWallMarksCall>(*((Fvector*)c->pos), T,
+                                             WallmarkShader));
             }
 
-            if (square_cam_dist < SQUARE_SOUND_EFFECT_DIST)
+            if (square_cam_dist < SQUARE_SOUND_EFFECT_DIST &&
+                !mtl_pair->CollideSounds.empty())
             {
                 SGameMtl* static_mtl = GMLib.GetMaterialByIdx(T->material);
                 VERIFY(static_mtl);
-                if (!static_mtl->Flags.test(SGameMtl::flPassable) && vel_cret > Pars::vel_cret_sound)
-                {
-                    if (!mtl_pair->CollideSounds.empty())
-                    {
-                        float volume = collide_volume_min + vel_cret * (collide_volume_max - collide_volume_min) / (_sqrt(mass_limit) * default_l_limit - Pars::vel_cret_sound);
-                        auto sp = object_snd_player(data);
-                        if (sp)
-                            sp->PlayNext(mtl_pair, ((Fvector*)c->pos), &volume);
-                        else
-                            GET_RANDOM(mtl_pair->CollideSounds).play_no_feedback(nullptr, 0, 0, ((Fvector*)c->pos), &volume);
-                    }
-                }
-                else if (data->ph_ref_object && !mtl_pair->CollideSounds.empty())
+                if (static_mtl->Flags.test(SGameMtl::flPassable))
                 {
                     play_object(data, mtl_pair, c);
                 }
+                else
+                {
+                    float volume = collide_volume_min;
+                    if (vel_cret > Pars::vel_cret_sound)
+                        volume += vel_cret *
+                            (collide_volume_max - collide_volume_min) /
+                            (_sqrt(mass_limit) * default_l_limit -
+                             Pars::vel_cret_sound);
+                    if (auto sp = object_snd_player(data); sp)
+                        sp->PlayNext(mtl_pair, ((Fvector*)c->pos), true,
+                                     &volume);
+                    else
+                        GET_RANDOM(mtl_pair->CollideSounds)
+                            .play_no_feedback(nullptr, 0, 0, ((Fvector*)c->pos),
+                                              &volume);
+                }
             }
 
-            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            if (square_cam_dist < SQUARE_PARTICLE_EFFECT_DIST && !mtl_pair->CollideParticles.empty())
+            if (square_cam_dist < SQUARE_PARTICLE_EFFECT_DIST &&
+                !mtl_pair->CollideParticles.empty())
             {
                 SGameMtl* static_mtl = GMLib.GetMaterialByIdx(T->material);
                 VERIFY(static_mtl);
-                const char* ps_name = *mtl_pair->CollideParticles[::Random.randI(0, mtl_pair->CollideParticles.size())];
-                play_particles<Pars>(vel_cret, data, c, b_invert_normal, static_mtl, ps_name);
+                const char* ps_name =
+                    *mtl_pair->CollideParticles[::Random.randI(
+                        0, mtl_pair->CollideParticles.size())];
+                play_particles<Pars>(vel_cret, data, c, b_invert_normal,
+                                     static_mtl, ps_name);
             }
         }
     }
