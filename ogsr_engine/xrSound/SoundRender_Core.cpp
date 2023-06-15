@@ -11,11 +11,12 @@
 #pragma warning(pop)
 
 int psSoundTargets = 256; // 512; //--#SM+#-- //32;
-Flags32 psSoundFlags = {ss_Hardware | ss_EAX};
-float psSoundOcclusionScale = 0.5f;
-float psSoundLinearFadeFactor = 0.4f; //--#SM+#--
+Flags32 psSoundFlags = {ss_Hardware};
+float psSoundOcclusionScale = 1.f;
+float psSoundOcclusionMtl = 0.5f;
 float psSoundCull = 0.01f;
-float psSoundRolloff = 0.75f;
+float psSoundRolloff = 1.f;
+float psSoundFadeSpeed = 1.f;
 u32 psSoundModel = 0;
 float psSoundVEffects = 1.0f;
 float psSoundVFactor = 1.0f;

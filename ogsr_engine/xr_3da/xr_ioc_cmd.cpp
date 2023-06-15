@@ -648,9 +648,9 @@ void CCC_Register()
     CMD3(CCC_Mask, "rs_occlusion", &psDeviceFlags, rsOcclusion);
 
     CMD3(CCC_Mask, "rs_detail", &psDeviceFlags, rsDetails);
-    // CMD4(CCC_Float,		"r__dtex_range",		&r__dtex_range,		5,		175	);
+    // CMD4(CCC_Float, "r__dtex_range",	&r__dtex_range,	5, 175);
 
-    //	CMD3(CCC_Mask,		"rs_constant_fps",		&psDeviceFlags,		rsConstantFPS			);
+    // CMD3(CCC_Mask, "rs_constant_fps", &psDeviceFlags, rsConstantFPS);
     CMD3(CCC_Mask, "rs_render_statics", &psDeviceFlags, rsDrawStatic);
     CMD3(CCC_Mask, "rs_render_dynamics", &psDeviceFlags, rsDrawDynamic);
 #endif
@@ -660,7 +660,8 @@ void CCC_Register()
     CMD3(CCC_Token, "r_fps_lock", &g_dwFPSlimit, FpsLockToken);
 
     CMD3(CCC_Mask, "rs_v_sync", &psDeviceFlags, rsVSync);
-    //	CMD3(CCC_Mask,		"rs_disable_objects_as_crows",&psDeviceFlags,	rsDisableObjectsAsCrows	);
+    // CMD3(CCC_Mask, "rs_disable_objects_as_crows",&psDeviceFlags,
+    // rsDisableObjectsAsCrows);
     CMD3(CCC_Mask, "rs_fullscreen", &psDeviceFlags, rsFullscreen);
     CMD3(CCC_Mask, "rs_refresh_60hz", &psDeviceFlags, rsRefresh60hz);
     CMD3(CCC_Mask, "rs_stats", &psDeviceFlags, rsStatistic);
@@ -670,14 +671,14 @@ void CCC_Register()
 #ifdef DEBUG
     CMD3(CCC_Mask, "rs_occ_draw", &psDeviceFlags, rsOcclusionDraw);
     CMD3(CCC_Mask, "rs_occ_stats", &psDeviceFlags, rsOcclusionStats);
-    // CMD4(CCC_Integer,	"rs_skeleton_update",	&psSkeletonUpdate,	2,		128	);
+    // CMD4(CCC_Integer, "rs_skeleton_update", &psSkeletonUpdate, 2, 128);
 #endif // DEBUG
 
     CMD2(CCC_Gamma, "rs_c_gamma", &ps_gamma);
     CMD2(CCC_Gamma, "rs_c_brightness", &ps_brightness);
     CMD2(CCC_Gamma, "rs_c_contrast", &ps_contrast);
-    //	CMD4(CCC_Integer,	"rs_vb_size",			&rsDVB_Size,		32,		4096);
-    //	CMD4(CCC_Integer,	"rs_ib_size",			&rsDIB_Size,		32,		4096);
+    // CMD4(CCC_Integer, "rs_vb_size", &rsDVB_Size, 32, 4096);
+    // CMD4(CCC_Integer, "rs_ib_size", &rsDIB_Size, 32, 4096);
 
     CMD3(CCC_Mask, "rs_hw_stats", &psDeviceFlags, rsHWInfo);
 
@@ -701,7 +702,6 @@ void CCC_Register()
     CMD3(CCC_Mask, "snd_efx", &psSoundFlags, ss_EAX);
     CMD4(CCC_Integer, "snd_targets", &psSoundTargets, 128, 256);
     CMD4(CCC_Integer, "snd_cache_size", &psSoundCacheSizeMB, 32, 64);
-    CMD4(CCC_Float, "snd_linear_fade", &psSoundLinearFadeFactor, 0.1f, 1.f);
 
 #ifdef DEBUG
     CMD3(CCC_Mask, "snd_stats", &g_stats_flags, st_sound);
@@ -709,7 +709,8 @@ void CCC_Register()
     CMD3(CCC_Mask, "snd_stats_max_dist", &g_stats_flags, st_sound_max_dist);
     CMD3(CCC_Mask, "snd_stats_ai_dist", &g_stats_flags, st_sound_ai_dist);
     CMD3(CCC_Mask, "snd_stats_info_name", &g_stats_flags, st_sound_info_name);
-    CMD3(CCC_Mask, "snd_stats_info_object", &g_stats_flags, st_sound_info_object);
+    CMD3(CCC_Mask, "snd_stats_info_object", &g_stats_flags,
+         st_sound_info_object);
 
     CMD4(CCC_Integer, "error_line_count", &g_ErrorLineCount, 6, 1024);
 #endif // DEBUG
@@ -731,18 +732,25 @@ void CCC_Register()
 #ifndef DEDICATED_SERVER
     CMD1(CCC_soundDevice, "snd_device");
 #endif
-    // psSoundRolloff	= pSettings->r_float	("sound","rolloff");		clamp(psSoundRolloff,			EPS_S,	2.f);
-    psSoundOcclusionScale = pSettings->r_float("sound", "occlusion_scale");
-    clamp(psSoundOcclusionScale, 0.1f, 1.f);
+    // psSoundRolloff = pSettings->r_float("sound","rolloff");
+    // clamp(psSoundRolloff, EPS_S, 2.f);
+    CMD4(CCC_Float, "snd_rolloff", &psSoundRolloff, 0.1f, 2.f);
+    // psSoundOcclusionScale = pSettings->r_float("sound", "occlusion_scale");
+    // clamp(psSoundOcclusionScale, 0.1f, 1.f);
+    CMD4(CCC_Float, "snd_occ_scale", &psSoundOcclusionScale, 0.1f, 1.f);
+    CMD4(CCC_Float, "snd_occ_mtl", &psSoundOcclusionMtl, 0.f, 1.f);
+    CMD4(CCC_Float, "snd_fade_speed", &psSoundFadeSpeed, 1.f, 10.f);
 
 #ifdef DEBUG
     CMD1(CCC_DumpOpenFiles, "dump_open_files");
 #endif
 
-    CMD3(CCC_ExclusiveMode, "input_exclusive_mode", &psDeviceFlags, rsExclusiveMode);
+    CMD3(CCC_ExclusiveMode, "input_exclusive_mode", &psDeviceFlags,
+         rsExclusiveMode);
 
     // extern int g_svTextConsoleUpdateRate;
-    // CMD4(CCC_Integer, "sv_console_update_rate", &g_svTextConsoleUpdateRate, 1, 100);
+    // CMD4(CCC_Integer, "sv_console_update_rate", &g_svTextConsoleUpdateRate,
+    // 1, 100);
 
     CMD1(CCC_HideConsole, "hide");
 

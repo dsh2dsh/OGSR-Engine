@@ -242,13 +242,14 @@ IC void volume_lerp(float& c, float t, float s, float dt)
         mot = diff_a;
     c += (diff / diff_a) * mot;
 }
-#include "..\COMMON_AI\ai_sounds.h"
+
+// #include "..\COMMON_AI\ai_sounds.h"
 BOOL CSoundRender_Emitter::update_culling(float dt)
 {
     if (b2D)
     {
         occluder_volume = 1.f;
-        fade_volume += dt * 10.f * (bStopping ? -1.f : 1.f);
+        fade_volume += dt * psSoundFadeSpeed * (bStopping ? -1.f : 1.f);
     }
     else
     {
@@ -259,20 +260,14 @@ BOOL CSoundRender_Emitter::update_culling(float dt)
         // Ничего внезапно не замолчит, т.к. еще ничего и не было слышно. Звучит
         // звук или не звучит - будем определять по наличию target, т.е. тому,
         // что обеспечивает физическое звучание.
-        if (!target)
+        if (!target && att() < psSoundCull)
         {
-            // Check range
-            float dist =
-                SoundRender->listener_position().distance_to(p_source.position);
-            if (dist > p_source.max_distance)
-            {
-                smooth_volume = 0;
-                return FALSE;
-            }
+            smooth_volume = 0;
+            return FALSE;
         }
 
         // Calc attenuated volume
-        float fade_scale = bStopping ||
+        float fade_dir = bStopping ||
                 (att() * p_source.base_volume * p_source.volume *
                      (owner_data->s_type == st_Effect ?
                           psSoundVEffects * psSoundVFactor :
@@ -280,11 +275,13 @@ BOOL CSoundRender_Emitter::update_culling(float dt)
                  psSoundCull) ?
             -1.f :
             1.f;
-        fade_volume += dt * 10.f * fade_scale;
+        fade_volume += dt * psSoundFadeSpeed * fade_dir;
 
         // Update occlusion
-        float occ = (owner_data->g_type == SOUND_TYPE_WORLD_AMBIENT) ?
-            1.0f :
+        // float occ = (owner_data->g_type == SOUND_TYPE_WORLD_AMBIENT) ?
+        //     1.0f :
+        //     SoundRender->get_occlusion(p_source.position, .2f, &occluder);
+        float occ =
             SoundRender->get_occlusion(p_source.position, .2f, &occluder);
         volume_lerp(occluder_volume, occ, 1.f, dt);
         clamp(occluder_volume, 0.f, 1.f);
@@ -309,24 +306,32 @@ BOOL CSoundRender_Emitter::update_culling(float dt)
         return SoundRender->i_allow_play(this);
 }
 
-float CSoundRender_Emitter::priority() { return smooth_volume * att() * priority_scale; }
+float CSoundRender_Emitter::priority()
+{
+    return smooth_volume * att() * priority_scale;
+}
 
+/*
+The AL_INVERSE_DISTANCE_CLAMPED model works according to the following formula:
+
+distance = max(distance,AL_REFERENCE_DISTANCE);
+distance = min(distance,AL_MAX_DISTANCE);
+gain = AL_REFERENCE_DISTANCE / (AL_REFERENCE_DISTANCE +
+ AL_ROLLOFF_FACTOR *
+ (distance – AL_REFERENCE_DISTANCE));
+*/
 float CSoundRender_Emitter::att()
 {
-    float dist = SoundRender->listener_position().distance_to(p_source.position);
-    float rolloff_dist = psSoundRolloff * dist;
+    float dist =
+        SoundRender->listener_position().distance_to(p_source.position);
 
-    // Calc linear fade --#SM+#--
-    // https://www.desmos.com/calculator/lojovfugle
-    const float fMinDistDiff = rolloff_dist - p_source.min_distance;
-    float att;
-    if (fMinDistDiff > 0.f)
-    {
-        const float fMaxDistDiff = p_source.max_distance - p_source.min_distance;
-        att = pow(1.f - (fMinDistDiff / fMaxDistDiff), psSoundLinearFadeFactor);
-    }
-    else
-        att = 1.f;
+    if (dist < p_source.min_distance)
+        dist = p_source.min_distance;
+    else if (dist > p_source.max_distance)
+        return 0.f; //dist = p_source.max_distance;
+    float att = p_source.min_distance /
+        (p_source.min_distance +
+         psSoundRolloff * (dist - p_source.min_distance));
     clamp(att, 0.f, 1.f);
 
     return att;

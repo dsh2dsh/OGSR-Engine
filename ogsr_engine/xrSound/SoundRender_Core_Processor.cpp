@@ -213,7 +213,8 @@ float CSoundRender_Core::get_occlusion(const Fvector& P, float R, Occ* occ)
     return calc_occlusion(listener_position(), P, R, occ);
 }
 
-float CSoundRender_Core::calc_occlusion(const Fvector& base, const Fvector& P, float R, Occ* occ)
+float CSoundRender_Core::calc_occlusion(const Fvector& base, const Fvector& P,
+                                        float R, Occ* occ)
 {
     float occ_value = 1.f;
 
@@ -256,10 +257,16 @@ float CSoundRender_Core::calc_occlusion(const Fvector& base, const Fvector& P, f
                     const CDB::TRI& T = geom_MODEL->get_tris()[R->id];
                     u16 material_idx = T.material;
                     SGameMtl* mtl = get_material(material_idx);
-                    if (mtl->Flags.test(SGameMtl::flPassable |
-                                        SGameMtl::flPickable))
-                        continue;
-                    occ_value *= psSoundOcclusionScale;
+                    if (!mtl->Flags.test(SGameMtl::flPassable |
+                                         SGameMtl::flPickable))
+                        occ_value *= psSoundOcclusionScale;
+
+                    if (psSoundOcclusionMtl > 0.f &&
+                        mtl->fSndOcclusionFactor < 1.f)
+                        occ_value = occ_value * (1.f - psSoundOcclusionMtl) +
+                            occ_value * psSoundOcclusionMtl *
+                                mtl->fSndOcclusionFactor;
+
                     if (!occ->valid)
                     {
                         const Fvector* V = geom_MODEL->get_verts();
@@ -268,15 +275,18 @@ float CSoundRender_Core::calc_occlusion(const Fvector& base, const Fvector& P, f
                         occ->occ[2].set(V[T.verts[2]]);
                         occ->valid = true;
                     }
+
+                    if (fis_zero(occ_value))
+                        break;
                 }
                 occ->occ_value = occ_value;
             }
         }
     }
 
-    if (0 != geom_SOM)
+    if (0 != geom_SOM && !fis_zero(occ_value))
     {
-        geom_DB.ray_options(CDB::OPT_CULL);
+        geom_DB.ray_options(0);
         geom_DB.ray_query(geom_SOM, base, dir, range);
         u32 r_cnt = u32(geom_DB.r_count());
         CDB::RESULT* _B = geom_DB.r_begin();
@@ -287,6 +297,8 @@ float CSoundRender_Core::calc_occlusion(const Fvector& base, const Fvector& P, f
             {
                 CDB::RESULT* R = _B + k;
                 occ_value *= *(float*)&R->dummy;
+                if (fis_zero(occ_value))
+                    break;
             }
         }
     }
