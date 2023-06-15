@@ -43,6 +43,10 @@ IC int get_token_id(xr_token* tokens, LPCSTR key)
     return -1;
 }
 
+XRCORE_API void get_token_id(xr_token* tokens, LPCSTR key,
+                             std::function<void(int)> foundFn,
+                             std::function<void()> notFoundFn = {});
+
 struct XRCORE_API xr_token2
 {
     LPCSTR name;

@@ -280,6 +280,7 @@
     <ClInclude Include="SoundRender_Cache.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\COMMON_AI\ai_sounds.cpp" />
     <ClCompile Include="guids.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>

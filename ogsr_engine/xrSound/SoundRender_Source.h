@@ -28,6 +28,7 @@ private:
     std::mutex m_mutex;
     void i_decompress_fr(OggVorbis_File* ovf, char* dest, u32 size);
     void LoadWave(LPCSTR name);
+    void LoadWaveLtx(LPCSTR name);
 
 public:
     CSoundRender_Source();

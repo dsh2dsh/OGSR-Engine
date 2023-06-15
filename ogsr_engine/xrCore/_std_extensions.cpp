@@ -37,3 +37,22 @@ char* xr_strdup(const char* string)
     CopyMemory(memory, string, len);
     return memory;
 }
+
+void get_token_id(xr_token* tokens, LPCSTR key,
+                  std::function<void(int)> foundFn,
+                  std::function<void()> notFoundFn)
+{
+    const xr_token* tok = tokens;
+    while (tok->name)
+    {
+        if (stricmp(tok->name, key) == 0)
+        {
+            foundFn(tok->id);
+            return;
+        }
+        tok++;
+    }
+
+    if (notFoundFn)
+        notFoundFn();
+}

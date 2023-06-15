@@ -155,6 +155,7 @@ void CSoundRender_Source::load(LPCSTR name)
     }
 
     LoadWave(fn);
+    LoadWaveLtx(fn);
     SoundRender->cache.cat_create(CAT, dwBytesTotal);
     m_loaded = true;
 }
@@ -171,4 +172,58 @@ bool CSoundRender_Source::loaded()
 {
     std::scoped_lock<std::mutex> lock(m_mutex);
     return m_loaded;
+}
+
+#include <filesystem>
+#include "..\COMMON_AI\ai_sounds.h"
+
+void CSoundRender_Source::LoadWaveLtx(LPCSTR fn)
+{
+    std::filesystem::path path{fn};
+    path.replace_extension(".ltx");
+
+    IReader* ltx = FS.r_open(path.string().c_str());
+    if (!ltx)
+        return;
+    auto iniData = xr_new<CInifile>(ltx, path.parent_path().string().c_str());
+    ltx->close();
+
+    static constexpr const char* sect = "comments";
+    if (!iniData->section_exist(sect))
+        return;
+
+    if (iniData->line_exist(sect, "game_type"))
+    {
+        std::string gameType{iniData->r_string_wb(sect, "game_type").c_str()};
+        get_token_id(
+            anomaly_type_token, gameType.c_str(),
+            [&](int id) { m_uGameType = u32(id); },
+            [&, fname = __func__]() {
+                Msg("![%s]: unknown game_type '%s' in %s", fname,
+                    gameType.c_str(), path.string().c_str());
+            });
+    }
+
+    m_fBaseVolume =
+        READ_IF_EXISTS(iniData, r_float, sect, "volume", m_fBaseVolume);
+
+    m_fMinDist = READ_IF_EXISTS(iniData, r_float, sect, "min_dist", m_fMinDist);
+    m_fMaxDist = READ_IF_EXISTS(iniData, r_float, sect, "max_dist", m_fMaxDist);
+
+    m_fMaxAIDist =
+        READ_IF_EXISTS(iniData, r_float, sect, "max_ai_dist", m_fMaxAIDist);
+
+    bool log = READ_IF_EXISTS(iniData, r_bool, sect, "log", false);
+    if (log)
+    {
+        MsgIfDbg("[%s]: found %s", __func__, path.string().c_str());
+        MsgIfDbg("game_type   = \"%s\"",
+                 get_token_name(anomaly_type_token, m_uGameType));
+        MsgIfDbg("volume      = %.2f", m_fBaseVolume);
+        MsgIfDbg("min_dist    = %.2f", m_fMinDist);
+        MsgIfDbg("max_dist    = %.2f", m_fMaxDist);
+        MsgIfDbg("max_ai_dist = %.2f", m_fMaxAIDist);
+    }
+
+    xr_delete(iniData);
 }
