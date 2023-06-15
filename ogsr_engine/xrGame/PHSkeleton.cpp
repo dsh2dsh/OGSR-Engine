@@ -304,8 +304,8 @@ void CPHSkeleton::RestoreNetState(CSE_PHSkeleton* /*po*/)
         else
         {
             MsgIfDbg(
-                "! [%s]: [%s] skip load of bone state due to single root bone "
-                "with fixed position. Visual[%s]",
+                "* [%s]: [%s] skip load of bone state due to fixed single root "
+                "bone. Visual[%s]",
                 __FUNCTION__, obj->Name_script(), obj->cNameVisual().c_str());
         }
     }
