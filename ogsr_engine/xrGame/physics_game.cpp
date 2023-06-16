@@ -234,9 +234,9 @@ void TContactShotMark(CDB::TRI* T, dContactGeom* c)
                 }
                 else
                 {
-                    float volume = collide_volume_min;
+                    float volume = 1.f;
                     if (vel_cret > Pars::vel_cret_sound)
-                        volume += vel_cret *
+                        volume = collide_volume_min + vel_cret *
                             (collide_volume_max - collide_volume_min) /
                             (_sqrt(mass_limit) * default_l_limit -
                              Pars::vel_cret_sound);
