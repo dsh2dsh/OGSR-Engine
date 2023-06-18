@@ -228,16 +228,11 @@ void TContactShotMark(CDB::TRI* T, dContactGeom* c)
             {
                 SGameMtl* static_mtl = GMLib.GetMaterialByIdx(T->material);
                 VERIFY(static_mtl);
-                if (static_mtl->Flags.test(SGameMtl::flPassable))
+                if (!static_mtl->Flags.test(SGameMtl::flPassable) &&
+                    vel_cret > Pars::vel_cret_sound)
                 {
-                    play_object(data, mtl_pair, c);
-                }
-                else
-                {
-                    float volume = 1.f;
-                    if (vel_cret > Pars::vel_cret_sound)
-                        volume = collide_volume_min + vel_cret *
-                            (collide_volume_max - collide_volume_min) /
+                    float volume = collide_volume_min +
+                        vel_cret * (collide_volume_max - collide_volume_min) /
                             (_sqrt(mass_limit) * default_l_limit -
                              Pars::vel_cret_sound);
                     if (auto sp = object_snd_player(data); sp)
@@ -247,6 +242,10 @@ void TContactShotMark(CDB::TRI* T, dContactGeom* c)
                         GET_RANDOM(mtl_pair->CollideSounds)
                             .play_no_feedback(nullptr, 0, 0, ((Fvector*)c->pos),
                                               &volume);
+                }
+                else
+                {
+                    play_object(data, mtl_pair, c);
                 }
             }
 
