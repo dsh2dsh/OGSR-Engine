@@ -114,7 +114,7 @@ void CSpaceRestrictionHolder::register_restrictor(CSpaceRestrictor* space_restri
 {
     if (smart_cast<CSmartZone*>(space_restrictor))
     {
-        MsgIfDbg("[%s]: skip CSmartZone[%s]", __FUNCTION__, space_restrictor->cName().c_str());
+        MsgIfDbg("* [%s]: skip CSmartZone[%s]", __FUNCTION__, space_restrictor->cName().c_str());
         return;
     }
 
