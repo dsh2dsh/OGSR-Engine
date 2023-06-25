@@ -115,6 +115,8 @@ void CCustomZone::Load(LPCSTR section)
         self->spatial.type |= (STYPE_COLLIDEABLE | STYPE_SHAPE);
     //////////////////////////////////////////////////////////////////////////
 
+    soundHeight =
+        READ_IF_EXISTS(pSettings, r_float, section, "sound_height", 0.5f);
     LPCSTR sound_str = NULL;
 
     if (pSettings->line_exist(section, "idle_sound"))
@@ -732,8 +734,8 @@ void CCustomZone::PlayIdleParticles()
     StopBlowoutParticles();
     StopAccumParticles();
 
-    Fvector C;
-    XFORM().transform_tiny(C, CFORM()->getSphere().P);
+    Fvector C = Position();
+    C.y += soundHeight;
     m_idle_sound.play_at_pos(0, C, true);
 
     if (*m_sIdleParticles)
@@ -1084,8 +1086,8 @@ void CCustomZone::UpdateBlowout()
 
     if (m_dwBlowoutSoundTime >= (u32)m_iPreviousStateTime && m_dwBlowoutSoundTime < (u32)m_iStateTime)
     {
-        Fvector C;
-        XFORM().transform_tiny(C, CFORM()->getSphere().P);
+        Fvector C = Position();
+        C.y += soundHeight;
         m_blowout_sound.play_at_pos(0, C);
     }
 
@@ -1510,8 +1512,8 @@ void CCustomZone::PlayAccumParticles()
 
     if (m_accum_sound._handle())
     {
-        Fvector C;
-        XFORM().transform_tiny(C, CFORM()->getSphere().P);
+        Fvector C = Position();
+        C.y += soundHeight;
         m_accum_sound.play_at_pos(0, C);
     }
 }
@@ -1543,8 +1545,8 @@ void CCustomZone::PlayAwakingParticles()
 
     if (m_awaking_sound._handle())
     {
-        Fvector C;
-        XFORM().transform_tiny(C, CFORM()->getSphere().P);
+        Fvector C = Position();
+        C.y += soundHeight;
         m_awaking_sound.play_at_pos(0, C);
     }
 }

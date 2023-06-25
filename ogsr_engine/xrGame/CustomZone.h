@@ -241,6 +241,7 @@ protected:
     ref_sound m_blowout_sound;
     ref_sound m_hit_sound;
     ref_sound m_entrance_sound;
+    float soundHeight;
 
     //объект партиклов обычного состояния зоны
     CParticlesObject* m_pIdleParticles;
