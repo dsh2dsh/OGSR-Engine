@@ -99,7 +99,8 @@ void CSoundRender_CoreA::_initialize(int stage)
     }
 
     pDeviceList->SelectBestDevice();
-    R_ASSERT(snd_device_id >= 0 && snd_device_id < pDeviceList->GetNumDevices());
+    R_ASSERT(snd_device_id >= 0 &&
+             snd_device_id < pDeviceList->GetNumDevices());
     const ALDeviceDesc& deviceDesc = pDeviceList->GetDeviceDesc(snd_device_id);
     // OpenAL device
     pDevice = alcOpenDevice(deviceDesc.name);
@@ -139,6 +140,8 @@ void CSoundRender_CoreA::_initialize(int stage)
     A_CHK(alListenerfv(AL_ORIENTATION, &orient[0].x));
     A_CHK(alListenerf(AL_GAIN, 1.f));
 
+    InitAlEffectAPI();
+
     if (!pDeviceList->IS_OpenAL_Soft)
     {
         // Check for EAX extension
@@ -157,7 +160,8 @@ void CSoundRender_CoreA::_initialize(int stage)
             bEAX = EAXTestSupport(FALSE);
         }
         Msg("[OpenAL] EAX 2.0 extension: %s", bEAX ? "present" : "absent");
-        Msg("[OpenAL] EAX 2.0 deferred: %s", bDeferredEAX ? "present" : "absent");
+        Msg("[OpenAL] EAX 2.0 deferred: %s",
+            bDeferredEAX ? "present" : "absent");
     }
     else if (deviceDesc.props.efx)
     {
@@ -179,6 +183,7 @@ void CSoundRender_CoreA::_initialize(int stage)
             {
                 if (bEFX)
                     T->alAuxInit(slot);
+                T->alFilterInit(filter);
 
                 T->alsoft_flag = pDeviceList->IS_OpenAL_Soft;
                 s_targets.push_back(T);

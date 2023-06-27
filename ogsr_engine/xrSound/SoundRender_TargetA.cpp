@@ -13,6 +13,7 @@ CSoundRender_TargetA::CSoundRender_TargetA() : CSoundRender_Target()
     cache_gain = 0.f;
     cache_pitch = 1.f;
     pSource = 0;
+    cacheGainHF = 1.f;
 }
 
 CSoundRender_TargetA::~CSoundRender_TargetA() {}
@@ -40,7 +41,16 @@ BOOL CSoundRender_TargetA::_initialize()
     }
 }
 
-void CSoundRender_TargetA::alAuxInit(ALuint slot) { A_CHK(alSource3i(pSource, AL_AUXILIARY_SEND_FILTER, slot, 0, AL_FILTER_NULL)); }
+void CSoundRender_TargetA::alAuxInit(ALuint slot)
+{
+    A_CHK(
+        alSource3i(pSource, AL_AUXILIARY_SEND_FILTER, slot, 0, AL_FILTER_NULL));
+}
+
+void CSoundRender_TargetA::alFilterInit(ALuint filter)
+{
+    A_CHK(alSourcei(pSource, AL_DIRECT_FILTER, filter));
+}
 
 void CSoundRender_TargetA::_destroy()
 {
@@ -182,24 +192,30 @@ void CSoundRender_TargetA::update()
     }
 }
 
-void CSoundRender_TargetA::fill_parameters()
+extern LPALEFFECTF alFilterf;
+
+void CSoundRender_TargetA::fill_parameters(ALuint filter)
 {
 #ifdef DEBUG
     CSoundRender_Emitter* SE = m_pEmitter;
     VERIFY(SE);
 #endif
 
-    inherited::fill_parameters();
+    inherited::fill_parameters(filter);
 
     // 3D params
     VERIFY2(m_pEmitter, SE->source()->file_name());
-    A_CHK(alSourcef(pSource, AL_REFERENCE_DISTANCE, m_pEmitter->p_source.min_distance));
+    A_CHK(alSourcef(pSource, AL_REFERENCE_DISTANCE,
+                    m_pEmitter->p_source.min_distance));
 
     VERIFY2(m_pEmitter, SE->source()->file_name());
-    A_CHK(alSourcef(pSource, AL_MAX_DISTANCE, m_pEmitter->p_source.max_distance));
+    A_CHK(
+        alSourcef(pSource, AL_MAX_DISTANCE, m_pEmitter->p_source.max_distance));
 
     VERIFY2(m_pEmitter, SE->source()->file_name());
-    A_CHK(alSource3f(pSource, AL_POSITION, m_pEmitter->p_source.position.x, m_pEmitter->p_source.position.y, -m_pEmitter->p_source.position.z));
+    A_CHK(alSource3f(pSource, AL_POSITION, m_pEmitter->p_source.position.x,
+                     m_pEmitter->p_source.position.y,
+                     -m_pEmitter->p_source.position.z));
 
     VERIFY2(m_pEmitter, SE->source()->file_name());
     A_CHK(alSourcei(pSource, AL_SOURCE_RELATIVE, m_pEmitter->b2D));
@@ -215,8 +231,23 @@ void CSoundRender_TargetA::fill_parameters()
         A_CHK(alSourcef(pSource, AL_GAIN, _gain));
     }
 
+    _gain = m_pEmitter->SmoothHfVolume;
+    clamp(_gain, EPS_S, 1.f);
+    if (!fsimilar(_gain, cacheGainHF, 0.01f))
+    {
+        cacheGainHF = _gain;
+        // https://github.com/kcat/openal-soft/issues/673
+        // To set the gain for just this source
+        alFilterf(filter, AL_LOWPASS_GAINHF, _gain);
+        // Copies the filter properties; the filter can be altered afterward
+        // without affecting the source.
+        A_CHK(alSourcei(pSource, AL_DIRECT_FILTER, filter));
+    }
+
     VERIFY2(m_pEmitter, SE->source()->file_name());
-    const float _pitch = std::min(std::clamp(m_pEmitter->p_source.freq, EPS_L, 2.f) * psSoundTimeFactor, 100.f); //--#SM+#-- Correct sound "speed" by time factor
+    const float _pitch = std::min(
+        std::clamp(m_pEmitter->p_source.freq, EPS_L, 2.f) * psSoundTimeFactor,
+        100.f); //--#SM+#-- Correct sound "speed" by time factor
     if (!fsimilar(_pitch, cache_pitch))
     {
         cache_pitch = _pitch;

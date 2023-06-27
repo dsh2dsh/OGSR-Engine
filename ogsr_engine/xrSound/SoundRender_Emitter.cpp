@@ -44,6 +44,9 @@ CSoundRender_Emitter::CSoundRender_Emitter(void)
     starting_delay = 0.f;
     priority_scale = 1.f;
     m_cur_handle_cursor = 0;
+
+    occluder.checkReverse = true;
+    SmoothHfVolume = 1.f;
 }
 
 CSoundRender_Emitter::~CSoundRender_Emitter(void)

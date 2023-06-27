@@ -24,7 +24,8 @@ void CSoundRender_Emitter::update(float dt)
     float fTime = SoundRender->fTimer_Value;
     float fDeltaTime = SoundRender->fTimer_Delta;
 
-    VERIFY2(!!(owner_data) || (!(owner_data) && (m_current_state == stStopped)), "owner");
+    VERIFY2(!!(owner_data) || (!(owner_data) && (m_current_state == stStopped)),
+            "owner");
     VERIFY2(owner_data ? *(int*)(&owner_data->feedback) : 1, "owner");
 
     if (bRewind)
@@ -50,14 +51,7 @@ void CSoundRender_Emitter::update(float dt)
         fTimeStarted = fTime;
         fTimeToStop = fTime + get_length_sec();
         fTimeToPropagade = fTime;
-        fade_volume = 1.f;
-        occluder_volume =
-            SoundRender->get_occlusion(p_source.position, .2f, &occluder);
-        smooth_volume = p_source.base_volume * p_source.volume *
-            (owner_data->s_type == st_Effect ?
-                 psSoundVEffects * psSoundVFactor :
-                 psSoundVMusic) *
-            (b2D ? 1.f : occluder_volume);
+        initStartingVolumes();
         e_current = e_target = *SoundRender->get_environment(p_source.position);
         if (update_culling(dt))
         {
@@ -81,14 +75,7 @@ void CSoundRender_Emitter::update(float dt)
         fTimeStarted = fTime;
         fTimeToStop = 0xffffffff;
         fTimeToPropagade = fTime;
-        fade_volume = 1.f;
-        occluder_volume =
-            SoundRender->get_occlusion(p_source.position, .2f, &occluder);
-        smooth_volume = p_source.base_volume * p_source.volume *
-            (owner_data->s_type == st_Effect ?
-                 psSoundVEffects * psSoundVFactor :
-                 psSoundVMusic) *
-            (b2D ? 1.f : occluder_volume);
+        initStartingVolumes();
         e_current = e_target = *SoundRender->get_environment(p_source.position);
         if (update_culling(dt))
         {
@@ -148,7 +135,8 @@ void CSoundRender_Emitter::update(float dt)
         }
         else
         {
-            u32 ptr = calc_cursor(fTimeStarted, fTime, get_length_sec(), source()->m_wformat);
+            u32 ptr = calc_cursor(fTimeStarted, fTime, get_length_sec(),
+                                  source()->m_wformat);
             set_cursor(ptr);
 
             if (update_culling(dt))
@@ -156,10 +144,8 @@ void CSoundRender_Emitter::update(float dt)
                 // switch to: PLAY
                 m_current_state = stPlaying;
                 /*
-                                u32 ptr						= calc_cursor(	fTimeStarted,
-                                                                            fTime,
-                                                                            get_length_sec(),
-                                                                            source()->m_wformat);
+                                u32 ptr						= calc_cursor(
+                   fTimeStarted, fTime, get_length_sec(), source()->m_wformat);
                                 set_cursor					(ptr);
                 */
                 SoundRender->i_start(this);
@@ -201,7 +187,8 @@ void CSoundRender_Emitter::update(float dt)
         {
             // switch to: PLAY
             m_current_state = stPlayingLooped; // switch state
-            u32 ptr = calc_cursor(fTimeStarted, fTime, get_length_sec(), source()->m_wformat);
+            u32 ptr = calc_cursor(fTimeStarted, fTime, get_length_sec(),
+                                  source()->m_wformat);
             set_cursor(ptr);
 
             SoundRender->i_start(this);
@@ -213,7 +200,8 @@ void CSoundRender_Emitter::update(float dt)
     if (bStopping && fis_zero(fade_volume))
         i_stop();
 
-    VERIFY2(!!(owner_data) || (!(owner_data) && (m_current_state == stStopped)), "owner");
+    VERIFY2(!!(owner_data) || (!(owner_data) && (m_current_state == stStopped)),
+            "owner");
     VERIFY2(owner_data ? *(int*)(owner_data->feedback) : 1, "owner");
 
     // footer
@@ -253,6 +241,14 @@ BOOL CSoundRender_Emitter::update_culling(float dt)
     }
     else
     {
+        // Update occlusion
+        updateOccVolume(dt);
+
+        // Calc attenuated volume
+        float fade_dir =
+            bStopping || (att() * applyOccVolume()) < psSoundCull ? -1.f : 1.f;
+        fade_volume += dt * psSoundFadeSpeed * fade_dir;
+
         // Если звук уже звучит и мы от него отошли дальше его максимальной
         // дистанции, не будем обрывать его резко. Пусть громкость плавно
         // снизится до минимального и потом уже выключается. А вот если звук еще
@@ -260,41 +256,17 @@ BOOL CSoundRender_Emitter::update_culling(float dt)
         // Ничего внезапно не замолчит, т.к. еще ничего и не было слышно. Звучит
         // звук или не звучит - будем определять по наличию target, т.е. тому,
         // что обеспечивает физическое звучание.
-        if (!target && att() < psSoundCull)
+        if (!target && fade_dir < 0.f)
         {
             smooth_volume = 0;
             return FALSE;
         }
-
-        // Calc attenuated volume
-        float fade_dir = bStopping ||
-                (att() * p_source.base_volume * p_source.volume *
-                     (owner_data->s_type == st_Effect ?
-                          psSoundVEffects * psSoundVFactor :
-                          psSoundVMusic) <
-                 psSoundCull) ?
-            -1.f :
-            1.f;
-        fade_volume += dt * psSoundFadeSpeed * fade_dir;
-
-        // Update occlusion
-        // float occ = (owner_data->g_type == SOUND_TYPE_WORLD_AMBIENT) ?
-        //     1.0f :
-        //     SoundRender->get_occlusion(p_source.position, .2f, &occluder);
-        float occ =
-            SoundRender->get_occlusion(p_source.position, .2f, &occluder);
-        volume_lerp(occluder_volume, occ, 1.f, dt);
-        clamp(occluder_volume, 0.f, 1.f);
     }
     clamp(fade_volume, 0.f, 1.f);
     // Update smoothing
-    smooth_volume = .9f * smooth_volume +
-        .1f *
-            (p_source.base_volume * p_source.volume *
-             (owner_data->s_type == st_Effect ?
-                  psSoundVEffects * psSoundVFactor :
-                  psSoundVMusic) *
-             occluder_volume * fade_volume);
+    smooth_volume = .9f * smooth_volume + .1f * applyOccVolume() * fade_volume;
+    SmoothHfVolume =
+        .9f * SmoothHfVolume + .1f * applyOccHfVolume() * fade_volume;
     if (smooth_volume < psSoundCull)
         return FALSE; // allow volume to go up
     // Here we has enought "PRIORITY" to be soundable
@@ -342,4 +314,67 @@ void CSoundRender_Emitter::update_environment(float dt)
     if (bMoved)
         e_target = *SoundRender->get_environment(p_source.position);
     e_current.lerp(e_current, e_target, dt);
+}
+
+float CSoundRender_Emitter::applyOccVolume()
+{
+    float vol = p_source.base_volume * p_source.volume *
+        (owner_data->s_type == st_Effect ? psSoundVEffects * psSoundVFactor :
+                                           psSoundVMusic);
+
+    if (!b2D)
+    {
+        if (fis_zero(occluder_volume))
+            return 0.f;
+        if (psSoundOcclusionScale < 1.f && occluder.valid)
+            vol *= psSoundOcclusionScale;
+        if (psSoundOcclusionMtl > 0.f && occluder_volume < 1.f)
+            vol = vol * (1.f - psSoundOcclusionMtl) +
+                vol * psSoundOcclusionMtl * occluder_volume;
+    }
+
+    return vol;
+}
+
+float CSoundRender_Emitter::applyOccHfVolume()
+{
+    if (psSoundOcclusionHf > 0.f && occluder_volume < 1.f)
+        return 1.f - psSoundOcclusionHf + occluder_volume * psSoundOcclusionHf;
+    return 1.f;
+}
+
+void CSoundRender_Emitter::initStartingVolumes()
+{
+    fade_volume = 1.f;
+    occluder_volume = (b2D || att() < psSoundCull) ?
+        1.f :
+        SoundRender->get_occlusion(p_source.position, .2f, &occluder, this);
+    smooth_volume = applyOccVolume();
+    SmoothHfVolume = applyOccHfVolume();
+}
+
+void CSoundRender_Emitter::updateOccVolume(float dt)
+{
+    if (target)
+    {
+        // Звук воспроизводится или пока ещё воспроизводится
+        float occ =
+            SoundRender->get_occlusion(p_source.position, .2f, &occluder, this);
+        volume_lerp(occluder_volume, occ, 1.f, dt);
+    }
+    else
+    {
+        // Или звук только что запустили, или его (пока ещё?) не слышно. Нужно
+        // проверить, если его не слышно потому, что он слишком далеко, тогда не
+        // будем зря дёргать `get_occlusion`. `occluder_volume` нужно установить
+        // сразу, а не через `volume_lerp`, что бы, если звук зазвучит на
+        // следующем кадре, он сразу с правильной громкостью начал
+        // воспроизводится. По этой же причине сразу установим `SmoothHfVolume`,
+        // что бы высокие частоты правильную громкость имели.
+        occluder_volume = (att() < psSoundCull) ?
+            1.f :
+            SoundRender->get_occlusion(p_source.position, .2f, &occluder, this);
+        SmoothHfVolume = applyOccHfVolume();
+    }
+    clamp(occluder_volume, 0.f, 1.f);
 }

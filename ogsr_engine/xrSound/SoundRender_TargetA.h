@@ -12,6 +12,7 @@ class CSoundRender_TargetA : public CSoundRender_Target
     ALuint pBuffers[sdef_target_count]{};
     float cache_gain;
     float cache_pitch;
+    float cacheGainHF;
 
     ALuint buf_block{};
 
@@ -31,7 +32,8 @@ public:
     virtual void rewind();
     virtual void stop();
     virtual void update();
-    virtual void fill_parameters();
+    virtual void fill_parameters(ALuint filter);
     virtual void alAuxInit(ALuint slot) override;
+    virtual void alFilterInit(ALuint filter) override;
     void source_changed();
 };

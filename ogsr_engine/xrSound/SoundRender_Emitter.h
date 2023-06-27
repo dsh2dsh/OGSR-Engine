@@ -43,6 +43,7 @@ public:
     float priority_scale;
     float smooth_volume;
     float occluder_volume; // USER
+    float SmoothHfVolume;
     float fade_volume;
     CSoundRender_Core::Occ occluder;
 
@@ -116,4 +117,10 @@ public:
 
     CSoundRender_Emitter();
     ~CSoundRender_Emitter();
+
+private:
+    float applyOccVolume();
+    float applyOccHfVolume();
+    void initStartingVolumes();
+    void updateOccVolume(float dt);
 };

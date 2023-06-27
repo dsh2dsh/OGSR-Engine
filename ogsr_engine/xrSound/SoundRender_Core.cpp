@@ -13,7 +13,8 @@
 int psSoundTargets = 256; // 512; //--#SM+#-- //32;
 Flags32 psSoundFlags = {ss_Hardware};
 float psSoundOcclusionScale = 1.f;
-float psSoundOcclusionMtl = 0.5f;
+float psSoundOcclusionMtl = 0.4f;
+float psSoundOcclusionHf = 0.6f;
 float psSoundCull = 0.01f;
 float psSoundRolloff = 1.f;
 float psSoundFadeSpeed = 1.f;
@@ -33,8 +34,12 @@ CSound_manager_interface* Sound = 0;
 static LPALEFFECTF alEffectf;
 static LPALEFFECTI alEffecti;
 static LPALDELETEEFFECTS alDeleteEffects;
+static LPALDELETEEFFECTS alDeleteFilters;
+LPALEFFECTF alFilterf;
+static LPALEFFECTI alFilteri;
 static LPALISEFFECT alIsEffect;
 static LPALGENEFFECTS alGenEffects;
+static LPALGENEFFECTS alGenFilters;
 LPALDELETEAUXILIARYEFFECTSLOTS alDeleteAuxiliaryEffectSlots;
 LPALGENAUXILIARYEFFECTSLOTS alGenAuxiliaryEffectSlots;
 LPALAUXILIARYEFFECTSLOTI alAuxiliaryEffectSloti;
@@ -66,6 +71,9 @@ CSoundRender_Core::CSoundRender_Core()
     bEFX = false;
     effect = 0;
     slot = 0;
+    filter = 0;
+
+    nextReflectFrame = 0;
 }
 
 CSoundRender_Core::~CSoundRender_Core()
@@ -78,6 +86,8 @@ CSoundRender_Core::~CSoundRender_Core()
         if (slot)
             alDeleteAuxiliaryEffectSlots(1, &slot);
     }
+    if (filter)
+        alDeleteFilters(1, &filter);
 
     xr_delete(geom_ENV);
     xr_delete(geom_SOM);
@@ -483,7 +493,19 @@ void CSoundRender_Core::env_apply()
     bListenerMoved = TRUE;
 }
 
-void CSoundRender_Core::update_listener(const Fvector& P, const Fvector& D, const Fvector& N, float dt) {}
+void CSoundRender_Core::update_listener(const Fvector& P, const Fvector& D,
+                                        const Fvector& N, float dt)
+{}
+
+void CSoundRender_Core::InitAlEffectAPI()
+{
+    LOAD_PROC(alGenFilters, LPALGENFILTERS);
+    LOAD_PROC(alDeleteFilters, LPALDELETEFILTERS);
+    LOAD_PROC(alFilteri, LPALFILTERI);
+    LOAD_PROC(alFilterf, LPALFILTERF);
+    alGenFilters(1, &filter);
+    alFilteri(filter, AL_FILTER_TYPE, AL_FILTER_LOWPASS);
+}
 
 //////////////////////////////////////////////////
 void CSoundRender_Core::InitAlEFXAPI()

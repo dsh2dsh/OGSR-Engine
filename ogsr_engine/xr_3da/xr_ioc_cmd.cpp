@@ -739,6 +739,7 @@ void CCC_Register()
     // clamp(psSoundOcclusionScale, 0.1f, 1.f);
     CMD4(CCC_Float, "snd_occ_scale", &psSoundOcclusionScale, 0.1f, 1.f);
     CMD4(CCC_Float, "snd_occ_mtl", &psSoundOcclusionMtl, 0.f, 1.f);
+    CMD4(CCC_Float, "snd_occ_hf", &psSoundOcclusionHf, 0.f, 1.f);
     CMD4(CCC_Float, "snd_fade_speed", &psSoundFadeSpeed, 1.f, 10.f);
 
 #ifdef DEBUG

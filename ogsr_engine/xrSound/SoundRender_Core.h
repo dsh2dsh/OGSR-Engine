@@ -44,11 +44,13 @@ public:
         Fvector occ[3];
         float occ_value;
         bool valid;
+        u32 lastFrame{};
 
-        Occ()
-        {
-            valid = false;
-        }
+        bool checkReverse{};
+        float occ_value2;
+        u32 nextReflectFrame;
+
+        Occ() { valid = false; }
     };
 
 protected:
@@ -137,10 +139,13 @@ public:
 
     virtual void object_relcase(CObject* obj);
 
-    virtual float get_occlusion_to(const Fvector& hear_pt, const Fvector& snd_pt, float dispersion = 0.2f);
-    float get_occlusion(const Fvector& P, float R, Occ* occ);
-    float calc_occlusion(const Fvector& base, const Fvector& P, float R, Occ* occ);
-    SGameMtl* get_material(u16 material_idx);
+    virtual float get_occlusion_to(const Fvector& hear_pt,
+                                   const Fvector& snd_pt,
+                                   float dispersion = 0.2f);
+    float get_occlusion(const Fvector& P, float R, Occ* occ,
+                        CSoundRender_Emitter* E = nullptr);
+    float calc_occlusion(const Fvector& base, const Fvector& P, float R,
+                         Occ* occ, CSoundRender_Emitter* E = nullptr);
     CSoundRender_Environment* get_environment(const Fvector& P);
 
     void env_load();
@@ -150,9 +155,23 @@ public:
 protected: // EFX
     EFXEAXREVERBPROPERTIES efx_reverb;
     ALuint effect;
+    ALuint filter;
     ALuint slot;
     bool EFXTestSupport();
     void InitAlEFXAPI();
+    void InitAlEffectAPI();
+
+private:
+    u32 nextReflectFrame;
+
+    SGameMtl* get_material(u16 material_idx);
+    float occRayTestMtl(const Fvector& pos, const Fvector& dir, float range,
+                        Occ* occ, CSoundRender_Emitter* E = nullptr);
+    float occRayTestSom(const Fvector& pos, const Fvector& dir, float range);
+    float occRayTestRefl(const Fvector& base, const Fvector& P,
+                         CSoundRender_Emitter* E = nullptr);
+    Fvector randomOccTestPoint(const Fvector& pos, const Fvector& dir,
+                               float range, Fvector& hit_normal);
 };
 
 extern XRSOUND_API CSoundRender_Core* SoundRender;
