@@ -324,8 +324,6 @@ float CSoundRender_Emitter::applyOccVolume()
 
     if (!b2D)
     {
-        if (fis_zero(occluder_volume))
-            return 0.f;
         if (psSoundOcclusionScale < 1.f && occluder.valid)
             vol *= psSoundOcclusionScale;
         if (psSoundOcclusionMtl > 0.f && occluder_volume < 1.f)
