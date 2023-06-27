@@ -72,8 +72,6 @@ CSoundRender_Core::CSoundRender_Core()
     effect = 0;
     slot = 0;
     filter = 0;
-
-    nextReflectFrame = 0;
 }
 
 CSoundRender_Core::~CSoundRender_Core()

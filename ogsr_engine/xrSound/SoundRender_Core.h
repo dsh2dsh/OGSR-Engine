@@ -45,10 +45,7 @@ public:
         float occ_value;
         bool valid;
         u32 lastFrame{};
-
         bool checkReverse{};
-        float occ_value2;
-        u32 nextReflectFrame;
 
         Occ() { valid = false; }
     };
@@ -162,8 +159,6 @@ protected: // EFX
     void InitAlEffectAPI();
 
 private:
-    u32 nextReflectFrame;
-
     SGameMtl* get_material(u16 material_idx);
     float occRayTestMtl(const Fvector& pos, const Fvector& dir, float range,
                         Occ* occ, CSoundRender_Emitter* E = nullptr);

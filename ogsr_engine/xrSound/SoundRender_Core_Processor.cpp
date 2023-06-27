@@ -34,8 +34,6 @@ void CSoundRender_Core::update(const Fvector& P, const Fvector& D,
     fTimer_Value = new_tm;
 
     s_emitters_u++;
-    if (nextReflectFrame <= s_emitters_u)
-        nextReflectFrame = s_emitters_u + 1;
 
     // Firstly update emitters, which are now being rendered
     // Msg	("! update: r-emitters");
@@ -257,15 +255,12 @@ float CSoundRender_Core::calc_occlusion(const Fvector& base, const Fvector& P,
             }
         }
 
-        bool checkReflects = occ->checkReverse && psSoundOcclusionMtl > 0.f;
-        bool checkReverse = occ->checkReverse;
-
         // 2. Polygon doesn't picked up - real database query
         if (bNeedFullTest)
         {
             // Проверяем препятствие в направлении от звука к камере
             occ_value = occRayTestMtl(pos, dir, range, occ, E);
-            if (checkReverse && occ_value < 1.f)
+            if (occ->checkReverse && occ_value < 1.f)
             {
                 // Проверяем препятствие в обратном направлении, от камеры к
                 // звуку и выбираем максимальное поглощение звука из этой и
@@ -279,28 +274,8 @@ float CSoundRender_Core::calc_occlusion(const Fvector& base, const Fvector& P,
                     occRayTestMtl(base, reverseDir, range, &reverseOcc, E);
                 if (reverseVal < occ_value)
                     occ_value = reverseVal;
-                occ->nextReflectFrame = s_emitters_u + 1;
-                occ->occ_value2 = 0.f;
             }
             occ->occ_value = occ_value;
-        }
-        // Следующие проверки начинаем делать со следующего кадра
-        else if (checkReflects && occ_value < 1.f && occ->occ_value2 < 1.f &&
-                 occ->nextReflectFrame <= s_emitters_u)
-        {
-            // Теперь проверяем препятствия между случайной точкой и
-            // камерой. Случайная точка выбирается таким образом, что бы между
-            // ней и звуком не было препятствий.
-            float val = occRayTestRefl(base, pos, E);
-            if (val > occ->occ_value2)
-                occ->occ_value2 = val;
-            if (occ->occ_value2 > occ_value)
-            {
-                occ_value = (occ_value + occ->occ_value2) / 2.f;
-                occ->occ_value = occ_value;
-            }
-            occ->nextReflectFrame = nextReflectFrame;
-            nextReflectFrame++;
         }
     }
 
