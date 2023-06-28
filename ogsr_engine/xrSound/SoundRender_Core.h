@@ -149,6 +149,8 @@ public:
     void env_unload();
     void env_apply();
 
+    bool Loaded(LPCSTR fName);
+
 protected: // EFX
     EFXEAXREVERBPROPERTIES efx_reverb;
     ALuint effect;

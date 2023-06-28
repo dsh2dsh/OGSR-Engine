@@ -145,8 +145,6 @@ public:
 
 private:
     // preload sounds registry
-    DEFINE_MAP(shared_str, ref_sound, SoundRegistryMap, SoundRegistryMapIt);
-    SoundRegistryMap sound_registry;
     std::deque<std::string> sound_registry_defer;
     std::mutex sound_registry_mutex;
 

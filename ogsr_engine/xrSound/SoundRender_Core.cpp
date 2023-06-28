@@ -119,6 +119,7 @@ void CSoundRender_Core::_clear()
         std::scoped_lock<std::mutex> lock(s_sources_mutex);
         for (auto it : s_sources)
             xr_delete(it.second);
+        MsgIfDbg("* [%s]: %u s_sources deleted", __FUNCTION__, s_sources.size());
         s_sources.clear();
     }
 
@@ -683,4 +684,26 @@ void CSoundRender_Core::set_mtl_lib(
 SGameMtl* CSoundRender_Core::get_material(u16 material_idx)
 {
     return m_materialGetter(material_idx);
+}
+
+bool CSoundRender_Core::Loaded(LPCSTR fName)
+{
+    // Search
+    string_path id;
+    xr_strcpy(id, fName);
+    strlwr(id);
+    if (strext(id))
+        *strext(id) = 0;
+    std::string s(id);
+
+    CSoundRender_Source* S;
+    {
+        std::scoped_lock<std::mutex> lock(s_sources_mutex);
+        auto it = s_sources.find(s);
+        if (it == s_sources.end())
+            return false;
+        S = it->second;
+    }
+
+    return S->loaded();
 }

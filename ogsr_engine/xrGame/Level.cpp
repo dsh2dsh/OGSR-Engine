@@ -41,6 +41,7 @@
 #include "Actor_Flags.h"
 #include "level_changer.h"
 #include "ui/UIGameTutorial.h"
+#include <execution>
 
 #ifdef DEBUG
 #include "level_debug.h"
@@ -176,7 +177,8 @@ CLevel::~CLevel()
     }
 
     // destroy PSs
-    for (POIt p_it = m_StaticParticles.begin(); m_StaticParticles.end() != p_it; ++p_it)
+    for (POIt p_it = m_StaticParticles.begin(); m_StaticParticles.end() != p_it;
+         ++p_it)
         CParticlesObject::Destroy(*p_it);
     m_StaticParticles.clear();
 
@@ -184,10 +186,8 @@ CLevel::~CLevel()
     // unload prefetched sounds
     {
         std::scoped_lock<std::mutex> lock(sound_registry_mutex);
-        sound_registry.clear();
         sound_registry_defer.clear();
     }
-
     // unload static sounds
     for (u32 i = 0; i < static_Sounds.size(); ++i)
     {
@@ -253,86 +253,46 @@ void CLevel::GetLevelInfo(CServerInfo* si) { Server->GetServerInfo(si); }
 
 bool CLevel::PrefetchSound(LPCSTR name)
 {
-    // preprocess sound name
-    string_path tmp;
-    strcpy_s(tmp, name);
-    xr_strlwr(tmp);
-    if (strext(tmp))
-        *strext(tmp) = 0;
-    shared_str snd_name = tmp;
-    // find in registry
-    bool created = false;
-    {
-        std::scoped_lock<std::mutex> lock(sound_registry_mutex);
-        SoundRegistryMapIt it = sound_registry.find(snd_name);
-        if (it == sound_registry.end())
-        {
-            sound_registry[snd_name];
-            created = true;
-        }
-    }
-    // if find failed - preload sound
-    if (created)
-    {
-        sound_registry[snd_name].create(snd_name.c_str(), st_Effect, sg_SourceType);
+    if (::Sound->Loaded(name))
         return true;
-    }
+    ref_sound S;
+    S.create(name, st_Effect, sg_SourceType);
     return false;
 }
 
 bool CLevel::PrefetchManySounds(LPCSTR prefix)
 {
     std::vector<std::string> load_queue;
+    string_path fn;
+
+    if (FS.exist(fn, "$game_sounds$", prefix, ".ogg") &&
+        !::Sound->Loaded(prefix))
+        load_queue.emplace_back(prefix);
+
+    u32 i = 0;
+    while (true)
     {
-        std::scoped_lock<std::mutex> lock(sound_registry_mutex);
-        string_path fn;
-        if (FS.exist(fn, "$game_sounds$", prefix, ".ogg"))
+        string256 name;
+        sprintf_s(name, "%s%d", prefix, i);
+        if (FS.exist(fn, "$game_sounds$", name, ".ogg"))
         {
-            SoundRegistryMapIt it = sound_registry.find(prefix);
-            if (it == sound_registry.end())
-            {
-                std::string s(prefix);
-                load_queue.push_back(s);
-            }
+            if (!::Sound->Loaded(name))
+                load_queue.emplace_back(name);
         }
-        u32 i = 0;
-        while (true)
-        {
-            string256 name;
-            sprintf_s(name, "%s%d", prefix, i);
-            if (FS.exist(fn, "$game_sounds$", name, ".ogg"))
-            {
-                SoundRegistryMapIt it = sound_registry.find(name);
-                if (it == sound_registry.end())
-                {
-                    std::string s(name);
-                    load_queue.push_back(s);
-                }
-            }
-            else if (i > 0)
-                break;
-            i++;
-        }
+        else if (i > 0)
+            break;
+        i++;
     }
 
-    size_t nWorkers = TTAPI->threads.size();
-    if (nWorkers > 1 && load_queue.size() > 1)
-    {
-        for (const auto& s : load_queue)
-            TTAPI->addJob([=] { PrefetchSound(s.c_str()); });
-        TTAPI->wait();
-    }
-    else
-    {
-        for (const auto& s : load_queue)
-            PrefetchSound(s.c_str());
-    }
+    std::for_each(std::execution::par_unseq, load_queue.begin(),
+                  load_queue.end(), [&](auto& s) { PrefetchSound(s.c_str()); });
 
     return load_queue.size() > 0;
 }
 
 bool CLevel::PrefetchManySoundsLater(LPCSTR prefix)
 {
+    std::scoped_lock<std::mutex> lock(sound_registry_mutex);
     std::string s(prefix);
     for (const auto& it : sound_registry_defer)
     {
@@ -345,6 +305,7 @@ bool CLevel::PrefetchManySoundsLater(LPCSTR prefix)
 
 void CLevel::PrefetchDeferredSounds()
 {
+    std::scoped_lock<std::mutex> lock(sound_registry_mutex);
     while (!sound_registry_defer.empty())
     {
         std::string s = sound_registry_defer.front();
@@ -356,8 +317,11 @@ void CLevel::PrefetchDeferredSounds()
 
 void CLevel::CancelPrefetchManySounds(LPCSTR prefix)
 {
+    std::scoped_lock<std::mutex> lock(sound_registry_mutex);
     std::string s(prefix);
-    sound_registry_defer.erase(std::remove(sound_registry_defer.begin(), sound_registry_defer.end(), s), sound_registry_defer.end());
+    sound_registry_defer.erase(std::remove(sound_registry_defer.begin(),
+                                           sound_registry_defer.end(), s),
+                               sound_registry_defer.end());
 }
 
 // Game interface ////////////////////////////////////////////////////
