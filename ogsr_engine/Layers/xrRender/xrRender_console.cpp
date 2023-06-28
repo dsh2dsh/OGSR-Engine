@@ -61,8 +61,11 @@ constexpr xr_token qsun_quality_token[] = {{"st_opt_low", 0},
 u32 ps_r3_msaa = 0; //	=	0;
 constexpr xr_token qmsaa_token[] = {{"st_opt_off", 0}, {"2x", 1}, {"4x", 2}, {"8x", 3}, {0, 0}};
 
-u32 ps_r3_msaa_atest = 0; //	=	0;
-constexpr xr_token qmsaa__atest_token[] = {{"st_opt_off", 0}, {"st_opt_atest_msaa_dx10_0", 1}, {"st_opt_atest_msaa_dx10_1", 2}, {0, 0}};
+u32 ps_r3_msaa_atest = 2; //	=	0;
+constexpr xr_token qmsaa__atest_token[] = {{"st_opt_off", 0},
+                                           {"st_opt_atest_msaa_dx10_0", 1},
+                                           {"st_opt_atest_msaa_dx10_1", 2},
+                                           {0, 0}};
 
 u32 ps_r3_minmax_sm = 0;
 constexpr xr_token qminmax_sm_token[] = {{"off", 0}, {"on", 1}, {"auto", 2}, {"autodetect", 3}, {0, 0}};
@@ -127,13 +130,17 @@ float ps_r2_ssaLOD_A = 64.f;
 float ps_r2_ssaLOD_B = 48.f;
 
 // R2-specific
-Flags32 ps_r2_ls_flags = {R2FLAG_SUN
-                          //| R2FLAG_SUN_IGNORE_PORTALS
-                          | R2FLAG_EXP_DONT_TEST_UNSHADOWED | R2FLAG_USE_NVSTENCIL | R2FLAG_EXP_SPLIT_SCENE | R2FLAG_EXP_MT_CALC | R3FLAG_DYN_WET_SURF |
-                          R3FLAG_VOLUMETRIC_SMOKE
-                          //| R3FLAG_MSAA
-                          | R3FLAG_MSAA_OPT | R3FLAG_GBUFFER_OPT | R2FLAG_DETAIL_BUMP | R2FLAG_DOF | R2FLAG_SOFT_PARTICLES | R2FLAG_SOFT_WATER | R2FLAG_STEEP_PARALLAX |
-                          R2FLAG_SUN_FOCUS | R2FLAG_SUN_TSM | R2FLAG_TONEMAP | R2FLAG_VOLUMETRIC_LIGHTS}; // r2-only
+Flags32 ps_r2_ls_flags = {
+    R2FLAG_SUN
+    //| R2FLAG_SUN_IGNORE_PORTALS
+    | R2FLAG_EXP_DONT_TEST_UNSHADOWED | R2FLAG_USE_NVSTENCIL |
+    R2FLAG_EXP_SPLIT_SCENE | R2FLAG_EXP_MT_CALC | R3FLAG_DYN_WET_SURF |
+    R3FLAG_VOLUMETRIC_SMOKE
+    //| R3FLAG_MSAA
+    | R3FLAG_MSAA_OPT | R3FLAG_GBUFFER_OPT | R2FLAG_DETAIL_BUMP | R2FLAG_DOF |
+    R2FLAG_SOFT_PARTICLES | R2FLAG_SOFT_WATER | R2FLAG_STEEP_PARALLAX |
+    R2FLAG_SUN_FOCUS | R2FLAG_SUN_TSM | R2FLAG_TONEMAP |
+    R2FLAG_VOLUMETRIC_LIGHTS}; // r2-only
 
 Flags32 ps_r2_ls_flags_ext = {
     /*R2FLAGEXT_SSAO_OPT_DATA |*/ R2FLAGEXT_SSAO_HALF_DATA |

@@ -325,9 +325,6 @@ void CRender::create()
     if (o.ssao_hdao)
         o.ssao_opt_data = false;
 
-    o.dx10_sm4_1 = ps_r2_ls_flags.test((u32)R3FLAG_USE_DX10_1);
-    o.dx10_sm4_1 = o.dx10_sm4_1 && (HW.FeatureLevel >= D3D_FEATURE_LEVEL_10_1);
-
     //	MSAA option dependencies
 
     o.dx10_msaa = !!ps_r3_msaa;
@@ -336,12 +333,8 @@ void CRender::create()
     o.dx10_msaa_opt = ps_r2_ls_flags.test(R3FLAG_MSAA_OPT);
     o.dx10_msaa_opt = o.dx10_msaa_opt && o.dx10_msaa &&
         (HW.FeatureLevel >= D3D_FEATURE_LEVEL_10_1);
-    // o.dx10_msaa && (HW.FeatureLevel >= D3D_FEATURE_LEVEL_11_0);
-
-    // o.dx10_msaa_hybrid	= ps_r2_ls_flags.test(R3FLAG_MSAA_HYBRID);
-    o.dx10_msaa_hybrid = ps_r2_ls_flags.test((u32)R3FLAG_USE_DX10_1);
-    o.dx10_msaa_hybrid &= !o.dx10_msaa_opt && o.dx10_msaa &&
-        (HW.FeatureLevel >= D3D_FEATURE_LEVEL_10_1);
+    o.dx10_sm4_1 = o.dx10_msaa_opt;
+    o.dx10_msaa_hybrid = o.dx10_msaa_opt;
 
     //	Allow alpha test MSAA for DX10.0
 
