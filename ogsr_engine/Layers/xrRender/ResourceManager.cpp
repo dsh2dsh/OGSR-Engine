@@ -383,7 +383,7 @@ void CResourceManager::DeferredUpload()
             it->second->Load();
     });
 
-    Msg("[%s] texture loading time (%zi): [%.2f s.]", __FUNCTION__, m_deferred_textures.size(), timer.GetElapsed_sec());
+    Msg("[%s] texture loading time (%zi): [%.3f s.]", __FUNCTION__, m_deferred_textures.size(), timer.GetElapsed_sec());
     m_deferred_textures.clear();
 }
 
