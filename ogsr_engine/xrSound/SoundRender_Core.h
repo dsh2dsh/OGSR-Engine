@@ -163,10 +163,6 @@ private:
     float occRayTestMtl(const Fvector& pos, const Fvector& dir, float range,
                         Occ* occ, CSoundRender_Emitter* E = nullptr);
     float occRayTestSom(const Fvector& pos, const Fvector& dir, float range);
-    float occRayTestRefl(const Fvector& base, const Fvector& P,
-                         CSoundRender_Emitter* E = nullptr);
-    Fvector randomOccTestPoint(const Fvector& pos, const Fvector& dir,
-                               float range, Fvector& hit_normal);
 };
 
 extern XRSOUND_API CSoundRender_Core* SoundRender;
