@@ -97,7 +97,8 @@ void CGameMtlLibrary::Load()
     if (OBJ)
     {
         u32 count;
-        for (IReader* O = OBJ->open_chunk_iterator(count); O; O = OBJ->open_chunk_iterator(count, O))
+        for (IReader* O = OBJ->open_chunk_iterator(count); O;
+             O = OBJ->open_chunk_iterator(count, O))
         {
             SGameMtl* M = xr_new<SGameMtl>();
             M->Load(*O);
@@ -114,14 +115,17 @@ void CGameMtlLibrary::Load()
     if (OBJ)
     {
         u32 count;
-        for (IReader* O = OBJ->open_chunk_iterator(count); O; O = OBJ->open_chunk_iterator(count, O))
+        for (IReader* O = OBJ->open_chunk_iterator(count); O;
+             O = OBJ->open_chunk_iterator(count, O))
         {
             SGameMtlPair* M = xr_new<SGameMtlPair>(this);
             M->Load(*O);
-            int idx0 = GetMaterialIdx(M->mtl0) * material_count + GetMaterialIdx(M->mtl1);
+            int idx0 = GetMaterialIdx(M->mtl0) * material_count +
+                GetMaterialIdx(M->mtl1);
             if (SGameMtlPair* S = material_pairs_rt[idx0])
             {
-                Msg("! [%s]: ignore [%u][%s] found [%u][%s]", __FUNCTION__, M->ID, M->dbg_Name(), S->ID, S->dbg_Name());
+                Msg("! [%s]: ignore [%u][%s] found [%u][%s]", __FUNCTION__,
+                    M->ID, M->dbg_Name(), S->ID, S->dbg_Name());
                 xr_delete(M);
             }
             else
@@ -130,7 +134,8 @@ void CGameMtlLibrary::Load()
                 material_pairs_rt[idx0] = M;
                 if (M->mtl0 != M->mtl1)
                 {
-                    int idx1 = GetMaterialIdx(M->mtl1) * material_count + GetMaterialIdx(M->mtl0);
+                    int idx1 = GetMaterialIdx(M->mtl1) * material_count +
+                        GetMaterialIdx(M->mtl0);
                     material_pairs_rt[idx1] = M;
                 }
                 if (M->ID > last_pair_id)
@@ -144,7 +149,8 @@ void CGameMtlLibrary::Load()
     {
         for (auto* M2 : materials)
         {
-            int idx0 = GetMaterialIdx(M1->GetID()) * material_count + GetMaterialIdx(M2->GetID());
+            int idx0 = GetMaterialIdx(M1->GetID()) * material_count +
+                GetMaterialIdx(M2->GetID());
             if (!material_pairs_rt[idx0])
             {
                 SGameMtlPair* M = xr_new<SGameMtlPair>(this);
@@ -152,12 +158,14 @@ void CGameMtlLibrary::Load()
                 M->ID = last_pair_id;
                 M->mtl0 = M1->GetID();
                 M->mtl1 = M2->GetID();
-                // Msg( "* [%s]: auto generate [%d][%s]", __FUNCTION__, M->ID, M->dbg_Name() );
+                // Msg( "* [%s]: auto generate [%d][%s]", __FUNCTION__, M->ID,
+                // M->dbg_Name() );
                 material_pairs.push_back(M);
                 material_pairs_rt[idx0] = M;
                 if (M1->GetID() != M2->GetID())
                 {
-                    int idx1 = GetMaterialIdx(M2->GetID()) * material_count + GetMaterialIdx(M1->GetID());
+                    int idx1 = GetMaterialIdx(M2->GetID()) * material_count +
+                        GetMaterialIdx(M1->GetID());
                     material_pairs_rt[idx1] = M;
                 }
             }
@@ -165,10 +173,10 @@ void CGameMtlLibrary::Load()
     }
 
     /*
-        for (GameMtlPairIt p_it=material_pairs.begin(); material_pairs.end() != p_it; ++p_it){
-            SGameMtlPair* S	= *p_it;
-            for (int k=0; k<S->StepSounds.size(); k++){
-                Msg("%40s - 0x%x", S->StepSounds[k].handle->file_name(), S->StepSounds[k].g_type);
+        for (GameMtlPairIt p_it=material_pairs.begin(); material_pairs.end() !=
+       p_it; ++p_it){ SGameMtlPair* S	= *p_it; for (int k=0;
+       k<S->StepSounds.size(); k++){ Msg("%40s - 0x%x",
+       S->StepSounds[k].handle->file_name(), S->StepSounds[k].g_type);
             }
         }
     */

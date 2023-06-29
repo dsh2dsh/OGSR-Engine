@@ -196,8 +196,10 @@ public:
     PropValue* propCollideParticles;
     PropValue* propCollideMarks;
     void __stdcall OnFlagChange(PropValue* sender);
-    void __stdcall OnParentClick(ButtonValue* sender, bool& bModif, bool& bSafe);
-    void __stdcall OnCommandClick(ButtonValue* sender, bool& bModif, bool& bSafe);
+    void __stdcall OnParentClick(ButtonValue* sender, bool& bModif,
+                                 bool& bSafe);
+    void __stdcall OnCommandClick(ButtonValue* sender, bool& bModif,
+                                  bool& bSafe);
     void __stdcall FillChooseMtl(ChooseItemVec& items, void* param);
     void CopyFrom(SGameMtlPair* parent);
 #endif
@@ -223,14 +225,18 @@ public:
         mtl0 = m0;
         mtl1 = m1;
     }
-    IC bool IsPair(int m0, int m1) { return !!(((mtl0 == m0) && (mtl1 == m1)) || ((mtl0 == m1) && (mtl1 == m0))); }
+    IC bool IsPair(int m0, int m1)
+    {
+        return !!(((mtl0 == m0) && (mtl1 == m1)) ||
+                  ((mtl0 == m1) && (mtl1 == m0)));
+    }
     void Save(IWriter& fs);
     void Load(IReader& fs);
     IC int GetParent() { return ID_parent; }
     BOOL SetParent(int parent);
-    //#ifdef DEBUG
+    // #ifdef DEBUG
     LPCSTR dbg_Name();
-    //#endif
+    // #endif
 };
 
 DEFINE_VECTOR(SGameMtlPair*, GameMtlPairVec, GameMtlPairIt);
