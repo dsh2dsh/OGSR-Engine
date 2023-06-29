@@ -4,6 +4,7 @@
 
 #include "GameMtlLib.h"
 //#include "../include/xrapi/xrapi.h"
+#include <execution>
 
 CGameMtlLibrary GMLib;
 // CSound_manager_interface*	Sound = NULL;
@@ -93,6 +94,9 @@ void CGameMtlLibrary::Load()
     materials.clear();
     material_pairs.clear();
 
+    CTimer timer;
+    timer.Start();
+
     IReader* OBJ = fs.open_chunk(GAMEMTLS_CHUNK_MTLS);
     if (OBJ)
     {
@@ -143,7 +147,11 @@ void CGameMtlLibrary::Load()
             }
         }
         OBJ->close();
+        loadSounds();
     }
+
+    Msg("* [%s]: mtl pairs loading time (%u): [%.3f s.]", __FUNCTION__,
+        material_pairs.size(), timer.GetElapsed_sec());
 
     for (auto* M1 : materials)
     {
@@ -182,6 +190,19 @@ void CGameMtlLibrary::Load()
     */
 
     FS.r_close(F);
+}
+
+void CGameMtlLibrary::loadSounds()
+{
+    CTimer timer;
+    timer.Start();
+
+    std::for_each(std::execution::par_unseq, material_pairs.begin(),
+                  material_pairs.end(),
+                  [](auto& pair) { pair->CreateAllSounds(); });
+
+    Msg("* [%s]: sounds creating time: [%.3f s.]", __FUNCTION__,
+        timer.GetElapsed_sec());
 }
 
 #ifndef _EDITOR
