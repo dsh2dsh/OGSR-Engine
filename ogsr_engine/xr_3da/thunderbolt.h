@@ -24,6 +24,7 @@ struct SThunderboltDesc
     FactoryPtr<IThunderboltDescRender> m_pRender;
     // sound
     ref_sound snd;
+    std::string sndName;
     // gradient
     struct SFlare
     {
@@ -142,4 +143,6 @@ public:
 #else
     shared_str AppendDef(CEnvironment& environment, CInifile* pIni, LPCSTR sect);
 #endif
+
+    void LoadSounds();
 };

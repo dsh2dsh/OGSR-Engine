@@ -7,6 +7,7 @@
 #include "Thunderbolt.h"
 #include "igame_persistent.h"
 #include "LightAnimLibrary.h"
+#include <execution>
 
 #ifdef _EDITOR
 #include "ui_toolscustom.h"
@@ -69,15 +70,17 @@ void SThunderboltDesc::load(CInifile& pIni, shared_str const& sect)
 
     /*
     IReader* F			= 0;
-    F					= FS.r_open("$game_meshes$",m_name); R_ASSERT2(F,"Empty 'lightning_model'.");
-    l_model				= ::Render->model_CreateDM(F);
+    F					= FS.r_open("$game_meshes$",m_name); R_ASSERT2(F,"Empty
+    'lightning_model'."); l_model				= ::Render->model_CreateDM(F);
     FS.r_close			(F);
     */
 
     // sound
     m_name = pIni.r_string(sect, "sound");
     if (m_name && m_name[0])
-        snd.create(m_name, st_Effect, sg_Undefined);
+        // Сохраним имя звука, что бы потом загрузить разом все
+        // звуки. См. LoadSounds().
+        sndName = m_name;
 }
 #else
 void SThunderboltDesc::create_top_gradient(CInifile* pIni, shared_str const& sect)
@@ -410,4 +413,25 @@ void CEffect_Thunderbolt::Render()
         RCache.Render			(D3DPT_TRIANGLELIST,VS_Offset+4, 0,4,0,2);
         */
     }
+}
+
+void CEffect_Thunderbolt::LoadSounds()
+{
+    CTimer timer;
+    timer.Start();
+
+    // Загрузим все звуки параллельно
+    std::vector<SThunderboltDesc*> thunders;
+    for (auto& col : collection)
+        for (auto& desc : col->palette)
+            thunders.push_back(desc);
+
+    std::for_each(std::execution::par_unseq, thunders.begin(), thunders.end(),
+                  [](auto& desc) {
+                      desc->snd.create(desc->sndName.c_str(), st_Effect,
+                                       sg_Undefined);
+                  });
+
+    Msg("* [%s]: thunderbolt sounds loading time (%u): [%.3f s.]", __FUNCTION__,
+        thunders.size(), timer.GetElapsed_sec());
 }

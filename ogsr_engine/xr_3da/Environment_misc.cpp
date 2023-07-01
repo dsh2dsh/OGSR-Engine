@@ -8,6 +8,7 @@
 #include "IGame_Level.h"
 #include "../COMMON_AI/object_broker.h"
 #include "../COMMON_AI/LevelGameDef.h"
+#include <execution>
 
 ENGINE_API float ps_r_sunshafts_intensity = 0.0f;
 ENGINE_API float puddles_drying = 2.f;
@@ -94,7 +95,8 @@ void CEnvAmbient::SSndChannel::load(CInifile& config, LPCSTR sect)
     m_sound_period.w = config.r_s32(m_load_section, "period3");
 
     //	m_sound_period			= config.r_ivector4(sect,"sound_period");
-    R_ASSERT(m_sound_period.x <= m_sound_period.y && m_sound_period.z <= m_sound_period.w);
+    R_ASSERT(m_sound_period.x <= m_sound_period.y &&
+             m_sound_period.z <= m_sound_period.w);
     //	m_sound_period.mul		(1000);// now in ms
     //	m_sound_dist			= config.r_fvector2(sect,"sound_dist");
     R_ASSERT2(m_sound_dist.y > m_sound_dist.x, sect);
@@ -104,13 +106,25 @@ void CEnvAmbient::SSndChannel::load(CInifile& config, LPCSTR sect)
     string_path tmp;
     R_ASSERT3(cnt, "sounds empty", sect);
 
-    m_sounds.resize(cnt);
-
+    // Подготавливаем имена звуков. Загрузим из позже все разом,
+    // см. loadAmbientSounds().
+    soundNames.reserve(cnt);
     for (u32 k = 0; k < cnt; ++k)
-    {
-        _GetItem(snds, k, tmp);
-        m_sounds[k].create(tmp, st_Effect, sg_SourceType);
-    }
+        soundNames.emplace_back(_GetItem(snds, k, tmp));
+}
+
+void CEnvAmbient::SSndChannel::LoadSounds()
+{
+    // Загружаем все звуки этого канала. См. loadAmbientSounds().
+    m_sounds.resize(soundNames.size());
+    for (size_t i = 0; i < soundNames.size(); i++)
+        m_sounds[i].create(soundNames[i].c_str(), st_Effect, sg_SourceType);
+}
+
+void CEnvAmbient::SEffect::LoadSound()
+{
+    // Загружаем звук этого эффекта. См. loadEffectSounds().
+    sound.create(soundName.c_str(), st_Effect, sg_SourceType);
 }
 
 CEnvAmbient::SEffect* CEnvAmbient::create_effect(CInifile& config, LPCSTR id)
@@ -123,12 +137,15 @@ CEnvAmbient::SEffect* CEnvAmbient::create_effect(CInifile& config, LPCSTR id)
     result->wind_gust_factor = config.r_float(id, "wind_gust_factor");
 
     if (config.line_exist(id, "sound"))
-        result->sound.create(config.r_string(id, "sound"), st_Effect, sg_SourceType);
+        // Подготавливаем имя звука, а сам звук загрузим позже, вместе со всеми
+        // остальными. См. loadEffectSounds().
+        result->soundName = config.r_string(id, "sound");
 
     if (config.line_exist(id, "wind_blast_strength"))
     {
         result->wind_blast_strength = config.r_float(id, "wind_blast_strength");
-        result->wind_blast_direction.setHP(deg2rad(config.r_float(id, "wind_blast_longitude")), 0.f);
+        result->wind_blast_direction.setHP(
+            deg2rad(config.r_float(id, "wind_blast_longitude")), 0.f);
         result->wind_blast_in_time = config.r_float(id, "wind_blast_in_time");
         result->wind_blast_out_time = config.r_float(id, "wind_blast_out_time");
         return (result);
@@ -157,7 +174,9 @@ void CEnvAmbient::destroy()
     delete_data(m_sound_channels);
 }
 
-void CEnvAmbient::load(CInifile& ambients_config, CInifile& sound_channels_config, CInifile& effects_config, const shared_str& sect)
+void CEnvAmbient::load(CInifile& ambients_config,
+                       CInifile& sound_channels_config,
+                       CInifile& effects_config, const shared_str& sect)
 {
     m_ambients_config_filename = ambients_config.fname();
     m_load_section = sect;
@@ -168,12 +187,14 @@ void CEnvAmbient::load(CInifile& ambients_config, CInifile& sound_channels_confi
     u32 cnt = _GetItemCount(channels);
     //	R_ASSERT3				(cnt,"sound_channels empty", sect.c_str());
     m_sound_channels.resize(cnt);
-
     for (u32 i = 0; i < cnt; ++i)
-        m_sound_channels[i] = create_sound_channel(sound_channels_config, _GetItem(channels, i, tmp));
+        m_sound_channels[i] = create_sound_channel(sound_channels_config,
+                                                   _GetItem(channels, i, tmp));
 
     // effects
-    m_effect_period.set(iFloor(ambients_config.r_float(sect, "min_effect_period") * 1000.f), iFloor(ambients_config.r_float(sect, "max_effect_period") * 1000.f));
+    m_effect_period.set(
+        iFloor(ambients_config.r_float(sect, "min_effect_period") * 1000.f),
+        iFloor(ambients_config.r_float(sect, "max_effect_period") * 1000.f));
     LPCSTR effs = ambients_config.r_string(sect, "effects");
     cnt = _GetItemCount(effs);
     //	R_ASSERT3				(cnt,"effects empty", sect.c_str());
@@ -184,13 +205,30 @@ void CEnvAmbient::load(CInifile& ambients_config, CInifile& sound_channels_confi
 
     R_ASSERT(!m_sound_channels.empty() || !m_effects.empty());
 }
+
+void CEnvAmbient::LoadSounds()
+{
+    CTimer timer;
+    timer.Start();
+
+    // Загружаем параллельно все звуки
+    std::for_each(std::execution::par_unseq, m_sound_channels.begin(),
+                  m_sound_channels.end(), [](auto& ch) { ch->LoadSounds(); });
+
+    Msg("* [%s]: ambient[%s] channel sounds loading time (%u): [%.3f s.]",
+        __FUNCTION__, name().c_str(), m_sound_channels.size(),
+        timer.GetElapsed_sec());
+}
+
 #else
 void CEnvAmbient::load(const shared_str& sect)
 {
     section = sect;
     string_path tmp;
     // sounds
-    ASSERT_FMT_DBG(pSettings->line_exist(sect, "sounds"), "CEnvAmbient::load: section '%s' not found", section.c_str());
+    ASSERT_FMT_DBG(pSettings->line_exist(sect, "sounds"),
+                   "CEnvAmbient::load: section '%s' not found",
+                   section.c_str());
     if (pSettings->line_exist(sect, "sounds"))
     {
         Fvector2 t = pSettings->r_fvector2(sect, "sound_period");
@@ -204,7 +242,8 @@ void CEnvAmbient::load(const shared_str& sect)
         {
             sounds.resize(cnt);
             for (u32 k = 0; k < cnt; ++k)
-                sounds[k].create(_GetItem(snds, k, tmp), st_Effect, sg_SourceType);
+                sounds[k].create(_GetItem(snds, k, tmp), st_Effect,
+                                 sg_SourceType);
         }
     }
     // effects
@@ -220,13 +259,16 @@ void CEnvAmbient::load(const shared_str& sect)
             for (u32 k = 0; k < cnt; ++k)
             {
                 _GetItem(effs, k, tmp);
-                effects[k].life_time = iFloor(pSettings->r_float(tmp, "life_time") * 1000.f);
+                effects[k].life_time =
+                    iFloor(pSettings->r_float(tmp, "life_time") * 1000.f);
                 effects[k].particles = pSettings->r_string(tmp, "particles");
                 VERIFY(effects[k].particles.size());
                 effects[k].offset = pSettings->r_fvector3(tmp, "offset");
-                effects[k].wind_gust_factor = pSettings->r_float(tmp, "wind_gust_factor");
+                effects[k].wind_gust_factor =
+                    pSettings->r_float(tmp, "wind_gust_factor");
                 if (pSettings->line_exist(tmp, "sound"))
-                    effects[k].sound.create(pSettings->r_string(tmp, "sound"), st_Effect, sg_SourceType);
+                    effects[k].sound.create(pSettings->r_string(tmp, "sound"),
+                                            st_Effect, sg_SourceType);
             }
         }
     }
@@ -620,27 +662,46 @@ void CEnvironment::load_level_specific_ambients()
     const shared_str level_name = g_pGameLevel->name();
 
     string_path path;
-    strconcat(sizeof(path), path, "environment\\ambients\\", level_name.c_str(), ".ltx");
+    strconcat(sizeof(path), path, "environment\\ambients\\", level_name.c_str(),
+              ".ltx");
 
     string_path full_path;
-    CInifile* level_ambients = xr_new<CInifile>(FS.update_path(full_path, "$game_config$", path), TRUE, TRUE, FALSE);
+    CInifile* level_ambients = xr_new<CInifile>(
+        FS.update_path(full_path, "$game_config$", path), TRUE, TRUE, FALSE);
 
+    std::vector<CEnvAmbient::SEffect*> effects;
+    std::vector<CEnvAmbient::SSndChannel*> snd_channels;
     for (EnvAmbVecIt I = Ambients.begin(), E = Ambients.end(); I != E; ++I)
     {
         CEnvAmbient* ambient = *I;
-
         shared_str section_name = ambient->name();
-
         // choose a source ini file
-        CInifile* source = (level_ambients && level_ambients->section_exist(section_name)) ? level_ambients : m_ambients_config;
-
+        CInifile* source =
+            (level_ambients && level_ambients->section_exist(section_name)) ?
+            level_ambients :
+            m_ambients_config;
         // check and reload if needed
-        if (xr_strcmp(ambient->get_ambients_config_filename().c_str(), source->fname()))
+        if (xr_strcmp(ambient->get_ambients_config_filename().c_str(),
+                      source->fname()))
         {
             ambient->destroy();
-            ambient->load(*source, *m_sound_channels_config, *m_effects_config, section_name);
+            ambient->load(*source, *m_sound_channels_config, *m_effects_config,
+                          section_name);
+            // Соберем все звуки, которые нужно загрузить и загрузим их все
+            // разом, многопоточно.
+            for (auto& ch : ambient->get_snd_channels())
+                snd_channels.push_back(ch);
+            for (auto& eff : ambient->effects())
+                if (eff->soundName.size())
+                    effects.push_back(eff);
         }
     }
+
+    if (snd_channels.size())
+        loadAmbientSounds(snd_channels);
+
+    if (effects.size())
+        loadEffectSounds(effects);
 
     xr_delete(level_ambients);
 }
@@ -863,7 +924,9 @@ void CEnvironment::load()
         create_mixer();
 
     m_pRender->OnLoad();
-    // tonemap					= Device.Resources->_CreateTexture("$user$tonemap");	//. hack
+    // tonemap					=
+    // Device.Resources->_CreateTexture("$user$tonemap");
+    // //. hack
     if (!eff_Rain)
         eff_Rain = xr_new<CEffect_Rain>();
     if (!eff_LensFlare)
@@ -871,8 +934,64 @@ void CEnvironment::load()
     if (!eff_Thunderbolt)
         eff_Thunderbolt = xr_new<CEffect_Thunderbolt>();
 
+    CTimer timer;
+    timer.Start();
+
     load_weathers();
     load_weather_effects();
+
+    loadAmbientSounds();
+    loadEffectSounds();
+    eff_Thunderbolt->LoadSounds();
+
+    Msg("* [%s]: weathers loading time: [%.3f s.]", __FUNCTION__,
+        timer.GetElapsed_sec());
+}
+
+void CEnvironment::loadAmbientSounds()
+{
+    // Загрузим все звуки всех амбиентов параллельно
+    std::vector<CEnvAmbient::SSndChannel*> snd_channels;
+    for (auto& amb : Ambients)
+        for (auto& ch : amb->get_snd_channels())
+            snd_channels.push_back(ch);
+    loadAmbientSounds(snd_channels);
+}
+
+void CEnvironment::loadAmbientSounds(
+    std::vector<CEnvAmbient::SSndChannel*>& snd_channels)
+{
+    CTimer timer;
+    timer.Start();
+
+    std::for_each(std::execution::par_unseq, snd_channels.begin(),
+                  snd_channels.end(), [](auto& ch) { ch->LoadSounds(); });
+
+    Msg("* [%s]: ambient sounds loading time (%u): [%.3f s.]", __FUNCTION__,
+        snd_channels.size(), timer.GetElapsed_sec());
+}
+
+void CEnvironment::loadEffectSounds()
+{
+    // Загрузим все звуки всех эффектов параллельно
+    std::vector<CEnvAmbient::SEffect*> effects;
+    for (auto& amb : Ambients)
+        for (auto& eff : amb->effects())
+            if (eff->soundName.size())
+                effects.push_back(eff);
+    loadEffectSounds(effects);
+}
+
+void CEnvironment::loadEffectSounds(std::vector<CEnvAmbient::SEffect*>& effects)
+{
+    CTimer timer;
+    timer.Start();
+
+    std::for_each(std::execution::par_unseq, effects.begin(), effects.end(),
+                  [](auto& eff) { eff->LoadSound(); });
+
+    Msg("* [%s]: effect sounds loading time (%u): [%.3f s.]", __FUNCTION__,
+        effects.size(), timer.GetElapsed_sec());
 }
 
 void CEnvironment::unload()
