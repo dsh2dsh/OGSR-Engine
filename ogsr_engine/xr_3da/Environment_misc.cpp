@@ -953,8 +953,8 @@ void CEnvironment::loadAmbientSounds()
     // Загрузим все звуки всех амбиентов параллельно
     std::vector<CEnvAmbient::SSndChannel*> snd_channels;
     for (auto& amb : Ambients)
-        for (auto& ch : amb->get_snd_channels())
-            snd_channels.push_back(ch);
+        snd_channels.insert(snd_channels.end(), amb->get_snd_channels().begin(),
+                            amb->get_snd_channels().end());
     loadAmbientSounds(snd_channels);
 }
 

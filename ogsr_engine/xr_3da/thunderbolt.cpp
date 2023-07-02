@@ -423,8 +423,8 @@ void CEffect_Thunderbolt::LoadSounds()
     // Загрузим все звуки параллельно
     std::vector<SThunderboltDesc*> thunders;
     for (auto& col : collection)
-        for (auto& desc : col->palette)
-            thunders.push_back(desc);
+        thunders.insert(thunders.end(), col->palette.begin(),
+                        col->palette.end());
 
     std::for_each(std::execution::par_unseq, thunders.begin(), thunders.end(),
                   [](auto& desc) {
