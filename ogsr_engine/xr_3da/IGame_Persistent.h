@@ -9,7 +9,12 @@ class IRenderVisual;
 class IMainMenu;
 class ENGINE_API CPS_Instance;
 //-----------------------------------------------------------------------------------------------------------
-class ENGINE_API IGame_Persistent : public DLL_Pure, public pureAppStart, public pureAppEnd, public pureAppActivate, public pureAppDeactivate, public pureFrame
+class ENGINE_API IGame_Persistent : public DLL_Pure,
+                                    public pureAppStart,
+                                    public pureAppEnd,
+                                    public pureAppActivate,
+                                    public pureAppDeactivate,
+                                    public pureFrame
 {
 public:
     union params
@@ -63,7 +68,10 @@ public:
 
     ShadersExternalData m_pGShaderConstants; //--#SM+#--
 
-    virtual bool OnRenderPPUI_query() { return FALSE; }; // should return true if we want to have second function called
+    virtual bool OnRenderPPUI_query()
+    {
+        return FALSE;
+    }; // should return true if we want to have second function called
     virtual void OnRenderPPUI_main(){};
     virtual void OnRenderPPUI_PP(){};
 
