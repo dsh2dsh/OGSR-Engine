@@ -38,7 +38,7 @@ CGamePersistent::CGamePersistent(void)
     m_game_params.m_e_game_type = GAME_ANY;
     ambient_effect_next_time = 0;
     ambient_effect_stop_time = 0;
-    ambient_particles = 0;
+    ambient_particles = nullptr;
 
     ambient_effect_wind_start = 0.f;
     ambient_effect_wind_in_time = 0.f;
@@ -176,7 +176,14 @@ void CGamePersistent::Disconnect()
     CWeaponHUD::CleanSharedContainer();
 
     // destroy ambient particles
-    CParticlesObject::Destroy(ambient_particles);
+    if (ambient_particles)
+    {
+        ambient_particles->Stop(FALSE);
+        ambient_particles = nullptr;
+    }
+    for (auto& it : ambientParticles)
+        CParticlesObject::Destroy(it.second);
+    ambientParticles.clear();
 
     __super::Disconnect();
     // stop all played emitters
@@ -314,8 +321,10 @@ void CGamePersistent::WeathersUpdate()
                         eff->life_time / 1000.f + eff->wind_blast_out_time;
                     ambient_effect_wind_on = true;
 
-                    ambient_particles = CParticlesObject::Create(
-                        eff->particles.c_str(), FALSE, false);
+                    ambient_particles = ambientParticle(eff);
+                    ASSERT_FMT(ambient_particles,
+                               "[%s]: particle wasn't created: %s",
+                               __FUNCTION__, eff->particles.c_str());
                     Fvector pos;
                     pos.add(Device.vCameraPosition, eff->offset);
                     ambient_particles->play_at_pos(pos);
@@ -435,7 +444,7 @@ void CGamePersistent::WeathersUpdate()
 
         // if particles not playing - destroy
         if (ambient_particles && !ambient_particles->IsPlaying())
-            CParticlesObject::Destroy(ambient_particles);
+            ambient_particles = nullptr;
     }
 }
 #else
@@ -894,4 +903,25 @@ void CGamePersistent::UpdateDof()
                                 clamp(m_dof[1].y, m_dof[2].y, m_dof[0].y);
     (m_dof[0].z < m_dof[2].z) ? clamp(m_dof[1].z, m_dof[0].z, m_dof[2].z) :
                                 clamp(m_dof[1].z, m_dof[2].z, m_dof[0].z);
+}
+
+bool CGamePersistent::CreateAmbientParticle(const CEnvAmbient::SEffect* effect)
+{
+    std::string s{effect->particles.c_str()};
+    if (auto it = ambientParticles.find(s); it != ambientParticles.end())
+        return false;
+
+    auto p = CParticlesObject::Create(effect->particles.c_str(), FALSE, false);
+    ambientParticles.insert({s, p});
+
+    return true;
+}
+
+CParticlesObject*
+CGamePersistent::ambientParticle(const CEnvAmbient::SEffect* effect)
+{
+    std::string s{effect->particles.c_str()};
+    if (const auto it = ambientParticles.find(s); it != ambientParticles.end())
+        return it->second;
+    return nullptr;
 }

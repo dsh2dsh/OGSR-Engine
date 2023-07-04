@@ -16,6 +16,7 @@ class CGamePersistent : public IGame_Persistent, public IEventReceiver
     // ambient particles
     CParticlesObject* ambient_particles;
 #ifdef USE_COP_WEATHER_CONFIGS
+    std::unordered_map<std::string, CParticlesObject*> ambientParticles;
     u32 ambient_sound_next_time[40]; // max snd channels
 #else
     u32 ambient_sound_next_time;
@@ -49,6 +50,8 @@ class CGamePersistent : public IGame_Persistent, public IEventReceiver
 
     void WeathersUpdate();
     void UpdateDof();
+
+    CParticlesObject* ambientParticle(const CEnvAmbient::SEffect* effect);
 
 public:
     ui_core* m_pUI_core;
@@ -93,6 +96,8 @@ public:
 
     virtual void GetCurrentDof(Fvector3& dof);
     virtual void SetBaseDof(const Fvector3& dof);
+
+    bool CreateAmbientParticle(const CEnvAmbient::SEffect* effect);
 };
 
 IC CGamePersistent& GamePersistent() { return *((CGamePersistent*)g_pGamePersistent); }

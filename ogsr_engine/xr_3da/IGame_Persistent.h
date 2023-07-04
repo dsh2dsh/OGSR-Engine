@@ -104,6 +104,8 @@ public:
 
     virtual bool CanBePaused() { return true; }
     virtual void models_savePrefetch();
+
+    virtual bool CreateAmbientParticle(const CEnvAmbient::SEffect* effect) = 0;
 };
 
 class IMainMenu
