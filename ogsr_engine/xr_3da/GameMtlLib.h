@@ -390,6 +390,7 @@ public:
 
 private:
     void loadSounds();
+    void loadParticles();
 };
 
 #define GET_RANDOM(a_vector) (a_vector[Random.randI(a_vector.size())])

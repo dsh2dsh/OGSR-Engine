@@ -3,7 +3,9 @@
 #pragma hdrstop
 
 #include "GameMtlLib.h"
-//#include "../include/xrapi/xrapi.h"
+#include "render.h"
+#include "../Include/xrRender/RenderVisual.h"
+// #include "../include/xrapi/xrapi.h"
 #include <execution>
 
 CGameMtlLibrary GMLib;
@@ -147,7 +149,9 @@ void CGameMtlLibrary::Load()
             }
         }
         OBJ->close();
+
         loadSounds();
+        loadParticles();
     }
 
     Msg("* [%s]: mtl pairs loading time (%u): [%.3f s.]", __FUNCTION__,
@@ -205,6 +209,24 @@ void CGameMtlLibrary::loadSounds()
         timer.GetElapsed_sec());
 }
 
+void CGameMtlLibrary::loadParticles()
+{
+    CTimer timer;
+    timer.Start();
+
+    for (const auto& mtl_pair : material_pairs)
+    {
+        for (const auto& particleName : mtl_pair->CollideParticles)
+        {
+            auto V = Render->model_CreateParticles(particleName.c_str());
+            Render->model_Delete(V);
+        }
+    }
+
+    Msg("* [%s]: particles creating time: [%.3f s.]", __FUNCTION__,
+        timer.GetElapsed_sec());
+}
+
 #ifndef _EDITOR
 
 SGameMtlPair* CGameMtlLibrary::GetMaterialPair(u16 idx0, u16 idx1)
@@ -212,7 +234,8 @@ SGameMtlPair* CGameMtlLibrary::GetMaterialPair(u16 idx0, u16 idx1)
     // R_ASSERT( ( idx0 < material_count ) && ( idx1 < material_count ) );
     if (idx0 >= material_count || idx1 >= material_count)
     {
-        MsgDbg("! [%s]: wrong index(es): idx0[%u] idx1[%u] material_count[%u]", __FUNCTION__, idx0, idx1, material_count);
+        MsgDbg("! [%s]: wrong index(es): idx0[%u] idx1[%u] material_count[%u]",
+               __FUNCTION__, idx0, idx1, material_count);
         if (idx0 >= material_count)
             idx0 = 0;
         if (idx1 >= material_count)
