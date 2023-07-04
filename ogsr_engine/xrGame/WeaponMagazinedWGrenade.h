@@ -12,10 +12,13 @@ protected:
     bool TryPlayAnimIdle(u8);
 
 public:
-    CWeaponMagazinedWGrenade(LPCSTR name = "AK74", ESoundTypes eSoundType = SOUND_TYPE_WEAPON_SUBMACHINEGUN);
+    CWeaponMagazinedWGrenade(
+        LPCSTR name = "AK74",
+        ESoundTypes eSoundType = SOUND_TYPE_WEAPON_SUBMACHINEGUN);
     virtual ~CWeaponMagazinedWGrenade();
 
     virtual void Load(LPCSTR section);
+    virtual void PrefetchEnd();
 
     virtual BOOL net_Spawn(CSE_Abstract* DC);
     virtual void net_Destroy();
@@ -52,14 +55,14 @@ public:
     virtual void UpdateSounds();
     virtual void StopHUDSounds();
 
-    //переключение в режим подствольника
+    // переключение в режим подствольника
     virtual bool SwitchMode();
     void PerformSwitchGL();
     void OnAnimationEnd(u32 state);
 
     virtual bool IsNecessaryItem(const shared_str& item_sect);
 
-    //виртуальные функции для проигрывания анимации HUD
+    // виртуальные функции для проигрывания анимации HUD
     virtual void PlayAnimShow();
     virtual void PlayAnimHide();
     virtual void PlayAnimReload();
@@ -71,7 +74,7 @@ public:
     HUD_SOUND sndReloadG;
     HUD_SOUND sndSwitch;
 
-    //анимации с подключенным подствольником
+    // анимации с подключенным подствольником
     //(режим обычной стрельбы)
     MotionSVec mhud_idle_g;
     MotionSVec mhud_idle_g_aim;
@@ -93,8 +96,8 @@ public:
     MotionSVec mhud_hide_w_gl;
     MotionSVec mhud_reload_w_gl_partly;
 
-    //дополнительные параметры патронов
-    //для подствольника
+    // дополнительные параметры патронов
+    // для подствольника
     CWeaponAmmo* m_pAmmo2{};
     shared_str m_ammoSect2;
     xr_vector<shared_str> m_ammoTypes2;

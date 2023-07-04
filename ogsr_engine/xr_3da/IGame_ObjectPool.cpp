@@ -28,6 +28,7 @@ void IGame_ObjectPool::prefetch()
         CObject* pObject = (CObject*)NEW_INSTANCE(CLS);
         pObject->Load(item.first.c_str());
         pObject->reload(item.first.c_str());
+        pObject->PrefetchEnd();
         ASSERT_FMT(
             xr_strcmp(pObject->cNameSect().c_str(), item.first.c_str()) == 0,
             "[%s]: unexpected section: '%s' != '%s', class[%s]",

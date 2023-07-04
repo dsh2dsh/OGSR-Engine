@@ -100,6 +100,7 @@ public:
     virtual ~CWeaponMagazined();
 
     virtual void Load(LPCSTR section);
+    virtual void PrefetchEnd();
     virtual CWeaponMagazined* cast_weapon_magazined() { return this; }
 
     virtual void SetDefaults();

@@ -29,6 +29,7 @@ protected:
     void reinit();
     void reload(LPCSTR section){};
     void Load(LPCSTR section);
+    void PrefetchEnd();
 
     Fvector m_vCurrentShootDir;
     Fvector m_vCurrentShootPos;

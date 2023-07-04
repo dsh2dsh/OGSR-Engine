@@ -19,6 +19,8 @@
 #include "WeaponBinoculars.h"
 #include "WeaponBinocularsVision.h"
 #include "ai_object_location.h"
+#include "../xr_3da/render.h"
+#include "../Include/xrRender/RenderVisual.h"
 
 #include "game_object_space.h"
 #include "script_callback_ex.h"
@@ -1515,4 +1517,23 @@ bool CWeaponMagazined::canApplyShootEffector()
     if (canApplyShootEffectorStart())
         return ShotsFired() > ShootEffectorStart();
     return true;
+}
+
+void CWeaponMagazined::PrefetchEnd()
+{
+    inherited::PrefetchEnd();
+
+    if (m_sSilencerFlameParticles)
+    {
+        auto V =
+            Render->model_CreateParticles(m_sSilencerFlameParticles);
+        Render->model_Delete(V);
+    }
+
+    if (m_sSilencerSmokeParticles)
+    {
+        auto V =
+            Render->model_CreateParticles(m_sSilencerSmokeParticles);
+        Render->model_Delete(V);
+    }
 }

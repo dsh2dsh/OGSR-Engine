@@ -166,6 +166,7 @@ public:
 
     virtual void Load(LPCSTR section);
     virtual void reload(LPCSTR section){};
+    virtual void PrefetchEnd(){};
 
     // Update
     virtual void shedule_Update(u32 dt); // Called by sheduler
