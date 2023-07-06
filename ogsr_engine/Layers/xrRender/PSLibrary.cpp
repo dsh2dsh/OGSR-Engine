@@ -213,6 +213,10 @@ bool CPSLibrary::Load(const char* nm)
     u16 ver = F->r_u16();
     if (ver != PS_VERSION)
         return false;
+
+    CTimer timer;
+    timer.Start();
+
     // second generation
     IReader* OBJ;
     OBJ = F->open_chunk(PS_CHUNK_SECONDGEN);
@@ -268,8 +272,12 @@ bool CPSLibrary::Load(const char* nm)
     for (PS::PEDIt e_it = m_PEDs.begin(); e_it != m_PEDs.end(); e_it++)
         (*e_it)->CreateShader();
 
+    Msg("* [%s]: %s loading time: [%.3f s.]", __FUNCTION__, nm,
+        timer.GetElapsed_sec());
+
     return bRes;
 }
+
 //----------------------------------------------------
 void CPSLibrary::Reload()
 {
