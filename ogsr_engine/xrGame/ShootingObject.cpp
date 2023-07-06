@@ -503,30 +503,3 @@ void CShootingObject::StartShotParticles()
     StartParticles(pSmokeParticles, *m_sShotParticles, m_vCurrentShootPos,
                    m_vCurrentShootDir, true);
 }
-
-void CShootingObject::PrefetchEnd()
-{
-    if (m_sShellParticles.size())
-    {
-        auto V = Render->model_CreateParticles(m_sShellParticles.c_str());
-        Render->model_Delete(V);
-    }
-
-    if (m_sFlameParticles.size())
-    {
-        auto V = Render->model_CreateParticles(m_sFlameParticles.c_str());
-        Render->model_Delete(V);
-    }
-
-    if (m_sSmokeParticles.size())
-    {
-        auto V = Render->model_CreateParticles(m_sSmokeParticles.c_str());
-        Render->model_Delete(V);
-    }
-
-    if (m_sShotParticles.size())
-    {
-        auto V = Render->model_CreateParticles(m_sShotParticles.c_str());
-        Render->model_Delete(V);
-    }
-}

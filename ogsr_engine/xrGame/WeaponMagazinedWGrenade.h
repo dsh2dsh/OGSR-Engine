@@ -18,7 +18,6 @@ public:
     virtual ~CWeaponMagazinedWGrenade();
 
     virtual void Load(LPCSTR section);
-    virtual void PrefetchEnd();
 
     virtual BOOL net_Spawn(CSE_Abstract* DC);
     virtual void net_Destroy();

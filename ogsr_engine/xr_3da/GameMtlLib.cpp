@@ -3,8 +3,6 @@
 #pragma hdrstop
 
 #include "GameMtlLib.h"
-#include "render.h"
-#include "../Include/xrRender/RenderVisual.h"
 // #include "../include/xrapi/xrapi.h"
 #include <execution>
 
@@ -151,7 +149,6 @@ void CGameMtlLibrary::Load()
         OBJ->close();
 
         loadSounds();
-        loadParticles();
     }
 
     Msg("* [%s]: mtl pairs loading time (%u): [%.3f s.]", __FUNCTION__,
@@ -206,24 +203,6 @@ void CGameMtlLibrary::loadSounds()
                   [](auto& pair) { pair->CreateAllSounds(); });
 
     Msg("* [%s]: sounds creating time: [%.3f s.]", __FUNCTION__,
-        timer.GetElapsed_sec());
-}
-
-void CGameMtlLibrary::loadParticles()
-{
-    CTimer timer;
-    timer.Start();
-
-    for (const auto& mtl_pair : material_pairs)
-    {
-        for (const auto& particleName : mtl_pair->CollideParticles)
-        {
-            auto V = Render->model_CreateParticles(particleName.c_str());
-            Render->model_Delete(V);
-        }
-    }
-
-    Msg("* [%s]: particles creating time: [%.3f s.]", __FUNCTION__,
         timer.GetElapsed_sec());
 }
 

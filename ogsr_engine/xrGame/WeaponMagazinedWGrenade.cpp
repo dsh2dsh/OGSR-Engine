@@ -811,14 +811,3 @@ float CWeaponMagazinedWGrenade::Weight() const
 {
     return inherited::Weight() + GetMagazineWeight(m_magazine2);
 }
-
-void CWeaponMagazinedWGrenade::PrefetchEnd()
-{
-    inherited::PrefetchEnd();
-
-    if (m_sFlameParticles2.size())
-    {
-        auto V = Render->model_CreateParticles(m_sFlameParticles2.c_str());
-        Render->model_Delete(V);
-    }
-}

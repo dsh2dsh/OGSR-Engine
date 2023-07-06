@@ -2329,5 +2329,3 @@ void CWeapon::ReloadNextAmmo(u32 next_ammoType)
     m_set_next_ammoType_on_reload = next_ammoType;
     Reload();
 }
-
-void CWeapon::PrefetchEnd() { CShootingObject::PrefetchEnd(); }

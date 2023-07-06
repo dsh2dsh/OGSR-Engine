@@ -452,8 +452,6 @@ void CModelPool::Prefetch()
     {
         now_prefetch2 = true;
         prefetchModels();
-        prefetchParticles("pe");
-        prefetchParticles("pg");
         now_prefetch2 = false;
     }
 
@@ -522,30 +520,6 @@ void CModelPool::prefetchModels()
         cnt, timer.GetElapsed_sec());
 }
 
-void CModelPool::prefetchParticles(const std::string sectName)
-{
-    if (!vis_prefetch->section_exist(sectName.c_str()))
-        return;
-
-    CTimer timer;
-    timer.Start();
-
-    const auto& sect = vis_prefetch->r_section(sectName.c_str());
-    u32 cnt = 0;
-    for (const auto& it : sect.Data)
-    {
-        auto V = RImplementation.model_CreateParticles(it.first.c_str());
-        if (V)
-        {
-            cnt++;
-            Render->model_Delete(V);
-        }
-    }
-
-    Msg("* [%s]: [%s] prefetching time (%u): [%.3f s.]", __FUNCTION__,
-        sectName.c_str(), cnt, timer.GetElapsed_sec());
-}
-
 void CModelPool::ClearPool(BOOL b_complete)
 {
     for (auto& I : Pool)
@@ -567,7 +541,6 @@ dxRender_Visual* CModelPool::CreatePE(PS::CPEDef* source)
     PS::CParticleEffect* V =
         (PS::CParticleEffect*)Instance_Create(MT_PARTICLE_EFFECT);
     V->Compile(source);
-    refreshPrefetchSect("pe", source->Name());
     return V;
 }
 
@@ -576,7 +549,6 @@ dxRender_Visual* CModelPool::CreatePG(PS::CPGDef* source)
     PS::CParticleGroup* V =
         (PS::CParticleGroup*)Instance_Create(MT_PARTICLE_GROUP);
     V->Compile(source);
-    refreshPrefetchSect("pg", source->Name());
     return V;
 }
 
@@ -805,12 +777,7 @@ void CModelPool::save_vis_prefetch()
     }
 }
 
-void CModelPool::process_vis_prefetch()
-{
-    processPrefetchSect("prefetch");
-    processPrefetchSect("pe");
-    processPrefetchSect("pg");
-}
+void CModelPool::process_vis_prefetch() { processPrefetchSect("prefetch"); }
 
 void CModelPool::processPrefetchSect(const std::string sectName)
 {

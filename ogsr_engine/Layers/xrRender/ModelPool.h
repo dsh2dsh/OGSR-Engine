@@ -60,7 +60,6 @@ private:
     void processPrefetchSect(const std::string sectName);
     void prefetchVisuals();
     void prefetchModels();
-    void prefetchParticles(const std::string sectName);
 
 public:
     CModelPool();
