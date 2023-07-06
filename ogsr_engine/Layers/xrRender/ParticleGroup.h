@@ -49,6 +49,7 @@ public:
     CPGDef();
     ~CPGDef();
     void SetName(LPCSTR name);
+    IC LPCSTR Name() const { return *m_Name; }
 
     void Save(IWriter& F);
     BOOL Load(IReader& F);

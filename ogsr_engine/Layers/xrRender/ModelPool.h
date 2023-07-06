@@ -19,7 +19,10 @@ private:
 
     struct str_pred
     {
-        IC bool operator()(const shared_str& x, const shared_str& y) const { return xr_strcmp(x, y) < 0; }
+        IC bool operator()(const shared_str& x, const shared_str& y) const
+        {
+            return xr_strcmp(x, y) < 0;
+        }
     };
     struct ModelDef
     {
@@ -49,8 +52,15 @@ private:
     std::unordered_map<std::string, bool> m_prefetched;
 
     void Destroy();
-    void refresh_prefetch(LPCSTR low_name);
+    void refreshPrefetchModel(LPCSTR low_name);
+    void
+    refreshPrefetchSect(const std::string sectName, const std::string lowName,
+                        const std::function<bool(std::string fn)> testFn = {});
     void process_vis_prefetch();
+    void processPrefetchSect(const std::string sectName);
+    void prefetchVisuals();
+    void prefetchModels();
+    void prefetchParticles(const std::string sectName);
 
 public:
     CModelPool();
@@ -58,7 +68,8 @@ public:
     dxRender_Visual* Instance_Create(u32 Type);
     dxRender_Visual* Instance_Duplicate(dxRender_Visual* V);
     dxRender_Visual* Instance_Load(LPCSTR N, BOOL allow_register);
-    dxRender_Visual* Instance_Load(LPCSTR N, IReader* data, BOOL allow_register);
+    dxRender_Visual* Instance_Load(LPCSTR N, IReader* data,
+                                   BOOL allow_register);
     void Instance_Register(LPCSTR N, dxRender_Visual* V);
     dxRender_Visual* Instance_Find(LPCSTR N);
 
@@ -78,11 +89,14 @@ public:
 
     void dump();
 
-    void memory_stats(u32& vb_mem_video, u32& vb_mem_system, u32& ib_mem_video, u32& ib_mem_system);
+    void memory_stats(u32& vb_mem_video, u32& vb_mem_system, u32& ib_mem_video,
+                      u32& ib_mem_system);
 #ifdef _EDITOR
     void OnDeviceDestroy();
-    void Render(dxRender_Visual* m_pVisual, const Fmatrix& mTransform, int priority, bool strictB2F, float m_fLOD);
-    void RenderSingle(dxRender_Visual* m_pVisual, const Fmatrix& mTransform, float m_fLOD);
+    void Render(dxRender_Visual* m_pVisual, const Fmatrix& mTransform,
+                int priority, bool strictB2F, float m_fLOD);
+    void RenderSingle(dxRender_Visual* m_pVisual, const Fmatrix& mTransform,
+                      float m_fLOD);
 #endif
 
     void save_vis_prefetch();

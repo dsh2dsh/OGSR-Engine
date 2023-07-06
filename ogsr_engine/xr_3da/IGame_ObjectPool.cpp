@@ -37,7 +37,7 @@ void IGame_ObjectPool::prefetch()
         m_PrefetchObjects.push_back(pObject);
     }
     Render->models_begin_prefetch1(false);
-    Msg("[%s] objects prefetching time (%u): [%.3f s.]", __FUNCTION__,
+    Msg("* [%s]: [%s] prefetching time (%u): [%.3f s.]", __FUNCTION__, section,
         m_PrefetchObjects.size(), T.GetElapsed_sec());
 
     // out statistic
