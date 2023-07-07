@@ -554,14 +554,17 @@ bool CActor::InventoryAllowSprint()
 {
     PIItem pActiveItem = inventory().ActiveItem();
     if (pActiveItem && !pActiveItem->IsSprintAllowed())
-    {
         return false;
-    };
-    PIItem pOutfitItem = inventory().ItemFromSlot(OUTFIT_SLOT);
-    if (pOutfitItem && !pOutfitItem->IsSprintAllowed())
-    {
+
+    if (auto wpn = smart_cast<const CWeapon*>(pActiveItem); wpn &&
+        Core.Features.test(xrCore::Feature::lock_reload_in_sprint) &&
+        wpn->GetState() == CWeapon::eReload)
         return false;
-    }
+
+    if (const PIItem pOutfitItem = inventory().ItemFromSlot(OUTFIT_SLOT);
+        pOutfitItem && !pOutfitItem->IsSprintAllowed())
+        return false;
+
     return true;
 };
 
