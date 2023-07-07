@@ -139,6 +139,7 @@ public:
     void cNameSect_set(shared_str N);
     ICF shared_str cNameVisual() const { return NameVisual; }
     void cNameVisual_set(shared_str N);
+    virtual bool VisualCanBePrefetched() { return false; }
     virtual shared_str shedule_Name() const { return cName(); };
     ICF LPCSTR Name_script() const { return NameObject.c_str(); }
 

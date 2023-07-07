@@ -17,7 +17,6 @@ void CObject::MakeMeCrow_internal() { g_pGameLevel->Objects.o_crow(this); }
 void CObject::cName_set(shared_str N) { NameObject = N; }
 void CObject::cNameSect_set(shared_str N) { NameSection = N; }
 
-//#include "SkeletonCustom.h"
 void CObject::cNameVisual_set(shared_str N)
 {
     // check if equal
@@ -31,17 +30,12 @@ void CObject::cNameVisual_set(shared_str N)
         IRenderVisual* old_v = renderable.visual;
 
         NameVisual = N;
-        renderable.visual = Render->model_Create(*N);
+        renderable.visual =
+            Render->model_Create(*N, nullptr, VisualCanBePrefetched());
 
         IKinematics* old_k = old_v ? old_v->dcast_PKinematics() : NULL;
         IKinematics* new_k = renderable.visual->dcast_PKinematics();
 
-        /*
-        if(old_k && new_k){
-            new_k->SetUpdateCallback(old_k->GetUpdateCallback());
-            new_k->SetUpdateCallbackParam(old_k->GetUpdateCallbackParam());
-        }
-        */
         if (old_k && new_k)
         {
             new_k->SetUpdateCallback(old_k->GetUpdateCallback());

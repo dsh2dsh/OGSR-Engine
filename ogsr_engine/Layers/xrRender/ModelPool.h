@@ -74,7 +74,8 @@ public:
 
     dxRender_Visual* CreatePE(PS::CPEDef* source);
     dxRender_Visual* CreatePG(PS::CPGDef* source);
-    dxRender_Visual* Create(LPCSTR name, IReader* data = 0);
+    dxRender_Visual* Create(LPCSTR name, IReader* data = 0,
+                            bool canBePrefetched = false);
     dxRender_Visual* CreateChild(LPCSTR name, IReader* data);
     void Delete(dxRender_Visual*& V, BOOL bDiscard = FALSE);
     void Discard(dxRender_Visual*& V, BOOL b_complete);

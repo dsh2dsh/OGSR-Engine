@@ -178,7 +178,8 @@ public:
     // Models
     virtual IRenderVisual* model_CreateParticles(LPCSTR name);
     virtual IRender_DetailModel* model_CreateDM(IReader* F);
-    virtual IRenderVisual* model_Create(LPCSTR name, IReader* data = 0);
+    virtual IRenderVisual* model_Create(LPCSTR name, IReader* data = 0,
+                                        bool canBePrefetched = false);
     virtual IRenderVisual* model_CreateChild(LPCSTR name, IReader* data);
     virtual IRenderVisual* model_Duplicate(IRenderVisual* V);
     virtual void model_Delete(IRenderVisual*& V, BOOL bDiscard);

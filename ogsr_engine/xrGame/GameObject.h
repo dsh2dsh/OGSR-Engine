@@ -102,9 +102,17 @@ public:
     virtual CHolderCustom* cast_holder_custom() { return NULL; }
     virtual CBaseMonster* cast_base_monster() { return NULL; }
 
+    virtual bool VisualCanBePrefetched()
+    {
+        return cast_entity_alive() || cast_inventory_item();
+    }
+
 public:
     virtual BOOL feel_touch_on_contact(CObject*) { return TRUE; }
-    virtual bool use(CGameObject* who_use) { return CUsableScriptObject::use(who_use); };
+    virtual bool use(CGameObject* who_use)
+    {
+        return CUsableScriptObject::use(who_use);
+    };
 
 public:
     CInifile* m_ini_file;

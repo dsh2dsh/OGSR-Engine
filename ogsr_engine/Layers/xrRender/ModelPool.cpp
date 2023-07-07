@@ -30,7 +30,6 @@
 
 CInifile* vis_prefetch = nullptr;
 bool now_prefetch1 = false;
-bool now_prefetch2 = false;
 
 dxRender_Visual* CModelPool::Instance_Create(u32 type)
 {
@@ -231,12 +230,14 @@ dxRender_Visual* CModelPool::Instance_Find(LPCSTR N)
     return Model;
 }
 
-dxRender_Visual* CModelPool::Create(const char* name, IReader* data)
+dxRender_Visual* CModelPool::Create(const char* name, IReader* data,
+                                    bool canBePrefetched)
 {
 #ifdef _EDITOR
     if (!name || !name[0])
         return 0;
 #endif
+
     string_path low_name;
     VERIFY(xr_strlen(name) < sizeof(low_name));
     xr_strcpy(low_name, name);
@@ -254,7 +255,8 @@ dxRender_Visual* CModelPool::Create(const char* name, IReader* data)
         Model->Spawn();
         Pool.erase(it);
 
-        refreshPrefetchModel(low_name);
+        if (now_prefetch1 || canBePrefetched)
+            refreshPrefetchModel(low_name);
 
         return Model;
     }
@@ -281,7 +283,8 @@ dxRender_Visual* CModelPool::Create(const char* name, IReader* data)
         dxRender_Visual* Model = Instance_Duplicate(Base);
         Registry.insert(mk_pair(Model, low_name));
 
-        refreshPrefetchModel(low_name);
+        if (now_prefetch1 || canBePrefetched)
+            refreshPrefetchModel(low_name);
 
         return Model;
     }
@@ -300,9 +303,6 @@ void CModelPool::refreshPrefetchSect(
     const std::string sectName, const std::string lowName,
     const std::function<bool(std::string fn)> testFn)
 {
-    if (now_prefetch2)
-        return;
-
     if (m_prefetched.find(lowName) != m_prefetched.end())
         return;
 
@@ -449,11 +449,7 @@ void CModelPool::Prefetch()
 
     prefetchVisuals();
     if (vis_prefetch)
-    {
-        now_prefetch2 = true;
         prefetchModels();
-        now_prefetch2 = false;
-    }
 
     Msg("* [%s]: all prefetching time: [%.3f s.]", __FUNCTION__,
         timer.GetElapsed_sec());
@@ -463,8 +459,6 @@ void CModelPool::Prefetch()
 
 void CModelPool::prefetchVisuals()
 {
-    begin_prefetch1(true);
-
     // prefetch visuals
     string256 section;
     strconcat(sizeof(section), section, "prefetch_visuals_",
