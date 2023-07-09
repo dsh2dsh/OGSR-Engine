@@ -229,6 +229,14 @@ float CSoundRender_Core::calc_occlusion(const Fvector& base, const Fvector& P,
         return occ->occ_value;
     float occ_value = 1.f;
 
+    // Если источник звука находится вплотную к слушателю - нечего и заглушать.
+    if (P.similar(base, 0.2f))
+    {
+        occ->lastFrame = s_emitters_u;
+        occ->occ_value = occ_value;
+        return occ_value;
+    }
+
     // Calculate RAY params
     Fvector pos = P, dir;
     // pos.random_dir();
