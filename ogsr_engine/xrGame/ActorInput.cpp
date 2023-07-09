@@ -24,6 +24,8 @@
 #include "UI/UIStatic.h"
 #include "CharacterPhysicsSupport.h"
 #include "InventoryBox.h"
+#include "WeaponMagazined.h"
+#include "WeaponBinoculars.h"
 
 //#include "game_object_space.h"
 //#include "script_callback_ex.h"
@@ -194,7 +196,11 @@ void CActor::IR_OnMouseWheel(int direction)
         }
         else
         {
-            if (ActiveSlot == BOLT_SLOT || ActiveSlot == KNIFE_SLOT)
+            const auto magazined =
+                smart_cast<CWeaponMagazined*>(inventory().ActiveItem());
+            const auto bino =
+                smart_cast<CWeaponBinoculars*>(inventory().ActiveItem());
+            if (ActiveSlot != NO_ACTIVE_SLOT && (bino || !magazined))
             {
                 inventory().Activate(NO_ACTIVE_SLOT);
                 restore_slot = ActiveSlot;
