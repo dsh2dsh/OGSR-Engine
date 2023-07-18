@@ -381,7 +381,8 @@ void CDetailManager::Render()
         return;
     if (!psDeviceFlags.is(rsDetails))
         return;
-    if (g_pGamePersistent && g_pGamePersistent->m_pMainMenu && g_pGamePersistent->m_pMainMenu->IsActive())
+    if (g_pGamePersistent && g_pGamePersistent->m_pMainMenu &&
+        g_pGamePersistent->m_pMainMenu->IsActive())
         return;
 
     // MT
@@ -401,7 +402,6 @@ void CDetailManager::Render()
         soft_Render();
     RCache.set_CullMode(CULL_CCW);
     RDEVICE.Statistic->RenderDUMP_DT_Render.End();
-    m_frame_rendered = RDEVICE.dwFrame;
 }
 
 u32 reset_frame = 0;
@@ -415,24 +415,34 @@ void CDetailManager::MT_CALC()
         return;
     if (!psDeviceFlags.is(rsDetails))
         return;
-    if (g_pGamePersistent && g_pGamePersistent->m_pMainMenu && g_pGamePersistent->m_pMainMenu->IsActive())
+    if (g_pGamePersistent && g_pGamePersistent->m_pMainMenu &&
+        g_pGamePersistent->m_pMainMenu->IsActive())
         return;
 
-    MT.Enter();
-    if (m_frame_calc != RDEVICE.dwFrame)
-        if ((m_frame_rendered + 1) == RDEVICE.dwFrame) // already rendered
-        {
-            Fvector EYE = RDEVICE.vCameraPosition_saved;
+    Fvector EYE = RDEVICE.vCameraPosition_saved;
 
-            int s_x = iFloor(EYE.x / dm_slot_size + .5f);
-            int s_z = iFloor(EYE.z / dm_slot_size + .5f);
+    int s_x = iFloor(EYE.x / dm_slot_size + .5f);
+    int s_z = iFloor(EYE.z / dm_slot_size + .5f);
 
-            RDEVICE.Statistic->RenderDUMP_DT_Cache.Begin();
-            cache_Update(s_x, s_z, EYE, dm_max_decompress);
-            RDEVICE.Statistic->RenderDUMP_DT_Cache.End();
+    RDEVICE.Statistic->RenderDUMP_DT_Cache.Begin();
+    cache_Update(s_x, s_z, EYE, dm_max_decompress);
+    RDEVICE.Statistic->RenderDUMP_DT_Cache.End();
 
-            UpdateVisibleM();
-            m_frame_calc = RDEVICE.dwFrame;
-        }
-    MT.Leave();
+    UpdateVisibleM();
+}
+
+void CDetailManager::MT_SYNC()
+{
+    if (ps_r2_ls_flags.test(R2FLAG_EXP_MT_CALC))
+    {
+        if (waitMTCalc.valid())
+            waitMTCalc.wait();
+    }
+    else
+        MT_CALC();
+}
+
+void CDetailManager::MT_START()
+{
+    waitMTCalc = TTAPI->submit([this]() { MT_CALC(); });
 }
