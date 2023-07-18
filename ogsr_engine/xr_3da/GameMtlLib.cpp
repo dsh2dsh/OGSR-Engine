@@ -198,9 +198,9 @@ void CGameMtlLibrary::loadSounds()
     CTimer timer;
     timer.Start();
 
-    std::for_each(std::execution::par_unseq, material_pairs.begin(),
-                  material_pairs.end(),
-                  [](auto& pair) { pair->CreateAllSounds(); });
+    for (auto& it : material_pairs)
+        TTAPI->submit_detach([](auto& pair) { pair->CreateAllSounds(); }, it);
+    TTAPI->wait_for_tasks();
 
     Msg("* [%s]: sounds creating time: [%.3f s.]", __FUNCTION__,
         timer.GetElapsed_sec());

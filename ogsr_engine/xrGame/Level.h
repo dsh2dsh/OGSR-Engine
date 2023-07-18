@@ -143,17 +143,9 @@ public:
     GlobalFeelTouch m_feel_deny;
     std::vector<u16> m_just_destroyed;
 
-private:
-    // preload sounds registry
-    std::deque<std::string> sound_registry_defer;
-    std::mutex sound_registry_mutex;
-
 public:
     bool PrefetchSound(LPCSTR name);
     bool PrefetchManySounds(LPCSTR prefix);
-    bool PrefetchManySoundsLater(LPCSTR prefix);
-    void PrefetchDeferredSounds();
-    void CancelPrefetchManySounds(LPCSTR prefix);
 
 protected:
     BOOL net_start_result_total;

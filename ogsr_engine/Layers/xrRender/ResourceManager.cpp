@@ -377,13 +377,20 @@ void CResourceManager::DeferredUpload()
     CTimer timer;
     timer.Start();
 
-    std::for_each(std::execution::par_unseq, m_deferred_textures.begin(), m_deferred_textures.end(), [&](auto& n) {
-        const auto it = m_textures.find(n.c_str());
-        if (it != m_textures.end())
-            it->second->Load();
-    });
+    for (const auto& it : m_deferred_textures)
+        TTAPI->submit_detach(
+            [&](const auto& n) {
+                if (const auto it = m_textures.find(n.c_str());
+                    it != m_textures.end())
+                {
+                    it->second->Load();
+                }
+            },
+            it);
+    TTAPI->wait_for_tasks();
 
-    Msg("[%s] texture loading time (%zi): [%.3f s.]", __FUNCTION__, m_deferred_textures.size(), timer.GetElapsed_sec());
+    Msg("* [%s]: texture loading time (%u): [%.3f s.]", __FUNCTION__,
+        m_deferred_textures.size(), timer.GetElapsed_sec());
     m_deferred_textures.clear();
 }
 

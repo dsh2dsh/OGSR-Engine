@@ -214,8 +214,9 @@ void CEnvAmbient::LoadSounds()
     timer.Start();
 
     // Загружаем параллельно все звуки
-    std::for_each(std::execution::par_unseq, m_sound_channels.begin(),
-                  m_sound_channels.end(), [](auto& ch) { ch->LoadSounds(); });
+    for (auto& it : m_sound_channels)
+        TTAPI->submit_detach([](auto& ch) { ch->LoadSounds(); }, it);
+    TTAPI->wait_for_tasks();
 
     Msg("* [%s]: ambient[%s] channel sounds loading time (%u): [%.3f s.]",
         __FUNCTION__, name().c_str(), m_sound_channels.size(),
@@ -973,8 +974,9 @@ void CEnvironment::loadAmbientSounds(
     CTimer timer;
     timer.Start();
 
-    std::for_each(std::execution::par_unseq, snd_channels.begin(),
-                  snd_channels.end(), [](auto& ch) { ch->LoadSounds(); });
+    for (auto& it : snd_channels)
+        TTAPI->submit_detach([](auto& ch) { ch->LoadSounds(); }, it);
+    TTAPI->wait_for_tasks();
 
     Msg("* [%s]: ambient sounds loading time (%u): [%.3f s.]", __FUNCTION__,
         snd_channels.size(), timer.GetElapsed_sec());
@@ -996,8 +998,9 @@ void CEnvironment::loadEffectSounds(std::vector<CEnvAmbient::SEffect*>& effects)
     CTimer timer;
     timer.Start();
 
-    std::for_each(std::execution::par_unseq, effects.begin(), effects.end(),
-                  [](auto& eff) { eff->LoadSound(); });
+    for (auto& it : effects)
+        TTAPI->submit_detach([](auto& eff) { eff->LoadSound(); }, it);
+    TTAPI->wait_for_tasks();
 
     Msg("* [%s]: effect sounds loading time (%u): [%.3f s.]", __FUNCTION__,
         effects.size(), timer.GetElapsed_sec());

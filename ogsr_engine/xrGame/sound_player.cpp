@@ -238,7 +238,8 @@ IC Fvector CSoundPlayer::compute_sound_point(const CSoundSingle& sound)
     return (l_tMatrix.c);
 }
 
-CSoundPlayer::CSoundCollection::CSoundCollection(const CSoundCollectionParams& params)
+CSoundPlayer::CSoundCollection::CSoundCollection(
+    const CSoundCollectionParams& params)
 {
     m_last_sound_id = u32(-1);
     m_loaded = false;
@@ -246,12 +247,13 @@ CSoundPlayer::CSoundCollection::CSoundCollection(const CSoundCollectionParams& p
 
     seed(u32(CPU::QPC() & 0xffffffff));
     m_sounds.clear();
-    for (int j = 0, N = _GetItemCount(m_params.m_sound_prefix.c_str()); j < N; ++j)
+    for (int j = 0, N = _GetItemCount(m_params.m_sound_prefix.c_str()); j < N;
+         ++j)
     {
         string_path s, temp;
         _GetItem(m_params.m_sound_prefix.c_str(), j, temp);
         strconcat(sizeof(s), s, m_params.m_sound_player_prefix.c_str(), temp);
-        Level().PrefetchManySoundsLater(s);
+        Level().PrefetchManySounds(s);
     }
 }
 

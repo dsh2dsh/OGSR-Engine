@@ -221,7 +221,7 @@ LPCSTR get_name() { return (*Level().name()); }
 
 void prefetch_sound(LPCSTR name) { Level().PrefetchSound(name); }
 
-void prefetch_many_sounds(LPCSTR prefix) { Level().PrefetchManySoundsLater(prefix); }
+void prefetch_many_sounds(LPCSTR prefix) { Level().PrefetchManySounds(prefix); }
 
 CClientSpawnManager& get_client_spawn_manager() { return (Level().client_spawn_manager()); }
 

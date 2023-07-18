@@ -183,11 +183,6 @@ CLevel::~CLevel()
     m_StaticParticles.clear();
 
     // Unload sounds
-    // unload prefetched sounds
-    {
-        std::scoped_lock<std::mutex> lock(sound_registry_mutex);
-        sound_registry_defer.clear();
-    }
     // unload static sounds
     for (u32 i = 0; i < static_Sounds.size(); ++i)
     {
@@ -262,12 +257,17 @@ bool CLevel::PrefetchSound(LPCSTR name)
 
 bool CLevel::PrefetchManySounds(LPCSTR prefix)
 {
-    std::vector<std::string> load_queue;
+    bool loading = false;
     string_path fn;
 
     if (FS.exist(fn, "$game_sounds$", prefix, ".ogg") &&
         !::Sound->Loaded(prefix))
-        load_queue.emplace_back(prefix);
+    {
+        const std::string s{prefix};
+        TTAPI->submit_detach([this](const auto s) { PrefetchSound(s.c_str()); },
+                             s);
+        loading = true;
+    }
 
     u32 i = 0;
     while (true)
@@ -277,51 +277,19 @@ bool CLevel::PrefetchManySounds(LPCSTR prefix)
         if (FS.exist(fn, "$game_sounds$", name, ".ogg"))
         {
             if (!::Sound->Loaded(name))
-                load_queue.emplace_back(name);
+            {
+                const std::string s{name};
+                TTAPI->submit_detach(
+                    [this](const auto s) { PrefetchSound(s.c_str()); }, s);
+                loading = true;
+            }
         }
         else if (i > 0)
             break;
         i++;
     }
 
-    std::for_each(std::execution::par_unseq, load_queue.begin(),
-                  load_queue.end(), [&](auto& s) { PrefetchSound(s.c_str()); });
-
-    return load_queue.size() > 0;
-}
-
-bool CLevel::PrefetchManySoundsLater(LPCSTR prefix)
-{
-    std::scoped_lock<std::mutex> lock(sound_registry_mutex);
-    std::string s(prefix);
-    for (const auto& it : sound_registry_defer)
-    {
-        if (it == s)
-            return false;
-    }
-    sound_registry_defer.push_back(s);
-    return true;
-}
-
-void CLevel::PrefetchDeferredSounds()
-{
-    std::scoped_lock<std::mutex> lock(sound_registry_mutex);
-    while (!sound_registry_defer.empty())
-    {
-        std::string s = sound_registry_defer.front();
-        sound_registry_defer.pop_front();
-        if (PrefetchManySounds(s.c_str()))
-            break;
-    }
-}
-
-void CLevel::CancelPrefetchManySounds(LPCSTR prefix)
-{
-    std::scoped_lock<std::mutex> lock(sound_registry_mutex);
-    std::string s(prefix);
-    sound_registry_defer.erase(std::remove(sound_registry_defer.begin(),
-                                           sound_registry_defer.end(), s),
-                               sound_registry_defer.end());
+    return loading; // dsh:
 }
 
 // Game interface ////////////////////////////////////////////////////
@@ -335,7 +303,8 @@ int CLevel::get_RPID(LPCSTR /**name/**/)
     // Read data
     Fvector4	pos;
     int			team;
-    sscanf		(params,"%f,%f,%f,%d,%f",&pos.x,&pos.y,&pos.z,&team,&pos.w); pos.y += 0.1f;
+    sscanf		(params,"%f,%f,%f,%d,%f",&pos.x,&pos.y,&pos.z,&team,&pos.w);
+    pos.y += 0.1f;
 
     // Search respawn point
     svector<Fvector4,maxRP>	&rp = Level().get_team(team).RespawnPoints;
@@ -513,9 +482,6 @@ void CLevel::OnFrame()
         Device.add_to_seq_parallel(fastdelegate::MakeDelegate(this, &CLevel::script_gc));
     else
         script_gc();
-
-    if (!sound_registry_defer.empty())
-        Device.add_to_seq_parallel(fastdelegate::MakeDelegate(this, &CLevel::PrefetchDeferredSounds));
 
     //-----------------------------------------------------
     if (pStatGraphR)

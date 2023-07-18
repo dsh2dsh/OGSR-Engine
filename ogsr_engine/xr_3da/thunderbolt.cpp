@@ -421,17 +421,16 @@ void CEffect_Thunderbolt::LoadSounds()
     timer.Start();
 
     // Загрузим все звуки параллельно
-    std::vector<SThunderboltDesc*> thunders;
     for (auto& col : collection)
-        thunders.insert(thunders.end(), col->palette.begin(),
-                        col->palette.end());
+        for (auto& it : col->palette)
+            TTAPI->submit_detach(
+                [](auto& desc) {
+                    desc->snd.create(desc->sndName.c_str(), st_Effect,
+                                     sg_Undefined);
+                },
+                it);
+    TTAPI->wait_for_tasks();
 
-    std::for_each(std::execution::par_unseq, thunders.begin(), thunders.end(),
-                  [](auto& desc) {
-                      desc->snd.create(desc->sndName.c_str(), st_Effect,
-                                       sg_Undefined);
-                  });
-
-    Msg("* [%s]: thunderbolt sounds loading time (%u): [%.3f s.]", __FUNCTION__,
-        thunders.size(), timer.GetElapsed_sec());
+    Msg("* [%s]: thunderbolt sounds loading time: [%.3f s.]", __FUNCTION__,
+        timer.GetElapsed_sec());
 }
