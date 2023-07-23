@@ -204,7 +204,8 @@ public:
     float rRange;
     float rRange2;
 
-    IC void _init(COLLIDER* CL, Fvector* V, TRI* T, const Fvector& C, const Fvector& D, float R)
+    IC void _init(COLLIDER* CL, Fvector* V, TRI* T, const Fvector& C,
+                  const Fvector& D, float R)
     {
         dest = CL;
         tris = T;
@@ -233,7 +234,8 @@ public:
     }
 
     // fpu
-    ICF BOOL _box_fpu(const Fvector& bCenter, const Fvector& bExtents, Fvector& coord)
+    ICF BOOL _box_fpu(const Fvector& bCenter, const Fvector& bExtents,
+                      Fvector& coord)
     {
         Fbox BB;
         BB.min.sub(bCenter, bExtents);
@@ -241,16 +243,19 @@ public:
         return isect_fpu(BB.min, BB.max, ray, coord);
     }
     // sse
-    ICF BOOL _box_sse(const Fvector& bCenter, const Fvector& bExtents, float& dist)
+    ICF BOOL _box_sse(const Fvector& bCenter, const Fvector& bExtents,
+                      float& dist)
     {
         aabb_t box;
         /*
             box.min.sub (bCenter,bExtents);	box.min.pad = 0;
             box.max.add	(bCenter,bExtents); box.max.pad = 0;
         */
-        __m128 CN = _mm_unpacklo_ps(_mm_load_ss((float*)&bCenter.x), _mm_load_ss((float*)&bCenter.y));
+        __m128 CN = _mm_unpacklo_ps(_mm_load_ss((float*)&bCenter.x),
+                                    _mm_load_ss((float*)&bCenter.y));
         CN = _mm_movelh_ps(CN, _mm_load_ss((float*)&bCenter.z));
-        __m128 EX = _mm_unpacklo_ps(_mm_load_ss((float*)&bExtents.x), _mm_load_ss((float*)&bExtents.y));
+        __m128 EX = _mm_unpacklo_ps(_mm_load_ss((float*)&bExtents.x),
+                                    _mm_load_ss((float*)&bExtents.y));
         EX = _mm_movelh_ps(EX, _mm_load_ss((float*)&bExtents.z));
 
         _mm_store_ps((float*)&box.min, _mm_sub_ps(CN, EX));
@@ -278,15 +283,18 @@ public:
         {
             if (det < EPS)
                 return false;
-            tvec.sub(ray.pos, p0); // calculate distance from vert0 to ray origin
+            tvec.sub(ray.pos,
+                     p0); // calculate distance from vert0 to ray origin
             u = tvec.dotproduct(pvec); // calculate U parameter and test bounds
             if (u < 0.f || u > det)
                 return false;
             qvec.crossproduct(tvec, edge1); // prepare to test V parameter
-            v = ray.fwd_dir.dotproduct(qvec); // calculate V parameter and test bounds
+            v = ray.fwd_dir.dotproduct(
+                qvec); // calculate V parameter and test bounds
             if (v < 0.f || u + v > det)
                 return false;
-            range = edge2.dotproduct(qvec); // calculate t, scale parameters, ray intersects triangle
+            range = edge2.dotproduct(
+                qvec); // calculate t, scale parameters, ray intersects triangle
             inv_det = 1.0f / det;
             range *= inv_det;
             u *= inv_det;
@@ -297,15 +305,19 @@ public:
             if (det > -EPS && det < EPS)
                 return false;
             inv_det = 1.0f / det;
-            tvec.sub(ray.pos, p0); // calculate distance from vert0 to ray origin
-            u = tvec.dotproduct(pvec) * inv_det; // calculate U parameter and test bounds
+            tvec.sub(ray.pos,
+                     p0); // calculate distance from vert0 to ray origin
+            u = tvec.dotproduct(pvec) *
+                inv_det; // calculate U parameter and test bounds
             if (u < 0.0f || u > 1.0f)
                 return false;
             qvec.crossproduct(tvec, edge1); // prepare to test V parameter
-            v = ray.fwd_dir.dotproduct(qvec) * inv_det; // calculate V parameter and test bounds
+            v = ray.fwd_dir.dotproduct(qvec) *
+                inv_det; // calculate V parameter and test bounds
             if (v < 0.0f || u + v > 1.0f)
                 return false;
-            range = edge2.dotproduct(qvec) * inv_det; // calculate t, ray intersects triangle
+            range = edge2.dotproduct(qvec) *
+                inv_det; // calculate t, ray intersects triangle
         }
         return true;
     }
@@ -368,14 +380,15 @@ public:
     void _stab(const AABBNoLeafNode* node)
     {
         // Should help
-        _mm_prefetch((char*)node->GetNeg(), _MM_HINT_NTA);
+        //_mm_prefetch((char*)node->GetNeg(), _MM_HINT_NTA);
 
         // Actual ray/aabb test
         if (bUseSSE)
         {
             // use SSE
             float d;
-            if (!_box_sse((Fvector&)node->mAABB.mCenter, (Fvector&)node->mAABB.mExtents, d))
+            if (!_box_sse((Fvector&)node->mAABB.mCenter,
+                          (Fvector&)node->mAABB.mExtents, d))
                 return;
             if (d > rRange)
                 return;
@@ -384,7 +397,8 @@ public:
         {
             // use FPU
             Fvector P;
-            if (!_box_fpu((Fvector&)node->mAABB.mCenter, (Fvector&)node->mAABB.mExtents, P))
+            if (!_box_fpu((Fvector&)node->mAABB.mCenter,
+                          (Fvector&)node->mAABB.mExtents, P))
                 return;
             if (P.distance_to_sqr(ray.pos) > rRange2)
                 return;
