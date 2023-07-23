@@ -19,13 +19,9 @@ typedef void __fastcall RP_FUNC(void* obj);
 
 #define DECLARE_MESSAGE(name) DECLARE_MESSAGE_CL(name, )
 #define DECLARE_RP(name) \
-    void __fastcall rp_##name(void* p) \
-    { \
-        ((pure##name*)p)->On##name(); \
-    }
+    void __fastcall rp_##name(void* p) { ((pure##name*)p)->On##name(); }
 
 DECLARE_MESSAGE_CL(Frame, _BCL);
-
 DECLARE_MESSAGE(Render);
 DECLARE_MESSAGE(AppActivate);
 DECLARE_MESSAGE(AppDeactivate);
@@ -34,52 +30,63 @@ DECLARE_MESSAGE(AppEnd);
 DECLARE_MESSAGE(DeviceReset);
 DECLARE_MESSAGE(ScreenResolutionChanged);
 
+//-----------------------------------------------------------------------------
+struct _REG_INFO
+{
+    void* Object;
+    int Prio;
+    u32 Flags;
+};
+
 // ENGINE_API extern int	__cdecl	_REG_Compare(const void *, const void *);
 
 template <class T>
 class CRegistrator // the registrator itself
 {
-    //-----------------------------------------------------------------------------
-    struct _REG_INFO
+    //	friend ENGINE_API int	__cdecl	_REG_Compare(const void *, const void *);
+    static int __cdecl _REG_Compare(const void* e1, const void* e2)
     {
-        T* Object;
-        int Prio;
-    };
+        _REG_INFO* p1 = (_REG_INFO*)e1;
+        _REG_INFO* p2 = (_REG_INFO*)e2;
+        return (p2->Prio - p1->Prio);
+    }
 
 public:
     xr_vector<_REG_INFO> R;
-
     // constructor
     struct
     {
         u32 in_process : 1;
         u32 changed : 1;
     };
-
     std::mutex m;
-
     CRegistrator()
     {
         in_process = false;
         changed = false;
     }
 
-    constexpr void Add(T* object, const int priority = REG_PRIORITY_NORMAL)
-    {
-        Add({object, priority});
-    }
-
-    void Add(_REG_INFO&& newMessage)
+    //
+    void Add(T* obj, int priority = REG_PRIORITY_NORMAL, u32 flags = 0)
     {
         std::scoped_lock lock(m);
-        R.emplace_back(newMessage);
+#ifdef DEBUG
+        VERIFY(priority != REG_PRIORITY_INVALID);
+        VERIFY(obj);
+        for (u32 i = 0; i < R.size(); i++)
+            VERIFY(!((R[i].Prio != REG_PRIORITY_INVALID) && (R[i].Object == (void*)obj)));
+#endif
+        _REG_INFO I;
+        I.Object = obj;
+        I.Prio = priority;
+        I.Flags = flags;
+        R.push_back(I);
 
         if (in_process)
             changed = true;
         else
             Resort();
-    }
-
+    };
     void Remove(T* obj)
     {
         std::scoped_lock lock(m);
@@ -88,20 +95,17 @@ public:
             if (R[i].Object == obj)
                 R[i].Prio = REG_PRIORITY_INVALID;
         }
-
         if (in_process)
             changed = true;
         else
             Resort();
-    }
+    };
 
     void Process(RP_FUNC* f)
     {
         in_process = true;
-
         _REG_INFO I{nullptr, 0, 0};
         u32 idx = 0;
-
         while (true)
         {
             bool found = false;
@@ -122,35 +126,24 @@ public:
                 break;
             idx++;
         }
-
         if (changed)
         {
             std::scoped_lock lock(m);
             Resort();
         }
-
         in_process = false;
-    }
+    };
 
+private:
     void Resort(void)
     {
-        if (!R.empty())
-        {
-            std::sort(
-                std::begin(R), std::end(R),
-                [](const auto& a, const auto& b) { return a.Prio > b.Prio; });
-        }
-
-        while (!R.empty() && R[R.size() - 1].Prio == REG_PRIORITY_INVALID)
-        {
+        qsort(&*R.begin(), R.size(), sizeof(_REG_INFO), _REG_Compare);
+        while ((R.size()) && (R[R.size() - 1].Prio == REG_PRIORITY_INVALID))
             R.pop_back();
-        }
-
         if (R.empty())
             R.clear();
-
         changed = false;
-    }
+    };
 };
 
 #endif

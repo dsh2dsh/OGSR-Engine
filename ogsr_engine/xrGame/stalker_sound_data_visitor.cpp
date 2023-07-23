@@ -30,10 +30,8 @@ void CStalkerSoundDataVisitor::visit(CStalkerSoundData* data)
 
     if (!data->object().memory().enemy().selected())
     {
-        if (!object().memory().danger().selected() &&
-            data->object().memory().danger().selected())
-            object().memory().danger().add(
-                *data->object().memory().danger().selected());
+        if (!object().memory().danger().selected() && data->object().memory().danger().selected())
+            object().memory().danger().add(*data->object().memory().danger().selected());
         return;
     }
 
@@ -50,14 +48,11 @@ void CStalkerSoundDataVisitor::visit(CStalkerSoundData* data)
         return;
 
 #ifdef DEBUG
-    Msg("%s : Adding fiction hit by sound info from stalker %s",
-        *object().cName(), *data->object().cName());
-#endif // #ifdef DEBUG
-    object().memory().make_object_visible_somewhen(
-        data->object().memory().enemy().selected());
+    Msg("%s : Adding fiction hit by sound info from stalker %s", *object().cName(), *data->object().cName());
+#endif //#ifdef DEBUG
+    object().memory().make_object_visible_somewhen(data->object().memory().enemy().selected());
 
-    //	const MemorySpace::CHitObject	*m =
-    // data->object().memory().hit().hit(data->object().memory().enemy().selected());
+    //	const MemorySpace::CHitObject	*m = data->object().memory().hit().hit(data->object().memory().enemy().selected());
     //	if (!m)
     //		return;
     //	object().memory().hit().add		(*m);
