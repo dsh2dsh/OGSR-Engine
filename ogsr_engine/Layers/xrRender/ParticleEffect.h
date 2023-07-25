@@ -94,12 +94,24 @@ public:
         return m_Def->m_Name;
     }
 
-    void SetDestroyCB(DestroyCallback destroy_cb) { m_DestroyCallback = destroy_cb; }
-    void SetCollisionCB(CollisionCallback collision_cb) { m_CollisionCallback = collision_cb; }
-    void SetBirthDeadCB(PAPI::OnBirthParticleCB bc, PAPI::OnDeadParticleCB dc, void* owner, u32 p);
+    void SetDestroyCB(DestroyCallback destroy_cb)
+    {
+        m_DestroyCallback = destroy_cb;
+    }
+    void SetCollisionCB(CollisionCallback collision_cb)
+    {
+        m_CollisionCallback = collision_cb;
+    }
+    void SetBirthDeadCB(PAPI::OnBirthParticleCB bc, PAPI::OnDeadParticleCB dc,
+                        void* owner, u32 p);
 
     virtual u32 ParticlesCount();
+
+private:
+    void ParticleRenderStream(PAPI::Particle* particles, FVF::LIT* pv,
+                              u32 p_from, u32 p_to);
 };
+
 void OnEffectParticleBirth(void* owner, u32 param, PAPI::Particle& m, u32 idx);
 void OnEffectParticleDead(void* owner, u32 param, PAPI::Particle& m, u32 idx);
 

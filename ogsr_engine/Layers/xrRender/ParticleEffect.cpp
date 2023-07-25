@@ -401,8 +401,8 @@ __forceinline void magnitude_sse(Fvector& vec, float& res)
     _mm_store_ss((float*)&res, tv);
 }
 
-void ParticleRenderStream(CParticleEffect& pPE, PAPI::Particle* particles,
-                          FVF::LIT* pv, u32 p_from, u32 p_to)
+void CParticleEffect::ParticleRenderStream(PAPI::Particle* particles,
+                                           FVF::LIT* pv, u32 p_from, u32 p_to)
 {
     float sina = 0.0f, cosa = 0.0f;
     // Xottab_DUTY: changed angle to be float instead of DWORD
@@ -427,36 +427,35 @@ void ParticleRenderStream(CParticleEffect& pPE, PAPI::Particle* particles,
 
         //_mm_prefetch(64 + (char*)&particles[i + 1], _MM_HINT_NTA);
 
-        if (pPE.m_Def->m_Flags.is(CPEDef::dfFramed))
-            pPE.m_Def->m_Frame.CalculateTC(iFloor(float(m.frame) / 255.f), lt,
-                                           rb);
+        if (m_Def->m_Flags.is(CPEDef::dfFramed))
+            m_Def->m_Frame.CalculateTC(iFloor(float(m.frame) / 255.f), lt, rb);
 
         float r_x = m.size.x * 0.5f;
         float r_y = m.size.y * 0.5f;
         float speed = 0.0f;
         BOOL speed_calculated = FALSE;
 
-        if (pPE.m_Def->m_Flags.is(CPEDef::dfVelocityScale))
+        if (m_Def->m_Flags.is(CPEDef::dfVelocityScale))
         {
             magnitude_sse(m.vel, speed);
             speed_calculated = TRUE;
-            r_x += speed * pPE.m_Def->m_VelocityScale.x;
-            r_y += speed * pPE.m_Def->m_VelocityScale.y;
+            r_x += speed * m_Def->m_VelocityScale.x;
+            r_y += speed * m_Def->m_VelocityScale.y;
         }
 
-        if (pPE.m_Def->m_Flags.is(CPEDef::dfAlignToPath))
+        if (m_Def->m_Flags.is(CPEDef::dfAlignToPath))
         {
             if (!speed_calculated)
                 magnitude_sse(m.vel, speed);
-            if ((speed < EPS_S) && pPE.m_Def->m_Flags.is(CPEDef::dfWorldAlign))
+            if ((speed < EPS_S) && m_Def->m_Flags.is(CPEDef::dfWorldAlign))
             {
                 Fmatrix M;
-                M.setXYZ(pPE.m_Def->m_APDefaultRotation);
-                if (pPE.m_RT_Flags.is(CParticleEffect::flRT_XFORM))
+                M.setXYZ(m_Def->m_APDefaultRotation);
+                if (m_RT_Flags.is(CParticleEffect::flRT_XFORM))
                 {
                     Fvector p;
-                    pPE.m_XFORM.transform_tiny(p, m.pos);
-                    M.mulA_43(pPE.m_XFORM);
+                    m_XFORM.transform_tiny(p, m.pos);
+                    M.mulA_43(m_XFORM);
                     FillSprite(pv, M.k, M.i, p, lt, rb, r_x, r_y, m.color, sina,
                                cosa);
                 }
@@ -466,8 +465,7 @@ void ParticleRenderStream(CParticleEffect& pPE, PAPI::Particle* particles,
                                sina, cosa);
                 }
             }
-            else if ((speed >= EPS_S) &&
-                     pPE.m_Def->m_Flags.is(CPEDef::dfFaceAlign))
+            else if ((speed >= EPS_S) && m_Def->m_Flags.is(CPEDef::dfFaceAlign))
             {
                 Fmatrix M;
                 M.identity();
@@ -479,11 +477,11 @@ void ParticleRenderStream(CParticleEffect& pPE, PAPI::Particle* particles,
                 M.i.normalize();
                 M.j.crossproduct(M.k, M.i);
                 M.j.normalize();
-                if (pPE.m_RT_Flags.is(CParticleEffect::flRT_XFORM))
+                if (m_RT_Flags.is(CParticleEffect::flRT_XFORM))
                 {
                     Fvector p;
-                    pPE.m_XFORM.transform_tiny(p, m.pos);
-                    M.mulA_43(pPE.m_XFORM);
+                    m_XFORM.transform_tiny(p, m.pos);
+                    M.mulA_43(m_XFORM);
                     FillSprite(pv, M.j, M.i, p, lt, rb, r_x, r_y, m.color, sina,
                                cosa);
                 }
@@ -499,13 +497,13 @@ void ParticleRenderStream(CParticleEffect& pPE, PAPI::Particle* particles,
                 if (speed >= EPS_S)
                     dir.div(m.vel, speed);
                 else
-                    dir.setHP(-pPE.m_Def->m_APDefaultRotation.y,
-                              -pPE.m_Def->m_APDefaultRotation.x);
-                if (pPE.m_RT_Flags.is(CParticleEffect::flRT_XFORM))
+                    dir.setHP(-m_Def->m_APDefaultRotation.y,
+                              -m_Def->m_APDefaultRotation.x);
+                if (m_RT_Flags.is(CParticleEffect::flRT_XFORM))
                 {
                     Fvector p, d;
-                    pPE.m_XFORM.transform_tiny(p, m.pos);
-                    pPE.m_XFORM.transform_dir(d, dir);
+                    m_XFORM.transform_tiny(p, m.pos);
+                    m_XFORM.transform_dir(d, dir);
                     FillSprite(pv, p, d, lt, rb, r_x, r_y, m.color, sina, cosa);
                 }
                 else
@@ -517,10 +515,10 @@ void ParticleRenderStream(CParticleEffect& pPE, PAPI::Particle* particles,
         }
         else
         {
-            if (pPE.m_RT_Flags.is(CParticleEffect::flRT_XFORM))
+            if (m_RT_Flags.is(CParticleEffect::flRT_XFORM))
             {
                 Fvector p;
-                pPE.m_XFORM.transform_tiny(p, m.pos);
+                m_XFORM.transform_tiny(p, m.pos);
                 FillSprite(pv, RDEVICE.vCameraTop, RDEVICE.vCameraRight, p, lt,
                            rb, r_x, r_y, m.color, sina, cosa);
             }
@@ -545,10 +543,11 @@ void CParticleEffect::Render(float)
     {
         if (m_Def && m_Def->m_Flags.is(CPEDef::dfSprite))
         {
-            FVF::LIT* pv_start = (FVF::LIT*)RCache.Vertex.Lock(p_cnt * 4 * 4, geom->vb_stride, dwOffset);
+            FVF::LIT* pv_start = (FVF::LIT*)RCache.Vertex.Lock(
+                p_cnt * 4 * 4, geom->vb_stride, dwOffset);
             FVF::LIT* pv = pv_start;
 
-            ParticleRenderStream(*this, particles, pv, 0, p_cnt);
+            ParticleRenderStream(particles, pv, 0, p_cnt);
 
             dwCount = p_cnt << 2;
 
@@ -559,8 +558,11 @@ void CParticleEffect::Render(float)
                 Fmatrix FTold = Device.mFullTransform;
                 if (GetHudMode())
                 {
-                    RDEVICE.mProject.build_projection(deg2rad(psHUD_FOV < 1.f ? psHUD_FOV * Device.fFOV : psHUD_FOV), Device.fASPECT, HUD_VIEWPORT_NEAR,
-                                                      g_pGamePersistent->Environment().CurrentEnv->far_plane);
+                    RDEVICE.mProject.build_projection(
+                        deg2rad(psHUD_FOV < 1.f ? psHUD_FOV * Device.fFOV :
+                                                  psHUD_FOV),
+                        Device.fASPECT, HUD_VIEWPORT_NEAR,
+                        g_pGamePersistent->Environment().CurrentEnv->far_plane);
 
                     Device.mFullTransform.mul(Device.mProject, Device.mView);
                     RCache.set_xform_project(Device.mProject);
@@ -571,8 +573,13 @@ void CParticleEffect::Render(float)
                 RCache.set_xform_world(Fidentity);
                 RCache.set_Geometry(geom);
 
-                RCache.set_CullMode(m_Def->m_Flags.is(CPEDef::dfCulling) ? (m_Def->m_Flags.is(CPEDef::dfCullCCW) ? CULL_CCW : CULL_CW) : CULL_NONE);
-                RCache.Render(D3DPT_TRIANGLELIST, dwOffset, 0, dwCount, 0, dwCount / 2);
+                RCache.set_CullMode(m_Def->m_Flags.is(CPEDef::dfCulling) ?
+                                        (m_Def->m_Flags.is(CPEDef::dfCullCCW) ?
+                                             CULL_CCW :
+                                             CULL_CW) :
+                                        CULL_NONE);
+                RCache.Render(D3DPT_TRIANGLELIST, dwOffset, 0, dwCount, 0,
+                              dwCount / 2);
                 RCache.set_CullMode(CULL_CCW);
 
                 if (GetHudMode())
