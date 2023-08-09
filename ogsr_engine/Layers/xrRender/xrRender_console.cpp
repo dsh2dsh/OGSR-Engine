@@ -201,6 +201,12 @@ int ps_r2_wait_sleep = 0;
 float ps_r2_lt_smooth = 1.f; // 1.f
 float ps_r2_slight_fade = 0.5f; // 1.f
 
+Fvector4 ps_ssfx_rain_1{2.0f, 0.1f, 0.6f, 2.f}; // Len, Width, Speed, Quality
+Fvector4 ps_ssfx_rain_2{0.7f, 0.1f, 1.0f,
+                        0.5f}; // Alpha, Brigthness, Refraction, Reflection
+Fvector4 ps_ssfx_rain_3{0.5f, 1.0f, 0.0f,
+                        0.0f}; // Alpha, Refraction ( Splashes )
+
 //	x - min (0), y - focus (1.4), z - max (100)
 Fvector3 ps_r2_dof = Fvector3().set(-1.25f, 1.4f, 600.f);
 float ps_r2_dof_sky = 30; //	distance to sky
@@ -964,7 +970,15 @@ void xrRender_initconsole()
     CMD4(CCC_Float, "r__pnv_noise", &ps_pnv_noise, 0.f, 1.f);
     CMD4(CCC_Float, "r__pnv_scanlines", &ps_pnv_scanlines, 0.f, 1.f);
 
-    CMD3(CCC_Mask, "r__flares_control", &ps_r2_ls_flags_ext, R2FLAGEXT_FLARES_CONTROL);
+    CMD3(CCC_Mask, "r__flares_control", &ps_r2_ls_flags_ext,
+         R2FLAGEXT_FLARES_CONTROL);
+
+    CMD4(CCC_Vector4, "ssfx_rain_1", &ps_ssfx_rain_1, (Fvector4{}),
+         (Fvector4{10.f, 5.f, 5.f, 2.f}));
+    CMD4(CCC_Vector4, "ssfx_rain_2", &ps_ssfx_rain_2, (Fvector4{}),
+         (Fvector4{1.f, 10.f, 10.f, 10.f}));
+    CMD4(CCC_Vector4, "ssfx_rain_3", &ps_ssfx_rain_3, (Fvector4{}),
+         (Fvector4{1.f, 10.f, 10.f, 10.f}));
 }
 
 #endif

@@ -152,6 +152,10 @@ extern ECORE_API float ps_pnv_scanlines;
 extern ECORE_API float ps_r2_visor_refl_intensity;
 extern ECORE_API float ps_r2_visor_refl_radius;
 
+extern ECORE_API Fvector4 ps_ssfx_rain_1;
+extern ECORE_API Fvector4 ps_ssfx_rain_2;
+extern ECORE_API Fvector4 ps_ssfx_rain_3;
+
 enum
 {
     R2FLAG_SUN = (1 << 0),

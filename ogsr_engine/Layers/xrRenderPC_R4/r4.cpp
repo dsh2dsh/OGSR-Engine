@@ -1093,6 +1093,7 @@ HRESULT CRender::shader_compile(LPCSTR name, DWORD const* pSrcData,
     char c_sun_shafts[32];
     char c_ssao[32];
     char c_sun_quality[32];
+    char c_rain_quality[10]{};
 
     char sh_name[MAX_PATH] = "";
 
@@ -1532,6 +1533,21 @@ HRESULT CRender::shader_compile(LPCSTR name, DWORD const* pSrcData,
     }
     sh_name[len] = '0' + char(ps_r2_ls_flags_ext.test(R2FLAGEXT_SSLR));
     ++len;
+
+    if (ps_ssfx_rain_1.w > 0)
+    {
+        sprintf_s(c_rain_quality, "%.0f", ps_ssfx_rain_1.w);
+        defines[def_it].Name = "SSFX_RAIN_QUALITY";
+        defines[def_it].Definition = c_rain_quality;
+        def_it++;
+        xr_strcat(sh_name, c_rain_quality);
+        len += xr_strlen(c_rain_quality);
+    }
+    else
+    {
+        sh_name[len] = '0';
+        ++len;
+    }
 
     // Be carefull!!!!! this should be at the end to correctly generate
     // compiled shader name;
